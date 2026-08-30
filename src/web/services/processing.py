@@ -8,7 +8,7 @@ from typing import Callable, Dict, List, Optional
 from datetime import datetime
 import pandas as pd
 
-from ...video_processor import VideoProcessor
+from ...video_processor import VideoProcessor, evenly_spaced_frame_indices
 from ...telemetry_extractor import TelemetryExtractor
 from ...lap_detector import LapDetector
 from ...position_tracker_v2 import PositionTrackerV2
@@ -78,7 +78,11 @@ class VideoProcessingService:
             lap_roi_config['lap_number'] = roi_config['lap_number_training']
 
         lap_detector = LapDetector(lap_roi_config, enable_performance_stats=False)
-        position_tracker = PositionTrackerV2()
+        position_config = roi_config.get('position_tracking', {})
+        position_tracker = PositionTrackerV2(
+            white_lower=position_config.get('white_lower'),
+            white_upper=position_config.get('white_upper'),
+        )
 
         if not processor.open_video():
             raise ValueError("Could not open video file")
@@ -95,7 +99,10 @@ class VideoProcessingService:
                 if progress_callback:
                     progress_callback(10, "Extracting track path from minimap...")
 
-                sample_frames = [0, 50, 100, 150, 200, 250, 500, 750, 1000, 1250, 1500]
+                sample_count = int(position_config.get('sample_count', 11))
+                sample_frames = evenly_spaced_frame_indices(
+                    video_info['frame_count'], sample_count
+                )
                 map_rois = []
 
                 for sample_frame_num in sample_frames:

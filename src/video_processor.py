@@ -7,6 +7,15 @@ import numpy as np
 from typing import Generator, Dict, Tuple
 
 
+def evenly_spaced_frame_indices(frame_count: int, sample_count: int) -> list[int]:
+    """Return evenly spaced frame indices spanning the available video."""
+    if frame_count <= 0 or sample_count <= 0:
+        return []
+
+    actual_count = min(frame_count, sample_count)
+    return np.linspace(0, frame_count - 1, actual_count, dtype=int).tolist()
+
+
 class VideoProcessor:
     """Handles video loading and frame extraction."""
     
@@ -114,4 +123,3 @@ class VideoProcessor:
             'width': int(self.cap.get(cv2.CAP_PROP_FRAME_WIDTH)) if self.cap else 0,
             'height': int(self.cap.get(cv2.CAP_PROP_FRAME_HEIGHT)) if self.cap else 0
         }
-

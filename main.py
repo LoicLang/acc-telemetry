@@ -11,7 +11,7 @@ import os
 import sys
 import webbrowser
 from pathlib import Path
-from src.video_processor import VideoProcessor
+from src.video_processor import VideoProcessor, evenly_spaced_frame_indices
 from src.telemetry_extractor import TelemetryExtractor
 from src.lap_detector import LapDetector
 from src.position_tracker_v2 import PositionTrackerV2
@@ -189,7 +189,11 @@ def main():
     
     # Use template matching for lap numbers (100-500x faster than OCR)
     lap_detector = LapDetector(lap_roi_config, enable_performance_stats=True)
-    position_tracker = PositionTrackerV2()
+    position_config = roi_config.get('position_tracking', {})
+    position_tracker = PositionTrackerV2(
+        white_lower=position_config.get('white_lower'),
+        white_upper=position_config.get('white_upper'),
+    )
     visualizer = InteractiveTelemetryVisualizer()
     
     if not processor.open_video():
@@ -209,7 +213,10 @@ def main():
         
         # Sample multiple frames to get complete path (avoid red dot occlusion)
         # Sample more frames to ensure we get enough clean ones after noise filtering
-        sample_frames = [0, 50, 100, 150, 200, 250, 500, 750, 1000, 1250, 1500]
+        sample_count = int(position_config.get('sample_count', 11))
+        sample_frames = evenly_spaced_frame_indices(
+            video_info['frame_count'], sample_count
+        )
         map_rois = []
         
         for sample_frame_num in sample_frames:
