@@ -1,9 +1,9 @@
 import unittest
+from unittest.mock import patch
 
 import numpy as np
-import tesserocr
 
-from src.lap_detector import LapDetector
+from src import lap_detector
 
 
 class FakeTesseractAPI:
@@ -20,21 +20,56 @@ class FakeTesseractAPI:
         return "171"
 
 
+class FailingTesseractAPI(FakeTesseractAPI):
+    def GetUTF8Text(self):
+        raise RuntimeError("OCR failed")
+
+
+@unittest.skipUnless(lap_detector.USE_TESSEROCR, "tesserocr is not available")
 class TestSpeedOCRMode(unittest.TestCase):
-    def test_extract_speed_uses_single_line_then_restores_single_word(self):
-        detector = LapDetector.__new__(LapDetector)
+    def make_detector(self, api):
+        detector = lap_detector.LapDetector.__new__(lap_detector.LapDetector)
         detector.speed_roi = {"x": 0, "y": 0, "width": 54, "height": 32}
         detector._speed_history = []
         detector._history_size = 15
         detector._last_valid_speed = None
-        detector._tesserocr_api = FakeTesseractAPI()
+        detector._tesserocr_api = api
+        return detector
 
-        speed = detector.extract_speed(np.zeros((32, 54, 3), dtype=np.uint8))
+    def extract_speed(self, detector):
+        converted_roi = np.zeros((32, 54, 3), dtype=np.uint8)
+        with (
+            patch.object(lap_detector.cv2, "cvtColor", return_value=converted_roi),
+            patch.object(lap_detector.Image, "fromarray", side_effect=lambda image: image),
+        ):
+            return detector.extract_speed(np.zeros((32, 54, 3), dtype=np.uint8))
+
+    def test_extract_speed_uses_single_line_then_restores_single_word(self):
+        detector = self.make_detector(FakeTesseractAPI())
+
+        speed = self.extract_speed(detector)
 
         self.assertEqual(speed, 171)
         self.assertEqual(
             detector._tesserocr_api.page_seg_modes,
-            [tesserocr.PSM.SINGLE_LINE, tesserocr.PSM.SINGLE_WORD],
+            [
+                lap_detector.tesserocr.PSM.SINGLE_LINE,
+                lap_detector.tesserocr.PSM.SINGLE_WORD,
+            ],
+        )
+
+    def test_extract_speed_restores_single_word_when_ocr_raises(self):
+        detector = self.make_detector(FailingTesseractAPI())
+
+        speed = self.extract_speed(detector)
+
+        self.assertIsNone(speed)
+        self.assertEqual(
+            detector._tesserocr_api.page_seg_modes,
+            [
+                lap_detector.tesserocr.PSM.SINGLE_LINE,
+                lap_detector.tesserocr.PSM.SINGLE_WORD,
+            ],
         )
 
 
