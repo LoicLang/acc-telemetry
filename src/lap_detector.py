@@ -12,6 +12,8 @@ from typing import Optional, Tuple
 from pathlib import Path
 from src.template_matcher import TemplateMatcher
 
+MAX_SPEED_OCR_DELTA_KMH = 20
+
 # Try to use fast tesserocr (direct C++ API), fall back to pytesseract
 try:
     import tesserocr
@@ -462,6 +464,16 @@ class LapDetector:
                 else:
                     speed = None
         except Exception as e:
+            speed = None
+
+        max_speed_delta = getattr(
+            self, "_max_speed_ocr_delta_kmh", MAX_SPEED_OCR_DELTA_KMH
+        )
+        if (
+            speed is not None
+            and self._last_valid_speed is not None
+            and abs(speed - self._last_valid_speed) > max_speed_delta
+        ):
             speed = None
         
         if speed is not None:

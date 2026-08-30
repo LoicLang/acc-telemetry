@@ -25,6 +25,15 @@ class FailingTesseractAPI(FakeTesseractAPI):
         raise RuntimeError("OCR failed")
 
 
+class SequenceTesseractAPI(FakeTesseractAPI):
+    def __init__(self, texts):
+        super().__init__()
+        self.texts = iter(texts)
+
+    def GetUTF8Text(self):
+        return next(self.texts)
+
+
 @unittest.skipUnless(lap_detector.USE_TESSEROCR, "tesserocr is not available")
 class TestSpeedOCRMode(unittest.TestCase):
     def make_detector(self, api):
@@ -71,6 +80,22 @@ class TestSpeedOCRMode(unittest.TestCase):
                 lap_detector.tesserocr.PSM.SINGLE_WORD,
             ],
         )
+
+    def test_extract_speed_rejects_large_ocr_jumps_before_smoothing(self):
+        detector = self.make_detector(SequenceTesseractAPI(["11", "147", "120"]))
+        detector._last_valid_speed = 111
+        detector._speed_history = [111] * detector._history_size
+
+        speeds = []
+        histories = []
+        for _ in range(3):
+            speeds.append(self.extract_speed(detector))
+            histories.append(detector._speed_history.copy())
+
+        self.assertEqual(speeds, [111, 111, 111])
+        self.assertEqual(histories[0], [111] * detector._history_size)
+        self.assertEqual(histories[1], [111] * detector._history_size)
+        self.assertEqual(histories[2], [111] * 14 + [120])
 
 
 if __name__ == "__main__":
