@@ -1,6 +1,6 @@
 # ROI configurations for different video sources
 
-twitch_720p:
+twitch_720p: &twitch_720p
   # ROI coordinates for 1280x720 video
   # Horizontal throttle/brake bars in bottom-right corner
   
@@ -73,61 +73,7 @@ twitch_720p:
     height: 183
 
 ps5_full_map_720p:
-  # ROI coordinates for 1280x720 PS5 full-map video
-  throttle:
-    x: 1172
-    y: 670
-    width: 102
-    height: 14
-
-  brake:
-    x: 1172
-    y: 683
-    width: 102
-    height: 12
-
-  steering:
-    x: 1135
-    y: 662
-    width: 134
-    height: 9
-
-  lap_number:
-    x: 237
-    y: 71
-    width: 47
-    height: 37
-
-  lap_number_training:
-    x: 181
-    y: 71
-    width: 47
-    height: 37
-
-  last_lap_time:
-    x: 119
-    y: 87
-    width: 87
-    height: 20
-
-  speed:
-    x: 1177
-    y: 621
-    width: 54
-    height: 32
-
-  gear:
-    x: 1124
-    y: 591
-    width: 47
-    height: 72
-
-  track_map:
-    x: 3
-    y: 215
-    width: 269
-    height: 183
-
+  <<: *twitch_720p
   position_tracking:
     white_lower: [0, 0, 150]
     white_upper: [180, 100, 255]
