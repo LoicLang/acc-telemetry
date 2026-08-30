@@ -83,6 +83,9 @@ class LapDetector:
         # Tesseract config for lap numbers (digit-only, single word)
         # PSM 8: Single word mode works better for isolated lap numbers
         self.tesseract_config_lap = '--psm 8 --oem 3 -c tessedit_char_whitelist=0123456789'
+
+        # Tesseract config for speed (digit-only, single line)
+        self.tesseract_config_speed = '--psm 7 --oem 3 -c tessedit_char_whitelist=0123456789'
         
         # Tesseract config for lap times (still using OCR for complex time format)
         self.tesseract_config_time = '--psm 7 --oem 3 -c tessedit_char_whitelist=0123456789:.'
@@ -452,7 +455,9 @@ class LapDetector:
             else:
                 # Slow path: pytesseract (50ms)
                 import pytesseract
-                text = pytesseract.image_to_string(roi, config=self.tesseract_config_lap)
+                text = pytesseract.image_to_string(
+                    roi, config=self.tesseract_config_speed
+                )
             
             text = text.strip()
             

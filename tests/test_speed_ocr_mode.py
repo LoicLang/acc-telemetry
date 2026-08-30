@@ -137,5 +137,31 @@ class TestSpeedOCRMode(unittest.TestCase):
         self.assertEqual(detector._speed_history[-1], 120)
 
 
+class TestSpeedOCRFallback(unittest.TestCase):
+    def test_extract_speed_uses_single_line_pytesseract_config(self):
+        detector = lap_detector.LapDetector.__new__(lap_detector.LapDetector)
+        detector.speed_roi = {"x": 0, "y": 0, "width": 54, "height": 32}
+        detector._speed_history = []
+        detector._history_size = 15
+        detector._last_valid_speed = None
+        detector._tesserocr_api = None
+        detector.tesseract_config_lap = (
+            "--psm 8 --oem 3 -c tessedit_char_whitelist=0123456789"
+        )
+        detector.tesseract_config_speed = (
+            "--psm 7 --oem 3 -c tessedit_char_whitelist=0123456789"
+        )
+
+        with patch("pytesseract.image_to_string", return_value="171") as image_to_string:
+            speed = detector.extract_speed(
+                np.zeros((32, 54, 3), dtype=np.uint8)
+            )
+
+        config = image_to_string.call_args.kwargs["config"]
+        self.assertEqual(speed, 171)
+        self.assertIn("--psm 7", config)
+        self.assertNotIn("--psm 8", config)
+
+
 if __name__ == "__main__":
     unittest.main()
