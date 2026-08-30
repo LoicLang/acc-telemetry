@@ -28,7 +28,13 @@ class PositionTrackerV2:
     - Simple forward-progress validation (no complex filtering)
     """
 
-    def __init__(self, fps: float = 30.0, max_jump_per_frame: float = 1.0):
+    def __init__(
+        self,
+        fps: float = 30.0,
+        max_jump_per_frame: float = 1.0,
+        white_lower: Optional[List[int]] = None,
+        white_upper: Optional[List[int]] = None,
+    ):
         """
         Initialize the improved position tracker.
 
@@ -37,6 +43,8 @@ class PositionTrackerV2:
             max_jump_per_frame: Maximum allowed position jump per frame (default: 1.0%)
                                At 30 FPS, a full lap takes ~100 seconds, so 1% = 1 second of track
                                This allows for normal speed variations while rejecting obvious outliers
+            white_lower: Optional lower HSV bound for racing-line detection
+            white_upper: Optional upper HSV bound for racing-line detection
         """
         self.track_path: Optional[List[Tuple[int, int]]] = None
         self.total_path_pixels: int = 0  # Total number of pixels in the racing line path
@@ -57,8 +65,12 @@ class PositionTrackerV2:
         # Racing line varies: bright sections 98.3%, dark sections 87.3%
         # Car cage: HSV(195°, 7.3%, 78.9%)
         # V=210/255=82.4% provides 3.5% margin above car cage, 4.9% below darkest racing line
-        self.white_lower = np.array([0, 0, 210])
-        self.white_upper = np.array([180, 30, 255])
+        self.white_lower = np.array(
+            white_lower if white_lower is not None else [0, 0, 210]
+        )
+        self.white_upper = np.array(
+            white_upper if white_upper is not None else [180, 30, 255]
+        )
 
         # Red dot detection - more restrictive to avoid false positives
         self.red_lower1 = np.array([0, 150, 150])
