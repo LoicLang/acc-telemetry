@@ -436,10 +436,14 @@ class LapDetector:
         try:
             if self._tesserocr_api:
                 # Fast path: tesserocr (1-2ms)
-                roi_rgb = cv2.cvtColor(roi, cv2.COLOR_BGR2RGB)
-                pil_image = Image.fromarray(roi_rgb)
-                self._tesserocr_api.SetImage(pil_image)
-                text = self._tesserocr_api.GetUTF8Text()
+                self._tesserocr_api.SetPageSegMode(tesserocr.PSM.SINGLE_LINE)
+                try:
+                    roi_rgb = cv2.cvtColor(roi, cv2.COLOR_BGR2RGB)
+                    pil_image = Image.fromarray(roi_rgb)
+                    self._tesserocr_api.SetImage(pil_image)
+                    text = self._tesserocr_api.GetUTF8Text()
+                finally:
+                    self._tesserocr_api.SetPageSegMode(tesserocr.PSM.SINGLE_WORD)
             else:
                 # Slow path: pytesseract (50ms)
                 import pytesseract
