@@ -13,6 +13,7 @@ from pathlib import Path
 from src.template_matcher import TemplateMatcher
 
 MAX_SPEED_OCR_DELTA_KMH = 20
+SPEED_OCR_RECOVERY_TOLERANCE_KMH = 3
 
 # Try to use fast tesserocr (direct C++ API), fall back to pytesseract
 try:
@@ -66,6 +67,8 @@ class LapDetector:
         self._last_valid_lap_number: Optional[int] = None
         self._last_valid_lap_time: Optional[str] = None
         self._last_valid_speed: Optional[int] = None
+        self._pending_speed_candidate: Optional[int] = None
+        self._pending_speed_candidate_count: int = 0
         self._last_valid_gear: Optional[int] = None
         self._lap_number_history: list = []  # Track recent detections for stability
         self._speed_history: list = []  # Track recent speed detections for stability
@@ -466,30 +469,69 @@ class LapDetector:
         except Exception as e:
             speed = None
 
+        # Validate: speed should be reasonable (0-400 km/h for ACC)
+        if speed is not None and not 0 <= speed <= 400:
+            speed = None
+
         max_speed_delta = getattr(
             self, "_max_speed_ocr_delta_kmh", MAX_SPEED_OCR_DELTA_KMH
         )
-        if (
-            speed is not None
-            and self._last_valid_speed is not None
-            and abs(speed - self._last_valid_speed) > max_speed_delta
+        recovery_tolerance = getattr(
+            self,
+            "_speed_ocr_recovery_tolerance_kmh",
+            SPEED_OCR_RECOVERY_TOLERANCE_KMH,
+        )
+        if speed is None:
+            self._pending_speed_candidate = None
+            self._pending_speed_candidate_count = 0
+        elif (
+            self._last_valid_speed is None
+            or abs(speed - self._last_valid_speed) <= max_speed_delta
         ):
-            speed = None
+            self._pending_speed_candidate = None
+            self._pending_speed_candidate_count = 0
+        else:
+            pending_candidate = getattr(self, "_pending_speed_candidate", None)
+            if (
+                pending_candidate is not None
+                and abs(speed - pending_candidate) <= recovery_tolerance
+            ):
+                pending_count = getattr(
+                    self, "_pending_speed_candidate_count", 0
+                ) + 1
+            else:
+                self._pending_speed_candidate = speed
+                pending_count = 1
+            self._pending_speed_candidate_count = pending_count
+
+            if pending_count >= self._history_size:
+                speed_direction = 1 if speed > self._last_valid_speed else -1
+                recovered_speed = self._last_valid_speed + (
+                    speed_direction * max_speed_delta
+                )
+                if speed_direction > 0:
+                    recovered_speed = min(recovered_speed, speed)
+                else:
+                    recovered_speed = max(recovered_speed, speed)
+                self._last_valid_speed = recovered_speed
+                self._speed_history = [recovered_speed] * self._history_size
+                self._pending_speed_candidate = None
+                self._pending_speed_candidate_count = 0
+            else:
+                speed = None
         
         if speed is not None:
-            # Validate: speed should be reasonable (0-400 km/h for ACC)
-            if 0 <= speed <= 400:
-                # Add to history for temporal smoothing
-                self._speed_history.append(speed)
-                if len(self._speed_history) > self._history_size:
-                    self._speed_history.pop(0)
-                
-                # Use median filtering to smooth out OCR noise
-                smoothed_speed = self._get_smoothed_speed()
-                
-                if smoothed_speed is not None:
-                    self._last_valid_speed = smoothed_speed
-                    return smoothed_speed
+            # Add to history for temporal smoothing
+            self._speed_history.append(speed)
+            if len(self._speed_history) > self._history_size:
+                self._speed_history.pop(0)
+
+            # Use median filtering to smooth out OCR noise
+            smoothed_speed = self._get_smoothed_speed()
+
+            if smoothed_speed is not None:
+                self._last_valid_speed = smoothed_speed
+                return smoothed_speed
         
         # Return last known good value
         return self._last_valid_speed

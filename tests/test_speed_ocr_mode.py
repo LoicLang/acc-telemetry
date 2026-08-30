@@ -97,6 +97,45 @@ class TestSpeedOCRMode(unittest.TestCase):
         self.assertEqual(histories[1], [111] * detector._history_size)
         self.assertEqual(histories[2], [111] * 14 + [120])
 
+    def test_extract_speed_recovers_from_a_confirmed_stable_jump(self):
+        readings = ["80"] * 23
+        detector = self.make_detector(SequenceTesseractAPI(readings))
+        detector._last_valid_speed = 50
+        detector._speed_history = [50] * detector._history_size
+
+        speeds = [self.extract_speed(detector) for _ in readings]
+
+        self.assertEqual(speeds[: detector._history_size - 1], [50] * 14)
+        self.assertEqual(speeds[detector._history_size - 1], 70)
+        self.assertEqual(speeds[-1], 80)
+        speed_changes = [
+            abs(current - previous)
+            for previous, current in zip([50] + speeds, speeds)
+        ]
+        self.assertLessEqual(max(speed_changes), lap_detector.MAX_SPEED_OCR_DELTA_KMH)
+
+    def test_extract_speed_plausible_reading_resets_pending_recovery(self):
+        detector = self.make_detector(
+            SequenceTesseractAPI(["147"] * 5 + ["120"])
+        )
+        detector._last_valid_speed = 111
+        detector._speed_history = [111] * detector._history_size
+
+        pending_speeds = [self.extract_speed(detector) for _ in range(5)]
+        pending_before_plausible_reading = (
+            getattr(detector, "_pending_speed_candidate", None),
+            getattr(detector, "_pending_speed_candidate_count", 0),
+        )
+        speed = self.extract_speed(detector)
+
+        self.assertEqual(pending_speeds, [111] * 5)
+        self.assertEqual(pending_before_plausible_reading, (147, 5))
+        self.assertEqual(speed, 111)
+        self.assertIsNone(getattr(detector, "_pending_speed_candidate", None))
+        self.assertEqual(getattr(detector, "_pending_speed_candidate_count", 0), 0)
+        self.assertNotIn(147, detector._speed_history)
+        self.assertEqual(detector._speed_history[-1], 120)
+
 
 if __name__ == "__main__":
     unittest.main()
