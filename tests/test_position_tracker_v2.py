@@ -3,7 +3,7 @@ import sys
 import os
 import numpy as np
 import unittest
-from unittest.mock import MagicMock
+from unittest.mock import MagicMock, patch
 
 # Add src to path
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../src')))
@@ -136,6 +136,28 @@ class TestPositionTrackerV2(unittest.TestCase):
             if p[1] > max_y: max_y = p[1]
             
         self.assertLess(max_y, 5)
+
+    def test_position_from_closest_index_prefers_forward_direction(self):
+        """Test that a small forward distance yields a forward travel direction."""
+        self.tracker.total_track_length = 100.0
+        self.tracker.start_idx = 0
+
+        with patch.object(self.tracker, "_calculate_path_distance", return_value=2.0):
+            pos = self.tracker._position_from_closest_index(2)
+
+        self.assertEqual(pos, 2.0)
+        self.assertEqual(self.tracker.travel_direction, 1)
+
+    def test_position_from_closest_index_prefers_reverse_direction(self):
+        """Test that a near-complete forward distance yields a reverse travel direction."""
+        self.tracker.total_track_length = 100.0
+        self.tracker.start_idx = 0
+
+        with patch.object(self.tracker, "_calculate_path_distance", return_value=98.0):
+            pos = self.tracker._position_from_closest_index(98)
+
+        self.assertEqual(pos, 2.0)
+        self.assertEqual(self.tracker.travel_direction, -1)
 
 if __name__ == '__main__':
     unittest.main()

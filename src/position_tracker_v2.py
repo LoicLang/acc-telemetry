@@ -53,6 +53,7 @@ class PositionTrackerV2:
         self.start_idx: int = 0  # Index in track_path closest to start_position (cached for performance)
         self.track_center: Optional[Tuple[float, float]] = None  # (x, y) center of track
         self.last_position: float = 0.0
+        self.travel_direction: Optional[int] = None
         self.path_extracted: bool = False
         self.validation_passed: bool = False
         self.lap_just_started: bool = False  # Flag to capture start position on next detection
@@ -612,49 +613,7 @@ class PositionTrackerV2:
                 min_distance = distance
                 closest_idx = i
 
-        # STEP 2: Use cached start_idx (set when lap started via reset_for_new_lap())
-
-        # STEP 3: Calculate arc length from start to current position
-        arc_length = 0.0
-
-        if closest_idx >= self.start_idx:
-            # Normal case: current position is ahead of start
-            for i in range(self.start_idx, closest_idx):
-                p1 = self.track_path[i]
-                p2 = self.track_path[i + 1]
-                dx = p2[0] - p1[0]
-                dy = p2[1] - p1[1]
-                arc_length += np.sqrt(dx*dx + dy*dy)
-        else:
-            # Wraparound case: we've passed the end of the path array
-            # Go from start_idx to end, then from 0 to closest_idx
-            for i in range(self.start_idx, len(self.track_path) - 1):
-                p1 = self.track_path[i]
-                p2 = self.track_path[i + 1]
-                dx = p2[0] - p1[0]
-                dy = p2[1] - p1[1]
-                arc_length += np.sqrt(dx*dx + dy*dy)
-
-            # Add closing segment (last point to first point)
-            p1 = self.track_path[-1]
-            p2 = self.track_path[0]
-            dx = p2[0] - p1[0]
-            dy = p2[1] - p1[1]
-            arc_length += np.sqrt(dx*dx + dy*dy)
-
-            # Add from start to current position
-            for i in range(0, closest_idx):
-                p1 = self.track_path[i]
-                p2 = self.track_path[i + 1]
-                dx = p2[0] - p1[0]
-                dy = p2[1] - p1[1]
-                arc_length += np.sqrt(dx*dx + dy*dy)
-
-        # STEP 4: Convert to percentage using cached total track length
-        if self.total_track_length > 0:
-            position = (arc_length / self.total_track_length) * 100.0
-        else:
-            position = 0.0
+        position = self._position_from_closest_index(closest_idx)
 
         # STEP 5: Handle near-completion detection
         # If position drops significantly from last_position when we're near 100%,
@@ -668,6 +627,24 @@ class PositionTrackerV2:
         position = max(0.0, min(100.0, position))
 
         return position
+
+    def _position_from_closest_index(self, closest_idx: int) -> float:
+        """Convert a closest path index into a normalized position percentage."""
+        if self.total_track_length <= 0:
+            return 0.0
+
+        forward_distance = self._calculate_path_distance(self.start_idx, closest_idx)
+        forward_position = (forward_distance / self.total_track_length) * 100.0
+        reverse_position = 0.0 if forward_position == 0.0 else 100.0 - forward_position
+
+        if self.travel_direction is None:
+            min_movement = min(forward_position, reverse_position)
+            if 0.02 <= min_movement <= 5.0:
+                self.travel_direction = 1 if forward_position <= reverse_position else -1
+            else:
+                return 0.0
+
+        return forward_position if self.travel_direction == 1 else reverse_position
     
     def extract_position(self, map_roi: np.ndarray) -> float:
         """
@@ -712,6 +689,7 @@ class PositionTrackerV2:
                         self.start_idx = i
 
                 self.lap_just_started = False
+                self.travel_direction = None
 
                 print(f"      ✅ New lap start set at pixel position ({dot_x}, {dot_y}), track_path index {self.start_idx}")
 
@@ -882,12 +860,45 @@ class PositionTrackerV2:
                 total_distance += np.sqrt(dx*dx + dy*dy)
 
         return total_distance
-    
+
+    def _remove_path_spikes(
+        self,
+        path: List[Tuple[int, int]],
+        window: int = 5,
+        angle_threshold: float = 60.0,
+    ) -> List[Tuple[int, int]]:
+        """
+        Remove small contour loops where the path quickly returns to a visited point.
+
+        angle_threshold is accepted for API compatibility with existing callers.
+        """
+        del angle_threshold
+
+        if len(path) <= window:
+            return path
+
+        cleaned: List[Tuple[int, int]] = []
+
+        for point in path:
+            loop_start = None
+            max_idx = len(cleaned) - window
+
+            for idx in range(max_idx):
+                prev_point = cleaned[idx]
+                if max(abs(point[0] - prev_point[0]), abs(point[1] - prev_point[1])) <= 1:
+                    loop_start = idx
+
+            if loop_start is not None:
+                cleaned = cleaned[: loop_start + 1]
+                continue
+
+            cleaned.append(point)
+
+        return cleaned
+
     def _validate_position(self, raw_position: Optional[float]) -> float:
         """
-        RAW MODE: Return raw measurements without any validation or filtering.
-
-        All restrictions disabled to observe raw position measurements.
+        Validate raw position measurements while preserving smooth forward motion.
 
         Args:
             raw_position: Raw position measurement (0-100%), or None if no detection
@@ -895,30 +906,41 @@ class PositionTrackerV2:
         Returns:
             Raw position (0-100%) or last position if no detection
         """
-        # Case 1: No measurement - use last known position
         if raw_position is None:
             return self.last_position
 
-        # Case 2: Accept ALL raw measurements without any validation
-        self.last_position = raw_position
-        return raw_position
+        if self.last_position > 95.0 and raw_position < 5.0:
+            self.last_position = raw_position
+            return raw_position
+
+        if raw_position < self.last_position:
+            return self.last_position
+
+        if self.last_position == 0.0:
+            self.last_position = raw_position
+            return raw_position
+
+        jump = raw_position - self.last_position
+        if jump > self.max_jump_per_frame:
+            self.last_position += self.max_jump_per_frame
+            return self.last_position
+
+        alpha = 0.3
+        smoothed_position = (alpha * raw_position) + ((1.0 - alpha) * self.last_position)
+        if raw_position - smoothed_position > 0.5:
+            smoothed_position = raw_position - 0.2
+
+        self.last_position = smoothed_position
+        return smoothed_position
     
     def reset_for_new_lap(self) -> None:
         """
         Reset position tracking for a new lap.
-
-        If start/finish line was detected geometrically, this just resets the position to 0%.
-        If no geometric detection occurred, it will set the start position on the next frame.
         """
-        if self.start_idx is not None and self.start_position is not None:
-            # Start line already detected geometrically - just reset position counter
-            print(f"      🏁 Lap reset triggered - using geometric start line at idx {self.start_idx}")
-            self.last_position = 0.0
-            # Do NOT set lap_just_started - we keep the geometric start position
-        else:
-            # No geometric detection - fall back to red dot detection on next frame
-            self.lap_just_started = True
-            print(f"      🏁 Lap reset triggered - will capture start position on next frame")
+        self.last_position = 0.0
+        self.travel_direction = None
+        self.lap_just_started = True
+        print(f"      🏁 Lap reset triggered - will capture start position on next frame")
     
     def is_ready(self) -> bool:
         """
@@ -945,6 +967,7 @@ class PositionTrackerV2:
             'start_position': self.start_position,
             'track_center': self.track_center,
             'last_position': self.last_position,
+            'travel_direction': self.travel_direction,
             'lap_just_started': self.lap_just_started,
             'max_jump_per_frame': self.max_jump_per_frame
         }
