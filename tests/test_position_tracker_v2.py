@@ -159,5 +159,48 @@ class TestPositionTrackerV2(unittest.TestCase):
         self.assertEqual(pos, 2.0)
         self.assertEqual(self.tracker.travel_direction, -1)
 
+    def test_position_from_closest_index_initializes_forward_mid_lap(self):
+        """Test that direction initializes for a shorter forward arc even mid-lap."""
+        self.tracker.total_track_length = 100.0
+        self.tracker.start_idx = 0
+
+        with patch.object(self.tracker, "_calculate_path_distance", return_value=40.0):
+            pos = self.tracker._position_from_closest_index(40)
+
+        self.assertEqual(pos, 40.0)
+        self.assertEqual(self.tracker.travel_direction, 1)
+
+    def test_position_from_closest_index_initializes_reverse_mid_lap(self):
+        """Test that direction initializes for a shorter reverse arc even mid-lap."""
+        self.tracker.total_track_length = 100.0
+        self.tracker.start_idx = 0
+
+        with patch.object(self.tracker, "_calculate_path_distance", return_value=60.0):
+            pos = self.tracker._position_from_closest_index(60)
+
+        self.assertEqual(pos, 40.0)
+        self.assertEqual(self.tracker.travel_direction, -1)
+
+    def test_position_from_closest_index_holds_zero_for_near_zero_movement(self):
+        """Test that near-zero movement does not lock a travel direction."""
+        self.tracker.total_track_length = 100.0
+        self.tracker.start_idx = 0
+
+        with patch.object(self.tracker, "_calculate_path_distance", return_value=0.01):
+            pos = self.tracker._position_from_closest_index(0)
+
+        self.assertEqual(pos, 0.0)
+        self.assertIsNone(self.tracker.travel_direction)
+
+    def test_validation_clamps_large_jump_from_zero(self):
+        """Test that an initial large jump from zero is clamped instead of accepted raw."""
+        self.tracker.max_jump_per_frame = 1.0
+        self.tracker.last_position = 0.0
+
+        pos = self.tracker._validate_position(20.0)
+
+        self.assertEqual(pos, 1.0)
+        self.assertEqual(self.tracker.last_position, 1.0)
+
 if __name__ == '__main__':
     unittest.main()

@@ -639,7 +639,7 @@ class PositionTrackerV2:
 
         if self.travel_direction is None:
             min_movement = min(forward_position, reverse_position)
-            if 0.02 <= min_movement <= 5.0:
+            if min_movement > 0.02:
                 self.travel_direction = 1 if forward_position <= reverse_position else -1
             else:
                 return 0.0
@@ -916,14 +916,14 @@ class PositionTrackerV2:
         if raw_position < self.last_position:
             return self.last_position
 
-        if self.last_position == 0.0:
-            self.last_position = raw_position
-            return raw_position
-
         jump = raw_position - self.last_position
         if jump > self.max_jump_per_frame:
             self.last_position += self.max_jump_per_frame
             return self.last_position
+
+        if self.last_position == 0.0:
+            self.last_position = raw_position
+            return raw_position
 
         alpha = 0.3
         smoothed_position = (alpha * raw_position) + ((1.0 - alpha) * self.last_position)
