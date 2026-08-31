@@ -1,18 +1,16 @@
 """Video processing service for telemetry extraction."""
 
 import yaml
-import time
-import cv2
 from pathlib import Path
-from typing import Callable, Dict, List, Optional
+from typing import Callable, Dict, Optional
 from datetime import datetime
-import pandas as pd
 
-from acc_telemetry.extraction.video import VideoProcessor, evenly_spaced_frame_indices
+from acc_telemetry.extraction.video import VideoProcessor
 from acc_telemetry.extraction.controls import TelemetryExtractor
 from acc_telemetry.extraction.laps import LapDetector
 from acc_telemetry.extraction.position import PositionTrackerV2
 from acc_telemetry.visualization.interactive import InteractiveTelemetryVisualizer
+from acc_telemetry.application.pipeline import TelemetryPipeline
 
 from ..config import settings
 from ..models import VideoMetadata, LapMetadata
@@ -83,180 +81,37 @@ class VideoProcessingService:
             white_upper=position_config.get('white_upper'),
         )
 
-        if not processor.open_video():
-            raise ValueError("Could not open video file")
+        pipeline = TelemetryPipeline(
+            video=processor,
+            controls=extractor,
+            laps=lap_detector,
+            position=position_tracker,
+            has_track_map='track_map' in roi_config,
+            sample_count=int(position_config.get('sample_count', 11)),
+            progress_callback=progress_callback,
+        )
+        result = pipeline.run()
 
-        try:
-            # Get video info
-            video_info = processor.get_video_info()
+        visualizer = InteractiveTelemetryVisualizer(
+            output_dir=str(self.storage.get_video_directory(video_name))
+        )
+        df = visualizer.create_dataframe(result.records)
+        csv_path = visualizer.export_csv(df, filename="telemetry.csv")
 
-            if progress_callback:
-                progress_callback(5, "Video opened successfully")
-
-            # Extract track path if available
-            if 'track_map' in roi_config:
-                if progress_callback:
-                    progress_callback(10, "Extracting track path from minimap...")
-
-                sample_count = int(position_config.get('sample_count', 11))
-                sample_frames = evenly_spaced_frame_indices(
-                    video_info['frame_count'], sample_count
-                )
-                map_rois = []
-
-                for sample_frame_num in sample_frames:
-                    if sample_frame_num >= video_info['frame_count']:
-                        break
-
-                    processor.cap.set(cv2.CAP_PROP_POS_FRAMES, sample_frame_num)
-                    ret, frame = processor.cap.read()
-
-                    if ret:
-                        map_roi = processor.extract_roi(frame, 'track_map')
-                        map_rois.append(map_roi)
-
-                processor.cap.set(cv2.CAP_PROP_POS_FRAMES, 0)
-
-                if position_tracker.extract_track_path(map_rois):
-                    if progress_callback:
-                        progress_callback(15, "Track path extraction successful")
-                else:
-                    if progress_callback:
-                        progress_callback(15, "Warning: Track path extraction failed")
-
-            # Process frames
-            if progress_callback:
-                progress_callback(20, "Processing frames and extracting telemetry...")
-            
-            total_frames = video_info['frame_count']
-            print(f"Starting frame processing loop for {total_frames} frames...")
-
-            telemetry_data = []
-            previous_lap = None
-            lap_transitions = []
-            completed_lap_times = {}
-            frames_since_transition = 0
-
-            last_progress_pct = 20
-
-            print(f"Starting frame processing loop for {total_frames} frames...")
-
-            for frame_num, timestamp, roi_dict in processor.process_frames():
-                # Extract telemetry
-                telemetry = extractor.extract_frame_telemetry(roi_dict)
-
-                # Extract lap number, speed, gear
-                lap_number = lap_detector.extract_lap_number(processor.current_frame)
-                speed = lap_detector.extract_speed(processor.current_frame)
-                gear = lap_detector.extract_gear(processor.current_frame)
-
-                # Extract track position
-                track_position = None
-                if 'track_map' in roi_dict and position_tracker.is_ready():
-                    track_position = position_tracker.extract_position(roi_dict['track_map'])
-
-                # Detect lap transitions
-                if lap_detector.detect_lap_transition(lap_number, previous_lap):
-                    frames_since_transition = 1
-                    position_tracker.reset_for_new_lap()
-
-                    if 'track_map' in roi_dict and position_tracker.is_ready():
-                        track_position = position_tracker.extract_position(roi_dict['track_map'])
-
-                    lap_transitions.append({
-                        'frame': frame_num,
-                        'time': timestamp,
-                        'from_lap': previous_lap,
-                        'to_lap': lap_number,
-                        'completed_lap_time': None
-                    })
-                elif frames_since_transition == 1:
-                    completed_lap_time = lap_detector.extract_last_lap_time(processor.current_frame)
-
-                    if completed_lap_time and previous_lap is not None:
-                        completed_lap_times[previous_lap] = completed_lap_time
-
-                        if lap_transitions:
-                            lap_transitions[-1]['completed_lap_time'] = completed_lap_time
-
-                    frames_since_transition = 0
-
-                # Store data
-                telemetry_data.append({
-                    'frame': frame_num,
-                    'time': timestamp,
-                    'lap_number': lap_number,
-                    'lap_time': None,
-                    'track_position': track_position,
-                    'speed': speed,
-                    'gear': gear,
-                    'throttle': telemetry['throttle'],
-                    'brake': telemetry['brake'],
-                    'steering': telemetry['steering'],
-                    'tc_active': telemetry['tc_active'],
-                    'abs_active': telemetry['abs_active']
-                })
-
-                previous_lap = lap_number
-
-                # Progress update (every 5%)
-                current_progress_pct = 20 + int((frame_num / total_frames) * 60)
-                if current_progress_pct > last_progress_pct and current_progress_pct % 5 == 0:
-                    if progress_callback:
-                        progress_callback(current_progress_pct, f"Processing frames: {frame_num}/{total_frames} ({int(frame_num/total_frames*100)}%)")
-                    last_progress_pct = current_progress_pct
-
-            # Finalize lap detection
-            final_lap = lap_detector.finalize_lap_detection()
-            if final_lap is not None and (previous_lap is None or final_lap > previous_lap):
-                if previous_lap is not None and final_lap == previous_lap + 1:
-                    for entry in reversed(telemetry_data):
-                        if entry['lap_number'] == previous_lap:
-                            entry['lap_number'] = final_lap
-                        else:
-                            break
-
-            # Add lap times to telemetry data
-            for entry in telemetry_data:
-                lap_num = entry['lap_number']
-                entry['lap_time'] = completed_lap_times.get(lap_num, None)
-
-            if progress_callback:
-                progress_callback(85, "Generating outputs...")
-
-            # Create DataFrame
-            visualizer = InteractiveTelemetryVisualizer(
-                output_dir=str(self.storage.get_video_directory(video_name))
-            )
-            df = visualizer.create_dataframe(telemetry_data)
-
-            # Save CSV
-            csv_filename = "telemetry.csv"
-            csv_path = visualizer.export_csv(df, filename=csv_filename)
-
-            if progress_callback:
-                progress_callback(90, "Generating metadata...")
-
-            # Generate metadata
-            summary = visualizer.generate_summary(df)
-            metadata = self._create_metadata(
-                video_name=video_name,
-                video_path=video_path,
-                video_info=video_info,
-                summary=summary,
-                csv_path=csv_path
-            )
-
-            # Save metadata
-            self.storage.save_metadata(video_name, metadata)
-
-            if progress_callback:
-                progress_callback(100, "Processing complete!")
-
-            return metadata
-
-        finally:
-            processor.close()
+        if progress_callback:
+            progress_callback(90, "Generating metadata...")
+        summary = visualizer.generate_summary(df)
+        metadata = self._create_metadata(
+            video_name=video_name,
+            video_path=video_path,
+            video_info=result.video_info,
+            summary=summary,
+            csv_path=csv_path,
+        )
+        self.storage.save_metadata(video_name, metadata)
+        if progress_callback:
+            progress_callback(100, "Processing complete!")
+        return metadata
 
     def validate_profile_name(
         self,

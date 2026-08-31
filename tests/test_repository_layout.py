@@ -52,6 +52,11 @@ class TestRepositoryLayout(unittest.TestCase):
                 module = import_module(module_name)
                 self.assertTrue(hasattr(module, symbol))
 
+    def test_root_cli_delegates_to_packaged_adapter(self):
+        root_cli = import_module("main")
+        packaged_cli = import_module("acc_telemetry.adapters.cli")
+        self.assertIs(root_cli.main, packaged_cli.main)
+
 
 if __name__ == "__main__":
     unittest.main()
