@@ -57,6 +57,13 @@ class TestRepositoryLayout(unittest.TestCase):
         packaged_cli = import_module("acc_telemetry.adapters.cli")
         self.assertIs(root_cli.main, packaged_cli.main)
 
+    def test_server_launchers_use_packaged_web_adapter(self):
+        dockerfile = (ROOT / "Dockerfile").read_text(encoding="utf-8")
+        run_server = (ROOT / "run_server.py").read_text(encoding="utf-8")
+        self.assertIn("ENV PYTHONPATH=/app/src", dockerfile)
+        self.assertIn("acc_telemetry.adapters.web.main:app", dockerfile)
+        self.assertIn("acc_telemetry.adapters.web.main:app", run_server)
+
     def test_current_documentation_is_complete_and_not_stale(self):
         required = (
             "README.md",

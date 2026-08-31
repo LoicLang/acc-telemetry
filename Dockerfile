@@ -5,6 +5,7 @@ FROM python:3.12-slim
 # without being first buffered and that you can see the output of your application (e.g. django logs)
 # in real time.
 ENV PYTHONUNBUFFERED=1
+ENV PYTHONPATH=/app/src
 
 # Set working directory
 WORKDIR /app
@@ -48,4 +49,4 @@ USER user
 EXPOSE 7860
 
 # Command to run the application
-CMD ["uvicorn", "src.web.main:app", "--host", "0.0.0.0", "--port", "7860"]
+CMD ["uvicorn", "acc_telemetry.adapters.web.main:app", "--host", "0.0.0.0", "--port", "7860"]
