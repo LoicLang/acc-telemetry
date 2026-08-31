@@ -216,6 +216,128 @@ class TestWebProfileSelectionApi(unittest.IsolatedAsyncioTestCase):
             self.assertEqual(callback_updates[0], (5, "Video opened successfully"))
             self.assertEqual(callback_updates[-1], (100, "Processing complete!"))
 
+    async def test_process_video_accepts_profile_name_as_fifth_positional_argument(self):
+        with tempfile.TemporaryDirectory() as temp_dir:
+            video_path = Path(temp_dir) / "session.mp4"
+            video_path.write_bytes(b"fake video contents")
+            callback_updates = []
+            processor_configs = []
+
+            def progress_callback(progress: int, message: str):
+                callback_updates.append((progress, message))
+
+            class FakeProcessor:
+                def __init__(self, video_path, roi_config):
+                    self.video_path = video_path
+                    self.roi_config = roi_config
+                    self.current_frame = object()
+                    self.cap = self
+                    processor_configs.append(roi_config)
+
+                def open_video(self):
+                    return True
+
+                def get_video_info(self):
+                    return {"fps": 60.0, "duration": 1.0, "frame_count": 1}
+
+                def process_frames(self):
+                    return iter(())
+
+                def set(self, prop_id, value):
+                    return None
+
+                def read(self):
+                    return False, None
+
+                def close(self):
+                    return None
+
+            class FakeVisualizer:
+                def __init__(self, output_dir: str):
+                    self.output_dir = output_dir
+
+                def create_dataframe(self, telemetry_data):
+                    return telemetry_data
+
+                def export_csv(self, df, filename: str):
+                    return str(Path(temp_dir) / filename)
+
+                def generate_summary(self, df):
+                    return {
+                        "laps": [],
+                        "total_laps": 0,
+                        "track_position_tracked": False,
+                    }
+
+            class FakeExtractor:
+                def extract_frame_telemetry(self, roi_dict):
+                    return {
+                        "throttle": 0.0,
+                        "brake": 0.0,
+                        "steering": 0.0,
+                        "tc_active": False,
+                        "abs_active": False,
+                    }
+
+            class FakeLapDetector:
+                def __init__(self, roi_config, enable_performance_stats: bool = False):
+                    self.roi_config = roi_config
+
+                def extract_lap_number(self, current_frame):
+                    return None
+
+                def extract_speed(self, current_frame):
+                    return None
+
+                def extract_gear(self, current_frame):
+                    return None
+
+                def detect_lap_transition(self, lap_number, previous_lap):
+                    return False
+
+                def finalize_lap_detection(self):
+                    return None
+
+            class FakePositionTracker:
+                def __init__(self, white_lower=None, white_upper=None):
+                    self.white_lower = white_lower
+                    self.white_upper = white_upper
+
+                def extract_track_path(self, map_rois):
+                    return False
+
+                def is_ready(self):
+                    return False
+
+                def reset_for_new_lap(self):
+                    return None
+
+                def extract_position(self, track_map):
+                    return None
+
+            with (
+                patch.object(self.service, "load_roi_config", return_value=self.full_config),
+                patch("src.web.services.processing.VideoProcessor", FakeProcessor),
+                patch("src.web.services.processing.TelemetryExtractor", FakeExtractor),
+                patch("src.web.services.processing.LapDetector", FakeLapDetector),
+                patch("src.web.services.processing.PositionTrackerV2", FakePositionTracker),
+                patch("src.web.services.processing.InteractiveTelemetryVisualizer", FakeVisualizer),
+                patch.object(self.service.storage, "get_video_directory", return_value=Path(temp_dir)),
+                patch.object(self.service.storage, "save_metadata"),
+            ):
+                metadata = await self.service.process_video(
+                    str(video_path),
+                    "session",
+                    False,
+                    progress_callback,
+                    "ps5_full_map_720p",
+                )
+
+            self.assertEqual(metadata.video_name, "session")
+            self.assertEqual(processor_configs, [self.full_config["ps5_full_map_720p"]])
+            self.assertEqual(callback_updates[0], (5, "Video opened successfully"))
+            self.assertEqual(callback_updates[-1], (100, "Processing complete!"))
+
     async def test_process_endpoint_passes_profile_name_to_processing_service(self):
         with tempfile.TemporaryDirectory() as temp_dir:
             video_path = Path(temp_dir) / "session.mp4"
