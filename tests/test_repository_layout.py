@@ -2,6 +2,7 @@
 
 import subprocess
 import unittest
+from importlib import import_module
 from pathlib import Path
 
 
@@ -37,6 +38,19 @@ class TestRepositoryLayout(unittest.TestCase):
         for relative_path in (".agent", ".claude", ".cursor"):
             with self.subTest(path=relative_path):
                 self.assertFalse((ROOT / relative_path).exists())
+
+    def test_public_package_boundaries_are_importable(self):
+        imports = {
+            "acc_telemetry.extraction.video": "VideoProcessor",
+            "acc_telemetry.extraction.controls": "TelemetryExtractor",
+            "acc_telemetry.extraction.laps": "LapDetector",
+            "acc_telemetry.extraction.position": "PositionTrackerV2",
+            "acc_telemetry.visualization.interactive": "InteractiveTelemetryVisualizer",
+        }
+        for module_name, symbol in imports.items():
+            with self.subTest(module=module_name):
+                module = import_module(module_name)
+                self.assertTrue(hasattr(module, symbol))
 
 
 if __name__ == "__main__":

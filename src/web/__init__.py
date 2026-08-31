@@ -1,1 +1,1 @@
-"""FastAPI web server for ACC Telemetry Extractor."""
+"""Compatibility namespace for the former web package path."""
