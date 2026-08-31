@@ -37,6 +37,11 @@ async def upload_video(
     # Validate file type
     if not file.content_type.startswith('video/'):
         raise HTTPException(status_code=400, detail="File must be a video")
+
+    try:
+        profile_name = processing.validate_profile_name(profile_name)
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
     
     # Save file to input directory
     video_name = storage.sanitize_filename(file.filename)
@@ -92,8 +97,8 @@ async def upload_video(
                 video_path=str(file_path),
                 video_name=video_name,
                 has_overlay=has_overlay,
+                progress_callback=progress_callback,
                 profile_name=profile_name,
-                progress_callback=progress_callback
             )
 
             job_manager.complete_job(job_id, message=f"Video '{video_name}' processed successfully")
@@ -178,6 +183,11 @@ async def process_video(request: VideoProcessRequest, background_tasks: Backgrou
             detail=f"Video '{video_name}' has already been processed. Delete it first to reprocess."
         )
 
+    try:
+        profile_name = processing.validate_profile_name(request.profile_name)
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+
     # Create job
     job_id = job_manager.create_job(video_name)
 
@@ -198,8 +208,8 @@ async def process_video(request: VideoProcessRequest, background_tasks: Backgrou
             metadata = await processing.process_video(
                 video_path=str(video_path),
                 video_name=video_name,
-                profile_name=request.profile_name,
-                progress_callback=progress_callback
+                progress_callback=progress_callback,
+                profile_name=profile_name,
             )
 
             job_manager.complete_job(job_id, message=f"Video '{video_name}' processed successfully")

@@ -36,8 +36,8 @@ class VideoProcessingService:
         video_path: str,
         video_name: str,
         has_overlay: bool = False,
+        progress_callback: Optional[Callable[[int, str], None]] = None,
         profile_name: Optional[str] = None,
-        progress_callback: Optional[Callable[[int, str], None]] = None
     ) -> VideoMetadata:
         """
         Process a video and extract telemetry data.
@@ -61,6 +61,7 @@ class VideoProcessingService:
 
         # Load configuration
         full_config = self.load_roi_config()
+        profile_name = self.validate_profile_name(profile_name, full_config=full_config)
         roi_config = self._select_roi_profile(
             full_config,
             profile_name=profile_name,
@@ -256,6 +257,31 @@ class VideoProcessingService:
 
         finally:
             processor.close()
+
+    def validate_profile_name(
+        self,
+        profile_name: Optional[str],
+        full_config: Optional[Dict] = None,
+    ) -> Optional[str]:
+        """Normalize profile names and reject unknown configured profiles."""
+        if profile_name is None:
+            return None
+
+        normalized_profile_name = profile_name.strip()
+        if not normalized_profile_name:
+            return None
+
+        if full_config is None:
+            full_config = self.load_roi_config()
+
+        if normalized_profile_name not in full_config:
+            available_profiles = ", ".join(sorted(full_config))
+            raise ValueError(
+                f"Unknown ROI profile '{normalized_profile_name}'. "
+                f"Available profiles: {available_profiles}"
+            )
+
+        return normalized_profile_name
 
     def _select_roi_profile(
         self,
