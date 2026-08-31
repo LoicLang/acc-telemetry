@@ -1,0 +1,13 @@
+position:
+  frequency_threshold: 0.45
+  max_jump_per_frame: 1.0
+
+ocr:
+  max_speed_delta_kmh: 20
+  recovery_tolerance_kmh: 3
+
+normalization:
+  speed_min_kmh: 0
+  speed_max_kmh: 400
+  pedal_min_percent: 0
+  pedal_max_percent: 100
