@@ -60,12 +60,44 @@ Defaults preserve current PS5 behavior. Configuration loading validates required
 
 User recordings, full telemetry exports, debug frames, OCR data, and generated visualizations are local data and remain outside Git. Existing source data is never edited in place.
 
-The repository documents these zones:
+Long-lived training data is grouped by session rather than by file type:
 
-- `data/raw/`: immutable user-provided captures and source exports;
-- `data/interim/`: reproducible extraction artifacts;
-- `data/processed/`: normalized outputs and reports;
-- `tests/fixtures/`: small, reviewed, non-sensitive test samples only.
+```text
+data/
+  catalog.csv
+  sessions/
+    YYYY/
+      YYYY-MM-DD_track_platform_purpose/
+        session.yaml
+        raw/
+        interim/
+        processed/
+        reports/
+  lab/
+  shared/
+tests/fixtures/
+```
+
+- `raw/` contains immutable source recordings and source exports for one session.
+- `interim/` contains reproducible extraction artifacts.
+- `processed/` contains normalized telemetry.
+- `reports/` contains generated HTML, images, and human-readable analysis.
+- `lab/` keeps smoke tests, failed extractions, and calibration experiments out of the pilot history.
+- `shared/` holds reusable local resources such as OCR data.
+- `catalog.csv` indexes every retained artifact by session, type, relative path, SHA-256 digest, size, and legacy source path.
+- `tests/fixtures/` contains small, reviewed, non-sensitive test samples only and remains versioned.
+
+The initial migration consolidates the three distinct ACC videos and four distinct ACC CSV datasets found in the current project locations. Byte-identical duplicates are represented once in the catalog with all known legacy paths recorded.
+
+Original videos and CSV files are deleted only after all of these checks pass:
+
+1. every selected source has a destination entry;
+2. source and destination sizes match;
+3. source and destination SHA-256 digests match;
+4. every duplicate source digest is represented in the catalog;
+5. the new repository and data tree can be read independently of the temporary worktrees.
+
+Deletion targets are explicit paths from the reviewed inventory. No recursive deletion, wildcard deletion, or deletion outside the ACC telemetry locations is allowed. The temporary source repositories themselves remain in place until the code migration and Git verification are complete.
 
 A compact CSV fixture will be derived from the available ACC PS5 schema, with deliberately representative normal, missing, imperfect, and anomalous rows. It is test data, not a claimed real driving lap.
 
@@ -110,6 +142,7 @@ No commit will mix broad file movement with behavior changes. No feature beyond 
 - Distance `s`, imperfect passages, quality/anomalies, and future `d` are documented and represented without inventing lateral telemetry.
 - Active thresholds are configurable and validated.
 - Raw data is ignored, treated as immutable, and never modified by tests or normal processing.
+- Videos and CSV datasets are consolidated into the session catalog, verified by digest, and their inventoried originals are removed only after successful verification.
 - A compact representative CSV fixture supports focused tests.
 - Dead code is only removed or archived with evidence that active imports, entry points, tests, and documentation no longer depend on it.
 - The final worktree is clean and the work is split into descriptive atomic commits.
