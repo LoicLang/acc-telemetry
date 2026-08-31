@@ -36,6 +36,7 @@ class VideoProcessingService:
         video_path: str,
         video_name: str,
         has_overlay: bool = False,
+        profile_name: Optional[str] = None,
         progress_callback: Optional[Callable[[int, str], None]] = None
     ) -> VideoMetadata:
         """
@@ -60,14 +61,11 @@ class VideoProcessingService:
 
         # Load configuration
         full_config = self.load_roi_config()
-        
-        # Select profile based on overlay flag
-        profile_name = 'go_setups_720p' if has_overlay else 'twitch_720p'
-        roi_config = full_config.get(profile_name)
-        
-        if not roi_config:
-            # Fallback to first available if specific one not found
-            roi_config = list(full_config.values())[0]
+        roi_config = self._select_roi_profile(
+            full_config,
+            profile_name=profile_name,
+            has_overlay=has_overlay,
+        )
 
         # Initialize components
         processor = VideoProcessor(video_path, roi_config)
@@ -258,6 +256,33 @@ class VideoProcessingService:
 
         finally:
             processor.close()
+
+    def _select_roi_profile(
+        self,
+        full_config: Dict,
+        profile_name: Optional[str] = None,
+        has_overlay: bool = False,
+    ) -> Dict:
+        """Select the ROI profile from config without side effects."""
+        if profile_name is not None:
+            roi_config = full_config.get(profile_name)
+            if roi_config is None:
+                available_profiles = ", ".join(sorted(full_config))
+                raise ValueError(
+                    f"Unknown ROI profile '{profile_name}'. "
+                    f"Available profiles: {available_profiles}"
+                )
+            return roi_config
+
+        legacy_profile_name = 'go_setups_720p' if has_overlay else 'twitch_720p'
+        roi_config = full_config.get(legacy_profile_name)
+        if roi_config:
+            return roi_config
+
+        if full_config:
+            return next(iter(full_config.values()))
+
+        raise ValueError("No ROI profiles are configured.")
 
     def _create_metadata(
         self,

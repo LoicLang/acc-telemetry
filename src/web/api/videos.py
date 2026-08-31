@@ -21,6 +21,7 @@ processing = VideoProcessingService()
 async def upload_video(
     file: UploadFile = File(...),
     has_overlay: bool = Form(False),
+    profile_name: str | None = Form(None),
     background_tasks: BackgroundTasks = BackgroundTasks()
 ):
     """
@@ -91,6 +92,7 @@ async def upload_video(
                 video_path=str(file_path),
                 video_name=video_name,
                 has_overlay=has_overlay,
+                profile_name=profile_name,
                 progress_callback=progress_callback
             )
 
@@ -196,6 +198,7 @@ async def process_video(request: VideoProcessRequest, background_tasks: Backgrou
             metadata = await processing.process_video(
                 video_path=str(video_path),
                 video_name=video_name,
+                profile_name=request.profile_name,
                 progress_callback=progress_callback
             )
 

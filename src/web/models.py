@@ -7,6 +7,10 @@ from pydantic import BaseModel, Field
 class VideoProcessRequest(BaseModel):
     """Request to process a video file."""
     video_path: str = Field(..., description="Path to the video file on the server")
+    profile_name: Optional[str] = Field(
+        default=None,
+        description="Optional ROI profile name to force for processing",
+    )
 
 
 class LapMetadata(BaseModel):
