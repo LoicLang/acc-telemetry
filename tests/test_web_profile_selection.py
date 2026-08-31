@@ -1,3 +1,4 @@
+import io
 from pathlib import Path
 import inspect
 import tempfile
@@ -5,7 +6,8 @@ import unittest
 from unittest.mock import patch
 
 import yaml
-from fastapi import BackgroundTasks
+from fastapi import BackgroundTasks, UploadFile
+from starlette.datastructures import Headers
 
 from src.web.api import videos
 from src.web.models import VideoProcessRequest
@@ -120,6 +122,71 @@ class TestWebProfileSelectionApi(unittest.IsolatedAsyncioTestCase):
                 await background_tasks()
 
             self.assertEqual(captured["video_path"], str(video_path))
+            self.assertEqual(captured["video_name"], "session")
+            self.assertFalse(captured["has_overlay"])
+            self.assertEqual(captured["profile_name"], "ps5_full_map_720p")
+            self.assertIsNotNone(captured["progress_callback"])
+
+    async def test_upload_endpoint_passes_profile_name_to_processing_service(self):
+        with tempfile.TemporaryDirectory() as temp_dir:
+            saved_video_path = Path(temp_dir) / "session.mp4"
+            background_tasks = BackgroundTasks()
+            captured = {}
+            upload = UploadFile(
+                file=io.BytesIO(b"fake video contents"),
+                filename="session.mp4",
+                headers=Headers({"content-type": "video/mp4"}),
+            )
+
+            class FakeCapture:
+                def isOpened(self):
+                    return True
+
+                def get(self, prop_id):
+                    return 720
+
+                def release(self):
+                    return None
+
+            async def fake_process_video(
+                video_path: str,
+                video_name: str,
+                has_overlay: bool = False,
+                profile_name: str | None = None,
+                progress_callback=None,
+            ):
+                captured["video_path"] = video_path
+                captured["video_name"] = video_name
+                captured["has_overlay"] = has_overlay
+                captured["profile_name"] = profile_name
+                captured["progress_callback"] = progress_callback
+                return None
+
+            with (
+                patch.object(videos.storage, "get_video_path", return_value=saved_video_path),
+                patch.object(videos.storage, "video_exists", return_value=False),
+                patch.object(videos.job_manager, "create_job", return_value="job-456"),
+                patch.object(videos.job_manager, "update_job"),
+                patch.object(videos.job_manager, "complete_job"),
+                patch.object(videos.job_manager, "fail_job"),
+                patch.object(videos.cv2, "VideoCapture", return_value=FakeCapture()),
+                patch.object(videos.processing, "process_video", side_effect=fake_process_video),
+            ):
+                response = await videos.upload_video(
+                    file=upload,
+                    has_overlay=False,
+                    profile_name="ps5_full_map_720p",
+                    background_tasks=background_tasks,
+                )
+
+                self.assertEqual(response.video_name, "session")
+                self.assertEqual(response.video_path, str(saved_video_path))
+                self.assertEqual(len(background_tasks.tasks), 1)
+
+                await background_tasks()
+
+            self.assertTrue(saved_video_path.exists())
+            self.assertEqual(captured["video_path"], str(saved_video_path))
             self.assertEqual(captured["video_name"], "session")
             self.assertFalse(captured["has_overlay"])
             self.assertEqual(captured["profile_name"], "ps5_full_map_720p")
