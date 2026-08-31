@@ -68,6 +68,15 @@ class TestRepositoryLayout(unittest.TestCase):
         for relative_path in required:
             with self.subTest(path=relative_path):
                 self.assertTrue((ROOT / relative_path).is_file())
+        tracked_paths = subprocess.run(
+            ["git", "ls-files"],
+            cwd=ROOT,
+            capture_output=True,
+            check=True,
+            text=True,
+        ).stdout.splitlines()
+        self.assertIn("docs/architecture.md", tracked_paths)
+        self.assertNotIn("docs/ARCHITECTURE.md", tracked_paths)
 
         readme = (ROOT / "README.md").read_text(encoding="utf-8")
         for expected in ("python3 -m venv", "main.py", "unittest", "data/sessions"):
