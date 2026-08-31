@@ -1,4 +1,5 @@
 import unittest
+import statistics
 from unittest.mock import patch
 
 import numpy as np
@@ -42,6 +43,7 @@ class TestSpeedOCRMode(unittest.TestCase):
         detector._speed_history = []
         detector._history_size = 15
         detector._last_valid_speed = None
+        detector._pending_speed_values = []
         detector._tesserocr_api = api
         return detector
 
@@ -125,6 +127,42 @@ class TestSpeedOCRMode(unittest.TestCase):
         self.assertEqual(detector._speed_history, [140] * detector._history_size)
         self.assertIsNone(getattr(detector, "_pending_speed_candidate", None))
         self.assertEqual(getattr(detector, "_pending_speed_candidate_count", 0), 0)
+        self.assertEqual(getattr(detector, "_pending_speed_values", []), [])
+
+    def test_extract_speed_promotes_representative_median_of_confirmed_window(self):
+        readings = ["143"] + ["140"] * 14
+        detector = self.make_detector(SequenceTesseractAPI(readings))
+        detector._last_valid_speed = 200
+        detector._speed_history = [200] * detector._history_size
+
+        speeds = [self.extract_speed(detector) for _ in readings]
+
+        self.assertEqual(speeds[: detector._history_size - 1], [200] * 14)
+        self.assertEqual(speeds[detector._history_size - 1], 140)
+        self.assertEqual(detector._speed_history, [140] * detector._history_size)
+        self.assertEqual(getattr(detector, "_pending_speed_values", []), [])
+
+    def test_extract_speed_tracks_coherent_window_until_median_promotion(self):
+        readings = ["80", "83"] * 7 + ["80"]
+        detector = self.make_detector(SequenceTesseractAPI(readings))
+        detector._last_valid_speed = 50
+        detector._speed_history = [50] * detector._history_size
+
+        pending_speeds = [self.extract_speed(detector) for _ in readings[:-1]]
+        pending_window = getattr(detector, "_pending_speed_values", []).copy()
+        confirmed_speed = self.extract_speed(detector)
+
+        self.assertEqual(pending_speeds, [50] * 14)
+        self.assertEqual(pending_window, [int(reading) for reading in readings[:-1]])
+        self.assertEqual(getattr(detector, "_pending_speed_values", []), [])
+        expected_speed = int(statistics.median(int(reading) for reading in readings))
+        self.assertEqual(confirmed_speed, expected_speed)
+        self.assertEqual(
+            detector._speed_history,
+            [expected_speed] * detector._history_size,
+        )
+        self.assertIsNone(getattr(detector, "_pending_speed_candidate", None))
+        self.assertEqual(getattr(detector, "_pending_speed_candidate_count", 0), 0)
 
     def test_extract_speed_plausible_reading_resets_pending_recovery(self):
         detector = self.make_detector(
@@ -145,6 +183,7 @@ class TestSpeedOCRMode(unittest.TestCase):
         self.assertEqual(speed, 111)
         self.assertIsNone(getattr(detector, "_pending_speed_candidate", None))
         self.assertEqual(getattr(detector, "_pending_speed_candidate_count", 0), 0)
+        self.assertEqual(getattr(detector, "_pending_speed_values", []), [])
         self.assertNotIn(147, detector._speed_history)
         self.assertEqual(detector._speed_history[-1], 120)
 

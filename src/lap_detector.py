@@ -8,6 +8,7 @@ Performance: tesserocr (1-2ms) >> pytesseract (50ms) > template matching (2ms)
 import cv2
 import numpy as np
 import re
+import statistics
 from typing import Optional, Tuple
 from pathlib import Path
 from src.template_matcher import TemplateMatcher
@@ -69,6 +70,7 @@ class LapDetector:
         self._last_valid_speed: Optional[int] = None
         self._pending_speed_candidate: Optional[int] = None
         self._pending_speed_candidate_count: int = 0
+        self._pending_speed_values: list[int] = []
         self._last_valid_gear: Optional[int] = None
         self._lap_number_history: list = []  # Track recent detections for stability
         self._speed_history: list = []  # Track recent speed detections for stability
@@ -487,36 +489,31 @@ class LapDetector:
             SPEED_OCR_RECOVERY_TOLERANCE_KMH,
         )
         if speed is None:
-            self._pending_speed_candidate = None
-            self._pending_speed_candidate_count = 0
+            self._clear_pending_speed_recovery()
         elif (
             self._last_valid_speed is None
             or abs(speed - self._last_valid_speed) <= max_speed_delta
         ):
-            self._pending_speed_candidate = None
-            self._pending_speed_candidate_count = 0
+            self._clear_pending_speed_recovery()
         else:
-            pending_candidate = getattr(self, "_pending_speed_candidate", None)
+            pending_values = list(getattr(self, "_pending_speed_values", []))
             if (
-                pending_candidate is not None
-                and abs(speed - pending_candidate) <= recovery_tolerance
+                pending_values
+                and abs(speed - pending_values[-1]) <= recovery_tolerance
             ):
-                pending_count = getattr(
-                    self, "_pending_speed_candidate_count", 0
-                ) + 1
+                pending_values.append(speed)
             else:
-                self._pending_speed_candidate = speed
-                pending_count = 1
+                pending_values = [speed]
+            self._pending_speed_values = pending_values
+            pending_count = len(pending_values)
             self._pending_speed_candidate_count = pending_count
+            self._pending_speed_candidate = int(statistics.median(pending_values))
 
             if pending_count >= self._history_size:
-                confirmed_speed = pending_candidate
-                if confirmed_speed is None:
-                    confirmed_speed = speed
+                confirmed_speed = int(statistics.median(pending_values))
                 self._last_valid_speed = confirmed_speed
                 self._speed_history = [confirmed_speed] * self._history_size
-                self._pending_speed_candidate = None
-                self._pending_speed_candidate_count = 0
+                self._clear_pending_speed_recovery()
                 return confirmed_speed
 
             speed = None
@@ -550,8 +547,12 @@ class LapDetector:
             return None
         
         # Use median to filter outliers (more robust than mean)
-        import statistics
         return int(statistics.median(self._speed_history))
+
+    def _clear_pending_speed_recovery(self) -> None:
+        self._pending_speed_candidate = None
+        self._pending_speed_candidate_count = 0
+        self._pending_speed_values = []
     
     def extract_gear(self, frame: np.ndarray) -> Optional[int]:
         """
