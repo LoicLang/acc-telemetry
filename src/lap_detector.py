@@ -510,20 +510,16 @@ class LapDetector:
             self._pending_speed_candidate_count = pending_count
 
             if pending_count >= self._history_size:
-                speed_direction = 1 if speed > self._last_valid_speed else -1
-                recovered_speed = self._last_valid_speed + (
-                    speed_direction * max_speed_delta
-                )
-                if speed_direction > 0:
-                    recovered_speed = min(recovered_speed, speed)
-                else:
-                    recovered_speed = max(recovered_speed, speed)
-                self._last_valid_speed = recovered_speed
-                self._speed_history = [recovered_speed] * self._history_size
+                confirmed_speed = pending_candidate
+                if confirmed_speed is None:
+                    confirmed_speed = speed
+                self._last_valid_speed = confirmed_speed
+                self._speed_history = [confirmed_speed] * self._history_size
                 self._pending_speed_candidate = None
                 self._pending_speed_candidate_count = 0
-            else:
-                speed = None
+                return confirmed_speed
+
+            speed = None
         
         if speed is not None:
             # Add to history for temporal smoothing
@@ -781,4 +777,3 @@ class LapDetector:
             'avg_time_per_frame_ms': estimated_template_time_ms,
             'estimated_speedup_vs_ocr': round(speedup, 2)
         }
-

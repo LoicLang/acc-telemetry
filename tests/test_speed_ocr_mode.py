@@ -106,13 +106,25 @@ class TestSpeedOCRMode(unittest.TestCase):
         speeds = [self.extract_speed(detector) for _ in readings]
 
         self.assertEqual(speeds[: detector._history_size - 1], [50] * 14)
-        self.assertEqual(speeds[detector._history_size - 1], 70)
+        self.assertEqual(speeds[detector._history_size - 1], 80)
         self.assertEqual(speeds[-1], 80)
-        speed_changes = [
-            abs(current - previous)
-            for previous, current in zip([50] + speeds, speeds)
-        ]
-        self.assertLessEqual(max(speed_changes), lap_detector.MAX_SPEED_OCR_DELTA_KMH)
+        self.assertEqual(detector._speed_history, [80] * detector._history_size)
+        self.assertIsNone(getattr(detector, "_pending_speed_candidate", None))
+        self.assertEqual(getattr(detector, "_pending_speed_candidate_count", 0), 0)
+
+    def test_extract_speed_recovers_from_a_confirmed_stable_brake_event(self):
+        readings = ["140"] * 15
+        detector = self.make_detector(SequenceTesseractAPI(readings))
+        detector._last_valid_speed = 200
+        detector._speed_history = [200] * detector._history_size
+
+        speeds = [self.extract_speed(detector) for _ in readings]
+
+        self.assertEqual(speeds[: detector._history_size - 1], [200] * 14)
+        self.assertEqual(speeds[detector._history_size - 1], 140)
+        self.assertEqual(detector._speed_history, [140] * detector._history_size)
+        self.assertIsNone(getattr(detector, "_pending_speed_candidate", None))
+        self.assertEqual(getattr(detector, "_pending_speed_candidate_count", 0), 0)
 
     def test_extract_speed_plausible_reading_resets_pending_recovery(self):
         detector = self.make_detector(
