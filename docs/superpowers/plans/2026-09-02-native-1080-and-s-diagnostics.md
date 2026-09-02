@@ -333,7 +333,7 @@ git commit -m "feat: expose position tracking diagnostics"
 - Create: `scripts/diagnose_position.py`
 - Create: `tests/test_position_diagnostic_cli.py`
 
-- [ ] **Step 1: Write failing callback and CSV tests**
+- [x] **Step 1: Write failing callback and CSV tests**
 
 Add an optional pipeline callback:
 
@@ -350,7 +350,7 @@ Test that the diagnostic CLI writes a CSV header containing:
 frame,time,lap_number,track_position,dot_x,dot_y,closest_idx,start_idx,start_source,travel_direction,raw_position,completion_forced,validated_position,decision
 ```
 
-- [ ] **Step 2: Run the focused tests and confirm RED**
+- [x] **Step 2: Run the focused tests and confirm RED**
 
 Run:
 
@@ -360,13 +360,13 @@ PYTHONPATH=src .venv/bin/python -m unittest tests.test_application_pipeline test
 
 Expected: unsupported callback and missing diagnostic CLI.
 
-- [ ] **Step 3: Implement the optional callback**
+- [x] **Step 3: Implement the optional callback**
 
 Add `position_diagnostic_callback` to `TelemetryPipeline.__init__`. After each final
 position extraction for a frame, call it with a flat dictionary built from the latest
 diagnostic. Do not add diagnostic columns to `PipelineResult.records`.
 
-- [ ] **Step 4: Implement the diagnostic CLI**
+- [x] **Step 4: Implement the diagnostic CLI**
 
 `scripts/diagnose_position.py` accepts:
 
@@ -378,7 +378,7 @@ It loads settings, builds components, creates a `TelemetryPipeline` with the cal
 streams rows through `csv.DictWriter`, and closes the output with a context manager.
 It writes no HTML report and never changes the source video.
 
-- [ ] **Step 5: Verify compatibility and commit**
+- [x] **Step 5: Verify compatibility and commit**
 
 Run focused and full tests, then commit:
 

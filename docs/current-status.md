@@ -65,6 +65,8 @@ Validate native 1080p telemetry input and isolate the first invalid transition i
 - Position diagnostic contract: implemented and unit-tested. It exposes dot,
   closest index, anchor source, direction, raw position, forced completion,
   validated position, and decision without changing legacy numeric output.
+- Position trace CLI: implemented and tested as `scripts/diagnose_position.py`; it
+  writes ignored diagnostic CSV data without changing legacy telemetry records.
 - Full clean-session position trace: not collected yet.
 
 Verification for the documentation milestone:

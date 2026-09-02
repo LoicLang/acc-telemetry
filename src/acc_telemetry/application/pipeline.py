@@ -9,6 +9,7 @@ from acc_telemetry.extraction.video import evenly_spaced_frame_indices
 
 
 ProgressCallback = Callable[[int, str], None]
+PositionDiagnosticCallback = Callable[[dict[str, Any]], None]
 
 
 @dataclass(frozen=True)
@@ -32,6 +33,7 @@ class TelemetryPipeline:
         sample_count: int = 11,
         frequency_threshold: float | None = None,
         progress_callback: ProgressCallback | None = None,
+        position_diagnostic_callback: PositionDiagnosticCallback | None = None,
     ):
         self.video = video
         self.controls = controls
@@ -41,10 +43,41 @@ class TelemetryPipeline:
         self.sample_count = sample_count
         self.frequency_threshold = frequency_threshold
         self.progress_callback = progress_callback
+        self.position_diagnostic_callback = position_diagnostic_callback
 
     def _progress(self, percent: int, message: str) -> None:
         if self.progress_callback is not None:
             self.progress_callback(percent, message)
+
+    def _report_position_diagnostic(
+        self,
+        *,
+        frame_number: int,
+        timestamp: float,
+        lap_number: int | None,
+        track_position: float,
+    ) -> None:
+        if self.position_diagnostic_callback is None:
+            return
+        diagnostic = self.position.get_last_position_diagnostic()
+        dot_x = diagnostic.dot_position[0] if diagnostic.dot_position else None
+        dot_y = diagnostic.dot_position[1] if diagnostic.dot_position else None
+        self.position_diagnostic_callback({
+            "frame": frame_number,
+            "time": timestamp,
+            "lap_number": lap_number,
+            "track_position": track_position,
+            "dot_x": dot_x,
+            "dot_y": dot_y,
+            "closest_idx": diagnostic.closest_idx,
+            "start_idx": diagnostic.start_idx,
+            "start_source": diagnostic.start_source,
+            "travel_direction": diagnostic.travel_direction,
+            "raw_position": diagnostic.raw_position,
+            "completion_forced": diagnostic.completion_forced,
+            "validated_position": diagnostic.validated_position,
+            "decision": diagnostic.decision.value,
+        })
 
     def _extract_track_path(self, video_info: dict[str, Any]) -> None:
         self._progress(10, "Extracting track path from minimap...")
@@ -123,6 +156,14 @@ class TelemetryPipeline:
                         if transitions:
                             transitions[-1]["completed_lap_time"] = completed_lap_time
                     frames_since_transition = 0
+
+                if track_position is not None:
+                    self._report_position_diagnostic(
+                        frame_number=frame_number,
+                        timestamp=timestamp,
+                        lap_number=lap_number,
+                        track_position=track_position,
+                    )
 
                 records.append({
                     "frame": frame_number,

@@ -3,6 +3,7 @@
 import unittest
 
 from acc_telemetry.application.pipeline import TelemetryPipeline
+from acc_telemetry.extraction.position import PositionDecision, PositionDiagnostic
 
 
 class FakeVideo:
@@ -17,7 +18,12 @@ class FakeVideo:
         return {"fps": 30.0, "frame_count": 1, "duration": 1 / 30}
 
     def process_frames(self):
-        yield 0, 0.0, {"throttle": object(), "brake": object(), "steering": object()}
+        yield 0, 0.0, {
+            "throttle": object(),
+            "brake": object(),
+            "steering": object(),
+            "track_map": object(),
+        }
 
     def close(self):
         self.closed = True
@@ -57,6 +63,27 @@ class FakePosition:
 
     def reset_for_new_lap(self):
         raise AssertionError("no transition expected")
+
+
+class ReadyPosition(FakePosition):
+    def is_ready(self):
+        return True
+
+    def extract_position(self, roi):
+        return 42.0
+
+    def get_last_position_diagnostic(self):
+        return PositionDiagnostic(
+            dot_position=(12, 34),
+            closest_idx=56,
+            start_idx=7,
+            start_source="geometric",
+            travel_direction=1,
+            raw_position=42.5,
+            completion_forced=False,
+            validated_position=42.0,
+            decision=PositionDecision.SMOOTHED,
+        )
 
 
 class TestTelemetryPipeline(unittest.TestCase):
@@ -111,6 +138,41 @@ class TestTelemetryPipeline(unittest.TestCase):
         with self.assertRaisesRegex(RuntimeError, "bad frame"):
             pipeline.run()
         self.assertTrue(video.closed)
+
+    def test_reports_position_diagnostic_without_changing_legacy_record(self):
+        diagnostics = []
+        pipeline = TelemetryPipeline(
+            video=FakeVideo(),
+            controls=FakeControls(),
+            laps=FakeLaps(),
+            position=ReadyPosition(),
+            has_track_map=False,
+            position_diagnostic_callback=diagnostics.append,
+        )
+
+        result = pipeline.run()
+
+        self.assertEqual(result.records[0]["track_position"], 42.0)
+        self.assertNotIn("raw_position", result.records[0])
+        self.assertEqual(
+            diagnostics,
+            [{
+                "frame": 0,
+                "time": 0.0,
+                "lap_number": 9,
+                "track_position": 42.0,
+                "dot_x": 12,
+                "dot_y": 34,
+                "closest_idx": 56,
+                "start_idx": 7,
+                "start_source": "geometric",
+                "travel_direction": 1,
+                "raw_position": 42.5,
+                "completion_forced": False,
+                "validated_position": 42.0,
+                "decision": "smoothed",
+            }],
+        )
 
 
 if __name__ == "__main__":
