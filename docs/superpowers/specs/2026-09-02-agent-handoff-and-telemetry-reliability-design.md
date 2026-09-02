@@ -19,13 +19,33 @@ These files must link to one another. A new agent starts with `AGENTS.md`, then 
 
 Historical reports remain under `docs/legacy/` and must not be treated as current truth.
 
+## Dynamic documentation discovery
+
+Agents must not load every Markdown file by default. Active documents under `docs/` use a small front matter header:
+
+```yaml
+---
+summary: concise description of the document's authority and contents
+read_when:
+  - concrete situation in which an agent must read this document
+---
+```
+
+The repository provides `scripts/docs-list`, backed by `scripts/docs_list.py`, to list each active document with its summary and `read_when` hints. The default listing excludes `docs/legacy/`, `docs/archive/`, and `docs/superpowers/`. An explicit `--all` option may include historical product documents, but dated superpowers specifications and plans remain excluded from discovery because they are working history rather than general project guidance.
+
+`docs/current-status.md` is the exception to purely dynamic routing: every agent reads it after running the index. It contains the path of the one active dated plan when a plan exists. This keeps historical plans out of the default context while still making the current implementation plan discoverable.
+
+The script must report malformed or missing front matter for active documents and return a non-zero status so documentation drift cannot pass silently. Tests cover file selection, metadata parsing, failure behavior, and the required metadata on every active document.
+
 ## Required handoff protocol
 
 Every agent that changes code, tests, configuration, data-processing behavior, or active documentation must leave the repository in a resumable state.
 
 Before starting work, the agent must:
 
-- read `AGENTS.md` and `docs/current-status.md`;
+- read `AGENTS.md`;
+- run `./scripts/docs-list` and use its `read_when` hints to select relevant documentation;
+- always read `docs/current-status.md`, then read the active dated plan it identifies when the task affects that milestone;
 - inspect `git status`, recent commits, and the active plan;
 - verify that any referenced local evidence exists before relying on it;
 - preserve unrelated user changes.
@@ -126,9 +146,9 @@ Afterward, the first coaching milestone is one manually reviewed Spa corner segm
 Documentation setup uses separate atomic commits:
 
 1. record this design decision;
-2. establish the handoff rules and current-status entry point;
+2. add the tested documentation index, active-document front matter, handoff rules, and current-status entry point as one usable discovery system;
 3. align the durable ACC PS5 plan with the failed 2026-09-01 validation;
-4. add the detailed implementation plan for the three reliability priorities.
+4. add the detailed implementation plan for the three reliability priorities and link it from current status.
 
 Implementation will use one or more commits per priority, with each commit independently tested and limited to a coherent behavior change. Diagnostic instrumentation, production correction, quality propagation, and documentation updates must not be bundled unless they are inseparable for repository truthfulness.
 
