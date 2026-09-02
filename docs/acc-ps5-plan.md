@@ -59,13 +59,25 @@ Verified evidence:
 - after that transition, the reset produces plausible progress near zero;
 - the longer session records `initial_s_anchor: fail_reproduced`.
 
-The current code path can amplify a bad initial anchor: path extraction installs a
-geometrically estimated start index, travel direction is inferred from an initial
-arc, backward values are held by the monotonic validator, and a large drop near the
-end is converted to 100%. This explains the observed saturation mechanism, but it
-does not yet prove which initial projection or detection error is the root cause.
-The next implementation must reproduce and instrument the failure before selecting
-a fix.
+The 2026-09-02 native 1080p diagnostic confirms three upstream root causes:
+
+1. geometric start detection selects `(359, 0)` at path index `1141`, while confirmed
+   crossings occur around `(70, 155)`;
+2. the extracted path is an outline with parallel branches, so adjacent dot pixels
+   can jump between path indexes such as `1905` and `370`;
+3. red-dot detection selects the largest red contour before validating it, so a large
+   red cockpit/background region can hide a valid 160–195 px² car dot.
+
+On the 139,561-row clean-session trace, only 32 frames were directly accepted as
+observed position. There were 63,282 missing-held, 40,254 backward-held, 18,323
+forced-completion, and 1,196 jump-clamped decisions. The geometric-anchor lap first
+reached 99.9% at 52.3167 seconds and remained there for 229.75 seconds before the real
+transition.
+
+The monotonic validator and forced-completion behavior amplify these upstream errors;
+threshold tuning is not the root fix. The production correction must address dot
+candidate selection, unique or continuity-aware path projection, and trusted lap
+anchoring before reevaluating smoothing.
 
 ## Failed long-capture lap transitions
 
@@ -98,10 +110,13 @@ Holding a value must never make it indistinguishable from a fresh observation.
 
 Required work:
 
-1. reproduce the 2026-09-01 failure with a focused regression;
-2. expose raw projection, anchor, direction, validation decision, and output quality;
-3. identify and correct the root cause rather than tuning thresholds blindly;
-4. replay the controlled Spa evidence.
+1. select plausible red-dot contours using track and temporal context instead of
+   rejecting the frame because the largest red region is invalid;
+2. derive a unique centerline or use continuity-aware projection so nearby pixels do
+   not jump between distant contour indexes;
+3. anchor `s` from a trusted confirmed crossing rather than the false geometric point;
+4. reevaluate completion and smoothing only after upstream observations are stable;
+5. replay both controlled Spa sessions.
 
 Exit criteria:
 

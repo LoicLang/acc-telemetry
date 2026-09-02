@@ -301,5 +301,26 @@ class TestPositionTrackerV2(unittest.TestCase):
         self.assertTrue(diagnostic.completion_forced)
         self.assertEqual(diagnostic.decision, PositionDecision.FORCED_COMPLETION)
 
+    def test_characterizes_projection_switching_between_contour_branches(self):
+        first_branch = [(x, 0) for x in range(50)]
+        nearby_return_branch = [(x, 1) for x in range(49, -1, -1)]
+        self.tracker.track_path = first_branch + nearby_return_branch
+
+        first_index = self.tracker._closest_path_index(25, 0)
+        nearby_index = self.tracker._closest_path_index(25, 1)
+
+        self.assertEqual(first_index, 25)
+        self.assertEqual(nearby_index, 74)
+        self.assertGreater(abs(nearby_index - first_index), 40)
+
+    def test_characterizes_large_red_background_masking_valid_dot(self):
+        roi = np.zeros((100, 100, 3), dtype=np.uint8)
+        roi[0:31, 0:31] = (0, 0, 255)
+        roi[67:74, 67:74] = (0, 0, 255)
+
+        dot = PositionTrackerV2().detect_red_dot(roi)
+
+        self.assertIsNone(dot)
+
 if __name__ == '__main__':
     unittest.main()

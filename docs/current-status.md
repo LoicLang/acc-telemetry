@@ -16,13 +16,14 @@ change. Use `git log` for authoritative commit hashes and dates.
 
 ## Current objective
 
-Validate native 1080p telemetry input and isolate the first invalid transition in
-`s` before selecting a production correction.
+Review the validated native 1080p baseline and confirmed `s` root causes before
+designing the production correction.
 
-- Active milestone: native 1080p baseline and `s` diagnostics
-- Status: implementation plan ready; execution authorized
+- Active milestone: native 1080p and `s` diagnostic review
+- Status: diagnostic complete; awaiting review with Loïc
 - Active specification: `docs/superpowers/specs/2026-09-02-native-1080-and-s-diagnostics-design.md`
-- Active plan: `docs/superpowers/plans/2026-09-02-native-1080-and-s-diagnostics.md`
+- Active plan: none
+- Last completed technical plan: `docs/superpowers/plans/2026-09-02-native-1080-and-s-diagnostics.md`
 - Last completed plan: `docs/superpowers/plans/2026-09-02-agent-handoff-documentation.md`
 - Technical ACC implementation: limited to the approved profile and diagnostic slice
 - Documentation milestone: verified complete
@@ -67,7 +68,43 @@ Validate native 1080p telemetry input and isolate the first invalid transition i
   validated position, and decision without changing legacy numeric output.
 - Position trace CLI: implemented and tested as `scripts/diagnose_position.py`; it
   writes ignored diagnostic CSV data without changing legacy telemetry records.
-- Full clean-session position trace: not collected yet.
+- Full clean-session position trace: collected over 139,561 rows and 2,326 seconds.
+
+### Confirmed `s` root causes
+
+The first invalid state exists before smoothing:
+
+- geometric start anchor: pixel `(359, 0)`, path index `1141`;
+- actual confirmed crossing: approximately `(70, 155)`, mapping variably to path
+  indexes `1873`, `1904`, or `372`;
+- first detected raw position: 21.7602% at 8.0167 seconds, immediately clamped from
+  zero because it is relative to the wrong geometric anchor;
+- first forced completion: 52.25 seconds;
+- first `s >= 99.9%`: 52.3167 seconds;
+- first plateau at or above 99.9%: 229.75 seconds, until the real transition.
+
+The extracted map path is the outline of a thick white line rather than a unique
+centerline. Adjacent red-dot pixels can therefore select physically adjacent but
+topologically distant path indexes. One measured jump changed index `1905` to `370`
+and raw position from about 1.51% to 34.68%.
+
+Red-dot detection also selects the largest red contour before checking its size.
+Transparent-map backgrounds frequently contain a red cockpit or car region above
+4,000 px² plus a valid car dot around 160–195 px². The large contour is rejected and
+the valid smaller dot is ignored.
+
+Trace decision totals:
+
+- `missing_held`: 63,282 frames;
+- `backward_held`: 40,254 frames;
+- `forced_completion`: 18,323 frames;
+- `smoothed`: 16,460 frames;
+- `jump_clamped`: 1,196 frames;
+- directly `observed`: 32 frames;
+- `lap_reset`: 14 frames.
+
+The monotonic validator and forced-completion rule amplify and conceal the upstream
+anchor, topology, and red-dot selection failures. They are not the first cause.
 
 Verification for the documentation milestone:
 
@@ -137,6 +174,10 @@ Ignored local A/B evidence:
 - `data/lab/2026-09-02_native-1080-ocr/reports/ground-truth.csv`
 - `data/lab/2026-09-02_native-1080-ocr/reports/ocr-results.csv`
 
+Ignored local position evidence:
+
+- `data/lab/2026-09-02_native-1080-position/trace.csv`
+
 Verify these paths exist before using them. Their summarized findings above are the
 durable repository record; personal videos and full telemetry exports must not be
 committed.
@@ -153,6 +194,6 @@ pass on controlled Spa evidence.
 
 ## Current next action
 
-Execute the active plan task by task with focused tests and atomic commits. Stop after
-the 1080p measurement and root-cause diagnostic, before implementing a production
-correction for `s`.
+Review the confirmed root causes with Loïc, then design a production correction that
+addresses red-dot candidate selection, unique/continuous path projection, and trusted
+lap anchoring. Do not treat smoothing thresholds as the root fix.

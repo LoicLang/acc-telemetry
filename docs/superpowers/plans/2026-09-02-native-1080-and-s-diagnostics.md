@@ -395,12 +395,12 @@ git commit -m "feat: add position diagnostic trace"
 - Modify: `docs/acc-ps5-plan.md` only if the root-cause statement changes
 - Modify: `docs/superpowers/plans/2026-09-02-native-1080-and-s-diagnostics.md`
 
-- [ ] **Step 1: Run the clean-session diagnostic**
+- [x] **Step 1: Run the clean-session diagnostic**
 
 Run `scripts/diagnose_position.py` on the primary BMW capture with
 `ps5_full_map_1080p`. Write the trace below the ignored local lab directory.
 
-- [ ] **Step 2: Locate the first bad state transition**
+- [x] **Step 2: Locate the first bad state transition**
 
 Measure:
 
@@ -415,7 +415,7 @@ Trace backward to the first wrong raw projection, closest index, direction choic
 anchor choice, or red-dot detection. Separate the first cause from later monotonic
 holding and forced-completion amplification.
 
-- [ ] **Step 3: Add the smallest passing characterization regression**
+- [x] **Step 3: Add the smallest passing characterization regression**
 
 Encode the confirmed first bad transition in `tests/test_position_tracker_v2.py` or
 `tests/test_application_pipeline.py`. Name the specific incorrect decision and assert
@@ -424,12 +424,12 @@ the wrong anchor source. The test must pass against current behavior so the repo
 remains green; the next production-fix plan will replace the characterized outcome
 with the desired expectation through a new red-green cycle.
 
-- [ ] **Step 4: Stop before the production fix**
+- [x] **Step 4: Stop before the production fix**
 
 Record the desired future assertion and the evidence required to make the
 characterization test obsolete. Do not alter position behavior in this milestone.
 
-- [ ] **Step 5: Update durable status and commit**
+- [x] **Step 5: Update durable status and commit**
 
 Record measured evidence, confirmed root cause or remaining single hypothesis, and
 the next exact correction. Mark this plan complete and set active plan to none.
