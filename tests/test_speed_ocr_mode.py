@@ -1,10 +1,25 @@
 import unittest
 import statistics
+import tempfile
+from pathlib import Path
 from unittest.mock import patch
 
 import numpy as np
 
 from src import lap_detector
+
+
+class TestTessdataDiscovery(unittest.TestCase):
+    def test_find_tessdata_path_prefers_repository_local_data(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            tessdata = root / "data" / "shared" / "tessdata"
+            tessdata.mkdir(parents=True)
+            (tessdata / "eng.traineddata").write_bytes(b"fixture")
+
+            result = lap_detector.find_tessdata_path(root)
+
+        self.assertEqual(result, tessdata)
 
 
 class FakeTesseractAPI:

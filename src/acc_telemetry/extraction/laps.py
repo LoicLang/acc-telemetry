@@ -16,6 +16,22 @@ from .templates import TemplateMatcher
 MAX_SPEED_OCR_DELTA_KMH = 20
 SPEED_OCR_RECOVERY_TOLERANCE_KMH = 3
 
+
+def find_tessdata_path(project_root: Path | None = None) -> Path | None:
+    """Locate English OCR data, preferring the repository-local data zone."""
+    root = project_root or Path(__file__).parents[3]
+    candidates = (
+        root / "data" / "shared" / "tessdata",
+        Path("/opt/homebrew/share/tessdata"),
+        Path("/usr/share/tesseract-ocr/5/tessdata"),
+        Path("/usr/share/tesseract-ocr/tessdata"),
+        Path("/usr/share/tessdata"),
+    )
+    for candidate in candidates:
+        if (candidate / "eng.traineddata").is_file():
+            return candidate
+    return None
+
 # Try to use fast tesserocr (direct C++ API), fall back to pytesseract
 try:
     import tesserocr
@@ -101,39 +117,20 @@ class LapDetector:
         self._tesserocr_api = None
         if USE_TESSEROCR:
             try:
-                # Try common paths for tessdata
-                tessdata_paths = [
-                    '/opt/homebrew/share/tessdata/',  # macOS Homebrew
-                    '/usr/share/tesseract-ocr/4.00/tessdata/',  # Linux/Docker (older)
-                    '/usr/share/tesseract-ocr/5/tessdata/',  # Linux/Docker (newer)
-                    '/usr/share/tesseract-ocr/tessdata/',  # Linux generic
-                    '/usr/share/tessdata/',  # Linux alternative
-                ]
-                
-                tessdata_path = None
-                print(f"🔍 Searching for tessdata in: {tessdata_paths}")
-                for path in tessdata_paths:
-                    if Path(path).exists():
-                        tessdata_path = path
-                        print(f"✅ Found tessdata at: {path}")
-                        break
+                tessdata_path = find_tessdata_path()
                 
                 if tessdata_path:
-                    print(f"DEBUG: Initializing PyTessBaseAPI with path: {tessdata_path}")
                     self._tesserocr_api = tesserocr.PyTessBaseAPI(
-                        path=tessdata_path,
+                        path=str(tessdata_path),
                         psm=tesserocr.PSM.SINGLE_WORD,
                         oem=tesserocr.OEM.LSTM_ONLY
                     )
-                    print("DEBUG: PyTessBaseAPI initialized successfully")
                 else:
                     # Let tesserocr find it (default behavior)
-                    print("DEBUG: Initializing PyTessBaseAPI with default path")
                     self._tesserocr_api = tesserocr.PyTessBaseAPI(
                         psm=tesserocr.PSM.SINGLE_WORD,
                         oem=tesserocr.OEM.LSTM_ONLY
                     )
-                    print("DEBUG: PyTessBaseAPI initialized successfully (default)")
                     
                 self._tesserocr_api.SetVariable("tessedit_char_whitelist", "0123456789")
                 print("✅ Using tesserocr (fast C++ API, ~2ms per frame)")

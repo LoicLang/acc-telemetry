@@ -48,6 +48,15 @@ Validate native 1080p telemetry input and isolate the first invalid transition i
 - The mandatory handoff protocol and living status were added in commit `a581c19`.
 - The ACC PS5 plan was corrected from the 2026-09-01 evidence in commit `457a1e1`.
 
+## Active milestone progress
+
+- OCR runtime prerequisite: verified. `LapDetector` now discovers
+  `data/shared/tessdata/eng.traineddata`, and the real tesserocr backend initializes
+  successfully without a separate system Tesseract installation.
+- Native 1080p profile: not implemented yet.
+- Native-versus-downscaled OCR comparison: not run yet.
+- Position diagnostic trace: not implemented yet.
+
 Verification for the documentation milestone:
 
 - documentation index exits successfully and lists four active documents;

@@ -17,7 +17,7 @@
 - Modify: `tests/test_speed_ocr_mode.py`
 - Modify: `docs/current-status.md`
 
-- [ ] **Step 1: Write a failing tessdata discovery test**
+- [x] **Step 1: Write a failing tessdata discovery test**
 
 Add a test that creates `data/shared/tessdata/eng.traineddata` beneath a temporary project root and calls a new helper:
 
@@ -34,7 +34,7 @@ def test_find_tessdata_path_prefers_repository_local_data(self):
     self.assertEqual(result, tessdata)
 ```
 
-- [ ] **Step 2: Run the focused test and confirm RED**
+- [x] **Step 2: Run the focused test and confirm RED**
 
 Run:
 
@@ -44,7 +44,7 @@ PYTHONPATH=src .venv/bin/python -m unittest tests.test_speed_ocr_mode -v
 
 Expected: import failure for `find_tessdata_path`.
 
-- [ ] **Step 3: Implement deterministic tessdata discovery**
+- [x] **Step 3: Implement deterministic tessdata discovery**
 
 Add:
 
@@ -67,7 +67,7 @@ def find_tessdata_path(project_root: Path | None = None) -> Path | None:
 Use this helper in `LapDetector.__init__`. Pass `path=str(tessdata_path)` when found;
 otherwise keep the existing default initialization and fallback behavior.
 
-- [ ] **Step 4: Verify the real backend**
+- [x] **Step 4: Verify the real backend**
 
 Run:
 
@@ -82,7 +82,7 @@ PY
 
 Expected: tesserocr initializes from `data/shared/tessdata`.
 
-- [ ] **Step 5: Update status and commit**
+- [x] **Step 5: Update status and commit**
 
 Record the verified local backend in `docs/current-status.md`, then run the focused
 and full suites and commit:
