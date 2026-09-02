@@ -1,3 +1,10 @@
+---
+summary: current code boundaries, dependency flow, telemetry contract, and adapter responsibilities
+read_when:
+  - changing package boundaries or data flow
+  - modifying extraction, normalization, domain, application, visualization, or adapters
+---
+
 # Architecture
 
 ## Data flow

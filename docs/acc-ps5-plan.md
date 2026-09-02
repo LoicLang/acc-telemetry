@@ -1,3 +1,10 @@
+---
+summary: durable ACC PS5 telemetry roadmap, reliability stage gates, and blocked downstream coaching work
+read_when:
+  - working on ACC PS5 telemetry reliability
+  - changing s, lap transitions, quality, segmentation, or coaching priorities
+---
+
 # ACC PS5 telemetry plan
 
 ## Current baseline

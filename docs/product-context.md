@@ -1,3 +1,10 @@
+---
+summary: Road to Verstappen product purpose and pilot coaching principles
+read_when:
+  - making product or coaching trade-offs
+  - deciding whether a feature improves driver progression
+---
+
 # Product context
 
 ## Purpose

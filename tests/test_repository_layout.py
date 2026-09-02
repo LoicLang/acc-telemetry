@@ -5,6 +5,8 @@ import unittest
 from importlib import import_module
 from pathlib import Path
 
+from scripts.docs_list import validate_active_docs
+
 
 ROOT = Path(__file__).parents[1]
 
@@ -67,10 +69,12 @@ class TestRepositoryLayout(unittest.TestCase):
     def test_current_documentation_is_complete_and_not_stale(self):
         required = (
             "README.md",
+            "docs/current-status.md",
             "docs/product-context.md",
             "docs/architecture.md",
             "docs/acc-ps5-plan.md",
             "docs/legacy/README.md",
+            "scripts/docs-list",
         )
         for relative_path in required:
             with self.subTest(path=relative_path):
@@ -101,6 +105,13 @@ class TestRepositoryLayout(unittest.TestCase):
         for concept in ("`s`", "passages imparfaits", "qualité", "anomalies", "`d`"):
             with self.subTest(plan_contains=concept):
                 self.assertIn(concept, plan)
+
+        agents = (ROOT / "AGENTS.md").read_text(encoding="utf-8")
+        self.assertIn("./scripts/docs-list", agents)
+        self.assertIn("docs/current-status.md", agents)
+
+    def test_active_documentation_has_routing_metadata(self):
+        self.assertEqual(validate_active_docs(ROOT / "docs"), [])
 
 
 if __name__ == "__main__":
