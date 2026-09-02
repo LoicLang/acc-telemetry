@@ -20,9 +20,9 @@ Validate native 1080p telemetry input and isolate the first invalid transition i
 `s` before selecting a production correction.
 
 - Active milestone: native 1080p baseline and `s` diagnostics
-- Status: design approved; specification awaiting review
+- Status: implementation plan ready; execution authorized
 - Active specification: `docs/superpowers/specs/2026-09-02-native-1080-and-s-diagnostics-design.md`
-- Active plan: none
+- Active plan: `docs/superpowers/plans/2026-09-02-native-1080-and-s-diagnostics.md`
 - Last completed plan: `docs/superpowers/plans/2026-09-02-agent-handoff-documentation.md`
 - Technical ACC implementation: limited to the approved profile and diagnostic slice
 - Documentation milestone: verified complete
@@ -127,6 +127,6 @@ pass on controlled Spa evidence.
 
 ## Current next action
 
-Review the active 1080p and `s` diagnostic specification with Loïc. After approval,
-write its test-driven implementation plan. Stop again after the 1080p measurement and
-root-cause diagnostic, before implementing a production correction for `s`.
+Execute the active plan task by task with focused tests and atomic commits. Stop after
+the 1080p measurement and root-cause diagnostic, before implementing a production
+correction for `s`.
