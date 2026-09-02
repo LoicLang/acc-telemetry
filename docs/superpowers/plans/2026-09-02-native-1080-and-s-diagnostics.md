@@ -100,7 +100,7 @@ git commit -m "fix: discover repository OCR data"
 - Modify: `tests/test_configuration.py`
 - Modify: `docs/current-status.md`
 
-- [ ] **Step 1: Write failing profile tests**
+- [x] **Step 1: Write failing profile tests**
 
 Add an exact geometry test using this contract:
 
@@ -131,7 +131,7 @@ self.assertEqual(profile.white_lower, (0, 0, 150))
 self.assertEqual(profile.white_upper, (180, 100, 255))
 ```
 
-- [ ] **Step 2: Run the profile tests and confirm RED**
+- [x] **Step 2: Run the profile tests and confirm RED**
 
 Run:
 
@@ -141,7 +141,7 @@ PYTHONPATH=src .venv/bin/python -m unittest tests.test_ps5_profile tests.test_co
 
 Expected: missing `ps5_full_map_1080p`.
 
-- [ ] **Step 3: Add the configured profile**
+- [x] **Step 3: Add the configured profile**
 
 Add `ps5_full_map_1080p` to `config/roi_config.yaml` with the exact regions above and:
 
@@ -154,12 +154,12 @@ position_tracking:
 
 Do not change the 720p profile or automatic defaults.
 
-- [ ] **Step 4: Verify construction and selection**
+- [x] **Step 4: Verify construction and selection**
 
 Run the focused tests, then instantiate components with the new profile and assert
 the video processor receives the 1080p regions.
 
-- [ ] **Step 5: Update status and commit**
+- [x] **Step 5: Update status and commit**
 
 Record profile availability without claiming OCR success. Run the full suite and
 commit:

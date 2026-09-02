@@ -26,6 +26,17 @@ class TestTelemetryConfiguration(unittest.TestCase):
         self.assertEqual(settings.ocr.max_speed_delta_kmh, 20)
         self.assertEqual(settings.ocr.recovery_tolerance_kmh, 3)
 
+    def test_loads_native_1080p_ps5_profile(self):
+        profile = load_settings(ROOT).profile("ps5_full_map_1080p")
+
+        self.assertEqual(profile.sample_count, 60)
+        self.assertEqual(profile.white_lower, (0, 0, 150))
+        self.assertEqual(profile.white_upper, (180, 100, 255))
+        self.assertEqual(
+            profile.rois["last_lap_time"],
+            {"x": 90, "y": 125, "width": 155, "height": 40},
+        )
+
     def test_rejects_missing_required_settings_section(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)

@@ -53,7 +53,8 @@ Validate native 1080p telemetry input and isolate the first invalid transition i
 - OCR runtime prerequisite: verified. `LapDetector` now discovers
   `data/shared/tessdata/eng.traineddata`, and the real tesserocr backend initializes
   successfully without a separate system Tesseract installation.
-- Native 1080p profile: not implemented yet.
+- Native 1080p profile: implemented and configuration-tested as
+  `ps5_full_map_1080p`; real OCR accuracy is not validated yet.
 - Native-versus-downscaled OCR comparison: not run yet.
 - Position diagnostic trace: not implemented yet.
 
