@@ -1,6 +1,6 @@
 # Agent Handoff Documentation Implementation Plan
 
-> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
+> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [x]`) syntax for tracking.
 
 **Goal:** Make the repository self-explaining through a tested documentation index, mandatory handoff rules, a current-status entry point, and an ACC PS5 plan aligned with the failed 2026-09-01 `s` validation.
 
@@ -17,7 +17,7 @@
 - Create: `scripts/docs-list`
 - Create: `tests/test_docs_list.py`
 
-- [ ] **Step 1: Write focused failing tests**
+- [x] **Step 1: Write focused failing tests**
 
 Create `tests/test_docs_list.py` with temporary documentation trees. Cover default exclusion, explicit historical listing, front-matter parsing, and non-zero validation for malformed active documents:
 
@@ -114,7 +114,7 @@ if __name__ == "__main__":
     unittest.main()
 ```
 
-- [ ] **Step 2: Run the tests and confirm RED**
+- [x] **Step 2: Run the tests and confirm RED**
 
 Run:
 
@@ -124,7 +124,7 @@ PYTHONPATH=src .venv/bin/python -m unittest tests.test_docs_list -v
 
 Expected: import/loading failure because `scripts/docs_list.py` does not exist.
 
-- [ ] **Step 3: Implement the dependency-free index**
+- [x] **Step 3: Implement the dependency-free index**
 
 Create `scripts/docs_list.py` with these public functions and behavior:
 
@@ -238,7 +238,7 @@ script_dir="$(cd "$(dirname "$0")" && pwd)"
 exec python3 "$script_dir/docs_list.py" "$@"
 ```
 
-- [ ] **Step 4: Run focused tests and confirm GREEN**
+- [x] **Step 4: Run focused tests and confirm GREEN**
 
 Run:
 
@@ -249,7 +249,7 @@ PYTHONPATH=src .venv/bin/python -m unittest tests.test_docs_list -v
 
 Expected: four tests pass.
 
-- [ ] **Step 5: Commit the index implementation**
+- [x] **Step 5: Commit the index implementation**
 
 ```bash
 git add scripts/docs-list scripts/docs_list.py tests/test_docs_list.py
@@ -266,7 +266,7 @@ git commit -m "feat: add dynamic documentation index"
 - Create: `docs/current-status.md`
 - Modify: `tests/test_repository_layout.py`
 
-- [ ] **Step 1: Add failing repository-policy assertions**
+- [x] **Step 1: Add failing repository-policy assertions**
 
 Extend `test_current_documentation_is_complete_and_not_stale` in `tests/test_repository_layout.py` to assert:
 
@@ -279,7 +279,7 @@ self.assertIn("docs/current-status.md", (ROOT / "AGENTS.md").read_text())
 
 Add a test that imports `scripts/docs_list.py` and asserts `validate_active_docs(ROOT / "docs") == []`.
 
-- [ ] **Step 2: Run the policy tests and confirm RED**
+- [x] **Step 2: Run the policy tests and confirm RED**
 
 Run:
 
@@ -289,7 +289,7 @@ PYTHONPATH=src .venv/bin/python -m unittest tests.test_repository_layout -v
 
 Expected: failure because `docs/current-status.md`, the AGENTS workflow, and active front matter are missing.
 
-- [ ] **Step 3: Add front matter to every active document**
+- [x] **Step 3: Add front matter to every active document**
 
 Use these headers:
 
@@ -328,7 +328,7 @@ read_when:
 ---
 ```
 
-- [ ] **Step 4: Create the living current status**
+- [x] **Step 4: Create the living current status**
 
 Create `docs/current-status.md` containing:
 
@@ -345,7 +345,7 @@ Create `docs/current-status.md` containing:
 
 Do not link ignored session files as portable repository dependencies. Record their repository-relative local paths and state explicitly that they may be absent on another machine.
 
-- [ ] **Step 5: Add the mandatory workflow to AGENTS.md**
+- [x] **Step 5: Add the mandatory workflow to AGENTS.md**
 
 Add sections requiring agents to:
 
@@ -359,7 +359,7 @@ Add sections requiring agents to:
 
 State that repository documentation is durable memory and chat history is only short-term context.
 
-- [ ] **Step 6: Run focused tests and the index**
+- [x] **Step 6: Run focused tests and the index**
 
 Run:
 
@@ -371,7 +371,7 @@ git diff --check
 
 Expected: all focused tests pass; the index lists exactly the four active docs without metadata errors.
 
-- [ ] **Step 7: Commit the complete discovery and handoff system**
+- [x] **Step 7: Commit the complete discovery and handoff system**
 
 ```bash
 git add AGENTS.md docs/current-status.md docs/architecture.md docs/product-context.md docs/acc-ps5-plan.md tests/test_repository_layout.py
@@ -385,7 +385,7 @@ git commit -m "docs: establish agent handoff protocol"
 - Modify: `docs/current-status.md`
 - Modify: `tests/test_repository_layout.py`
 
-- [ ] **Step 1: Add failing truth assertions**
+- [x] **Step 1: Add failing truth assertions**
 
 Require the active plan to contain these stable markers:
 
@@ -400,7 +400,7 @@ self.assertIn("quality propagation", plan)
 self.assertIn("blocked", plan)
 ```
 
-- [ ] **Step 2: Run the focused test and confirm RED**
+- [x] **Step 2: Run the focused test and confirm RED**
 
 Run:
 
@@ -410,7 +410,7 @@ PYTHONPATH=src .venv/bin/python -m unittest tests.test_repository_layout -v
 
 Expected: missing-marker failures against the stale plan language.
 
-- [ ] **Step 3: Rewrite the current baseline and stage gates**
+- [x] **Step 3: Rewrite the current baseline and stage gates**
 
 Update `docs/acc-ps5-plan.md` so it clearly states:
 
@@ -426,7 +426,7 @@ Update `docs/acc-ps5-plan.md` so it clearly states:
 
 Update `docs/current-status.md` to mark the repository documentation milestone complete and the ACC reliability milestone `awaiting_review`. Set `active_plan: none` until the technical plan is agreed after the requested review point.
 
-- [ ] **Step 4: Run focused verification**
+- [x] **Step 4: Run focused verification**
 
 Run:
 
@@ -438,7 +438,7 @@ git diff --check
 
 Expected: all tests pass and the index reports no metadata errors.
 
-- [ ] **Step 5: Commit the product-state correction**
+- [x] **Step 5: Commit the product-state correction**
 
 ```bash
 git add docs/acc-ps5-plan.md docs/current-status.md tests/test_repository_layout.py
@@ -450,7 +450,7 @@ git commit -m "docs: record ACC telemetry reliability blockers"
 **Files:**
 - Modify only if verification exposes a documentation defect.
 
-- [ ] **Step 1: Run the complete automated suite**
+- [x] **Step 1: Run the complete automated suite**
 
 Run:
 
@@ -463,7 +463,7 @@ git diff --check
 
 Expected: compilation and all tests pass; the index exits zero; no whitespace errors.
 
-- [ ] **Step 2: Verify repository state and atomic history**
+- [x] **Step 2: Verify repository state and atomic history**
 
 Run:
 
@@ -474,6 +474,6 @@ git log --oneline origin/main..HEAD
 
 Expected: no unexplained tracked changes. History shows separate commits for the design, dynamic-discovery design refinement, implementation plan, index implementation, handoff protocol, and ACC reliability status.
 
-- [ ] **Step 3: Stop before telemetry implementation**
+- [x] **Step 3: Stop before telemetry implementation**
 
 Report the current documentation entry points, verification evidence, commits, and unresolved technical priorities. Do not create or execute the detailed telemetry correction plan until Loïc and the agent review the updated repository state.

@@ -24,7 +24,7 @@ development.
 - Active plan: none
 - Last completed plan: `docs/superpowers/plans/2026-09-02-agent-handoff-documentation.md`
 - Technical ACC implementation: blocked pending this review
-- Documentation milestone: complete pending final verification
+- Documentation milestone: verified complete
 
 ## Resume here
 
@@ -45,6 +45,14 @@ development.
 - The current documentation implementation plan was recorded in commit `720c3fd`.
 - The tested documentation index was implemented in commit `595a6cf`.
 - The mandatory handoff protocol and living status were added in commit `a581c19`.
+- The ACC PS5 plan was corrected from the 2026-09-01 evidence in commit `457a1e1`.
+
+Verification for the documentation milestone:
+
+- documentation index exits successfully and lists four active documents;
+- all 64 repository tests pass;
+- Python compilation succeeds for `src`, `scripts`, `tests`, and launchers;
+- no telemetry production behavior was changed in this milestone.
 
 ## Verified working baseline
 
@@ -111,6 +119,5 @@ pass on controlled Spa evidence.
 
 ## Current next action
 
-Run final repository verification, then review this status and
-`docs/acc-ps5-plan.md` with Loïc. Only after that review should an agent draft or
-execute the detailed technical ACC implementation plan.
+Review this status and `docs/acc-ps5-plan.md` with Loïc. Only after that review
+should an agent draft or execute the detailed technical ACC implementation plan.
