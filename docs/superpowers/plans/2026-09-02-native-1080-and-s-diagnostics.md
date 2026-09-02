@@ -447,7 +447,7 @@ Omit unchanged files from `git add`.
 **Files:**
 - Modify only if verification exposes a scoped defect.
 
-- [ ] **Step 1: Run complete verification**
+- [x] **Step 1: Run complete verification**
 
 ```bash
 PYTHONPATH=src .venv/bin/python -m compileall -q src scripts tests main.py run_server.py
@@ -458,7 +458,7 @@ git status --short --branch
 git log --oneline origin/main..HEAD
 ```
 
-- [ ] **Step 2: Report and stop**
+- [x] **Step 2: Report and stop**
 
 Report the 1080p OCR comparison, the first invalid `s` transition, test evidence,
 commits, and unverified risks. Do not implement the production `s` correction, robust

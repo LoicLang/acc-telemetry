@@ -106,6 +106,19 @@ Trace decision totals:
 The monotonic validator and forced-completion rule amplify and conceal the upstream
 anchor, topology, and red-dot selection failures. They are not the first cause.
 
+Milestone commits:
+
+- `e944f81`: discover repository-local OCR data;
+- `d485cf2`: add the explicit native 1080p profile;
+- `d7a6005`: calibrate 1080p OCR regions and lap-number preprocessing;
+- `6b76631`: adopt native 1080p60 as the capture baseline;
+- `54ac52f`: expose extraction-level position decisions;
+- `b12bfe9`: add the shared-pipeline diagnostic trace;
+- `0548b61`: record and characterize the confirmed position root causes.
+
+Milestone verification: 77 tests pass, the diagnostic CLI processed all 139,561
+frames, documentation discovery passes, and legacy telemetry output remains unchanged.
+
 Verification for the documentation milestone:
 
 - documentation index exits successfully and lists four active documents;
