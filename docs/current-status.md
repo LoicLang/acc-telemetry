@@ -16,20 +16,21 @@ change. Use `git log` for authoritative commit hashes and dates.
 
 ## Current objective
 
-Establish the repository as durable agent memory before resuming ACC telemetry
+Review the newly established repository memory before resuming ACC telemetry
 development.
 
-- Active milestone: repository handoff documentation
-- Status: in progress
-- Active plan: `docs/superpowers/plans/2026-09-02-agent-handoff-documentation.md`
-- Technical ACC implementation: blocked pending repository-state review with Loïc
-- Scope of the current milestone: documentation, discovery tooling, and tests only
+- Active milestone: ACC telemetry reliability review
+- Status: awaiting review with Loïc
+- Active plan: none
+- Last completed plan: `docs/superpowers/plans/2026-09-02-agent-handoff-documentation.md`
+- Technical ACC implementation: blocked pending this review
+- Documentation milestone: complete pending final verification
 
 ## Resume here
 
 1. Run `./scripts/docs-list`.
 2. Read this document.
-3. Read the active plan above.
+3. If an active plan is named above, read it before changing that milestone.
 4. Inspect `git status --short --branch` and `git log --oneline -10`.
 5. Continue from the first unchecked plan step.
 
@@ -43,6 +44,7 @@ development.
 - Dynamic documentation discovery was added to that design in commit `67167a3`.
 - The current documentation implementation plan was recorded in commit `720c3fd`.
 - The tested documentation index was implemented in commit `595a6cf`.
+- The mandatory handoff protocol and living status were added in commit `a581c19`.
 
 ## Verified working baseline
 
@@ -109,7 +111,6 @@ pass on controlled Spa evidence.
 
 ## Current next action
 
-Finish the documentation milestone: align `docs/acc-ps5-plan.md` with the failed
-2026-09-01 validation, run the complete test suite and documentation index, then
-review the repository state with Loïc before drafting or executing the technical ACC
-implementation plan.
+Run final repository verification, then review this status and
+`docs/acc-ps5-plan.md` with Loïc. Only after that review should an agent draft or
+execute the detailed technical ACC implementation plan.

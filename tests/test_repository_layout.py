@@ -113,6 +113,22 @@ class TestRepositoryLayout(unittest.TestCase):
     def test_active_documentation_has_routing_metadata(self):
         self.assertEqual(validate_active_docs(ROOT / "docs"), [])
 
+    def test_acc_plan_records_verified_reliability_blockers(self):
+        plan = (ROOT / "docs" / "acc-ps5-plan.md").read_text(
+            encoding="utf-8"
+        )
+        for expected in (
+            "s_status: failed_validation",
+            "88.033333",
+            "50.027742",
+            "initial_s_anchor",
+            "false lap transitions",
+            "quality propagation",
+            "blocked",
+        ):
+            with self.subTest(plan_contains=expected):
+                self.assertIn(expected, plan)
+
 
 if __name__ == "__main__":
     unittest.main()
