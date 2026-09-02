@@ -203,6 +203,19 @@ timestamp_s,lap_number,last_lap_time,speed,gear
 Read values from the native frame. Use an empty field when a HUD value is genuinely
 not displayed; do not infer it.
 
+- [ ] **Step 3a: Calibrate OCR regions and preprocessing from RED tests**
+
+Real-frame sampling established two concrete gaps in the seeded profile:
+
+- use `lap_number_training: {x: 270, y: 105, width: 58, height: 60}`;
+- use `last_lap_time: {x: 100, y: 128, width: 130, height: 34}`;
+- threshold the lap-number crop at 200 and enlarge it 3x before tesserocr, matching
+  the proven lap-time preprocessing pattern.
+
+Update the exact profile tests and add a lap-number preprocessing test before changing
+configuration or production OCR behavior. Commit calibration and preprocessing as
+separate coherent changes.
+
 - [ ] **Step 4: Run both profiles**
 
 For each checkpoint, instantiate a fresh `LapDetector`. Feed the same frame 15 times

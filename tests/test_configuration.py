@@ -34,7 +34,7 @@ class TestTelemetryConfiguration(unittest.TestCase):
         self.assertEqual(profile.white_upper, (180, 100, 255))
         self.assertEqual(
             profile.rois["last_lap_time"],
-            {"x": 90, "y": 125, "width": 155, "height": 40},
+            {"x": 100, "y": 128, "width": 130, "height": 34},
         )
 
     def test_rejects_missing_required_settings_section(self):

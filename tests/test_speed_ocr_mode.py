@@ -50,6 +50,62 @@ class SequenceTesseractAPI(FakeTesseractAPI):
         return next(self.texts)
 
 
+class CapturingTesseractAPI(FakeTesseractAPI):
+    def __init__(self, text):
+        super().__init__()
+        self.text = text
+        self.images = []
+
+    def SetImage(self, image):
+        self.images.append(image)
+
+    def GetUTF8Text(self):
+        return self.text
+
+
+@unittest.skipUnless(lap_detector.USE_TESSEROCR, "tesserocr is not available")
+class TestLapNumberOCRMode(unittest.TestCase):
+    def test_extract_lap_number_enlarges_thresholded_digits(self):
+        detector = lap_detector.LapDetector.__new__(lap_detector.LapDetector)
+        detector.lap_number_roi = {"x": 0, "y": 0, "width": 58, "height": 60}
+        detector._last_valid_lap_number = None
+        detector._lap_number_history = []
+        detector._history_size = 15
+        detector._enable_performance_stats = False
+        detector._total_frames_processed = 0
+        detector._recognition_calls = 0
+        detector._tesserocr_api = CapturingTesseractAPI("5")
+
+        frame = np.full((60, 58, 3), 255, dtype=np.uint8)
+        gray = np.full((60, 58), 255, dtype=np.uint8)
+        thresholded = np.full((60, 58), 255, dtype=np.uint8)
+        resized = np.full((180, 174), 255, dtype=np.uint8)
+        resized_rgb = np.full((180, 174, 3), 255, dtype=np.uint8)
+        with (
+            patch.object(
+                lap_detector.cv2,
+                "cvtColor",
+                side_effect=[gray, resized_rgb] * 3,
+            ),
+            patch.object(
+                lap_detector.cv2,
+                "threshold",
+                return_value=(200, thresholded),
+            ),
+            patch.object(lap_detector.cv2, "resize", return_value=resized),
+            patch.object(
+                lap_detector.Image,
+                "fromarray",
+                side_effect=lambda image: image,
+            ),
+        ):
+            for _ in range(3):
+                lap_number = detector.extract_lap_number(frame)
+
+        self.assertEqual(lap_number, 5)
+        self.assertEqual(detector._tesserocr_api.images[-1].shape, (180, 174, 3))
+
+
 @unittest.skipUnless(lap_detector.USE_TESSEROCR, "tesserocr is not available")
 class TestSpeedOCRMode(unittest.TestCase):
     def make_detector(self, api):

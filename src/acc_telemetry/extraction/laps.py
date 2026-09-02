@@ -168,22 +168,31 @@ class LapDetector:
             self._total_frames_processed += 1
             self._recognition_calls += 1
         
-        # Run OCR directly on raw BGR ROI
-        # No preprocessing needed - Tesseract handles color images perfectly
+        gray = cv2.cvtColor(roi, cv2.COLOR_BGR2GRAY)
+        _, thresholded = cv2.threshold(gray, 200, 255, cv2.THRESH_BINARY)
+        resized = cv2.resize(
+            thresholded,
+            (thresholded.shape[1] * 3, thresholded.shape[0] * 3),
+            interpolation=cv2.INTER_CUBIC,
+        )
+
         try:
             import time
             ocr_start = time.time()
             
             if self._tesserocr_api:
                 # Fast path: tesserocr (1-2ms)
-                roi_rgb = cv2.cvtColor(roi, cv2.COLOR_BGR2RGB)
+                roi_rgb = cv2.cvtColor(resized, cv2.COLOR_GRAY2RGB)
                 pil_image = Image.fromarray(roi_rgb)
                 self._tesserocr_api.SetImage(pil_image)
                 text = self._tesserocr_api.GetUTF8Text()
             else:
                 # Slow path: pytesseract (50ms)
                 import pytesseract
-                text = pytesseract.image_to_string(roi, config=self.tesseract_config_lap)
+                text = pytesseract.image_to_string(
+                    resized,
+                    config=self.tesseract_config_lap,
+                )
             
             ocr_time = (time.time() - ocr_start) * 1000
             text = text.strip()
