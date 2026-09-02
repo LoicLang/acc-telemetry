@@ -16,14 +16,15 @@ change. Use `git log` for authoritative commit hashes and dates.
 
 ## Current objective
 
-Review the newly established repository memory before resuming ACC telemetry
-development.
+Validate native 1080p telemetry input and isolate the first invalid transition in
+`s` before selecting a production correction.
 
-- Active milestone: ACC telemetry reliability review
-- Status: awaiting review with Loïc
+- Active milestone: native 1080p baseline and `s` diagnostics
+- Status: design approved; specification awaiting review
+- Active specification: `docs/superpowers/specs/2026-09-02-native-1080-and-s-diagnostics-design.md`
 - Active plan: none
 - Last completed plan: `docs/superpowers/plans/2026-09-02-agent-handoff-documentation.md`
-- Technical ACC implementation: blocked pending this review
+- Technical ACC implementation: limited to the approved profile and diagnostic slice
 - Documentation milestone: verified complete
 
 ## Resume here
@@ -103,6 +104,13 @@ machine:
 - `data/sessions/2026/2026-09-01_spa_ps5_capture-test/processed/telemetry_20260901_182913.csv`
 - `data/sessions/2026/2026-09-01_spa_ps5_braking-baseline-aborted/session.yaml`
 
+New immutable external captures for the active milestone:
+
+- `/Users/loiclang/Movies/2026-09-02 21-55-05.mov`: primary clean BMW session,
+  1920x1080/60 FPS, 2326.033333 seconds, at least 12 visible laps;
+- `/Users/loiclang/Movies/2026-09-02 22-40-01.mov`: secondary robustness session,
+  1920x1080/60 FPS, 1137.016667 seconds, recent car change and crashes.
+
 Verify these paths exist before using them. Their summarized findings above are the
 durable repository record; personal videos and full telemetry exports must not be
 committed.
@@ -119,5 +127,6 @@ pass on controlled Spa evidence.
 
 ## Current next action
 
-Review this status and `docs/acc-ps5-plan.md` with Loïc. Only after that review
-should an agent draft or execute the detailed technical ACC implementation plan.
+Review the active 1080p and `s` diagnostic specification with Loïc. After approval,
+write its test-driven implementation plan. Stop again after the 1080p measurement and
+root-cause diagnostic, before implementing a production correction for `s`.
