@@ -176,12 +176,12 @@ git commit -m "feat: add PS5 native 1080p profile"
 - Modify: `docs/current-status.md`
 - Modify: `docs/acc-ps5-plan.md` only if the baseline decision changes
 
-- [ ] **Step 1: Create ignored evidence directories**
+- [x] **Step 1: Create ignored evidence directories**
 
 Create `native/`, `control-720p/`, and `reports/` below the local lab directory. Do
 not copy or modify the source video.
 
-- [ ] **Step 2: Extract identical checkpoints**
+- [x] **Step 2: Extract identical checkpoints**
 
 Use the clean BMW source and timestamps after known lap crossings:
 
@@ -192,7 +192,7 @@ Use the clean BMW source and timestamps after known lap crossings:
 For each timestamp, save one native PNG and one `1280x720` Lanczos downscale of the
 same frame under the ignored lab directory.
 
-- [ ] **Step 3: Record visible ground truth**
+- [x] **Step 3: Record visible ground truth**
 
 Create ignored `reports/ground-truth.csv` with columns:
 
@@ -203,7 +203,7 @@ timestamp_s,lap_number,last_lap_time,speed,gear
 Read values from the native frame. Use an empty field when a HUD value is genuinely
 not displayed; do not infer it.
 
-- [ ] **Step 3a: Calibrate OCR regions and preprocessing from RED tests**
+- [x] **Step 3a: Calibrate OCR regions and preprocessing from RED tests**
 
 Real-frame sampling established two concrete gaps in the seeded profile:
 
@@ -216,21 +216,21 @@ Update the exact profile tests and add a lap-number preprocessing test before ch
 configuration or production OCR behavior. Commit calibration and preprocessing as
 separate coherent changes.
 
-- [ ] **Step 4: Run both profiles**
+- [x] **Step 4: Run both profiles**
 
 For each checkpoint, instantiate a fresh `LapDetector`. Feed the same frame 15 times
 for lap-number consensus, then record lap number, last-lap time, speed, and gear.
 Write ignored `reports/ocr-results.csv` with `resolution`, `profile`, timestamp,
 expected values, actual values, and exact-match booleans.
 
-- [ ] **Step 5: Decide the capture baseline**
+- [x] **Step 5: Decide the capture baseline**
 
 Compute exact-match totals. Mark 1080p validated only if all configured regions are
 visually correct, map extraction succeeds on sampled frames, and OCR is measurably
 better or more complete than the downscaled control. Otherwise keep 1080p as a
 supported experimental profile and document the failing fields.
 
-- [ ] **Step 6: Commit only the durable conclusion**
+- [x] **Step 6: Commit only the durable conclusion**
 
 Update current status and, if warranted, the durable ACC plan. Run documentation and
 full tests. Never commit frames, videos, or full OCR reports.

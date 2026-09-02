@@ -53,9 +53,15 @@ Validate native 1080p telemetry input and isolate the first invalid transition i
 - OCR runtime prerequisite: verified. `LapDetector` now discovers
   `data/shared/tessdata/eng.traineddata`, and the real tesserocr backend initializes
   successfully without a separate system Tesseract installation.
-- Native 1080p profile: implemented and configuration-tested as
-  `ps5_full_map_1080p`; real OCR accuracy is not validated yet.
-- Native-versus-downscaled OCR comparison: not run yet.
+- Native 1080p profile: validated as `ps5_full_map_1080p` on ten manually
+  annotated checkpoints from the clean BMW session.
+- Native-versus-downscaled OCR comparison: complete. Native 1080p scored 10/10
+  exact matches for lap number, last-lap time, speed, and gear. The identical
+  Lanczos-downscaled 720p frames scored 9/10 for lap number, 0/10 for last-lap
+  time, and 10/10 for speed and gear.
+- Capture baseline decision: use native 1920x1080/60 FPS for future ACC sessions.
+- OCR calibration finding: a tighter last-lap-time crop and thresholded 3x
+  lap-number preprocessing were required; resolution alone was not sufficient.
 - Position diagnostic trace: not implemented yet.
 
 Verification for the documentation milestone:
@@ -120,6 +126,11 @@ New immutable external captures for the active milestone:
   1920x1080/60 FPS, 2326.033333 seconds, at least 12 visible laps;
 - `/Users/loiclang/Movies/2026-09-02 22-40-01.mov`: secondary robustness session,
   1920x1080/60 FPS, 1137.016667 seconds, recent car change and crashes.
+
+Ignored local A/B evidence:
+
+- `data/lab/2026-09-02_native-1080-ocr/reports/ground-truth.csv`
+- `data/lab/2026-09-02_native-1080-ocr/reports/ocr-results.csv`
 
 Verify these paths exist before using them. Their summarized findings above are the
 durable repository record; personal videos and full telemetry exports must not be

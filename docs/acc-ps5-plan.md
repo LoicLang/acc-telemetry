@@ -11,7 +11,7 @@ Last verified: 2026-09-02
 
 ## Current state
 
-- capture_status: validated
+- capture_status: native_1080p60_validated
 - controls_speed_gears_status: usable
 - track_path_extraction_status: usable
 - s_status: failed_validation
@@ -25,10 +25,20 @@ active product direction until the three stage gates below pass.
 
 ## Validated baseline
 
-The validated input is a 1280x720, constant 60 FPS ACC PS5 recording with the static
-full-map HUD. The extractor can recover the map path, controls, speed, gears, lap
-observations, and red-dot observations. This validates the capture and extraction
-inputs; it does not validate the derived longitudinal coordinate.
+The validated input is now a native 1920x1080, constant 60 FPS ACC PS5 recording with
+the static full-map HUD and the explicit `ps5_full_map_1080p` profile. The extractor
+can recover the map path, controls, speed, gears, lap observations, and red-dot
+observations. This validates the capture and extraction inputs; it does not validate
+the derived longitudinal coordinate.
+
+On ten manually annotated frames from the clean 2026-09-02 BMW session, native 1080p
+produced 10/10 exact matches for lap number, last-lap time, speed, and gear. The same
+frames downscaled to 720p produced 9/10 lap-number matches, 0/10 last-lap-time matches,
+and 10/10 speed and gear matches. Native 1080p60 is therefore the capture baseline for
+future sessions. The 720p profile remains supported for historical recordings.
+
+The result required calibrated regions and thresholded 3x lap-number preprocessing;
+file resolution alone did not fix OCR.
 
 `s` is intended to represent normalized progress along the extracted minimap path,
 from `0.0` at a confirmed lap start to `1.0` near the next confirmed crossing. Legacy
