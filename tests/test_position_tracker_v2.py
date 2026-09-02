@@ -8,7 +8,7 @@ from unittest.mock import MagicMock, patch
 # Add src to path
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../src')))
 
-from position_tracker_v2 import PositionTrackerV2
+from position_tracker_v2 import PositionDecision, PositionTrackerV2
 
 class TestPositionTrackerV2(unittest.TestCase):
     def setUp(self):
@@ -49,12 +49,29 @@ class TestPositionTrackerV2(unittest.TestCase):
         self.assertEqual(pos, 0.0)
         self.assertFalse(self.tracker.lap_just_started)
         self.assertEqual(self.tracker.start_position, (10, 0))
+        diagnostic = self.tracker.get_last_position_diagnostic()
+        self.assertEqual(diagnostic.dot_position, (10, 0))
+        self.assertEqual(diagnostic.closest_idx, 10)
+        self.assertEqual(diagnostic.start_idx, 10)
+        self.assertEqual(diagnostic.start_source, "lap_transition")
+        self.assertEqual(diagnostic.raw_position, 0.0)
+        self.assertEqual(diagnostic.validated_position, 0.0)
+        self.assertEqual(diagnostic.decision, PositionDecision.LAP_RESET)
         
         # 3. Second frame: dot at (20, 0) - moved 10 pixels = 2.5% of 400
         self.tracker.detect_red_dot.return_value = (20, 0)
         pos = self.tracker.extract_position(np.zeros((100,100,3), dtype=np.uint8))
         
         self.assertAlmostEqual(pos, 2.5, delta=0.1)
+        diagnostic = self.tracker.get_last_position_diagnostic()
+        self.assertEqual(diagnostic.dot_position, (20, 0))
+        self.assertEqual(diagnostic.closest_idx, 20)
+        self.assertEqual(diagnostic.start_idx, 10)
+        self.assertEqual(diagnostic.start_source, "lap_transition")
+        self.assertAlmostEqual(diagnostic.raw_position, 2.5, delta=0.1)
+        self.assertFalse(diagnostic.completion_forced)
+        self.assertAlmostEqual(diagnostic.validated_position, 2.5, delta=0.1)
+        self.assertEqual(diagnostic.decision, PositionDecision.OBSERVED)
         
         # 4. Trigger lap reset
         self.tracker.reset_for_new_lap()
@@ -201,6 +218,88 @@ class TestPositionTrackerV2(unittest.TestCase):
 
         self.assertEqual(pos, 1.0)
         self.assertEqual(self.tracker.last_position, 1.0)
+
+    def test_diagnostic_marks_missing_position_as_held(self):
+        self.tracker.start_position = (0, 0)
+        self.tracker.start_idx = 0
+        self.tracker.start_source = "geometric"
+        self.tracker.travel_direction = 1
+        self.tracker.last_position = 12.0
+        self.tracker.detect_red_dot.return_value = None
+
+        position = self.tracker.extract_position(np.zeros((1, 1), dtype=np.uint8))
+
+        self.assertEqual(position, 12.0)
+        self.assertEqual(
+            self.tracker.get_last_position_diagnostic().decision,
+            PositionDecision.MISSING_HELD,
+        )
+
+    def test_diagnostic_marks_backward_position_as_held(self):
+        self.tracker.start_position = (0, 0)
+        self.tracker.start_idx = 0
+        self.tracker.start_source = "geometric"
+        self.tracker.travel_direction = 1
+        self.tracker.last_position = 10.0
+        self.tracker.detect_red_dot.return_value = (20, 0)
+
+        position = self.tracker.extract_position(np.zeros((1, 1), dtype=np.uint8))
+
+        self.assertEqual(position, 10.0)
+        diagnostic = self.tracker.get_last_position_diagnostic()
+        self.assertAlmostEqual(diagnostic.raw_position, 5.0, delta=0.1)
+        self.assertEqual(diagnostic.decision, PositionDecision.BACKWARD_HELD)
+
+    def test_diagnostic_marks_large_jump_as_clamped(self):
+        self.tracker.start_position = (0, 0)
+        self.tracker.start_idx = 0
+        self.tracker.start_source = "geometric"
+        self.tracker.travel_direction = 1
+        self.tracker.last_position = 0.0
+        self.tracker.max_jump_per_frame = 1.0
+        self.tracker.detect_red_dot.return_value = (20, 0)
+
+        position = self.tracker.extract_position(np.zeros((1, 1), dtype=np.uint8))
+
+        self.assertEqual(position, 1.0)
+        self.assertEqual(
+            self.tracker.get_last_position_diagnostic().decision,
+            PositionDecision.JUMP_CLAMPED,
+        )
+
+    def test_diagnostic_marks_smoothed_position(self):
+        self.tracker.start_position = (0, 0)
+        self.tracker.start_idx = 0
+        self.tracker.start_source = "geometric"
+        self.tracker.travel_direction = 1
+        self.tracker.last_position = 10.0
+        self.tracker.max_jump_per_frame = 5.0
+        self.tracker.detect_red_dot.return_value = (44, 0)
+
+        position = self.tracker.extract_position(np.zeros((1, 1), dtype=np.uint8))
+
+        self.assertAlmostEqual(position, 10.8, delta=0.1)
+        self.assertEqual(
+            self.tracker.get_last_position_diagnostic().decision,
+            PositionDecision.SMOOTHED,
+        )
+
+    def test_diagnostic_exposes_forced_completion(self):
+        self.tracker.start_position = (0, 0)
+        self.tracker.start_idx = 0
+        self.tracker.start_source = "geometric"
+        self.tracker.travel_direction = 1
+        self.tracker.last_position = 96.0
+        self.tracker.max_jump_per_frame = 5.0
+        self.tracker.detect_red_dot.return_value = (40, 0)
+
+        position = self.tracker.extract_position(np.zeros((1, 1), dtype=np.uint8))
+
+        self.assertAlmostEqual(position, 99.8, delta=0.1)
+        diagnostic = self.tracker.get_last_position_diagnostic()
+        self.assertAlmostEqual(diagnostic.raw_position, 10.0, delta=0.1)
+        self.assertTrue(diagnostic.completion_forced)
+        self.assertEqual(diagnostic.decision, PositionDecision.FORCED_COMPLETION)
 
 if __name__ == '__main__':
     unittest.main()

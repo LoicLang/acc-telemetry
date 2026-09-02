@@ -62,7 +62,10 @@ Validate native 1080p telemetry input and isolate the first invalid transition i
 - Capture baseline decision: use native 1920x1080/60 FPS for future ACC sessions.
 - OCR calibration finding: a tighter last-lap-time crop and thresholded 3x
   lap-number preprocessing were required; resolution alone was not sufficient.
-- Position diagnostic trace: not implemented yet.
+- Position diagnostic contract: implemented and unit-tested. It exposes dot,
+  closest index, anchor source, direction, raw position, forced completion,
+  validated position, and decision without changing legacy numeric output.
+- Full clean-session position trace: not collected yet.
 
 Verification for the documentation milestone:
 

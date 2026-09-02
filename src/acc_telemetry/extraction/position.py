@@ -11,9 +11,40 @@ Addresses the fundamental issues with the original implementation:
 Author: ACC Telemetry Extractor
 """
 
+from dataclasses import dataclass
+from enum import StrEnum
+from typing import Optional, Tuple, List, Dict
+
 import cv2
 import numpy as np
-from typing import Optional, Tuple, List, Dict
+
+
+class PositionDecision(StrEnum):
+    """How one position output was produced."""
+
+    NOT_READY = "not_ready"
+    LAP_RESET = "lap_reset"
+    OBSERVED = "observed"
+    MISSING_HELD = "missing_held"
+    BACKWARD_HELD = "backward_held"
+    JUMP_CLAMPED = "jump_clamped"
+    SMOOTHED = "smoothed"
+    FORCED_COMPLETION = "forced_completion"
+
+
+@dataclass(frozen=True)
+class PositionDiagnostic:
+    """Evidence behind the most recent position output."""
+
+    dot_position: tuple[int, int] | None
+    closest_idx: int | None
+    start_idx: int
+    start_source: str
+    travel_direction: int | None
+    raw_position: float | None
+    completion_forced: bool
+    validated_position: float
+    decision: PositionDecision
 
 
 class PositionTrackerV2:
@@ -51,12 +82,24 @@ class PositionTrackerV2:
         self.total_track_length: float = 0.0  # Total arc length of racing line (cached)
         self.start_position: Optional[Tuple[int, int]] = None  # (x, y) where lap starts (set on lap change)
         self.start_idx: int = 0  # Index in track_path closest to start_position (cached for performance)
+        self.start_source: str = "unavailable"
         self.track_center: Optional[Tuple[float, float]] = None  # (x, y) center of track
         self.last_position: float = 0.0
         self.travel_direction: Optional[int] = None
         self.path_extracted: bool = False
         self.validation_passed: bool = False
         self.lap_just_started: bool = False  # Flag to capture start position on next detection
+        self._last_position_diagnostic = PositionDiagnostic(
+            dot_position=None,
+            closest_idx=None,
+            start_idx=0,
+            start_source="unavailable",
+            travel_direction=None,
+            raw_position=None,
+            completion_forced=False,
+            validated_position=0.0,
+            decision=PositionDecision.NOT_READY,
+        )
 
         # Simple validation parameters
         self.max_jump_per_frame = max_jump_per_frame  # Max forward jump allowed (%)
@@ -236,6 +279,7 @@ class PositionTrackerV2:
             print(f"      ✅ Start/finish line detected at index {start_line_idx} (confidence: {start_line_confidence:.2f})")
             self.start_idx = start_line_idx
             self.start_position = self.track_path[start_line_idx]
+            self.start_source = "geometric"
             print(f"      ✅ Start position set to {self.start_position}")
 
             # STEP 5.6: Clean racing line by removing start/finish artifact
@@ -274,6 +318,7 @@ class PositionTrackerV2:
         else:
             print(f"      ⚠️  Could not detect start/finish line geometrically")
             print(f"      ℹ️  Start position will be set on first lap change")
+            self.start_source = "unavailable"
         
         # STEP 6: Validate extraction
         print(f"   Step 6: Validating path extraction...")
@@ -600,7 +645,13 @@ class PositionTrackerV2:
         if not self.track_path or len(self.track_path) == 0:
             return 0.0
 
-        # STEP 1: Find closest point on racing line to red dot
+        closest_idx = self._closest_path_index(dot_x, dot_y)
+        position = self._position_from_closest_index(closest_idx)
+        position, _ = self._apply_completion_handling(position)
+        return position
+
+    def _closest_path_index(self, dot_x: int, dot_y: int) -> int:
+        """Return the path index nearest to the detected red dot."""
         min_distance = float('inf')
         closest_idx = 0
 
@@ -613,20 +664,17 @@ class PositionTrackerV2:
                 min_distance = distance
                 closest_idx = i
 
-        position = self._position_from_closest_index(closest_idx)
+        return closest_idx
 
-        # STEP 5: Handle near-completion detection
-        # If position drops significantly from last_position when we're near 100%,
-        # it means we've crossed the start/finish line and should show 100% not <95%
+    def _apply_completion_handling(self, position: float) -> tuple[float, bool]:
+        """Apply legacy near-completion behavior and report whether it fired."""
+        completion_forced = False
         if self.last_position > 90.0 and position < 90.0 and (self.last_position - position) > 3.0:
-            # This is likely a lap completion - return 100% instead of wrapping back
-            # The lap number detector will trigger reset on next frame
             position = 100.0
+            completion_forced = True
 
-        # Clamp to valid range
         position = max(0.0, min(100.0, position))
-
-        return position
+        return position, completion_forced
 
     def _position_from_closest_index(self, closest_idx: int) -> float:
         """Convert a closest path index into a normalized position percentage."""
@@ -663,6 +711,17 @@ class PositionTrackerV2:
             Position percentage (0.0 - 100.0), validated for forward progress
         """
         if not self.path_extracted or not self.validation_passed:
+            self._last_position_diagnostic = PositionDiagnostic(
+                dot_position=None,
+                closest_idx=None,
+                start_idx=self.start_idx,
+                start_source=self.start_source,
+                travel_direction=self.travel_direction,
+                raw_position=None,
+                completion_forced=False,
+                validated_position=0.0,
+                decision=PositionDecision.NOT_READY,
+            )
             return 0.0
 
         # Detect red dot
@@ -670,23 +729,19 @@ class PositionTrackerV2:
 
         # Calculate raw position (if red dot detected)
         raw_position = None
+        closest_idx = None
+        completion_forced = False
         if dot_position is not None:
             dot_x, dot_y = dot_position
+            closest_idx = self._closest_path_index(dot_x, dot_y)
 
             # If lap just started, set current position as new start point
             if self.lap_just_started:
                 # Set the red dot position as the start position
                 self.start_position = (dot_x, dot_y)
 
-                # Find and cache the start_idx (closest point on track_path to start_position)
-                min_distance = float('inf')
-                for i, (px, py) in enumerate(self.track_path):
-                    dx = dot_x - px
-                    dy = dot_y - py
-                    distance = dx*dx + dy*dy
-                    if distance < min_distance:
-                        min_distance = distance
-                        self.start_idx = i
+                self.start_idx = closest_idx
+                self.start_source = "lap_transition"
 
                 self.lap_just_started = False
                 self.travel_direction = None
@@ -695,13 +750,43 @@ class PositionTrackerV2:
 
                 # Return 0.0 for the first frame of new lap
                 self.last_position = 0.0
+                self._last_position_diagnostic = PositionDiagnostic(
+                    dot_position=dot_position,
+                    closest_idx=closest_idx,
+                    start_idx=self.start_idx,
+                    start_source=self.start_source,
+                    travel_direction=self.travel_direction,
+                    raw_position=0.0,
+                    completion_forced=False,
+                    validated_position=0.0,
+                    decision=PositionDecision.LAP_RESET,
+                )
                 return 0.0
 
-            # Calculate raw position normally
-            raw_position = self.calculate_position(dot_x, dot_y)
+            raw_position = self._position_from_closest_index(closest_idx)
+            handled_position, completion_forced = self._apply_completion_handling(
+                raw_position
+            )
+        else:
+            handled_position = None
 
-        # Apply simple validation
-        return self._validate_position(raw_position)
+        validated_position, decision = self._validate_position_with_decision(
+            handled_position
+        )
+        if completion_forced:
+            decision = PositionDecision.FORCED_COMPLETION
+        self._last_position_diagnostic = PositionDiagnostic(
+            dot_position=dot_position,
+            closest_idx=closest_idx,
+            start_idx=self.start_idx,
+            start_source=self.start_source,
+            travel_direction=self.travel_direction,
+            raw_position=raw_position,
+            completion_forced=completion_forced,
+            validated_position=validated_position,
+            decision=decision,
+        )
+        return validated_position
 
     def _save_path_visualization(self, map_roi: np.ndarray, cleaned_mask: np.ndarray) -> None:
         """
@@ -896,34 +981,29 @@ class PositionTrackerV2:
 
         return cleaned
 
-    def _validate_position(self, raw_position: Optional[float]) -> float:
-        """
-        Validate raw position measurements while preserving smooth forward motion.
-
-        Args:
-            raw_position: Raw position measurement (0-100%), or None if no detection
-
-        Returns:
-            Raw position (0-100%) or last position if no detection
-        """
+    def _validate_position_with_decision(
+        self,
+        raw_position: Optional[float],
+    ) -> tuple[float, PositionDecision]:
+        """Validate a position and explain the resulting decision."""
         if raw_position is None:
-            return self.last_position
+            return self.last_position, PositionDecision.MISSING_HELD
 
         if self.last_position > 95.0 and raw_position < 5.0:
             self.last_position = raw_position
-            return raw_position
+            return raw_position, PositionDecision.OBSERVED
 
         if raw_position < self.last_position:
-            return self.last_position
+            return self.last_position, PositionDecision.BACKWARD_HELD
 
         jump = raw_position - self.last_position
         if jump > self.max_jump_per_frame:
             self.last_position += self.max_jump_per_frame
-            return self.last_position
+            return self.last_position, PositionDecision.JUMP_CLAMPED
 
         if self.last_position == 0.0:
             self.last_position = raw_position
-            return raw_position
+            return raw_position, PositionDecision.OBSERVED
 
         alpha = 0.3
         smoothed_position = (alpha * raw_position) + ((1.0 - alpha) * self.last_position)
@@ -931,7 +1011,12 @@ class PositionTrackerV2:
             smoothed_position = raw_position - 0.2
 
         self.last_position = smoothed_position
-        return smoothed_position
+        return smoothed_position, PositionDecision.SMOOTHED
+
+    def _validate_position(self, raw_position: Optional[float]) -> float:
+        """Compatibility wrapper returning only the validated numeric value."""
+        position, _ = self._validate_position_with_decision(raw_position)
+        return position
     
     def reset_for_new_lap(self) -> None:
         """
@@ -950,6 +1035,10 @@ class PositionTrackerV2:
             True if track path has been extracted and validated
         """
         return self.path_extracted and self.validation_passed and self.track_path is not None
+
+    def get_last_position_diagnostic(self) -> PositionDiagnostic:
+        """Return evidence for the most recent `extract_position` call."""
+        return self._last_position_diagnostic
     
     def get_debug_info(self) -> Dict:
         """
@@ -965,6 +1054,7 @@ class PositionTrackerV2:
             'total_path_pixels': self.total_path_pixels,
             'total_track_length': self.total_track_length,
             'start_position': self.start_position,
+            'start_source': self.start_source,
             'track_center': self.track_center,
             'last_position': self.last_position,
             'travel_direction': self.travel_direction,

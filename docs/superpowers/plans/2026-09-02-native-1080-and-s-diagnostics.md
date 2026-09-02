@@ -248,7 +248,7 @@ Omit an unchanged file from `git add`.
 - Modify: `src/acc_telemetry/extraction/position.py`
 - Modify: `tests/test_position_tracker_v2.py`
 
-- [ ] **Step 1: Write failing diagnostic-contract tests**
+- [x] **Step 1: Write failing diagnostic-contract tests**
 
 Define the intended extraction-local contract in tests:
 
@@ -267,7 +267,7 @@ self.assertEqual(diagnostic.decision, PositionDecision.OBSERVED)
 Add focused cases for `LAP_RESET`, `MISSING_HELD`, `BACKWARD_HELD`, `JUMP_CLAMPED`,
 `SMOOTHED`, and `FORCED_COMPLETION`. Existing numeric behavior assertions remain.
 
-- [ ] **Step 2: Run the tests and confirm RED**
+- [x] **Step 2: Run the tests and confirm RED**
 
 Run:
 
@@ -277,7 +277,7 @@ PYTHONPATH=src .venv/bin/python -m unittest tests.test_position_tracker_v2 -v
 
 Expected: missing `PositionDecision` and `get_last_position_diagnostic`.
 
-- [ ] **Step 3: Add the diagnostic types**
+- [x] **Step 3: Add the diagnostic types**
 
 Add extraction-local immutable types:
 
@@ -309,14 +309,14 @@ class PositionDiagnostic:
 Track `start_source` as `geometric`, `lap_transition`, or `unavailable`. Store the
 latest diagnostic after every `extract_position` call.
 
-- [ ] **Step 4: Refactor calculation without changing numeric behavior**
+- [x] **Step 4: Refactor calculation without changing numeric behavior**
 
 Extract a closest-index helper and a validation helper returning `(value, decision)`.
 Keep `calculate_position()` and `_validate_position()` as compatibility wrappers.
 `extract_position()` records raw projection before completion handling and the final
 decision afterward.
 
-- [ ] **Step 5: Verify compatibility and commit**
+- [x] **Step 5: Verify compatibility and commit**
 
 Run position tests and the full suite. Commit only position code and tests:
 
