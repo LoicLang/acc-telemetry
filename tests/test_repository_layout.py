@@ -150,7 +150,8 @@ class TestRepositoryLayout(unittest.TestCase):
             "Active plan: `docs/superpowers/plans/2026-09-03-generic-s-fusion.md`",
             status,
         )
-        self.assertIn("user validation required", status)
+        self.assertIn("implementation in progress", status)
+        self.assertIn("Task 1 complete; Task 2 is next", status)
 
 
 if __name__ == "__main__":

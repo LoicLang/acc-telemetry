@@ -20,12 +20,12 @@ Prepare the implementation of a circuit-generic fused `s`, using Spa as the firs
 validation dataset.
 
 - Active milestone: generic fused `s` production correction
-- Status: detailed TDD implementation plan drafted; user validation required
+- Status: implementation in progress on `feature/generic-s-fusion`
 - Active specification: `docs/superpowers/specs/2026-09-03-generic-s-fusion-design.md`
 - Active plan: `docs/superpowers/plans/2026-09-03-generic-s-fusion.md`
 - Last completed technical plan: `docs/superpowers/plans/2026-09-02-native-1080-and-s-diagnostics.md`
 - Last completed plan: `docs/superpowers/plans/2026-09-02-agent-handoff-documentation.md`
-- Technical ACC implementation: blocked until the user validates the active TDD plan
+- Technical ACC implementation: Task 1 complete; Task 2 is next
 - Documentation milestone: verified complete
 
 ## Resume here
@@ -55,6 +55,10 @@ validation dataset.
 - The ACC PS5 plan was corrected from the 2026-09-01 evidence in commit `457a1e1`.
 
 ## Active milestone progress
+
+- Generic progress contracts and validated circuit-independent settings are implemented
+  on `feature/generic-s-fusion`. The Task 1 RED tests failed on the missing contracts
+  and settings; focused tests and the full 83-test suite then passed GREEN.
 
 - OCR runtime prerequisite: verified. `LapDetector` now discovers
   `data/shared/tessdata/eng.traineddata`, and the real tesserocr backend initializes
@@ -242,6 +246,6 @@ gates pass on controlled Spa evidence.
 
 ## Current next action
 
-Review `docs/superpowers/plans/2026-09-03-generic-s-fusion.md` with the user. After
-explicit validation, begin Task 1 and keep the active-plan checkboxes synchronized;
-do not modify production position behavior before that validation.
+Begin Task 2 in `docs/superpowers/plans/2026-09-03-generic-s-fusion.md`: write the
+failing speed-integration tests, confirm RED, then implement the independent
+`s_odometry` baseline before any visual work.

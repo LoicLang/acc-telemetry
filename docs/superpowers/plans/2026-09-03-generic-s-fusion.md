@@ -118,7 +118,7 @@ All normalized `s` values and uncertainty values use `[0, 1]`. Wrapped deltas us
 - Modify: `tests/test_configuration.py`
 - Create: `tests/test_progress_contract.py`
 
-- [ ] **Step 1: Write failing contract and settings tests**
+- [x] **Step 1: Write failing contract and settings tests**
 
 Add tests that instantiate the exact dataclasses above, reject `ProgressEstimate` values outside `[0, 1]`, and assert these settings load:
 
@@ -153,7 +153,7 @@ progress:
 
 Test that zero/negative durations, fractions outside `[0, 1]`, `min_area_fraction >= max_area_fraction`, and `visual_gain > 1` raise `ConfigurationError` naming the exact key.
 
-- [ ] **Step 2: Run the tests and confirm RED**
+- [x] **Step 2: Run the tests and confirm RED**
 
 Run:
 
@@ -163,7 +163,7 @@ PYTHONPATH=src .venv/bin/python -m unittest tests.test_progress_contract tests.t
 
 Expected: FAIL because `acc_telemetry.domain.progress` and `TelemetrySettings.progress` do not exist.
 
-- [ ] **Step 3: Add the immutable contracts and nested validated settings**
+- [x] **Step 3: Add the immutable contracts and nested validated settings**
 
 Implement `ProgressEstimate.__post_init__` with explicit range checks:
 
@@ -181,7 +181,7 @@ def __post_init__(self) -> None:
 
 Represent each settings group as a frozen dataclass. Extend `load_settings()` with `_fraction()` and `_positive()` helpers so every threshold is validated centrally. Export only domain types from `domain/__init__.py`; do not import application or OpenCV code there.
 
-- [ ] **Step 4: Run focused and full tests and confirm GREEN**
+- [x] **Step 4: Run focused and full tests and confirm GREEN**
 
 Run:
 
@@ -192,7 +192,7 @@ PYTHONPATH=src .venv/bin/python -m unittest discover -s tests -v
 
 Expected: all tests pass and existing 720p/1080p settings still load.
 
-- [ ] **Step 5: Commit the contract**
+- [x] **Step 5: Commit the contract**
 
 ```bash
 git add config/telemetry.yaml src/acc_telemetry/domain/progress.py src/acc_telemetry/domain/__init__.py src/acc_telemetry/application/config.py tests/test_progress_contract.py tests/test_configuration.py

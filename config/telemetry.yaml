@@ -11,3 +11,30 @@ normalization:
   speed_max_kmh: 400
   pedal_min_percent: 0
   pedal_max_percent: 100
+
+progress:
+  odometry:
+    max_interpolation_gap_s: 0.25
+    observed_uncertainty_per_s: 0.00005
+    interpolated_uncertainty_per_s: 0.001
+  candidates:
+    min_area_fraction: 0.00002
+    max_area_fraction: 0.005
+    min_circularity: 0.35
+  centerline:
+    max_branch_length_fraction: 0.03
+    min_cycle_diagonal_fraction: 2.0
+    resample_spacing_diagonal_fraction: 0.0025
+  projection:
+    max_centerline_distance_diagonal_fraction: 0.03
+    max_progress_error: 0.04
+    min_score_margin: 0.15
+  fusion:
+    visual_gain: 0.35
+    short_visual_gap_s: 0.5
+    unavailable_uncertainty: 0.05
+  lap_confirmation:
+    consecutive_observations: 5
+  calibration:
+    max_missing_speed_fraction: 0.01
+    max_relative_mad: 0.03

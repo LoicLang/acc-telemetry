@@ -33,6 +33,63 @@ class NormalizationSettings:
 
 
 @dataclass(frozen=True)
+class OdometrySettings:
+    max_interpolation_gap_s: float
+    observed_uncertainty_per_s: float
+    interpolated_uncertainty_per_s: float
+
+
+@dataclass(frozen=True)
+class CandidateSettings:
+    min_area_fraction: float
+    max_area_fraction: float
+    min_circularity: float
+
+
+@dataclass(frozen=True)
+class CenterlineSettings:
+    max_branch_length_fraction: float
+    min_cycle_diagonal_fraction: float
+    resample_spacing_diagonal_fraction: float
+
+
+@dataclass(frozen=True)
+class ProjectionSettings:
+    max_centerline_distance_diagonal_fraction: float
+    max_progress_error: float
+    min_score_margin: float
+
+
+@dataclass(frozen=True)
+class FusionSettings:
+    visual_gain: float
+    short_visual_gap_s: float
+    unavailable_uncertainty: float
+
+
+@dataclass(frozen=True)
+class LapConfirmationSettings:
+    consecutive_observations: int
+
+
+@dataclass(frozen=True)
+class CalibrationSettings:
+    max_missing_speed_fraction: float
+    max_relative_mad: float
+
+
+@dataclass(frozen=True)
+class ProgressSettings:
+    odometry: OdometrySettings
+    candidates: CandidateSettings
+    centerline: CenterlineSettings
+    projection: ProjectionSettings
+    fusion: FusionSettings
+    lap_confirmation: LapConfirmationSettings
+    calibration: CalibrationSettings
+
+
+@dataclass(frozen=True)
 class ProfileSettings:
     name: str
     rois: Mapping[str, Mapping[str, int]]
@@ -46,6 +103,7 @@ class TelemetrySettings:
     position: PositionSettings
     ocr: OCRSettings
     normalization: NormalizationSettings
+    progress: ProgressSettings
     profiles: Mapping[str, ProfileSettings]
 
     def profile(self, name: str) -> ProfileSettings:
@@ -69,6 +127,28 @@ def _number(mapping: Mapping[str, Any], key: str, path: str) -> float:
     if isinstance(value, bool) or not isinstance(value, (int, float)):
         raise ConfigurationError(f"{path}.{key} must be numeric")
     return float(value)
+
+
+def _positive(mapping: Mapping[str, Any], key: str, path: str) -> float:
+    value = _number(mapping, key, path)
+    if value <= 0:
+        raise ConfigurationError(f"{path}.{key} must be positive")
+    return value
+
+
+def _fraction(
+    mapping: Mapping[str, Any],
+    key: str,
+    path: str,
+    *,
+    allow_zero: bool = False,
+) -> float:
+    value = _number(mapping, key, path)
+    lower_valid = value >= 0 if allow_zero else value > 0
+    if not lower_valid or value > 1:
+        interval = "[0, 1]" if allow_zero else "(0, 1]"
+        raise ConfigurationError(f"{path}.{key} must be in {interval}")
+    return value
 
 
 def _hsv(value: Any, path: str) -> tuple[int, int, int]:
@@ -119,6 +199,147 @@ def load_settings(root: Path | str | None = None) -> TelemetrySettings:
     if not 0 <= pedal_min < pedal_max <= 100:
         raise ConfigurationError("normalization pedal range is invalid")
 
+    progress_raw = _mapping(telemetry.get("progress"), "progress")
+    odometry_raw = _mapping(progress_raw.get("odometry"), "progress.odometry")
+    odometry = OdometrySettings(
+        max_interpolation_gap_s=_positive(
+            odometry_raw,
+            "max_interpolation_gap_s",
+            "progress.odometry",
+        ),
+        observed_uncertainty_per_s=_positive(
+            odometry_raw,
+            "observed_uncertainty_per_s",
+            "progress.odometry",
+        ),
+        interpolated_uncertainty_per_s=_positive(
+            odometry_raw,
+            "interpolated_uncertainty_per_s",
+            "progress.odometry",
+        ),
+    )
+
+    candidates_raw = _mapping(progress_raw.get("candidates"), "progress.candidates")
+    candidates = CandidateSettings(
+        min_area_fraction=_fraction(
+            candidates_raw,
+            "min_area_fraction",
+            "progress.candidates",
+        ),
+        max_area_fraction=_fraction(
+            candidates_raw,
+            "max_area_fraction",
+            "progress.candidates",
+        ),
+        min_circularity=_fraction(
+            candidates_raw,
+            "min_circularity",
+            "progress.candidates",
+        ),
+    )
+    if candidates.min_area_fraction >= candidates.max_area_fraction:
+        raise ConfigurationError(
+            "progress.candidates.min_area_fraction must be smaller than "
+            "progress.candidates.max_area_fraction"
+        )
+
+    centerline_raw = _mapping(progress_raw.get("centerline"), "progress.centerline")
+    centerline = CenterlineSettings(
+        max_branch_length_fraction=_fraction(
+            centerline_raw,
+            "max_branch_length_fraction",
+            "progress.centerline",
+        ),
+        min_cycle_diagonal_fraction=_positive(
+            centerline_raw,
+            "min_cycle_diagonal_fraction",
+            "progress.centerline",
+        ),
+        resample_spacing_diagonal_fraction=_fraction(
+            centerline_raw,
+            "resample_spacing_diagonal_fraction",
+            "progress.centerline",
+        ),
+    )
+
+    projection_raw = _mapping(progress_raw.get("projection"), "progress.projection")
+    projection = ProjectionSettings(
+        max_centerline_distance_diagonal_fraction=_fraction(
+            projection_raw,
+            "max_centerline_distance_diagonal_fraction",
+            "progress.projection",
+        ),
+        max_progress_error=_fraction(
+            projection_raw,
+            "max_progress_error",
+            "progress.projection",
+        ),
+        min_score_margin=_fraction(
+            projection_raw,
+            "min_score_margin",
+            "progress.projection",
+            allow_zero=True,
+        ),
+    )
+
+    fusion_raw = _mapping(progress_raw.get("fusion"), "progress.fusion")
+    fusion = FusionSettings(
+        visual_gain=_fraction(fusion_raw, "visual_gain", "progress.fusion"),
+        short_visual_gap_s=_positive(
+            fusion_raw,
+            "short_visual_gap_s",
+            "progress.fusion",
+        ),
+        unavailable_uncertainty=_fraction(
+            fusion_raw,
+            "unavailable_uncertainty",
+            "progress.fusion",
+        ),
+    )
+
+    confirmation_raw = _mapping(
+        progress_raw.get("lap_confirmation"),
+        "progress.lap_confirmation",
+    )
+    consecutive_observations = confirmation_raw.get("consecutive_observations")
+    if (
+        isinstance(consecutive_observations, bool)
+        or not isinstance(consecutive_observations, int)
+        or consecutive_observations <= 0
+    ):
+        raise ConfigurationError(
+            "progress.lap_confirmation.consecutive_observations must be a positive integer"
+        )
+    lap_confirmation = LapConfirmationSettings(consecutive_observations)
+
+    calibration_raw = _mapping(
+        progress_raw.get("calibration"),
+        "progress.calibration",
+    )
+    calibration = CalibrationSettings(
+        max_missing_speed_fraction=_fraction(
+            calibration_raw,
+            "max_missing_speed_fraction",
+            "progress.calibration",
+            allow_zero=True,
+        ),
+        max_relative_mad=_fraction(
+            calibration_raw,
+            "max_relative_mad",
+            "progress.calibration",
+            allow_zero=True,
+        ),
+    )
+    progress = ProgressSettings(
+        odometry=odometry,
+        candidates=candidates,
+        centerline=centerline,
+        projection=projection,
+        fusion=fusion,
+        lap_confirmation=lap_confirmation,
+        calibration=calibration,
+    )
+
     profiles: dict[str, ProfileSettings] = {}
     for name, raw_value in roi_profiles.items():
         raw = _mapping(raw_value, f"profiles.{name}")
@@ -165,5 +386,6 @@ def load_settings(root: Path | str | None = None) -> TelemetrySettings:
         position=PositionSettings(frequency_threshold, max_jump),
         ocr=OCRSettings(int(max_speed_delta), int(recovery_tolerance)),
         normalization=NormalizationSettings(speed_min, speed_max, pedal_min, pedal_max),
+        progress=progress,
         profiles=MappingProxyType(profiles),
     )
