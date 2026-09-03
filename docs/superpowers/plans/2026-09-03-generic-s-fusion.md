@@ -205,7 +205,7 @@ git commit -m "feat: define odometric progress contracts"
 - Create: `src/acc_telemetry/application/odometry.py`
 - Create: `tests/test_odometry.py`
 
-- [ ] **Step 1: Write failing integration tests**
+- [x] **Step 1: Write failing integration tests**
 
 Cover these exact cases with synthetic observations:
 
@@ -234,7 +234,7 @@ def test_never_integrates_negative_or_duplicate_time():
 
 Also assert: km/h is divided by 3.6; observed endpoints use trapezoidal integration; a missing speed across `0.2 s` is linearly interpolated and increases uncertainty; a missing speed across `0.3 s` adds no claimed distance and produces `MISSING`; anomalous speed is never treated as observed; uncertainty is monotonic during missing intervals.
 
-- [ ] **Step 2: Run the test and confirm RED**
+- [x] **Step 2: Run the test and confirm RED**
 
 ```bash
 PYTHONPATH=src .venv/bin/python -m unittest tests.test_odometry -v
@@ -242,7 +242,7 @@ PYTHONPATH=src .venv/bin/python -m unittest tests.test_odometry -v
 
 Expected: FAIL because `SpeedObservation`, `OdometryPoint`, and `integrate_speed()` do not exist.
 
-- [ ] **Step 3: Implement minimal timestamp-aware integration**
+- [x] **Step 3: Implement minimal timestamp-aware integration**
 
 Use immutable inputs and outputs:
 
@@ -266,7 +266,7 @@ class OdometryPoint:
 
 For each strictly positive `dt`, integrate `((v0 + v1) / 2) / 3.6 * dt` only when both endpoints are observed, or when a bounded internal gap can be explicitly interpolated. Keep distance unchanged for unavailable intervals; do not replace missing distance with zero-quality movement. Clamp uncertainty to `1.0`, not the signal.
 
-- [ ] **Step 4: Add RED/GREEN calibration tests**
+- [x] **Step 4: Add RED/GREEN calibration tests**
 
 Define complete laps only from pairs of `ConfirmedLapBoundary`. Test distances `[7000, 7010, 6990, 9100]`: the first three yield `effective_lap_length_m == 7000`, while the 9100 m crash/off-track outlier is rejected and reports `calibration_lap_rejected`. Reject laps with an unbounded speed gap, missing boundary, non-positive distance, or missing-speed fraction above configuration. A single accepted lap may normalize itself offline but must report higher calibration uncertainty; three accepted laps use the median and median absolute deviation.
 
@@ -278,7 +278,7 @@ PYTHONPATH=src .venv/bin/python -m unittest tests.test_odometry -v
 
 Expected RED: calibration symbols missing. Expected GREEN: exact integration and outlier-rejection assertions pass.
 
-- [ ] **Step 5: Run full tests and commit**
+- [x] **Step 5: Run full tests and commit**
 
 ```bash
 PYTHONPATH=src .venv/bin/python -m unittest discover -s tests -v

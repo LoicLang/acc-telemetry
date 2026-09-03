@@ -25,7 +25,7 @@ validation dataset.
 - Active plan: `docs/superpowers/plans/2026-09-03-generic-s-fusion.md`
 - Last completed technical plan: `docs/superpowers/plans/2026-09-02-native-1080-and-s-diagnostics.md`
 - Last completed plan: `docs/superpowers/plans/2026-09-02-agent-handoff-documentation.md`
-- Technical ACC implementation: Task 1 complete; Task 2 is next
+- Technical ACC implementation: Tasks 1-2 complete; Task 3 is next
 - Documentation milestone: verified complete
 
 ## Resume here
@@ -59,6 +59,10 @@ validation dataset.
 - Generic progress contracts and validated circuit-independent settings are implemented
   on `feature/generic-s-fusion`. The Task 1 RED tests failed on the missing contracts
   and settings; focused tests and the full 83-test suite then passed GREEN.
+- Independent speed odometry now integrates observed speed with trapezoidal `v * dt`,
+  interpolates only bounded internal gaps, preserves missing/anomalous evidence, and
+  calibrates effective lap length from robust boundary-to-boundary medians. Task 2
+  focused tests and the full 93-test suite pass.
 
 - OCR runtime prerequisite: verified. `LapDetector` now discovers
   `data/shared/tessdata/eng.traineddata`, and the real tesserocr backend initializes
@@ -246,6 +250,6 @@ gates pass on controlled Spa evidence.
 
 ## Current next action
 
-Begin Task 2 in `docs/superpowers/plans/2026-09-03-generic-s-fusion.md`: write the
-failing speed-integration tests, confirm RED, then implement the independent
-`s_odometry` baseline before any visual work.
+Begin Task 3 in `docs/superpowers/plans/2026-09-03-generic-s-fusion.md`: write the
+failing synthetic-image tests, confirm RED, then extract every plausible red-dot
+candidate without selecting a single visual truth.

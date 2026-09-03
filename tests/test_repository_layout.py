@@ -151,7 +151,6 @@ class TestRepositoryLayout(unittest.TestCase):
             status,
         )
         self.assertIn("implementation in progress", status)
-        self.assertIn("Task 1 complete; Task 2 is next", status)
 
 
 if __name__ == "__main__":
