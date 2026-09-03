@@ -7,6 +7,7 @@ from unittest.mock import patch
 import numpy as np
 
 from src import lap_detector
+from acc_telemetry.domain.telemetry import QualityFlag
 
 
 class TestTessdataDiscovery(unittest.TestCase):
@@ -139,6 +140,7 @@ class TestSpeedOCRMode(unittest.TestCase):
                 lap_detector.tesserocr.PSM.SINGLE_WORD,
             ],
         )
+        self.assertEqual(detector.get_last_speed_quality(), QualityFlag.OBSERVED)
 
     def test_extract_speed_restores_single_word_when_ocr_raises(self):
         detector = self.make_detector(FailingTesseractAPI())
@@ -153,6 +155,7 @@ class TestSpeedOCRMode(unittest.TestCase):
                 lap_detector.tesserocr.PSM.SINGLE_WORD,
             ],
         )
+        self.assertEqual(detector.get_last_speed_quality(), QualityFlag.MISSING)
 
     def test_extract_speed_rejects_large_ocr_jumps_before_smoothing(self):
         detector = self.make_detector(SequenceTesseractAPI(["11", "147", "120"]))
@@ -169,6 +172,17 @@ class TestSpeedOCRMode(unittest.TestCase):
         self.assertEqual(histories[0], [111] * detector._history_size)
         self.assertEqual(histories[1], [111] * detector._history_size)
         self.assertEqual(histories[2], [111] * 14 + [120])
+        self.assertEqual(detector.get_last_speed_quality(), QualityFlag.OBSERVED)
+
+    def test_pending_jump_returns_held_speed_with_explicit_quality(self):
+        detector = self.make_detector(SequenceTesseractAPI(["147"]))
+        detector._last_valid_speed = 111
+        detector._speed_history = [111] * detector._history_size
+
+        speed = self.extract_speed(detector)
+
+        self.assertEqual(speed, 111)
+        self.assertEqual(detector.get_last_speed_quality(), QualityFlag.HELD)
 
     def test_extract_speed_recovers_from_a_confirmed_stable_jump(self):
         readings = ["80"] * 23

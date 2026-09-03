@@ -12,6 +12,7 @@ import statistics
 from typing import Optional, Tuple
 from pathlib import Path
 from .templates import TemplateMatcher
+from acc_telemetry.domain.telemetry import QualityFlag
 
 MAX_SPEED_OCR_DELTA_KMH = 20
 SPEED_OCR_RECOVERY_TOLERANCE_KMH = 3
@@ -84,6 +85,7 @@ class LapDetector:
         self._last_valid_lap_number: Optional[int] = None
         self._last_valid_lap_time: Optional[str] = None
         self._last_valid_speed: Optional[int] = None
+        self._last_speed_quality = QualityFlag.MISSING
         self._pending_speed_candidate: Optional[int] = None
         self._pending_speed_candidate_count: int = 0
         self._pending_speed_values: list[int] = []
@@ -440,11 +442,21 @@ class LapDetector:
             Speed in km/h as integer, or None if extraction fails
         """
         if frame is None or frame.size == 0:
+            self._last_speed_quality = (
+                QualityFlag.HELD
+                if self._last_valid_speed is not None
+                else QualityFlag.MISSING
+            )
             return self._last_valid_speed
         
         # Extract ROI
         roi = self._extract_roi(frame, self.speed_roi)
         if roi is None or roi.size == 0:
+            self._last_speed_quality = (
+                QualityFlag.HELD
+                if self._last_valid_speed is not None
+                else QualityFlag.MISSING
+            )
             return self._last_valid_speed
         
         # Run OCR directly on raw BGR ROI
@@ -483,7 +495,8 @@ class LapDetector:
             speed = None
 
         # Validate: speed should be reasonable (0-400 km/h for ACC)
-        if speed is not None and not 0 <= speed <= 400:
+        anomalous_speed = speed is not None and not 0 <= speed <= 400
+        if anomalous_speed:
             speed = None
 
         max_speed_delta = getattr(
@@ -520,6 +533,7 @@ class LapDetector:
                 self._last_valid_speed = confirmed_speed
                 self._speed_history = [confirmed_speed] * self._history_size
                 self._clear_pending_speed_recovery()
+                self._last_speed_quality = QualityFlag.OBSERVED
                 return confirmed_speed
 
             speed = None
@@ -535,10 +549,20 @@ class LapDetector:
 
             if smoothed_speed is not None:
                 self._last_valid_speed = smoothed_speed
+                self._last_speed_quality = QualityFlag.OBSERVED
                 return smoothed_speed
-        
+
         # Return last known good value
+        self._last_speed_quality = (
+            QualityFlag.HELD
+            if self._last_valid_speed is not None
+            else (QualityFlag.ANOMALOUS if anomalous_speed else QualityFlag.MISSING)
+        )
         return self._last_valid_speed
+
+    def get_last_speed_quality(self) -> QualityFlag:
+        """Return the provenance of the most recent speed output."""
+        return getattr(self, "_last_speed_quality", QualityFlag.MISSING)
     
     def _get_smoothed_speed(self) -> Optional[int]:
         """

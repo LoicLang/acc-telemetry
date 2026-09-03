@@ -25,7 +25,7 @@ validation dataset.
 - Active plan: `docs/superpowers/plans/2026-09-03-generic-s-fusion.md`
 - Last completed technical plan: `docs/superpowers/plans/2026-09-02-native-1080-and-s-diagnostics.md`
 - Last completed plan: `docs/superpowers/plans/2026-09-02-agent-handoff-documentation.md`
-- Technical ACC implementation: Tasks 1-7 complete; Task 8 is next
+- Technical ACC implementation: Tasks 1-8 complete; clean-session validation is next
 - Documentation milestone: verified complete
 
 ## Resume here
@@ -87,6 +87,12 @@ validation dataset.
   without implicit lap resets, and exposes interpolation, prediction, ambiguity, and
   uncertainty-limit reasons. Offline replay learns only from accepted complete laps;
   a synthetic crash-distance outlier cannot recalibrate the median. All 136 tests pass.
+- CLI and web processing now construct the same generic session estimator. The shared
+  pipeline collects raw frame evidence, then performs offline calibration/fusion and
+  emits legacy `track_position` only as `s_fused * 100`. Modern output preserves
+  component signals, uncertainty, source, and reasons. Speed OCR now distinguishes a
+  fresh observation from held, missing, or anomalous evidence. A global OpenCV mock
+  that made test results order-dependent was removed. All 146 tests pass.
 
 - OCR runtime prerequisite: verified. `LapDetector` now discovers
   `data/shared/tessdata/eng.traineddata`, and the real tesserocr backend initializes
@@ -274,6 +280,6 @@ gates pass on controlled Spa evidence.
 
 ## Current next action
 
-Begin Task 8 in `docs/superpowers/plans/2026-09-03-generic-s-fusion.md`: write the
-failing two-pass pipeline and normalization tests, confirm RED, then propagate fused
-progress while preserving explicit legacy compatibility.
+Begin Task 9 in `docs/superpowers/plans/2026-09-03-generic-s-fusion.md`: add the
+tested progress-diagnostic schema and metrics, then replay the immutable clean BMW
+capture into ignored `data/lab/` output and evaluate every clean-session gate.

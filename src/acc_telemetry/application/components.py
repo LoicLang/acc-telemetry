@@ -9,6 +9,7 @@ from acc_telemetry.extraction.video import VideoProcessor
 
 from .config import TelemetrySettings, load_settings
 from .lap_state import LapTransitionConfirmer
+from .progress import ProgressSessionEstimator
 
 
 @dataclass(frozen=True)
@@ -17,6 +18,7 @@ class ProcessingComponents:
     controls: TelemetryExtractor
     laps: LapDetector
     lap_confirmer: LapTransitionConfirmer
+    progress: ProgressSessionEstimator
     position: PositionTrackerV2
     profile_name: str
     sample_count: int
@@ -59,12 +61,19 @@ def build_components(
             active_settings.progress.lap_confirmation.consecutive_observations
         )
     )
+    progress = ProgressSessionEstimator(
+        settings=active_settings.progress,
+        lap_confirmer=lap_confirmer,
+        white_lower=profile.white_lower,
+        white_upper=profile.white_upper,
+    )
 
     return ProcessingComponents(
         video=video,
         controls=controls,
         laps=laps,
         lap_confirmer=lap_confirmer,
+        progress=progress,
         position=position,
         profile_name=profile_name,
         sample_count=profile.sample_count,

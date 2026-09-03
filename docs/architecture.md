@@ -40,16 +40,20 @@ Root `main.py` and modules such as `src/video_processor.py` are compatibility en
 
 Legacy extraction records use `track_position` in percent for CSV compatibility. The domain converts it to `s` in `[0, 1]`. A value outside the expected range is retained and marked anomalous; it is never silently clipped.
 
-Each field has one quality state: observed, missing, held, interpolated, or anomalous. The sample also preserves source values and anomaly reasons. Lateral `d` is not present because video evidence does not yet support it reliably.
+Each field has one quality state: observed, missing, held, interpolated, predicted,
+fused, or anomalous. The sample also preserves source values and anomaly reasons.
+Longitudinal progress additionally carries its odometric and visual components,
+uncertainty, source, and stable reasons. Lateral `d` is not present because video
+evidence does not yet support it reliably.
 
 The current legacy `track_position` remains map-only and is not reliable enough for
 analysis. Diagnostic output may expose its raw projection and filtering decisions,
 but must not be mistaken for validated domain `s`.
 
-## Planned position estimation
+## Generic position estimation
 
-The approved target is generic across circuits using the static full-map HUD. It is
-not implemented yet.
+The implemented estimator is generic across circuits using the static full-map HUD.
+Its production wiring is complete; real-session validation gates remain open.
 
 ```text
 speed + delta time -> integrated distance -> s_odometry + uncertainty
@@ -81,7 +85,12 @@ target architecture.
 
 ## State and error handling
 
-Frames remain sequential because OCR recovery, lap transitions, position validation, and future fusion depend on history. `TelemetryPipeline` owns video lifetime and closes the capture in a `finally` block. Adapters choose inputs and outputs; they do not duplicate extraction rules.
+Frame extraction remains sequential because OCR recovery and lap observations depend
+on history. `TelemetryPipeline` first collects raw evidence, then runs an offline pass
+to confirm boundaries, calibrate measured lap distance, align the visual centerline,
+and fuse progress. It owns video lifetime and closes the capture in a `finally` block.
+CLI and web adapters construct the same application engine and do not duplicate fusion
+rules.
 
 ## Testing
 

@@ -308,6 +308,23 @@ class TestProjection(unittest.TestCase):
         self.assertIn(0.208, [round(projection.s_visual, 3) for projection in projections])
         self.assertIn(0.708, [round(projection.s_visual, 3) for projection in projections])
 
+    def test_collapses_adjacent_segments_into_one_local_projection(self):
+        dense = Centerline(
+            points=tuple((float(x), 0.0) for x in range(11))
+            + ((10.0, 10.0), (0.0, 10.0)),
+            cumulative_length_px=tuple(float(x) for x in range(11)) + (20.0, 30.0),
+            total_length_px=40.0,
+        )
+
+        projections = project_candidate(
+            self.candidate(5.0, 0.5),
+            dense,
+            max_distance_px=2.0,
+        )
+
+        self.assertEqual(len(projections), 1)
+        self.assertAlmostEqual(projections[0].s_visual, 0.125)
+
     def test_rejects_segments_outside_the_geometric_gate(self):
         projections = project_candidate(
             self.candidate(50.0, 50.0),

@@ -11,6 +11,9 @@ from acc_telemetry.extraction.laps import LapDetector
 from acc_telemetry.extraction.position import PositionTrackerV2
 from acc_telemetry.visualization.interactive import InteractiveTelemetryVisualizer
 from acc_telemetry.application.pipeline import TelemetryPipeline
+from acc_telemetry.application.config import load_settings
+from acc_telemetry.application.lap_state import LapTransitionConfirmer
+from acc_telemetry.application.progress import ProgressSessionEstimator
 
 from ..config import settings
 from ..models import VideoMetadata, LapMetadata
@@ -28,6 +31,25 @@ class VideoProcessingService:
         """Load ROI configuration from YAML file."""
         with open(self.config_path, 'r') as f:
             return yaml.safe_load(f)
+
+    def _build_progress_estimator(
+        self,
+        profile_name: str,
+    ) -> ProgressSessionEstimator:
+        """Build the same generic progress engine used by the packaged CLI."""
+        telemetry_settings = load_settings()
+        profile = telemetry_settings.profile(profile_name)
+        confirmer = LapTransitionConfirmer(
+            consecutive_observations=(
+                telemetry_settings.progress.lap_confirmation.consecutive_observations
+            )
+        )
+        return ProgressSessionEstimator(
+            settings=telemetry_settings.progress,
+            lap_confirmer=confirmer,
+            white_lower=profile.white_lower,
+            white_upper=profile.white_upper,
+        )
 
     async def process_video(
         self,
@@ -60,6 +82,9 @@ class VideoProcessingService:
         # Load configuration
         full_config = self.load_roi_config()
         profile_name = self.validate_profile_name(profile_name, full_config=full_config)
+        active_profile_name = profile_name or (
+            'go_setups_720p' if has_overlay else 'twitch_720p'
+        )
         roi_config = self._select_roi_profile(
             full_config,
             profile_name=profile_name,
@@ -80,14 +105,17 @@ class VideoProcessingService:
             white_lower=position_config.get('white_lower'),
             white_upper=position_config.get('white_upper'),
         )
+        progress_estimator = self._build_progress_estimator(active_profile_name)
 
         pipeline = TelemetryPipeline(
             video=processor,
             controls=extractor,
             laps=lap_detector,
             position=position_tracker,
+            progress=progress_estimator,
             has_track_map='track_map' in roi_config,
             sample_count=int(position_config.get('sample_count', 11)),
+            frequency_threshold=load_settings().position.frequency_threshold,
             progress_callback=progress_callback,
         )
         result = pipeline.run()

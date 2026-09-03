@@ -35,6 +35,26 @@ class VisualProjection:
     centroid: tuple[float, float]
 
 
+def build_white_probability(
+    map_rois: list[np.ndarray],
+    *,
+    white_lower: tuple[int, int, int],
+    white_upper: tuple[int, int, int],
+) -> np.ndarray:
+    """Aggregate stable white-map evidence without choosing centerline topology."""
+    masks = []
+    lower = np.array(white_lower, dtype=np.uint8)
+    upper = np.array(white_upper, dtype=np.uint8)
+    for map_roi in map_rois:
+        if map_roi is None or map_roi.size == 0:
+            continue
+        hsv = cv2.cvtColor(map_roi, cv2.COLOR_BGR2HSV)
+        masks.append(cv2.inRange(hsv, lower, upper) > 0)
+    if not masks:
+        raise ValueError("no valid map ROI")
+    return np.mean(np.stack(masks), axis=0).astype(np.float32)
+
+
 def extract_red_candidates(
     map_roi: np.ndarray | None,
     *,
@@ -448,7 +468,7 @@ def project_candidate(
     max_distance_px: float,
 ) -> tuple[VisualProjection, ...]:
     """Project one image candidate onto every geometrically compatible segment."""
-    projections: list[VisualProjection] = []
+    indexed_projections: list[tuple[int, VisualProjection]] = []
     candidate_x, candidate_y = candidate.centroid
     for index, start in enumerate(centerline.points):
         end = centerline.points[(index + 1) % len(centerline.points)]
@@ -475,14 +495,34 @@ def project_candidate(
         arc_length = (
             centerline.cumulative_length_px[index] + fraction * segment_length
         )
-        projections.append(
-            VisualProjection(
-                s_visual=(arc_length / centerline.total_length_px) % 1.0,
-                distance_px=distance,
-                projected_xy=projected,
-                centroid=candidate.centroid,
+        indexed_projections.append(
+            (
+                index,
+                VisualProjection(
+                    s_visual=(arc_length / centerline.total_length_px) % 1.0,
+                    distance_px=distance,
+                    projected_xy=projected,
+                    centroid=candidate.centroid,
+                ),
             )
         )
+    groups: list[list[VisualProjection]] = []
+    previous_index: int | None = None
+    for index, projection in indexed_projections:
+        if previous_index is None or index != previous_index + 1:
+            groups.append([])
+        groups[-1].append(projection)
+        previous_index = index
+    projections = [
+        min(
+            group,
+            key=lambda projection: (
+                projection.distance_px,
+                projection.s_visual,
+            ),
+        )
+        for group in groups
+    ]
     return tuple(
         sorted(
             projections,

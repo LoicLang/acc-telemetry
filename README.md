@@ -25,7 +25,10 @@ PYTHONPATH=src python main.py \
   --output data/sessions/2026/example_spa_ps5_session/processed
 ```
 
-The command never writes into `raw/`. It writes a telemetry CSV and HTML report to the chosen output directory.
+The command never writes into `raw/`. It writes a telemetry CSV and HTML report to the
+chosen output directory. Modern CSV rows expose `s_odometry`, `s_visual`, `s_fused`,
+uncertainty, source, and reasons. `track_position` remains a compatibility percentage
+derived only from available `s_fused`.
 
 ## Tests
 
@@ -69,8 +72,10 @@ Compatibility modules under `src/` keep older imports working during the migrati
 - ACC console video, not native PC telemetry.
 - ROI profiles are resolution and HUD dependent.
 - The full static minimap is supported; the scrolling minimap is not.
-- The legacy map-only `track_position` is diagnostically instrumented but is not reliable enough for coaching.
-- The approved replacement will expose `s_odometry`, `s_visual`, and fused `s`; implementation planning is the next milestone.
+- The generic fused progress pipeline is implemented but remains blocked from coaching
+  use until clean and crash-heavy real-session validation passes.
+- Legacy map-only position remains importable for compatibility; production CLI and
+  web processing use `s_odometry`, `s_visual`, and `s_fused`.
 - Lateral distance `d` remains future work.
 - OCR and map observations can be missing or anomalous and must not be treated as unquestioned truth.
 

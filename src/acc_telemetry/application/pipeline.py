@@ -5,6 +5,7 @@ from typing import Any, Callable
 
 import cv2
 
+from acc_telemetry.domain.telemetry import QualityFlag
 from acc_telemetry.extraction.video import evenly_spaced_frame_indices
 
 
@@ -29,6 +30,7 @@ class TelemetryPipeline:
         controls: Any,
         laps: Any,
         position: Any,
+        progress: Any | None = None,
         has_track_map: bool,
         sample_count: int = 11,
         frequency_threshold: float | None = None,
@@ -39,6 +41,7 @@ class TelemetryPipeline:
         self.controls = controls
         self.laps = laps
         self.position = position
+        self.progress = progress
         self.has_track_map = has_track_map
         self.sample_count = sample_count
         self.frequency_threshold = frequency_threshold
@@ -91,7 +94,12 @@ class TelemetryPipeline:
                 map_rois.append(self.video.extract_roi(frame, "track_map"))
         self.video.cap.set(cv2.CAP_PROP_POS_FRAMES, 0)
 
-        if self.frequency_threshold is None:
+        if self.progress is not None:
+            extracted = self.progress.prepare_map(
+                map_rois,
+                frequency_threshold=self.frequency_threshold,
+            )
+        elif self.frequency_threshold is None:
             extracted = self.position.extract_track_path(map_rois)
         else:
             extracted = self.position.extract_track_path(
@@ -104,6 +112,33 @@ class TelemetryPipeline:
             else "Warning: Track path extraction failed"
         )
         self._progress(15, message)
+
+    def _report_generic_progress(self, frame_result: Any) -> None:
+        if self.position_diagnostic_callback is None:
+            return
+        estimate = frame_result.estimate
+        selected = frame_result.selected_centroid
+        self.position_diagnostic_callback({
+            "frame": frame_result.frame,
+            "raw_lap_number": frame_result.raw_lap_number,
+            "confirmed_lap_number": frame_result.confirmed_lap_number,
+            "boundary_confidence": frame_result.boundary_confidence,
+            "candidate_count": frame_result.candidate_count,
+            "selected_x": None if selected is None else selected[0],
+            "selected_y": None if selected is None else selected[1],
+            "track_position": (
+                None if estimate.s_fused is None else estimate.s_fused * 100.0
+            ),
+            "s_odometry": estimate.s_odometry,
+            "s_visual": estimate.s_visual,
+            "s_fused": estimate.s_fused,
+            "distance_m": estimate.distance_m,
+            "effective_lap_length_m": estimate.effective_lap_length_m,
+            "uncertainty": estimate.uncertainty,
+            "source": estimate.source.value,
+            "reasons": ";".join(estimate.reasons),
+            "anchored": estimate.anchored,
+        })
 
     def run(self) -> PipelineResult:
         """Open, process, and close one video, returning legacy-compatible records."""
@@ -129,13 +164,31 @@ class TelemetryPipeline:
                 controls = self.controls.extract_frame_telemetry(rois)
                 lap_number = self.laps.extract_lap_number(self.video.current_frame)
                 speed = self.laps.extract_speed(self.video.current_frame)
+                speed_quality = (
+                    self.laps.get_last_speed_quality()
+                    if hasattr(self.laps, "get_last_speed_quality")
+                    else (
+                        QualityFlag.OBSERVED
+                        if speed is not None
+                        else QualityFlag.MISSING
+                    )
+                )
                 gear = self.laps.extract_gear(self.video.current_frame)
 
                 track_position = None
-                if "track_map" in rois and self.position.is_ready():
+                if self.progress is not None:
+                    self.progress.observe_frame(
+                        frame=frame_number,
+                        time_s=timestamp,
+                        speed_kmh=speed,
+                        speed_quality=speed_quality,
+                        raw_lap_number=lap_number,
+                        map_roi=rois.get("track_map"),
+                    )
+                elif "track_map" in rois and self.position.is_ready():
                     track_position = self.position.extract_position(rois["track_map"])
 
-                if self.laps.detect_lap_transition(lap_number, previous_lap):
+                if self.progress is None and self.laps.detect_lap_transition(lap_number, previous_lap):
                     frames_since_transition = 1
                     self.position.reset_for_new_lap()
                     if "track_map" in rois and self.position.is_ready():
@@ -200,6 +253,34 @@ class TelemetryPipeline:
 
             for record in records:
                 record["lap_time"] = completed_lap_times.get(record["lap_number"])
+
+            if self.progress is not None:
+                progress_result = self.progress.finalize()
+                if len(progress_result.frames) != len(records):
+                    raise ValueError("Progress result is not frame-aligned")
+                transitions = []
+                for record, frame_result in zip(records, progress_result.frames):
+                    estimate = frame_result.estimate
+                    record["lap_number"] = frame_result.confirmed_lap_number
+                    record["track_position"] = (
+                        None if estimate.s_fused is None else estimate.s_fused * 100.0
+                    )
+                    record["s_odometry"] = estimate.s_odometry
+                    record["s_visual"] = estimate.s_visual
+                    record["s_fused"] = estimate.s_fused
+                    record["s_uncertainty"] = estimate.uncertainty
+                    record["s_source"] = estimate.source.value
+                    record["s_reasons"] = ";".join(estimate.reasons)
+                    if frame_result.boundary is not None:
+                        boundary = frame_result.boundary
+                        transitions.append({
+                            "frame": boundary.frame,
+                            "time": boundary.time_s,
+                            "from_lap": boundary.from_lap,
+                            "to_lap": boundary.to_lap,
+                            "completed_lap_time": None,
+                        })
+                    self._report_generic_progress(frame_result)
 
             self._progress(85, "Generating outputs...")
             return PipelineResult(records, video_info, transitions)

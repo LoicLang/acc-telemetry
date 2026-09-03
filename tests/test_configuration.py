@@ -164,6 +164,7 @@ class TestTelemetryConfiguration(unittest.TestCase):
             with self.assertRaisesRegex(ConfigurationError, "white_lower"):
                 load_settings(root)
 
+    @patch("acc_telemetry.application.components.ProgressSessionEstimator")
     @patch("acc_telemetry.application.components.LapTransitionConfirmer")
     @patch("acc_telemetry.application.components.PositionTrackerV2")
     @patch("acc_telemetry.application.components.LapDetector")
@@ -176,6 +177,7 @@ class TestTelemetryConfiguration(unittest.TestCase):
         lap_detector,
         position_tracker,
         lap_confirmer,
+        progress_estimator,
     ):
         from acc_telemetry.application.components import build_components
 
@@ -201,6 +203,13 @@ class TestTelemetryConfiguration(unittest.TestCase):
         )
         lap_confirmer.assert_called_once_with(consecutive_observations=5)
         self.assertIs(components.lap_confirmer, lap_confirmer.return_value)
+        progress_estimator.assert_called_once_with(
+            settings=load_settings(ROOT).progress,
+            lap_confirmer=lap_confirmer.return_value,
+            white_lower=(0, 0, 150),
+            white_upper=(180, 100, 255),
+        )
+        self.assertIs(components.progress, progress_estimator.return_value)
         self.assertEqual(components.sample_count, 60)
         self.assertEqual(components.frequency_threshold, 0.45)
 

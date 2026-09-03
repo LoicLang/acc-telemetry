@@ -1,11 +1,4 @@
-import sys
 import unittest
-from unittest.mock import MagicMock
-
-# Mock cv2 before importing PositionTrackerV2
-sys.modules['cv2'] = MagicMock()
-sys.modules['cv2'].getStructuringElement = MagicMock()
-sys.modules['cv2'].MORPH_ELLIPSE = 1
 
 from src.position_tracker_v2 import PositionTrackerV2
 

@@ -3,6 +3,9 @@
 import unittest
 
 from acc_telemetry.application.pipeline import TelemetryPipeline
+from acc_telemetry.application.progress import ProgressFrameResult, ProgressSessionResult
+from acc_telemetry.domain.progress import ProgressEstimate, ProgressSource
+from acc_telemetry.domain.telemetry import QualityFlag
 from acc_telemetry.extraction.position import PositionDecision, PositionDiagnostic
 
 
@@ -47,6 +50,9 @@ class FakeLaps:
     def extract_speed(self, frame):
         return 171
 
+    def get_last_speed_quality(self):
+        return QualityFlag.OBSERVED
+
     def extract_gear(self, frame):
         return 4
 
@@ -86,7 +92,78 @@ class ReadyPosition(FakePosition):
         )
 
 
+class FakeGenericProgress:
+    def __init__(self):
+        self.observations = []
+        self.finalized = False
+
+    def observe_frame(self, **observation):
+        self.observations.append(observation)
+
+    def finalize(self):
+        self.finalized = True
+        return ProgressSessionResult(
+            frames=(
+                ProgressFrameResult(
+                    frame=0,
+                    raw_lap_number=9,
+                    confirmed_lap_number=9,
+                    boundary=None,
+                    boundary_confidence=1.0,
+                    candidate_count=2,
+                    selected_centroid=(12.0, 34.0),
+                    estimate=ProgressEstimate(
+                        s_fused=0.1035,
+                        s_odometry=0.10,
+                        s_visual=0.11,
+                        distance_m=100.0,
+                        effective_lap_length_m=1000.0,
+                        uncertainty=0.002,
+                        source=ProgressSource.FUSED,
+                        reasons=("visual_correction",),
+                        anchored=True,
+                    ),
+                ),
+            ),
+            calibration=None,
+        )
+
+
 class TestTelemetryPipeline(unittest.TestCase):
+    def test_applies_generic_progress_only_after_collecting_frame_observations(self):
+        generic_progress = FakeGenericProgress()
+        diagnostics = []
+        pipeline = TelemetryPipeline(
+            video=FakeVideo(),
+            controls=FakeControls(),
+            laps=FakeLaps(),
+            position=FakePosition(),
+            progress=generic_progress,
+            has_track_map=False,
+            position_diagnostic_callback=diagnostics.append,
+        )
+
+        result = pipeline.run()
+
+        self.assertTrue(generic_progress.finalized)
+        self.assertEqual(len(generic_progress.observations), 1)
+        self.assertEqual(generic_progress.observations[0]["speed_kmh"], 171)
+        self.assertEqual(
+            generic_progress.observations[0]["speed_quality"],
+            QualityFlag.OBSERVED,
+        )
+        self.assertEqual(generic_progress.observations[0]["raw_lap_number"], 9)
+        self.assertEqual(result.records[0]["track_position"], 10.35)
+        self.assertEqual(result.records[0]["s_odometry"], 0.10)
+        self.assertEqual(result.records[0]["s_visual"], 0.11)
+        self.assertEqual(result.records[0]["s_fused"], 0.1035)
+        self.assertEqual(result.records[0]["s_uncertainty"], 0.002)
+        self.assertEqual(result.records[0]["s_source"], "fused")
+        self.assertEqual(result.records[0]["s_reasons"], "visual_correction")
+        self.assertEqual(diagnostics[0]["candidate_count"], 2)
+        self.assertEqual(diagnostics[0]["selected_x"], 12.0)
+        self.assertEqual(diagnostics[0]["confirmed_lap_number"], 9)
+
     def test_extracts_one_stable_legacy_record_and_reports_progress(self):
         video = FakeVideo()
         progress = []

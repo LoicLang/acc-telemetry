@@ -561,7 +561,7 @@ git commit -m "feat: fuse progress with uncertainty and trusted anchors"
 - Modify: `tests/test_application_pipeline.py`
 - Modify: `tests/test_normalization.py`
 
-- [ ] **Step 1: Write failing two-pass pipeline tests**
+- [x] **Step 1: Write failing two-pass pipeline tests**
 
 Extend fakes to yield at least two confirmed boundaries and candidate lists. Assert the pipeline collects raw frame observations first and calls `estimate_progress()` only after extraction. Assert every record receives:
 
@@ -579,7 +579,7 @@ Extend fakes to yield at least two confirmed boundaries and candidate lists. Ass
 
 `track_position` must equal `s_fused * 100` only when fused progress is available; otherwise it is `None`. Assert `position_diagnostic_callback` exposes the new fields and never reports a legacy held/saturated value as fused output.
 
-- [ ] **Step 2: Run and confirm RED**
+- [x] **Step 2: Run and confirm RED**
 
 ```bash
 PYTHONPATH=src .venv/bin/python -m unittest tests.test_application_pipeline -v
@@ -587,15 +587,15 @@ PYTHONPATH=src .venv/bin/python -m unittest tests.test_application_pipeline -v
 
 Expected: FAIL because the pipeline still invokes `PositionTrackerV2.extract_position()` frame by frame.
 
-- [ ] **Step 3: Implement raw collection and offline replay**
+- [x] **Step 3: Implement raw collection and offline replay**
 
 During the frame loop, collect timestamp, speed plus quality, raw lap observation, confirmed lap state, and `extract_red_candidates()` output. After the loop, call the estimator and merge one estimate into each matching record. Preserve controls, gear, lap time, video closing, progress callbacks, and existing profiles. Keep legacy `PositionTrackerV2` importable but stop constructing or invoking it in the production component path once the new path passes focused tests.
 
-- [ ] **Step 4: Write failing normalization/domain tests**
+- [x] **Step 4: Write failing normalization/domain tests**
 
 Extend `TelemetrySample` with optional `s_odometry`, `s_visual`, `s_uncertainty`, `s_source`, and `s_reasons`. Add `PREDICTED` and `FUSED` to `QualityFlag`. Assert `normalize_row()` prefers `s_fused`, parses numeric optional fields, maps `s_source` to `field_quality["s"]`, preserves reasons as anomalies/evidence without flattening them, and continues accepting old rows containing only `track_position`.
 
-- [ ] **Step 5: Implement normalization and confirm compatibility**
+- [x] **Step 5: Implement normalization and confirm compatibility**
 
 Old rows retain current semantics. New rows satisfy:
 
@@ -607,7 +607,7 @@ sample.source_values["track_position"] == row["track_position"]
 
 Treat `missing` as `s=None`; never promote `predicted`, `interpolated`, or `fused` to `observed`.
 
-- [ ] **Step 6: Run focused/full tests and commit**
+- [x] **Step 6: Run focused/full tests and commit**
 
 ```bash
 PYTHONPATH=src .venv/bin/python -m unittest tests.test_application_pipeline tests.test_normalization tests.test_web_profile_selection -v

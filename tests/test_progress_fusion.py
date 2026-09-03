@@ -2,16 +2,22 @@
 
 import unittest
 
+import cv2
+import numpy as np
+
 from acc_telemetry.application.odometry import OdometryPoint
 from acc_telemetry.application.progress import (
     FusedProgressEstimator,
     ProgressReplayObservation,
+    ProgressSessionEstimator,
     VisualSelection,
     estimate_progress,
     select_visual_projection,
 )
 from acc_telemetry.extraction.map_progress import VisualProjection
-from acc_telemetry.domain.progress import ConfirmedLapBoundary, ProgressSource
+from acc_telemetry.domain.progress import Centerline, ConfirmedLapBoundary, ProgressSource
+from acc_telemetry.application.config import load_settings
+from acc_telemetry.application.lap_state import LapTransitionConfirmer
 
 
 def _projection(
@@ -327,6 +333,97 @@ class TestOfflineProgressReplay(unittest.TestCase):
         self.assertEqual(
             [lap.lap_number for lap in replay.calibration.rejected_laps],
             [10],
+        )
+
+
+class TestProgressSessionEstimator(unittest.TestCase):
+    def test_prepares_a_centerline_from_stable_map_frames(self):
+        settings = load_settings().progress
+        estimator = ProgressSessionEstimator(
+            settings=settings,
+            lap_confirmer=LapTransitionConfirmer(consecutive_observations=2),
+            white_lower=(0, 0, 150),
+            white_upper=(180, 100, 255),
+        )
+        map_roi = np.zeros((200, 200, 3), dtype=np.uint8)
+        cv2.rectangle(map_roi, (20, 20), (180, 180), (255, 255, 255), 9)
+
+        prepared = estimator.prepare_map(
+            [map_roi] * 10,
+            frequency_threshold=0.45,
+        )
+
+        self.assertTrue(prepared)
+        self.assertIsNotNone(estimator.centerline)
+        self.assertIsNone(estimator.map_error_reason)
+
+    def test_infers_centerline_direction_then_emits_anchored_visual_progress(self):
+        settings = load_settings().progress
+        centerline = Centerline(
+            points=((10.0, 10.0), (50.0, 10.0), (50.0, 50.0), (10.0, 50.0)),
+            cumulative_length_px=(0.0, 40.0, 80.0, 120.0),
+            total_length_px=160.0,
+        )
+        estimator = ProgressSessionEstimator(
+            settings=settings,
+            lap_confirmer=LapTransitionConfirmer(consecutive_observations=2),
+            white_lower=(0, 0, 150),
+            white_upper=(180, 100, 255),
+            centerline=centerline,
+        )
+        positions = ((10, 10), (10, 10), (10, 10), (10, 10), (50, 10), (50, 50), (10, 50), (10, 10))
+        laps = (8, 8, 9, 9, 9, 9, 10, 10)
+        for frame, (position, lap_number) in enumerate(zip(positions, laps)):
+            map_roi = np.zeros((100, 100, 3), dtype=np.uint8)
+            cv2.circle(map_roi, position, 3, (0, 0, 255), -1)
+            estimator.observe_frame(
+                frame=frame,
+                time_s=frame / 10.0,
+                speed_kmh=1440.0,
+                raw_lap_number=lap_number,
+                map_roi=map_roi,
+            )
+
+        result = estimator.finalize()
+
+        self.assertEqual(result.calibration.effective_lap_length_m, 160.0)
+        self.assertEqual(result.frames[3].estimate.s_fused, 0.0)
+        self.assertAlmostEqual(result.frames[4].estimate.s_visual, 0.25)
+        self.assertEqual(result.frames[4].estimate.source, ProgressSource.FUSED)
+        self.assertEqual(result.frames[7].estimate.s_fused, 0.0)
+
+    def test_integrates_confirms_calibrates_and_returns_frame_aligned_results(self):
+        settings = load_settings().progress
+        estimator = ProgressSessionEstimator(
+            settings=settings,
+            lap_confirmer=LapTransitionConfirmer(consecutive_observations=2),
+            white_lower=(0, 0, 150),
+            white_upper=(180, 100, 255),
+        )
+        for frame, (time_s, lap_number) in enumerate(
+            ((0.0, 8), (0.1, 8), (0.2, 9), (0.3, 9), (0.4, 10), (0.5, 10))
+        ):
+            estimator.observe_frame(
+                frame=frame,
+                time_s=time_s,
+                speed_kmh=720.0,
+                raw_lap_number=lap_number,
+                map_roi=None,
+            )
+
+        result = estimator.finalize()
+
+        self.assertEqual(len(result.frames), 6)
+        self.assertEqual(result.calibration.effective_lap_length_m, 40.0)
+        self.assertFalse(result.frames[0].estimate.anchored)
+        self.assertIsNone(result.frames[0].estimate.s_fused)
+        self.assertEqual(result.frames[3].estimate.s_fused, 0.0)
+        self.assertEqual(result.frames[4].estimate.s_odometry, 0.5)
+        self.assertEqual(result.frames[4].estimate.source, ProgressSource.PREDICTED)
+        self.assertEqual(result.frames[5].estimate.s_fused, 0.0)
+        self.assertEqual(
+            [frame.boundary.to_lap for frame in result.frames if frame.boundary],
+            [9, 10],
         )
 
 

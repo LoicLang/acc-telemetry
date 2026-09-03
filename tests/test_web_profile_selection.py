@@ -87,6 +87,23 @@ class TestWebProfileSelection(unittest.TestCase):
 
         self.assertEqual(request.profile_name, "ps5_full_map_720p")
 
+    @patch("src.web.services.processing.ProgressSessionEstimator")
+    @patch("src.web.services.processing.LapTransitionConfirmer")
+    def test_builds_the_shared_generic_progress_engine(
+        self,
+        lap_confirmer,
+        progress_estimator,
+    ):
+        engine = self.service._build_progress_estimator("ps5_full_map_1080p")
+
+        lap_confirmer.assert_called_once_with(consecutive_observations=5)
+        progress_estimator.assert_called_once()
+        arguments = progress_estimator.call_args.kwargs
+        self.assertIs(arguments["lap_confirmer"], lap_confirmer.return_value)
+        self.assertEqual(arguments["white_lower"], (0, 0, 150))
+        self.assertEqual(arguments["white_upper"], (180, 100, 255))
+        self.assertIs(engine, progress_estimator.return_value)
+
 
 class TestWebProfileSelectionApi(unittest.IsolatedAsyncioTestCase):
     @classmethod

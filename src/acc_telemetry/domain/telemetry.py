@@ -5,6 +5,8 @@ from enum import StrEnum
 from types import MappingProxyType
 from typing import Any, Mapping
 
+from .progress import ProgressSource
+
 
 class QualityFlag(StrEnum):
     """How trustworthy and direct a normalized value is."""
@@ -13,6 +15,8 @@ class QualityFlag(StrEnum):
     MISSING = "missing"
     HELD = "held"
     INTERPOLATED = "interpolated"
+    PREDICTED = "predicted"
+    FUSED = "fused"
     ANOMALOUS = "anomalous"
 
 
@@ -35,3 +39,8 @@ class TelemetrySample:
     field_quality: Mapping[str, QualityFlag]
     anomalies: tuple[str, ...] = ()
     source_values: Mapping[str, Any] = MappingProxyType({})
+    s_odometry: float | None = None
+    s_visual: float | None = None
+    s_uncertainty: float | None = None
+    s_source: ProgressSource | None = None
+    s_reasons: tuple[str, ...] = ()

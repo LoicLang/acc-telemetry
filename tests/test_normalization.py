@@ -4,6 +4,7 @@ import unittest
 from pathlib import Path
 
 from acc_telemetry.application.config import load_settings
+from acc_telemetry.domain.progress import ProgressSource
 from acc_telemetry.domain.telemetry import QualityFlag
 from acc_telemetry.normalization.samples import load_csv_samples, normalize_row
 
@@ -74,6 +75,62 @@ class TestTelemetryNormalization(unittest.TestCase):
         self.assertEqual(held.field_quality["s"], QualityFlag.HELD)
         self.assertEqual(held.field_quality["speed_kmh"], QualityFlag.HELD)
         self.assertEqual(interpolated.field_quality["s"], QualityFlag.INTERPOLATED)
+
+    def test_prefers_fused_progress_and_preserves_component_evidence(self):
+        sample = normalize_row(
+            {
+                "frame": "12",
+                "time": "0.2",
+                "track_position": "10.35",
+                "s_odometry": "0.1",
+                "s_visual": "0.11",
+                "s_fused": "0.1035",
+                "s_uncertainty": "0.002",
+                "s_source": "fused",
+                "s_reasons": "visual_correction;speed_gap_interpolated",
+            },
+            self.settings,
+        )
+
+        self.assertEqual(sample.s, 0.1035)
+        self.assertEqual(sample.s_odometry, 0.1)
+        self.assertEqual(sample.s_visual, 0.11)
+        self.assertEqual(sample.s_uncertainty, 0.002)
+        self.assertEqual(sample.s_source, ProgressSource.FUSED)
+        self.assertEqual(
+            sample.s_reasons,
+            ("visual_correction", "speed_gap_interpolated"),
+        )
+        self.assertEqual(sample.field_quality["s"], QualityFlag.FUSED)
+        self.assertEqual(sample.source_values["track_position"], "10.35")
+
+    def test_missing_modern_progress_does_not_fall_back_to_legacy_saturation(self):
+        sample = normalize_row(
+            {
+                "frame": "12",
+                "time": "0.2",
+                "track_position": "100.0",
+                "s_fused": "",
+                "s_source": "missing",
+                "s_reasons": "uncertainty_limit",
+            },
+            self.settings,
+        )
+
+        self.assertIsNone(sample.s)
+        self.assertEqual(sample.s_source, ProgressSource.MISSING)
+        self.assertEqual(sample.field_quality["s"], QualityFlag.MISSING)
+        self.assertEqual(sample.s_reasons, ("uncertainty_limit",))
+
+    def test_old_row_remains_legacy_observed_progress(self):
+        sample = normalize_row(
+            {"frame": "4", "time": "1.5", "track_position": "42.5"},
+            self.settings,
+        )
+
+        self.assertEqual(sample.s, 0.425)
+        self.assertIsNone(sample.s_source)
+        self.assertEqual(sample.field_quality["s"], QualityFlag.OBSERVED)
 
     def test_loads_representative_fixture(self):
         samples = load_csv_samples(FIXTURE, self.settings)

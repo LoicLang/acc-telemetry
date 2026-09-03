@@ -5,6 +5,7 @@ from pathlib import Path
 from types import MappingProxyType
 from typing import Any, Mapping, Protocol
 
+from acc_telemetry.domain.progress import ProgressSource
 from acc_telemetry.domain.telemetry import QualityFlag, TelemetrySample
 
 
@@ -53,6 +54,12 @@ def _quality_hints(value: Any) -> dict[str, QualityFlag]:
     return hints
 
 
+def _reasons(value: Any) -> tuple[str, ...]:
+    if value is None or str(value).strip() == "":
+        return ()
+    return tuple(reason.strip() for reason in str(value).split(";") if reason.strip())
+
+
 def normalize_row(row: Mapping[str, Any], limits: NormalizationLimits) -> TelemetrySample:
     """Convert a legacy CSV row into the stable domain contract."""
     source = dict(row)
@@ -60,7 +67,23 @@ def normalize_row(row: Mapping[str, Any], limits: NormalizationLimits) -> Teleme
     anomalies: list[str] = []
 
     track_position = _optional_float(row.get("track_position"))
-    s = None if track_position is None else track_position / 100.0
+    modern_progress = "s_fused" in row or "s_source" in row
+    s_fused = _optional_float(row.get("s_fused"))
+    s = (
+        s_fused
+        if modern_progress
+        else (None if track_position is None else track_position / 100.0)
+    )
+    s_odometry = _optional_float(row.get("s_odometry"))
+    s_visual = _optional_float(row.get("s_visual"))
+    s_uncertainty = _optional_float(row.get("s_uncertainty"))
+    source_text = row.get("s_source")
+    s_source = (
+        None
+        if source_text is None or str(source_text).strip() == ""
+        else ProgressSource(str(source_text).strip())
+    )
+    s_reasons = _reasons(row.get("s_reasons"))
     speed = _optional_float(row.get("speed"))
     throttle = _optional_float(row.get("throttle"))
     brake = _optional_float(row.get("brake"))
@@ -82,6 +105,8 @@ def normalize_row(row: Mapping[str, Any], limits: NormalizationLimits) -> Teleme
         quality[field] = QualityFlag.MISSING if value is None else QualityFlag.OBSERVED
 
     quality.update(_quality_hints(row.get("quality_hint")))
+    if s_source is not None:
+        quality["s"] = QualityFlag(s_source.value)
 
     def mark_anomaly(field: str, reason: str) -> None:
         quality[field] = QualityFlag.ANOMALOUS
@@ -119,6 +144,11 @@ def normalize_row(row: Mapping[str, Any], limits: NormalizationLimits) -> Teleme
         field_quality=MappingProxyType(quality),
         anomalies=tuple(anomalies),
         source_values=MappingProxyType(source),
+        s_odometry=s_odometry,
+        s_visual=s_visual,
+        s_uncertainty=s_uncertainty,
+        s_source=s_source,
+        s_reasons=s_reasons,
     )
 
 

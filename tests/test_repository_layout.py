@@ -144,7 +144,7 @@ class TestRepositoryLayout(unittest.TestCase):
         for concept in ("s_odometry", "s_visual", "s_fused", "v * delta_t"):
             with self.subTest(plan_contains=concept):
                 self.assertIn(concept, plan)
-        self.assertIn("Planned position estimation", architecture)
+        self.assertIn("Generic position estimation", architecture)
         self.assertIn("2026-09-03-generic-s-fusion-design.md", status)
         self.assertIn(
             "Active plan: `docs/superpowers/plans/2026-09-03-generic-s-fusion.md`",
