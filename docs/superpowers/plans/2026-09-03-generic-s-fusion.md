@@ -457,7 +457,7 @@ git commit -m "feat: guide visual projection with odometry"
 - Modify: `src/acc_telemetry/application/components.py`
 - Modify: `tests/test_configuration.py`
 
-- [ ] **Step 1: Write failing raw-versus-confirmed state tests**
+- [x] **Step 1: Write failing raw-versus-confirmed state tests**
 
 Test these sequences with `consecutive_observations=5`:
 
@@ -468,7 +468,7 @@ Test these sequences with `consecutive_observations=5`:
 - the boundary confidence is `stable_count / required_count`, capped at 1.0;
 - raw values remain inspectable even when rejected.
 
-- [ ] **Step 2: Run and confirm RED**
+- [x] **Step 2: Run and confirm RED**
 
 ```bash
 PYTHONPATH=src .venv/bin/python -m unittest tests.test_lap_state -v
@@ -476,15 +476,15 @@ PYTHONPATH=src .venv/bin/python -m unittest tests.test_lap_state -v
 
 Expected: FAIL because `LapTransitionConfirmer` is missing.
 
-- [ ] **Step 3: Implement a pure confirmation state machine**
+- [x] **Step 3: Implement a pure confirmation state machine**
 
 `LapTransitionConfirmer.observe(LapObservation)` returns a state containing `raw_lap_number`, `confirmed_lap_number`, optional `ConfirmedLapBoundary`, confidence, and reasons. Only `confirmed + 1` may become pending; any return to the confirmed number clears pending evidence. Initialization requires the same stable consensus but emits no boundary because there is no known preceding lap.
 
-- [ ] **Step 4: Wire configuration without changing the pipeline yet**
+- [x] **Step 4: Wire configuration without changing the pipeline yet**
 
 Make `ProcessingComponents` carry a configured confirmer factory or instance. Assert the factory receives `settings.progress.lap_confirmation.consecutive_observations`. Do not call legacy `detect_lap_transition()` from the new component.
 
-- [ ] **Step 5: Run focused/full tests and commit**
+- [x] **Step 5: Run focused/full tests and commit**
 
 ```bash
 PYTHONPATH=src .venv/bin/python -m unittest tests.test_lap_state tests.test_configuration -v

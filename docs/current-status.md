@@ -25,7 +25,7 @@ validation dataset.
 - Active plan: `docs/superpowers/plans/2026-09-03-generic-s-fusion.md`
 - Last completed technical plan: `docs/superpowers/plans/2026-09-02-native-1080-and-s-diagnostics.md`
 - Last completed plan: `docs/superpowers/plans/2026-09-02-agent-handoff-documentation.md`
-- Technical ACC implementation: Tasks 1-5 complete; Task 6 is next
+- Technical ACC implementation: Tasks 1-6 complete; Task 7 is next
 - Documentation milestone: verified complete
 
 ## Resume here
@@ -77,6 +77,11 @@ validation dataset.
   wraparound and nearby branches. Pure temporal selection scores normalized odometric
   error, centerline distance, and image displacement; it accepts only a clear winner
   and preserves missing, out-of-gate, and ambiguous reasons. All 121 tests pass.
+- Raw lap observations now feed a pure confirmation state machine. Initialization and
+  each sequential `+1` transition require five consecutive observations; missing,
+  isolated, decreasing, and jumping values remain inspectable without emitting a
+  boundary. The configured confirmer is constructed but does not yet reset production
+  position. All 127 tests pass.
 
 - OCR runtime prerequisite: verified. `LapDetector` now discovers
   `data/shared/tessdata/eng.traineddata`, and the real tesserocr backend initializes
@@ -264,6 +269,6 @@ gates pass on controlled Spa evidence.
 
 ## Current next action
 
-Begin Task 6 in `docs/superpowers/plans/2026-09-03-generic-s-fusion.md`: write the
-failing raw-versus-confirmed lap tests, confirm RED, then implement the pure temporal
-confirmation state machine before connecting any reset or anchor.
+Begin Task 7 in `docs/superpowers/plans/2026-09-03-generic-s-fusion.md`: write the
+failing fused-state tests, confirm RED, then combine odometric prediction and accepted
+visual corrections while anchoring only on `ConfirmedLapBoundary`.
