@@ -6,7 +6,21 @@ from unittest.mock import patch
 import cv2
 import numpy as np
 
-from acc_telemetry.extraction.map_progress import extract_red_candidates
+from acc_telemetry.extraction.map_progress import (
+    CenterlineTopologyError,
+    build_centerline,
+    extract_red_candidates,
+)
+
+
+def _build(mask: np.ndarray):
+    return build_centerline(
+        mask.astype(np.float32) / 255.0,
+        frequency_threshold=0.45,
+        max_branch_length_fraction=0.03,
+        min_cycle_diagonal_fraction=2.0,
+        resample_spacing_diagonal_fraction=0.01,
+    )
 
 
 class TestRedDotCandidates(unittest.TestCase):
@@ -96,6 +110,147 @@ class TestRedDotCandidates(unittest.TestCase):
             )
 
         self.assertEqual(candidates, ())
+
+
+class TestCenterline(unittest.TestCase):
+    def test_orders_and_resamples_one_thick_closed_ring(self):
+        mask = np.zeros((200, 200), dtype=np.uint8)
+        cv2.rectangle(mask, (20, 20), (180, 180), 255, 9)
+
+        centerline = _build(mask)
+
+        self.assertGreater(len(centerline.points), 100)
+        self.assertEqual(centerline.cumulative_length_px[0], 0.0)
+        self.assertTrue(
+            all(
+                current > previous
+                for previous, current in zip(
+                    centerline.cumulative_length_px,
+                    centerline.cumulative_length_px[1:],
+                )
+            )
+        )
+        self.assertGreater(
+            centerline.total_length_px,
+            centerline.cumulative_length_px[-1],
+        )
+        segment_lengths = [
+            np.linalg.norm(np.subtract(second, first))
+            for first, second in zip(centerline.points, centerline.points[1:])
+        ]
+        expected_spacing = np.hypot(*mask.shape) * 0.01
+        self.assertLess(max(abs(length - expected_spacing) for length in segment_lengths), 1.1)
+
+    def test_prunes_a_short_start_marker_branch(self):
+        mask = np.zeros((200, 200), dtype=np.uint8)
+        cv2.rectangle(mask, (20, 20), (180, 180), 255, 9)
+        cv2.line(mask, (100, 20), (100, 10), 255, 5)
+
+        centerline = _build(mask)
+
+        self.assertGreater(len(centerline.points), 100)
+        self.assertTrue(all(y >= 18.0 for _, y in centerline.points))
+
+    def test_prunes_neighbouring_short_branches_in_one_topology_pass(self):
+        mask = np.zeros((240, 240), dtype=np.uint8)
+        cv2.rectangle(mask, (20, 20), (220, 220), 255, 9)
+        cv2.line(mask, (100, 20), (94, 10), 255, 3)
+        cv2.line(mask, (100, 20), (106, 10), 255, 3)
+
+        centerline = _build(mask)
+
+        self.assertGreater(len(centerline.points), 100)
+        self.assertTrue(all(y >= 18.0 for _, y in centerline.points))
+
+    def test_removes_short_transverse_markers_from_the_closed_cycle(self):
+        mask = np.zeros((240, 240), dtype=np.uint8)
+        cv2.rectangle(mask, (20, 20), (220, 220), 255, 1)
+        cv2.line(mask, (98, 20), (100, 16), 255, 1)
+        cv2.line(mask, (100, 16), (102, 20), 255, 1)
+
+        centerline = _build(mask)
+
+        self.assertGreater(len(centerline.points), 100)
+        self.assertTrue(
+            all(18.0 <= x <= 222.0 and 18.0 <= y <= 222.0 for x, y in centerline.points)
+        )
+
+    def test_adjacent_pixels_on_opposite_stroke_edges_remain_local(self):
+        mask = np.zeros((200, 200), dtype=np.uint8)
+        cv2.rectangle(mask, (20, 20), (180, 180), 255, 11)
+        centerline = _build(mask)
+
+        def nearest_progress(point):
+            distances = [
+                np.linalg.norm(np.subtract(candidate, point))
+                for candidate in centerline.points
+            ]
+            index = int(np.argmin(distances))
+            return centerline.cumulative_length_px[index] / centerline.total_length_px
+
+        outer_progress = nearest_progress((100.0, 15.0))
+        inner_progress = nearest_progress((100.0, 25.0))
+        wrapped_difference = abs(((outer_progress - inner_progress + 0.5) % 1.0) - 0.5)
+
+        self.assertLess(wrapped_difference, 0.02)
+
+    def test_rejects_an_open_path_without_fallback(self):
+        mask = np.zeros((200, 200), dtype=np.uint8)
+        cv2.line(mask, (20, 100), (180, 100), 255, 9)
+
+        with self.assertRaises(CenterlineTopologyError) as caught:
+            _build(mask)
+
+        self.assertEqual(caught.exception.reason, "no_closed_cycle")
+
+    def test_rejects_multiple_unresolved_cycles(self):
+        mask = np.zeros((240, 240), dtype=np.uint8)
+        cv2.circle(mask, (60, 120), 40, 255, 9)
+        cv2.circle(mask, (180, 120), 40, 255, 9)
+
+        with self.assertRaises(CenterlineTopologyError) as caught:
+            _build(mask)
+
+        self.assertEqual(caught.exception.reason, "multiple_cycles")
+
+    def test_keeps_a_dominant_cycle_over_small_disconnected_loop_artifacts(self):
+        mask = np.zeros((240, 240), dtype=np.uint8)
+        cv2.rectangle(mask, (20, 20), (220, 220), 255, 9)
+        cv2.circle(mask, (110, 110), 10, 255, 3)
+
+        centerline = _build(mask)
+
+        self.assertGreater(len(centerline.points), 100)
+        self.assertTrue(all(x <= 225.0 and y <= 225.0 for x, y in centerline.points))
+
+    def test_rejects_an_excessive_branch(self):
+        mask = np.zeros((240, 240), dtype=np.uint8)
+        cv2.rectangle(mask, (30, 30), (210, 210), 255, 9)
+        cv2.line(mask, (120, 30), (120, 110), 255, 7)
+
+        with self.assertRaises(CenterlineTopologyError) as caught:
+            _build(mask)
+
+        self.assertEqual(caught.exception.reason, "excessive_branches")
+
+    def test_rejects_disconnected_noncycle_components(self):
+        mask = np.zeros((200, 200), dtype=np.uint8)
+        cv2.line(mask, (20, 50), (180, 50), 255, 9)
+        cv2.line(mask, (20, 150), (180, 150), 255, 9)
+
+        with self.assertRaises(CenterlineTopologyError) as caught:
+            _build(mask)
+
+        self.assertEqual(caught.exception.reason, "discontinuous_path")
+
+    def test_rejects_an_implausibly_short_cycle(self):
+        mask = np.zeros((200, 200), dtype=np.uint8)
+        cv2.circle(mask, (100, 100), 20, 255, 7)
+
+        with self.assertRaises(CenterlineTopologyError) as caught:
+            _build(mask)
+
+        self.assertEqual(caught.exception.reason, "implausibly_short_path")
 
 
 if __name__ == "__main__":

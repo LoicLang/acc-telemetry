@@ -49,7 +49,7 @@ class TestPS5Profile(unittest.TestCase):
             "last_lap_time": {"x": 100, "y": 128, "width": 130, "height": 34},
             "speed": {"x": 1766, "y": 932, "width": 81, "height": 48},
             "gear": {"x": 1686, "y": 887, "width": 71, "height": 108},
-            "track_map": {"x": 5, "y": 323, "width": 404, "height": 275},
+            "track_map": {"x": 0, "y": 180, "width": 500, "height": 480},
         }
 
         self.assertEqual(

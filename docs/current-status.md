@@ -25,7 +25,7 @@ validation dataset.
 - Active plan: `docs/superpowers/plans/2026-09-03-generic-s-fusion.md`
 - Last completed technical plan: `docs/superpowers/plans/2026-09-02-native-1080-and-s-diagnostics.md`
 - Last completed plan: `docs/superpowers/plans/2026-09-02-agent-handoff-documentation.md`
-- Technical ACC implementation: Tasks 1-3 complete; Task 4 is next
+- Technical ACC implementation: Tasks 1-4 complete; Task 5 is next
 - Documentation milestone: verified complete
 
 ## Resume here
@@ -67,6 +67,12 @@ validation dataset.
   backgrounds and low-circularity artifacts individually, supports both red HSV ranges,
   and returns stable candidate ordering. Task 3 focused tests and the full 98-test
   suite pass; the legacy single-largest-contour behavior remains characterized only.
+- Generic centerline extraction now selects a dominant stable-map component, thins it,
+  prunes local branches/marker cycles, rejects unresolved topology, orders one closed
+  cycle, and resamples it by arc length. The original 1080p map ROI truncated the HUD
+  cycle; the profile now covers the full left-side map region. On 59 sampled frames
+  from the immutable clean BMW capture, the generic extractor returns 861 points and
+  a 1490.639 px cycle. All 109 tests pass.
 
 - OCR runtime prerequisite: verified. `LapDetector` now discovers
   `data/shared/tessdata/eng.traineddata`, and the real tesserocr backend initializes
@@ -254,6 +260,6 @@ gates pass on controlled Spa evidence.
 
 ## Current next action
 
-Begin Task 4 in `docs/superpowers/plans/2026-09-03-generic-s-fusion.md`: write the
-failing topology tests, confirm RED, then derive one ordered generic centerline with
-explicit failure reasons and no fallback to the legacy external contour.
+Begin Task 5 in `docs/superpowers/plans/2026-09-03-generic-s-fusion.md`: write the
+failing geometric-projection tests, confirm RED, then score every projection against
+odometric prediction and temporal image continuity.

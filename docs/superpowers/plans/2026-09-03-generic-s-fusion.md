@@ -337,13 +337,13 @@ git commit -m "feat: retain plausible red map candidates"
 - Modify: `src/acc_telemetry/extraction/map_progress.py`
 - Modify: `tests/test_map_progress.py`
 
-- [ ] **Step 1: Write failing topology and resampling tests**
+- [x] **Step 1: Write failing topology and resampling tests**
 
 Generate masks for: a thick rectangular ring; the same ring with a short start-marker spur; an open curve; two disjoint rings; a ring with a branch longer than the configured fraction; and a tiny ring. Assert the accepted ring yields a one-pixel ordered closed cycle, every graph node has degree two after pruning, cumulative lengths strictly increase, the closing edge is included, and resampling has stable spacing within one source pixel.
 
 Assert exact error reasons through `CenterlineTopologyError.reason`: `no_closed_cycle`, `multiple_cycles`, `excessive_branches`, `discontinuous_path`, and `implausibly_short_path`. There must be no fallback result.
 
-- [ ] **Step 2: Run and confirm RED**
+- [x] **Step 2: Run and confirm RED**
 
 ```bash
 PYTHONPATH=src .venv/bin/python -m unittest tests.test_map_progress.TestCenterline -v
@@ -351,7 +351,7 @@ PYTHONPATH=src .venv/bin/python -m unittest tests.test_map_progress.TestCenterli
 
 Expected: FAIL because `build_centerline()` and `CenterlineTopologyError` are absent.
 
-- [ ] **Step 3: Implement mask reduction and explicit topology validation**
+- [x] **Step 3: Implement mask reduction and explicit topology validation**
 
 Implement these private stages in order, each covered directly through public behavior:
 
@@ -376,11 +376,11 @@ def build_centerline(
 
 Use 8-neighbour pixel adjacency and scale branch/cycle/resampling limits by ROI diagonal or extracted cycle length, never by a circuit name or absolute Spa coordinate. Preserve the white-frequency construction currently used by `PositionTrackerV2`, but move the new centerline path into this focused module. Do not call `_detect_start_finish_line()`.
 
-- [ ] **Step 4: Add a regression for parallel contour ambiguity**
+- [x] **Step 4: Add a regression for parallel contour ambiguity**
 
 Use the synthetic two-pixel-thick return path from the existing characterization. Assert projections onto the new ordered centerline differ locally rather than jumping by more than `0.4` normalized progress. Keep the old tracker characterization unchanged until migration.
 
-- [ ] **Step 5: Run focused/full tests and commit**
+- [x] **Step 5: Run focused/full tests and commit**
 
 ```bash
 PYTHONPATH=src .venv/bin/python -m unittest tests.test_map_progress tests.test_position_tracker_v2 -v

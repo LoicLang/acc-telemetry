@@ -121,10 +121,10 @@ ps5_full_map_1080p:
     width: 71
     height: 108
   track_map:
-    x: 5
-    y: 323
-    width: 404
-    height: 275
+    x: 0
+    y: 180
+    width: 500
+    height: 480
   position_tracking:
     white_lower: [0, 0, 150]
     white_upper: [180, 100, 255]
