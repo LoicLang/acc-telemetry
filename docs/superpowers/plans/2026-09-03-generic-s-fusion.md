@@ -499,7 +499,7 @@ git commit -m "feat: confirm trusted lap boundaries"
 - Modify: `src/acc_telemetry/application/progress.py`
 - Modify: `tests/test_progress_fusion.py`
 
-- [ ] **Step 1: Write failing anchor and fusion tests**
+- [x] **Step 1: Write failing anchor and fusion tests**
 
 Use a 1000 m effective lap length and synthetic boundaries. Assert:
 
@@ -513,7 +513,7 @@ Use a 1000 m effective lap length and synthetic boundaries. Assert:
 - no raw OCR change, visual wrap, geometric point, or `s_visual` near zero resets the lap;
 - progress cannot enter the completion band before a confirmed next boundary unless odometry genuinely predicts it; no forced `1.0` exists.
 
-- [ ] **Step 2: Run and confirm RED**
+- [x] **Step 2: Run and confirm RED**
 
 ```bash
 PYTHONPATH=src .venv/bin/python -m unittest tests.test_progress_fusion.TestFusedEstimator -v
@@ -521,7 +521,7 @@ PYTHONPATH=src .venv/bin/python -m unittest tests.test_progress_fusion.TestFused
 
 Expected: FAIL because `FusedProgressEstimator` is missing.
 
-- [ ] **Step 3: Implement the minimal state update**
+- [x] **Step 3: Implement the minimal state update**
 
 Use odometry for prediction and visual evidence only as a correction:
 
@@ -538,11 +538,11 @@ else:
 
 Reduce uncertainty only when visual selection is unambiguous; otherwise add odometry and gap uncertainty. A confirmed boundary resets cumulative lap distance and the wrapped coordinate but retains a session-total distance for diagnostics. Return a fresh immutable `ProgressEstimate` every frame.
 
-- [ ] **Step 4: Write and pass offline rebasing/calibration tests**
+- [x] **Step 4: Write and pass offline rebasing/calibration tests**
 
 Implement `estimate_progress(observations, centerline, settings)`. It must first derive confirmed boundaries and odometric lap summaries, calibrate from accepted complete laps, then replay frames. A partial opening lap stays unanchored. A captured lap bounded on both sides may be rebased offline. Crash/outlier laps can receive estimates but never update `effective_lap_length_m`.
 
-- [ ] **Step 5: Run focused/full tests and commit**
+- [x] **Step 5: Run focused/full tests and commit**
 
 ```bash
 PYTHONPATH=src .venv/bin/python -m unittest tests.test_odometry tests.test_lap_state tests.test_progress_fusion -v

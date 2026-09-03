@@ -25,7 +25,7 @@ validation dataset.
 - Active plan: `docs/superpowers/plans/2026-09-03-generic-s-fusion.md`
 - Last completed technical plan: `docs/superpowers/plans/2026-09-02-native-1080-and-s-diagnostics.md`
 - Last completed plan: `docs/superpowers/plans/2026-09-02-agent-handoff-documentation.md`
-- Technical ACC implementation: Tasks 1-6 complete; Task 7 is next
+- Technical ACC implementation: Tasks 1-7 complete; Task 8 is next
 - Documentation milestone: verified complete
 
 ## Resume here
@@ -82,6 +82,11 @@ validation dataset.
   isolated, decreasing, and jumping values remain inspectable without emitting a
   boundary. The configured confirmer is constructed but does not yet reset production
   position. All 127 tests pass.
+- The fused estimator now stays unavailable before a confirmed boundary, anchors only
+  on that boundary, predicts from odometric distance, applies wrapped visual correction
+  without implicit lap resets, and exposes interpolation, prediction, ambiguity, and
+  uncertainty-limit reasons. Offline replay learns only from accepted complete laps;
+  a synthetic crash-distance outlier cannot recalibrate the median. All 136 tests pass.
 
 - OCR runtime prerequisite: verified. `LapDetector` now discovers
   `data/shared/tessdata/eng.traineddata`, and the real tesserocr backend initializes
@@ -269,6 +274,6 @@ gates pass on controlled Spa evidence.
 
 ## Current next action
 
-Begin Task 7 in `docs/superpowers/plans/2026-09-03-generic-s-fusion.md`: write the
-failing fused-state tests, confirm RED, then combine odometric prediction and accepted
-visual corrections while anchoring only on `ConfirmedLapBoundary`.
+Begin Task 8 in `docs/superpowers/plans/2026-09-03-generic-s-fusion.md`: write the
+failing two-pass pipeline and normalization tests, confirm RED, then propagate fused
+progress while preserving explicit legacy compatibility.
