@@ -25,7 +25,7 @@ validation dataset.
 - Active plan: `docs/superpowers/plans/2026-09-03-generic-s-fusion.md`
 - Last completed technical plan: `docs/superpowers/plans/2026-09-02-native-1080-and-s-diagnostics.md`
 - Last completed plan: `docs/superpowers/plans/2026-09-02-agent-handoff-documentation.md`
-- Technical ACC implementation: Tasks 1-2 complete; Task 3 is next
+- Technical ACC implementation: Tasks 1-3 complete; Task 4 is next
 - Documentation milestone: verified complete
 
 ## Resume here
@@ -63,6 +63,10 @@ validation dataset.
   interpolates only bounded internal gaps, preserves missing/anomalous evidence, and
   calibrates effective lap length from robust boundary-to-boundary medians. Task 2
   focused tests and the full 93-test suite pass.
+- Red-map extraction now retains every independently plausible contour, rejects large
+  backgrounds and low-circularity artifacts individually, supports both red HSV ranges,
+  and returns stable candidate ordering. Task 3 focused tests and the full 98-test
+  suite pass; the legacy single-largest-contour behavior remains characterized only.
 
 - OCR runtime prerequisite: verified. `LapDetector` now discovers
   `data/shared/tessdata/eng.traineddata`, and the real tesserocr backend initializes
@@ -250,6 +254,6 @@ gates pass on controlled Spa evidence.
 
 ## Current next action
 
-Begin Task 3 in `docs/superpowers/plans/2026-09-03-generic-s-fusion.md`: write the
-failing synthetic-image tests, confirm RED, then extract every plausible red-dot
-candidate without selecting a single visual truth.
+Begin Task 4 in `docs/superpowers/plans/2026-09-03-generic-s-fusion.md`: write the
+failing topology tests, confirm RED, then derive one ordered generic centerline with
+explicit failure reasons and no fallback to the legacy external contour.

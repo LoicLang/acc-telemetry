@@ -9,6 +9,7 @@ from unittest.mock import MagicMock, patch
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../src')))
 
 from position_tracker_v2 import PositionDecision, PositionTrackerV2
+from acc_telemetry.extraction.map_progress import extract_red_candidates
 
 class TestPositionTrackerV2(unittest.TestCase):
     def setUp(self):
@@ -319,8 +320,18 @@ class TestPositionTrackerV2(unittest.TestCase):
         roi[67:74, 67:74] = (0, 0, 255)
 
         dot = PositionTrackerV2().detect_red_dot(roi)
+        candidates = extract_red_candidates(
+            roi,
+            min_area_fraction=0.00002,
+            max_area_fraction=0.005,
+            min_circularity=0.35,
+        )
 
         self.assertIsNone(dot)
+        self.assertEqual(
+            [candidate.centroid for candidate in candidates],
+            [(70.0, 70.0)],
+        )
 
 if __name__ == '__main__':
     unittest.main()

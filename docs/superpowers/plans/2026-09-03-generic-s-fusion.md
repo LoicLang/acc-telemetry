@@ -293,7 +293,7 @@ git commit -m "feat: integrate speed into odometric progress"
 - Create: `tests/test_map_progress.py`
 - Modify: `src/acc_telemetry/extraction/__init__.py`
 
-- [ ] **Step 1: Write the failing all-candidate tests**
+- [x] **Step 1: Write the failing all-candidate tests**
 
 Build BGR arrays in memory. One image contains a 31x31 red background region and two circular red candidates inside the configured fractional area/circularity limits. Assert that the large region is rejected individually and both plausible candidates remain, sorted deterministically by `(centroid_y, centroid_x)`. Add cases for empty input, zero-moment contours, a tiny speck, an elongated red bar, and both HSV red ranges.
 
@@ -308,7 +308,7 @@ self.assertEqual([candidate.centroid for candidate in candidates], [(70.0, 30.0)
 self.assertTrue(all(candidate.area_fraction < 0.005 for candidate in candidates))
 ```
 
-- [ ] **Step 2: Run and confirm RED**
+- [x] **Step 2: Run and confirm RED**
 
 ```bash
 PYTHONPATH=src .venv/bin/python -m unittest tests.test_map_progress -v
@@ -316,11 +316,11 @@ PYTHONPATH=src .venv/bin/python -m unittest tests.test_map_progress -v
 
 Expected: FAIL because `extract_red_candidates()` is missing.
 
-- [ ] **Step 3: Implement candidate extraction without selecting truth**
+- [x] **Step 3: Implement candidate extraction without selecting truth**
 
 Use the existing dual HSV masks, `cv2.RETR_EXTERNAL`, and calculate `area_fraction = contour_area / (height * width)` and `circularity = 4 * pi * area / perimeter**2`. Filter each contour independently, calculate its floating-point centroid, and return all survivors. Do not use `max(contours, ...)`, previous progress, or Spa geometry in this function.
 
-- [ ] **Step 4: Confirm GREEN, preserve characterization, and commit**
+- [x] **Step 4: Confirm GREEN, preserve characterization, and commit**
 
 Update `tests/test_position_tracker_v2.py::test_characterizes_large_red_background_masking_valid_dot` only after the new test is green: keep it as a legacy characterization and assert the new function returns the valid smaller candidate. Do not change `PositionTrackerV2.detect_red_dot()` yet.
 
