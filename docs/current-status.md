@@ -20,12 +20,12 @@ Prepare the implementation of a circuit-generic fused `s`, using Spa as the firs
 validation dataset.
 
 - Active milestone: generic fused `s` production correction
-- Status: design approved; implementation plan required
+- Status: detailed TDD implementation plan drafted; user validation required
 - Active specification: `docs/superpowers/specs/2026-09-03-generic-s-fusion-design.md`
-- Active plan: none
+- Active plan: `docs/superpowers/plans/2026-09-03-generic-s-fusion.md`
 - Last completed technical plan: `docs/superpowers/plans/2026-09-02-native-1080-and-s-diagnostics.md`
 - Last completed plan: `docs/superpowers/plans/2026-09-02-agent-handoff-documentation.md`
-- Technical ACC implementation: blocked until the new agent writes and reviews a TDD plan
+- Technical ACC implementation: blocked until the user validates the active TDD plan
 - Documentation milestone: verified complete
 
 ## Resume here
@@ -37,6 +37,11 @@ validation dataset.
 5. Continue from the first unchecked plan step.
 
 ## Recently completed
+
+- The generic fused `s` design was decomposed into a ten-commit TDD execution plan
+  covering independent odometry, all plausible red candidates, a validated unique
+  centerline, odometry-guided projection, confirmed lap anchors, fused uncertainty,
+  domain propagation, and clean/crash-heavy local replay gates.
 
 - Repository foundations and package boundaries were completed on 2026-08-31.
 - The quality-aware `TelemetrySample` domain contract was added.
@@ -142,6 +147,15 @@ Verification for the documentation milestone:
 - Python compilation succeeds for `src`, `scripts`, `tests`, and launchers;
 - no telemetry production behavior was changed in this milestone.
 
+Verification for the active generic fused `s` implementation plan:
+
+- every local evidence path named by this document exists, including both immutable
+  external captures;
+- documentation discovery and `git diff --check` exit successfully;
+- Python compilation succeeds for `src`, `scripts`, `tests`, and launchers;
+- all 78 repository tests pass;
+- no telemetry production behavior or raw video was changed while writing the plan.
+
 ## Verified working baseline
 
 - Native ACC PS5 capture at 1920x1080 and constant 60 FPS is validated; historical
@@ -228,6 +242,6 @@ gates pass on controlled Spa evidence.
 
 ## Current next action
 
-Read `docs/superpowers/specs/2026-09-03-generic-s-fusion-design.md`, then write and
-review a detailed TDD implementation plan. Begin with `s_odometry`; do not modify
-production position behavior before the plan is active.
+Review `docs/superpowers/plans/2026-09-03-generic-s-fusion.md` with the user. After
+explicit validation, begin Task 1 and keep the active-plan checkboxes synchronized;
+do not modify production position behavior before that validation.

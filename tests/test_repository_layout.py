@@ -146,7 +146,11 @@ class TestRepositoryLayout(unittest.TestCase):
                 self.assertIn(concept, plan)
         self.assertIn("Planned position estimation", architecture)
         self.assertIn("2026-09-03-generic-s-fusion-design.md", status)
-        self.assertIn("Active plan: none", status)
+        self.assertIn(
+            "Active plan: `docs/superpowers/plans/2026-09-03-generic-s-fusion.md`",
+            status,
+        )
+        self.assertIn("user validation required", status)
 
 
 if __name__ == "__main__":
