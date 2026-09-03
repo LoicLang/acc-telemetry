@@ -1,6 +1,6 @@
 # ACC Telemetry
 
-Extract driving telemetry from Assetto Corsa Competizione PS5 recordings when native telemetry is unavailable. The current baseline supports the ACC 720p full-map HUD and produces CSV plus an interactive HTML report.
+Extract driving telemetry from Assetto Corsa Competizione PS5 recordings when native telemetry is unavailable. The validated capture baseline is native 1920x1080 at 60 FPS with the ACC static full-map HUD and the `ps5_full_map_1080p` profile. Historical 720p recordings remain supported.
 
 This repository is the telemetry foundation for the future Road to Verstappen product. It deliberately separates video extraction, normalization, domain concepts, analysis, and presentation.
 
@@ -20,9 +20,9 @@ Place an immutable recording in a session `raw/` directory, then run:
 
 ```bash
 PYTHONPATH=src python main.py \
-  data/sessions/2026/2026-08-30_spa_ps5_calibration/raw/acc-ps5-full-map-720p.mp4 \
-  --profile ps5_full_map_720p \
-  --output data/sessions/2026/2026-08-30_spa_ps5_calibration/processed
+  data/sessions/2026/example_spa_ps5_session/raw/session-1080p60.mov \
+  --profile ps5_full_map_1080p \
+  --output data/sessions/2026/example_spa_ps5_session/processed
 ```
 
 The command never writes into `raw/`. It writes a telemetry CSV and HTML report to the chosen output directory.
@@ -69,16 +69,25 @@ Compatibility modules under `src/` keep older imports working during the migrati
 - ACC console video, not native PC telemetry.
 - ROI profiles are resolution and HUD dependent.
 - The full static minimap is supported; the scrolling minimap is not.
-- Track progress is currently a normalized longitudinal coordinate `s`; lateral distance `d` is future work.
+- The legacy map-only `track_position` is diagnostically instrumented but is not reliable enough for coaching.
+- The approved replacement will expose `s_odometry`, `s_visual`, and fused `s`; implementation planning is the next milestone.
+- Lateral distance `d` remains future work.
 - OCR and map observations can be missing or anomalous and must not be treated as unquestioned truth.
 
 ## Reference documents
 
+- [Current status](docs/current-status.md)
 - [Product context](docs/product-context.md)
 - [Architecture](docs/architecture.md)
 - [ACC PS5 plan](docs/acc-ps5-plan.md)
 - [Contribution rules](CONTRIBUTING.md)
 - [Historical documentation](docs/legacy/README.md)
+
+Agents discover active documentation through:
+
+```bash
+./scripts/docs-list
+```
 
 To run the API locally:
 

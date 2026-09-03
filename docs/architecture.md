@@ -42,9 +42,46 @@ Legacy extraction records use `track_position` in percent for CSV compatibility.
 
 Each field has one quality state: observed, missing, held, interpolated, or anomalous. The sample also preserves source values and anomaly reasons. Lateral `d` is not present because video evidence does not yet support it reliably.
 
+The current legacy `track_position` remains map-only and is not reliable enough for
+analysis. Diagnostic output may expose its raw projection and filtering decisions,
+but must not be mistaken for validated domain `s`.
+
+## Planned position estimation
+
+The approved target is generic across circuits using the static full-map HUD. It is
+not implemented yet.
+
+```text
+speed + delta time -> integrated distance -> s_odometry + uncertainty
+
+static map -> unique centerline
+red contours -> plausible dot candidates
+centerline + candidates + odometry prediction -> s_visual
+
+s_odometry + s_visual + confirmed lap boundary
+  -> s_fused + source + uncertainty + reasons
+  -> normalized domain telemetry
+```
+
+`s_odometry` integrates `speed_kmh / 3.6 * delta_time_s`. Completed clean laps are
+normalized by their measured integrated distance; the median becomes an effective
+lap-length calibration. Official circuit length is optional sanity evidence, not the
+primary denominator.
+
+The visual side uses a single centerline, not the external outline of the thick map
+stroke. It retains all plausible red-dot candidates and uses odometric prediction
+plus temporal continuity to disambiguate nearby branches. A visual gap may be bridged
+briefly with explicitly predicted/interpolated progress; long uncertain gaps become
+unavailable.
+
+Only a confirmed lap boundary may reset `s_fused` to zero. The opening partial lap is
+unanchored unless offline evidence provides both trusted boundaries. The geometric
+top-of-map start heuristic and unconditional forced completion are not part of the
+target architecture.
+
 ## State and error handling
 
-Frames remain sequential because OCR recovery, lap transitions, and position validation depend on history. `TelemetryPipeline` owns video lifetime and closes the capture in a `finally` block. Adapters choose inputs and outputs; they do not duplicate extraction rules.
+Frames remain sequential because OCR recovery, lap transitions, position validation, and future fusion depend on history. `TelemetryPipeline` owns video lifetime and closes the capture in a `finally` block. Adapters choose inputs and outputs; they do not duplicate extraction rules.
 
 ## Testing
 

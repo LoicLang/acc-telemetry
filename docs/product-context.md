@@ -35,6 +35,6 @@ Useful session feedback answers:
 
 ## Product principles
 
-Prioritize simple and explainable evidence over opaque scores. Preserve history, compare sessions, segment by track position, expose data quality, and produce concrete feedback. The user is the first product user, so every extraction problem is also product research.
+Prioritize simple and explainable evidence over opaque scores. Preserve history, compare sessions, segment by track position, expose data quality, and produce concrete feedback. Observed, predicted, interpolated, and fused values must remain distinguishable; a smooth signal is not automatically a truthful signal. The user is the first product user, so every extraction problem is also product research.
 
 This repository covers the ACC PS5 telemetry foundation. Product roadmap and coaching UI work remain outside the current cleanup scope.

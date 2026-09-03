@@ -7,7 +7,7 @@ read_when:
 
 # ACC PS5 telemetry plan
 
-Last verified: 2026-09-02
+Last verified: 2026-09-03
 
 ## Current state
 
@@ -15,6 +15,7 @@ Last verified: 2026-09-02
 - controls_speed_gears_status: usable
 - track_path_extraction_status: usable
 - s_status: failed_validation
+- s_repair_design_status: approved_pending_implementation_plan
 - long_capture_lap_transition_status: failed_validation
 - quality_propagation_status: incomplete
 - downstream_coaching_status: blocked
@@ -79,6 +80,31 @@ threshold tuning is not the root fix. The production correction must address dot
 candidate selection, unique or continuity-aware path projection, and trusted lap
 anchoring before reevaluating smoothing.
 
+## Approved generic `s` architecture
+
+The replacement must work across static full-map circuits; Spa is only the first
+validation dataset. The approved design is documented in
+`docs/superpowers/specs/2026-09-03-generic-s-fusion-design.md`.
+
+It exposes three independently inspectable coordinates:
+
+- `s_odometry`: progress from integrated `v * delta_t`, normalized using measured
+  complete-lap distance;
+- `s_visual`: absolute candidates projected onto a unique map centerline;
+- `s_fused`: odometry-constrained visual progress with source, uncertainty, and
+  reasons.
+
+Official circuit length is an optional sanity check, not the primary denominator.
+Actual driven distance changes with racing line, pits, and off-track travel.
+
+Odometry is both a useful independent baseline and the temporal prediction used to
+reject visually close but topologically impossible candidates. Visual observations
+correct odometric drift. During missing visual evidence, short predictions remain
+explicitly estimated and long uncertain gaps become unavailable.
+
+Only a confirmed lap boundary may anchor or reset `s_fused`. No Spa-specific map,
+corner coordinate, or track template belongs in the first implementation.
+
 ## Failed long-capture lap transitions
 
 The longer 2026-09-01 Spa session records false lap transitions from lap-number OCR.
@@ -110,13 +136,18 @@ Holding a value must never make it indistinguishable from a fresh observation.
 
 Required work:
 
-1. select plausible red-dot contours using track and temporal context instead of
+1. build and validate `s_odometry` from speed and timestamps as an independent
+   generic baseline;
+2. select plausible red-dot contours using track and temporal context instead of
    rejecting the frame because the largest red region is invalid;
-2. derive a unique centerline or use continuity-aware projection so nearby pixels do
+3. derive a unique centerline and continuity-aware projection so nearby pixels do
    not jump between distant contour indexes;
-3. anchor `s` from a trusted confirmed crossing rather than the false geometric point;
-4. reevaluate completion and smoothing only after upstream observations are stable;
-5. replay both controlled Spa sessions.
+4. fuse visual candidates with odometric prediction and explicit uncertainty;
+5. anchor `s_fused` from a trusted confirmed crossing rather than the false geometric
+   point;
+6. connect observed, predicted, interpolated, and fused quality to the domain boundary;
+7. replay the clean and crash-heavy Spa sessions;
+8. reevaluate completion and smoothing only after upstream observations are stable.
 
 Exit criteria:
 
@@ -191,8 +222,9 @@ today because the video minimap does not yet provide validated track width or la
 projection. Future work must define reference geometry, sign, unit, confidence, and
 evaluation on known corners.
 
-## Review gate
+## Next planning gate
 
-No technical implementation plan is active yet. The repository documentation must be
-reviewed with Loïc first. After that review, create one detailed, test-driven plan for
-the three ordered reliability priorities and link it from `docs/current-status.md`.
+The generic fusion design is approved, but no implementation plan is active. The next
+agent must read the design and create a detailed TDD plan before modifying position
+behavior. The first implementation slice is `s_odometry`; downstream coaching remains
+blocked until fused `s` passes the Spa criteria.

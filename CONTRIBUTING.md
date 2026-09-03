@@ -12,6 +12,10 @@ python -m pip install -r requirements.txt
 
 Run commands from the repository root. Until the package is installed, expose the source tree with `PYTHONPATH=src`.
 
+Before changing the repository, run `./scripts/docs-list`, read
+`docs/current-status.md`, and follow the `read_when` hints for the task. If the status
+names an active specification or plan, read it before implementation.
+
 ## Tests
 
 Run a focused test while working, then the complete suite:
@@ -22,6 +26,12 @@ PYTHONPATH=src python -m unittest discover -s tests -v
 ```
 
 New behavior and bug fixes require a failing test first. Tests must not read or modify personal data under `data/sessions/`.
+
+If active documentation changes, also run:
+
+```bash
+./scripts/docs-list
+```
 
 ## Data
 
@@ -48,3 +58,6 @@ docs: explain ACC PS5 position quality
 ```
 
 Do not mix large file moves, behavior changes, data migration, and documentation rewrites in one commit.
+
+Update `docs/current-status.md` in the same commit whenever a behavior change alters
+verified project truth, blockers, the active milestone, or the exact next action.

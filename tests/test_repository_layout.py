@@ -129,6 +129,25 @@ class TestRepositoryLayout(unittest.TestCase):
             with self.subTest(plan_contains=expected):
                 self.assertIn(expected, plan)
 
+    def test_current_docs_record_approved_fused_s_direction(self):
+        readme = (ROOT / "README.md").read_text(encoding="utf-8")
+        plan = (ROOT / "docs" / "acc-ps5-plan.md").read_text(encoding="utf-8")
+        architecture = (ROOT / "docs" / "architecture.md").read_text(
+            encoding="utf-8"
+        )
+        status = (ROOT / "docs" / "current-status.md").read_text(
+            encoding="utf-8"
+        )
+
+        self.assertIn("ps5_full_map_1080p", readme)
+        self.assertIn("1920x1080", readme)
+        for concept in ("s_odometry", "s_visual", "s_fused", "v * delta_t"):
+            with self.subTest(plan_contains=concept):
+                self.assertIn(concept, plan)
+        self.assertIn("Planned position estimation", architecture)
+        self.assertIn("2026-09-03-generic-s-fusion-design.md", status)
+        self.assertIn("Active plan: none", status)
+
 
 if __name__ == "__main__":
     unittest.main()

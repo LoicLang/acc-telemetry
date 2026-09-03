@@ -8,7 +8,7 @@ read_when:
 
 # Current status
 
-Last verified: 2026-09-02
+Last verified: 2026-09-03
 
 This document is the mandatory living handoff for the repository. Update it from
 verified evidence whenever active work, blockers, stage gates, or the next action
@@ -16,23 +16,23 @@ change. Use `git log` for authoritative commit hashes and dates.
 
 ## Current objective
 
-Review the validated native 1080p baseline and confirmed `s` root causes before
-designing the production correction.
+Prepare the implementation of a circuit-generic fused `s`, using Spa as the first
+validation dataset.
 
-- Active milestone: native 1080p and `s` diagnostic review
-- Status: diagnostic complete; awaiting review with Loïc
-- Active specification: `docs/superpowers/specs/2026-09-02-native-1080-and-s-diagnostics-design.md`
+- Active milestone: generic fused `s` production correction
+- Status: design approved; implementation plan required
+- Active specification: `docs/superpowers/specs/2026-09-03-generic-s-fusion-design.md`
 - Active plan: none
 - Last completed technical plan: `docs/superpowers/plans/2026-09-02-native-1080-and-s-diagnostics.md`
 - Last completed plan: `docs/superpowers/plans/2026-09-02-agent-handoff-documentation.md`
-- Technical ACC implementation: limited to the approved profile and diagnostic slice
+- Technical ACC implementation: blocked until the new agent writes and reviews a TDD plan
 - Documentation milestone: verified complete
 
 ## Resume here
 
 1. Run `./scripts/docs-list`.
 2. Read this document.
-3. If an active plan is named above, read it before changing that milestone.
+3. Read the active specification above; if an active plan is named, read it too.
 4. Inspect `git status --short --branch` and `git log --oneline -10`.
 5. Continue from the first unchecked plan step.
 
@@ -106,6 +106,22 @@ Trace decision totals:
 The monotonic validator and forced-completion rule amplify and conceal the upstream
 anchor, topology, and red-dot selection failures. They are not the first cause.
 
+### Approved production direction
+
+The replacement is generic across circuits and validated on Spa first:
+
+1. `s_odometry` integrates `speed / 3.6 * delta_time` and is normalized by measured
+   complete-lap distance;
+2. `s_visual` projects plausible red-dot candidates onto a unique map centerline;
+3. `s_fused` uses odometry as a temporal prediction and visual position as an absolute
+   correction;
+4. every output retains source, uncertainty, and reasons;
+5. only a confirmed lap boundary anchors or resets progress.
+
+Official circuit length is optional sanity evidence. It is not the primary distance
+denominator. No Spa-specific coordinates or templates are allowed in the first
+implementation.
+
 Milestone commits:
 
 - `e944f81`: discover repository-local OCR data;
@@ -128,7 +144,8 @@ Verification for the documentation milestone:
 
 ## Verified working baseline
 
-- ACC PS5 capture at 1280x720 and constant 60 FPS is usable.
+- Native ACC PS5 capture at 1920x1080 and constant 60 FPS is validated; historical
+  1280x720 recordings remain supported.
 - The static full-map HUD path is extracted.
 - Controls, speed, and gears produce useful observations.
 - Real lap transitions can be detected on the controlled short capture.
@@ -195,18 +212,22 @@ Verify these paths exist before using them. Their summarized findings above are 
 durable repository record; personal videos and full telemetry exports must not be
 committed.
 
-## Priority order after the review gate
+## Priority order
 
-1. Make the initial `s` anchor and progression trustworthy.
-2. Confirm lap transitions robustly on long captures.
-3. Propagate field-level quality and anomalies through the real pipeline.
+1. Implement and validate the independent `s_odometry` baseline.
+2. Make red-dot candidate extraction survive large red backgrounds.
+3. Build a unique generic map centerline.
+4. Fuse visual candidates with odometric prediction and trusted lap anchors.
+5. Validate `s_fused` on clean then crash-heavy Spa evidence.
+6. Confirm lap transitions robustly on long captures.
+7. Propagate field-level quality and anomalies through the complete pipeline.
 
 Corner segmentation, driving-event extraction, reference comparison, coaching
-rules, dashboards, and generative feedback remain blocked until these three gates
-pass on controlled Spa evidence.
+rules, dashboards, and generative feedback remain blocked until the reliability
+gates pass on controlled Spa evidence.
 
 ## Current next action
 
-Review the confirmed root causes with Loïc, then design a production correction that
-addresses red-dot candidate selection, unique/continuous path projection, and trusted
-lap anchoring. Do not treat smoothing thresholds as the root fix.
+Read `docs/superpowers/specs/2026-09-03-generic-s-fusion-design.md`, then write and
+review a detailed TDD implementation plan. Begin with `s_odometry`; do not modify
+production position behavior before the plan is active.

@@ -18,8 +18,8 @@ Before changing code, tests, configuration, or active documentation:
 2. Run `./scripts/docs-list`.
 3. Always read `docs/current-status.md`.
 4. Use the index `read_when` hints to select the other relevant documents.
-5. Read the active dated plan named by `docs/current-status.md` when the task affects
-   that milestone.
+5. Read the active specification and dated plan named by `docs/current-status.md`
+   when the task affects that milestone.
 6. Inspect `git status --short --branch` and recent commits.
 7. Confirm that local evidence referenced by a document exists before relying on it.
 
