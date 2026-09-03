@@ -399,11 +399,11 @@ Stop the milestone here if the real Spa mask cannot produce one cycle without tr
 - Create: `tests/test_progress_fusion.py`
 - Modify: `tests/test_map_progress.py`
 
-- [ ] **Step 1: Write failing geometric projection tests**
+- [x] **Step 1: Write failing geometric projection tests**
 
 Make `project_candidate(candidate, centerline)` return every segment projection within the configured distance gate as `VisualProjection(s_visual, distance_px, projected_xy)`. Test wraparound at `0/1`, interpolation between resampled points, and multiple projections for visually close centerline branches. Geometry must not choose the winning branch.
 
-- [ ] **Step 2: Run and confirm RED, then implement the geometric projection**
+- [x] **Step 2: Run and confirm RED, then implement the geometric projection**
 
 ```bash
 PYTHONPATH=src .venv/bin/python -m unittest tests.test_map_progress.TestProjection -v
@@ -411,7 +411,7 @@ PYTHONPATH=src .venv/bin/python -m unittest tests.test_map_progress.TestProjecti
 
 Expected RED: projection API missing. Implement orthogonal point-to-segment projection and normalized arc length, rerun, and expect GREEN.
 
-- [ ] **Step 3: Write failing temporal-selection tests**
+- [x] **Step 3: Write failing temporal-selection tests**
 
 Define:
 
@@ -428,7 +428,7 @@ class VisualSelection:
 
 Test the measured failure shape generically: two spatially adjacent branches project to `0.015` and `0.347`, while odometry predicts `0.018`; select `0.015`. Test that 2D displacement, wrapped progress error, projection distance, elapsed time, speed-derived maximum movement, and current uncertainty all contribute. If the top two normalized scores differ by less than `min_score_margin`, return `s_visual=None` with `visual_ambiguous`. If every candidate violates the physical/projection gate, return `visual_out_of_gate`. With no candidates, return `visual_missing`.
 
-- [ ] **Step 4: Implement deterministic scoring**
+- [x] **Step 4: Implement deterministic scoring**
 
 Implement `select_visual_projection()` with a documented lower-is-better score whose terms are normalized by configured gates:
 
@@ -440,7 +440,7 @@ score = 0.40 * progress_error / progress_gate
 
 Expand `progress_gate` by current odometric uncertainty. Derive `displacement_gate` from `speed_kmh * dt` only as a consistency bound; because pixels/metre is unknown, combine it with prior accepted image displacement and ROI diagonal. Do not convert map pixels to physical metres. Break exact-score ties only by stable candidate/projection ordering, then still reject them as ambiguous because their margin is zero.
 
-- [ ] **Step 5: Run focused/full tests and commit**
+- [x] **Step 5: Run focused/full tests and commit**
 
 ```bash
 PYTHONPATH=src .venv/bin/python -m unittest tests.test_map_progress tests.test_progress_fusion -v

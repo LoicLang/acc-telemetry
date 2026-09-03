@@ -25,7 +25,7 @@ validation dataset.
 - Active plan: `docs/superpowers/plans/2026-09-03-generic-s-fusion.md`
 - Last completed technical plan: `docs/superpowers/plans/2026-09-02-native-1080-and-s-diagnostics.md`
 - Last completed plan: `docs/superpowers/plans/2026-09-02-agent-handoff-documentation.md`
-- Technical ACC implementation: Tasks 1-4 complete; Task 5 is next
+- Technical ACC implementation: Tasks 1-5 complete; Task 6 is next
 - Documentation milestone: verified complete
 
 ## Resume here
@@ -73,6 +73,10 @@ validation dataset.
   cycle; the profile now covers the full left-side map region. On 59 sampled frames
   from the immutable clean BMW capture, the generic extractor returns 861 points and
   a 1490.639 px cycle. All 109 tests pass.
+- Visual geometry now returns every compatible point-to-segment projection, including
+  wraparound and nearby branches. Pure temporal selection scores normalized odometric
+  error, centerline distance, and image displacement; it accepts only a clear winner
+  and preserves missing, out-of-gate, and ambiguous reasons. All 121 tests pass.
 
 - OCR runtime prerequisite: verified. `LapDetector` now discovers
   `data/shared/tessdata/eng.traineddata`, and the real tesserocr backend initializes
@@ -260,6 +264,6 @@ gates pass on controlled Spa evidence.
 
 ## Current next action
 
-Begin Task 5 in `docs/superpowers/plans/2026-09-03-generic-s-fusion.md`: write the
-failing geometric-projection tests, confirm RED, then score every projection against
-odometric prediction and temporal image continuity.
+Begin Task 6 in `docs/superpowers/plans/2026-09-03-generic-s-fusion.md`: write the
+failing raw-versus-confirmed lap tests, confirm RED, then implement the pure temporal
+confirmation state machine before connecting any reset or anchor.

@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from dataclasses import dataclass
 from math import hypot, pi
 
 import cv2
@@ -22,6 +23,16 @@ class CenterlineTopologyError(ValueError):
     def __init__(self, reason: str):
         self.reason = reason
         super().__init__(reason)
+
+
+@dataclass(frozen=True)
+class VisualProjection:
+    """One candidate projected onto one compatible centerline segment."""
+
+    s_visual: float
+    distance_px: float
+    projected_xy: tuple[float, float]
+    centroid: tuple[float, float]
 
 
 def extract_red_candidates(
@@ -428,3 +439,58 @@ def build_centerline(
         raise CenterlineTopologyError("implausibly_short_path")
     spacing = resample_spacing_diagonal_fraction * diagonal
     return _resample_closed_path(ordered, spacing)
+
+
+def project_candidate(
+    candidate: RedDotCandidate,
+    centerline: Centerline,
+    *,
+    max_distance_px: float,
+) -> tuple[VisualProjection, ...]:
+    """Project one image candidate onto every geometrically compatible segment."""
+    projections: list[VisualProjection] = []
+    candidate_x, candidate_y = candidate.centroid
+    for index, start in enumerate(centerline.points):
+        end = centerline.points[(index + 1) % len(centerline.points)]
+        dx = end[0] - start[0]
+        dy = end[1] - start[1]
+        squared_length = dx * dx + dy * dy
+        if squared_length <= 0:
+            continue
+        fraction = (
+            (candidate_x - start[0]) * dx + (candidate_y - start[1]) * dy
+        ) / squared_length
+        fraction = max(0.0, min(1.0, fraction))
+        projected = (
+            start[0] + fraction * dx,
+            start[1] + fraction * dy,
+        )
+        distance = hypot(
+            candidate_x - projected[0],
+            candidate_y - projected[1],
+        )
+        if distance > max_distance_px:
+            continue
+        segment_length = squared_length**0.5
+        arc_length = (
+            centerline.cumulative_length_px[index] + fraction * segment_length
+        )
+        projections.append(
+            VisualProjection(
+                s_visual=(arc_length / centerline.total_length_px) % 1.0,
+                distance_px=distance,
+                projected_xy=projected,
+                centroid=candidate.centroid,
+            )
+        )
+    return tuple(
+        sorted(
+            projections,
+            key=lambda projection: (
+                projection.distance_px,
+                projection.s_visual,
+                projection.projected_xy[1],
+                projection.projected_xy[0],
+            ),
+        )
+    )

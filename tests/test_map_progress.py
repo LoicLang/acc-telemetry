@@ -10,7 +10,9 @@ from acc_telemetry.extraction.map_progress import (
     CenterlineTopologyError,
     build_centerline,
     extract_red_candidates,
+    project_candidate,
 )
+from acc_telemetry.domain.progress import Centerline, RedDotCandidate
 
 
 def _build(mask: np.ndarray):
@@ -251,6 +253,69 @@ class TestCenterline(unittest.TestCase):
             _build(mask)
 
         self.assertEqual(caught.exception.reason, "implausibly_short_path")
+
+
+class TestProjection(unittest.TestCase):
+    def setUp(self):
+        self.square = Centerline(
+            points=((0.0, 0.0), (10.0, 0.0), (10.0, 10.0), (0.0, 10.0)),
+            cumulative_length_px=(0.0, 10.0, 20.0, 30.0),
+            total_length_px=40.0,
+        )
+
+    @staticmethod
+    def candidate(x: float, y: float) -> RedDotCandidate:
+        return RedDotCandidate((x, y), 50.0, 0.001, 0.9)
+
+    def test_projects_orthogonally_onto_a_centerline_segment(self):
+        projections = project_candidate(
+            self.candidate(5.0, 2.0),
+            self.square,
+            max_distance_px=3.0,
+        )
+
+        self.assertEqual(len(projections), 1)
+        self.assertAlmostEqual(projections[0].s_visual, 0.125)
+        self.assertAlmostEqual(projections[0].distance_px, 2.0)
+        self.assertEqual(projections[0].projected_xy, (5.0, 0.0))
+
+    def test_preserves_progress_wraparound_on_the_closing_segment(self):
+        near_end = project_candidate(
+            self.candidate(1.0, 1.0),
+            self.square,
+            max_distance_px=1.1,
+        )
+
+        self.assertEqual(
+            sorted(round(projection.s_visual, 3) for projection in near_end),
+            [0.025, 0.975],
+        )
+
+    def test_returns_multiple_nearby_branch_projections_without_choosing(self):
+        parallel = Centerline(
+            points=((0.0, 0.0), (10.0, 0.0), (10.0, 2.0), (0.0, 2.0)),
+            cumulative_length_px=(0.0, 10.0, 12.0, 22.0),
+            total_length_px=24.0,
+        )
+
+        projections = project_candidate(
+            self.candidate(5.0, 1.0),
+            parallel,
+            max_distance_px=1.1,
+        )
+
+        self.assertGreaterEqual(len(projections), 2)
+        self.assertIn(0.208, [round(projection.s_visual, 3) for projection in projections])
+        self.assertIn(0.708, [round(projection.s_visual, 3) for projection in projections])
+
+    def test_rejects_segments_outside_the_geometric_gate(self):
+        projections = project_candidate(
+            self.candidate(50.0, 50.0),
+            self.square,
+            max_distance_px=3.0,
+        )
+
+        self.assertEqual(projections, ())
 
 
 if __name__ == "__main__":
