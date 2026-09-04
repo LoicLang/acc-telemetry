@@ -19,14 +19,15 @@ change. Use `git log` for authoritative commit hashes and dates.
 Validate circuit-generic fused `s` against new native 1080p sessions before starting
 corner analysis.
 
-- Active milestone: new-session generic `s` robustness
+- Active milestone: generic boundary visual-anchor robustness
 - Previous milestone status: implementation and representative validation complete;
   merged locally into `main` at `f7888ae`
 - Current validation status: temporal centerline selection passes the new BMW and both
   historical 1080p controls; the new replay exposes a separate missing-boundary-dot
   anchor gap that leaves its first complete lap unavailable
-- Active specification: `docs/superpowers/specs/2026-09-03-generic-s-fusion-design.md`
-- Active plan: none; the visual-anchor correction requires review before planning
+- Active specification: `docs/superpowers/specs/2026-09-05-generic-boundary-visual-anchor-design.md`
+- Parent specification: `docs/superpowers/specs/2026-09-03-generic-s-fusion-design.md`
+- Active plan: none; the approved design requires written-spec review before planning
 - Last completed implementation plan: `docs/superpowers/plans/2026-09-04-temporal-centerline-selection.md`
 - Prior completed implementation plan: `docs/superpowers/plans/2026-09-03-generic-s-fusion.md`
 - Last completed technical plan: `docs/superpowers/plans/2026-09-02-native-1080-and-s-diagnostics.md`
@@ -367,8 +368,8 @@ gates pass on controlled Spa evidence.
 
 ## Current next action
 
-Explain and design a minimal generic RED regression for a confirmed lap boundary whose
-exact frame has no visual projection although a valid red-dot observation exists just
-before or after it. Do not weaken confirmed-boundary anchoring or infer resets from map
-geometry. Push local `main` only after explicit user request, and do not start corner
-analysis before the reopened `s` gate and remaining quality gates pass.
+Review the written generic boundary visual-anchor specification with the user, then
+write a TDD implementation plan for layered compact-candidate retention and bounded
+confirmed-boundary anchor recovery. Do not weaken confirmed-boundary anchoring or
+infer resets from map geometry. Push only after explicit user request, and do not
+start corner analysis before the reopened `s` gate and remaining quality gates pass.
