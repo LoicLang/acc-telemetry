@@ -25,6 +25,17 @@ def _build(mask: np.ndarray):
     )
 
 
+def _candidate_settings() -> dict[str, float]:
+    return {
+        "min_area_fraction": 0.00002,
+        "max_area_fraction": 0.005,
+        "min_circularity": 0.35,
+        "min_compact_aspect_ratio": 0.75,
+        "min_filled_extent": 0.45,
+        "min_convex_compactness": 0.45,
+    }
+
+
 class TestRedDotCandidates(unittest.TestCase):
     def test_keeps_all_plausible_dots_despite_a_larger_red_region(self):
         image = np.zeros((200, 200, 3), dtype=np.uint8)
@@ -34,9 +45,7 @@ class TestRedDotCandidates(unittest.TestCase):
 
         candidates = extract_red_candidates(
             image,
-            min_area_fraction=0.00002,
-            max_area_fraction=0.005,
-            min_circularity=0.35,
+            **_candidate_settings(),
         )
 
         self.assertEqual(
@@ -48,11 +57,7 @@ class TestRedDotCandidates(unittest.TestCase):
         )
 
     def test_returns_empty_for_missing_or_empty_images(self):
-        settings = {
-            "min_area_fraction": 0.00002,
-            "max_area_fraction": 0.005,
-            "min_circularity": 0.35,
-        }
+        settings = _candidate_settings()
 
         self.assertEqual(extract_red_candidates(None, **settings), ())
         self.assertEqual(
@@ -68,9 +73,11 @@ class TestRedDotCandidates(unittest.TestCase):
 
         candidates = extract_red_candidates(
             image,
-            min_area_fraction=0.0005,
-            max_area_fraction=0.005,
-            min_circularity=0.6,
+            **{
+                **_candidate_settings(),
+                "min_area_fraction": 0.0005,
+                "min_circularity": 0.6,
+            },
         )
 
         self.assertEqual(
@@ -86,9 +93,10 @@ class TestRedDotCandidates(unittest.TestCase):
 
         candidates = extract_red_candidates(
             image,
-            min_area_fraction=0.0005,
-            max_area_fraction=0.005,
-            min_circularity=0.35,
+            **{
+                **_candidate_settings(),
+                "min_area_fraction": 0.0005,
+            },
         )
 
         self.assertEqual(
@@ -106,10 +114,57 @@ class TestRedDotCandidates(unittest.TestCase):
         ):
             candidates = extract_red_candidates(
                 image,
-                min_area_fraction=0.0005,
-                max_area_fraction=0.02,
-                min_circularity=0.35,
+                **{
+                    **_candidate_settings(),
+                    "min_area_fraction": 0.0005,
+                    "max_area_fraction": 0.02,
+                },
             )
+
+        self.assertEqual(candidates, ())
+
+    def test_retains_a_compact_irregular_contour_below_minimum_circularity(self):
+        image = np.zeros((200, 200, 3), dtype=np.uint8)
+        irregular_compact = np.array(
+            [
+                (28, 20), (25, 21), (27, 24), (24, 24),
+                (24, 27), (21, 25), (20, 28), (19, 25),
+                (16, 27), (16, 24), (13, 24), (15, 21),
+                (12, 20), (15, 19), (13, 16), (16, 16),
+                (16, 13), (19, 15), (20, 12), (21, 15),
+                (24, 13), (24, 16), (27, 16), (25, 19),
+            ],
+            dtype=np.int32,
+        )
+        cv2.fillPoly(image, [irregular_compact], (0, 0, 255))
+        # Preserve the measured map-stroke overlap after OpenCV rasterization.
+        image[14, 16] = (0, 0, 0)
+        image[14, 18] = (0, 0, 0)
+
+        candidates = extract_red_candidates(image, **_candidate_settings())
+
+        self.assertEqual(len(candidates), 1)
+        self.assertLess(candidates[0].circularity, 0.35)
+
+    def test_rejects_noncompact_and_out_of_area_shapes(self):
+        image = np.zeros((200, 200, 3), dtype=np.uint8)
+        cv2.rectangle(image, (10, 10), (59, 12), (0, 0, 255), -1)
+        sparse_concave = np.array(
+            [
+                (88, 80), (84, 81), (87, 84), (83, 83),
+                (84, 87), (81, 84), (80, 88), (79, 84),
+                (76, 87), (77, 83), (73, 84), (76, 81),
+                (72, 80), (76, 79), (73, 76), (77, 77),
+                (76, 73), (79, 76), (80, 72), (81, 76),
+                (84, 73), (83, 77), (87, 76), (84, 79),
+            ],
+            dtype=np.int32,
+        )
+        cv2.fillPoly(image, [sparse_concave], (0, 0, 255))
+        cv2.rectangle(image, (120, 10), (150, 40), (0, 0, 255), -1)
+        image[180, 180] = (0, 0, 255)
+
+        candidates = extract_red_candidates(image, **_candidate_settings())
 
         self.assertEqual(candidates, ())
 

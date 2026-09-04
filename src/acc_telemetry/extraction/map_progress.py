@@ -61,6 +61,9 @@ def extract_red_candidates(
     min_area_fraction: float,
     max_area_fraction: float,
     min_circularity: float,
+    min_compact_aspect_ratio: float,
+    min_filled_extent: float,
+    min_convex_compactness: float,
 ) -> tuple[RedDotCandidate, ...]:
     """Return every independently plausible red contour in stable image order."""
     if map_roi is None or map_roi.size == 0:
@@ -89,7 +92,22 @@ def extract_red_candidates(
         if perimeter <= 0:
             continue
         circularity = 4.0 * pi * area_px / (perimeter * perimeter)
-        if circularity < min_circularity:
+        _, _, width, height = cv2.boundingRect(contour)
+        aspect_ratio = min(width, height) / max(width, height)
+        filled_extent = area_px / float(width * height)
+        convex_hull = cv2.convexHull(contour)
+        convex_perimeter = float(cv2.arcLength(convex_hull, True))
+        convex_compactness = (
+            0.0
+            if convex_perimeter <= 0
+            else 4.0 * pi * area_px / (convex_perimeter * convex_perimeter)
+        )
+        compact_shape = (
+            aspect_ratio >= min_compact_aspect_ratio
+            and filled_extent >= min_filled_extent
+            and convex_compactness >= min_convex_compactness
+        )
+        if circularity < min_circularity and not compact_shape:
             continue
         moments = cv2.moments(contour)
         if moments["m00"] == 0:

@@ -40,6 +40,9 @@ def _telemetry_with_progress() -> dict:
             "min_area_fraction": 0.00002,
             "max_area_fraction": 0.005,
             "min_circularity": 0.35,
+            "min_compact_aspect_ratio": 0.75,
+            "min_filled_extent": 0.45,
+            "min_convex_compactness": 0.45,
         },
         "centerline": {
             "max_branch_length_fraction": 0.03,
@@ -81,6 +84,15 @@ class TestTelemetryConfiguration(unittest.TestCase):
         self.assertEqual(settings.progress.candidates.min_area_fraction, 0.00002)
         self.assertEqual(settings.progress.candidates.max_area_fraction, 0.005)
         self.assertEqual(settings.progress.candidates.min_circularity, 0.35)
+        self.assertEqual(
+            settings.progress.candidates.min_compact_aspect_ratio,
+            0.75,
+        )
+        self.assertEqual(settings.progress.candidates.min_filled_extent, 0.45)
+        self.assertEqual(
+            settings.progress.candidates.min_convex_compactness,
+            0.45,
+        )
         self.assertEqual(settings.progress.centerline.max_branch_length_fraction, 0.03)
         self.assertEqual(settings.progress.centerline.min_cycle_diagonal_fraction, 2.0)
         self.assertEqual(settings.progress.projection.max_progress_error, 0.04)
@@ -95,6 +107,12 @@ class TestTelemetryConfiguration(unittest.TestCase):
         invalid_cases = (
             ("progress.odometry.max_interpolation_gap_s", ("progress", "odometry", "max_interpolation_gap_s"), 0),
             ("progress.candidates.min_area_fraction", ("progress", "candidates", "min_area_fraction"), -0.1),
+            ("progress.candidates.min_compact_aspect_ratio", ("progress", "candidates", "min_compact_aspect_ratio"), 0),
+            ("progress.candidates.min_compact_aspect_ratio", ("progress", "candidates", "min_compact_aspect_ratio"), 1.1),
+            ("progress.candidates.min_filled_extent", ("progress", "candidates", "min_filled_extent"), 0),
+            ("progress.candidates.min_filled_extent", ("progress", "candidates", "min_filled_extent"), 1.1),
+            ("progress.candidates.min_convex_compactness", ("progress", "candidates", "min_convex_compactness"), 0),
+            ("progress.candidates.min_convex_compactness", ("progress", "candidates", "min_convex_compactness"), 1.1),
             ("progress.fusion.visual_gain", ("progress", "fusion", "visual_gain"), 1.1),
             ("progress.lap_confirmation.consecutive_observations", ("progress", "lap_confirmation", "consecutive_observations"), 0),
         )

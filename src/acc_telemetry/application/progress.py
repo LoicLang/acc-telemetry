@@ -519,6 +519,13 @@ class ProgressSessionEstimator:
             min_area_fraction=candidate_settings.min_area_fraction,
             max_area_fraction=candidate_settings.max_area_fraction,
             min_circularity=candidate_settings.min_circularity,
+            min_compact_aspect_ratio=(
+                candidate_settings.min_compact_aspect_ratio
+            ),
+            min_filled_extent=candidate_settings.min_filled_extent,
+            min_convex_compactness=(
+                candidate_settings.min_convex_compactness
+            ),
         )
         if map_roi is not None and map_roi.size > 0 and self._roi_diagonal_px is None:
             self._roi_diagonal_px = hypot(*map_roi.shape[:2])

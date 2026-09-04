@@ -21,6 +21,9 @@ progress:
     min_area_fraction: 0.00002
     max_area_fraction: 0.005
     min_circularity: 0.35
+    min_compact_aspect_ratio: 0.75
+    min_filled_extent: 0.45
+    min_convex_compactness: 0.45
   centerline:
     max_branch_length_fraction: 0.03
     min_cycle_diagonal_fraction: 2.0

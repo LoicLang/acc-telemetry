@@ -325,6 +325,9 @@ class TestPositionTrackerV2(unittest.TestCase):
             min_area_fraction=0.00002,
             max_area_fraction=0.005,
             min_circularity=0.35,
+            min_compact_aspect_ratio=0.75,
+            min_filled_extent=0.45,
+            min_convex_compactness=0.45,
         )
 
         self.assertIsNone(dot)

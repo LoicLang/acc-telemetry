@@ -44,6 +44,9 @@ class CandidateSettings:
     min_area_fraction: float
     max_area_fraction: float
     min_circularity: float
+    min_compact_aspect_ratio: float
+    min_filled_extent: float
+    min_convex_compactness: float
 
 
 @dataclass(frozen=True)
@@ -234,6 +237,21 @@ def load_settings(root: Path | str | None = None) -> TelemetrySettings:
         min_circularity=_fraction(
             candidates_raw,
             "min_circularity",
+            "progress.candidates",
+        ),
+        min_compact_aspect_ratio=_fraction(
+            candidates_raw,
+            "min_compact_aspect_ratio",
+            "progress.candidates",
+        ),
+        min_filled_extent=_fraction(
+            candidates_raw,
+            "min_filled_extent",
+            "progress.candidates",
+        ),
+        min_convex_compactness=_fraction(
+            candidates_raw,
+            "min_convex_compactness",
             "progress.candidates",
         ),
     )
