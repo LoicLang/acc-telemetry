@@ -15,6 +15,7 @@ Last verified: 2026-09-04
 - controls_speed_gears_status: usable
 - track_path_extraction_status: usable
 - s_status: representative_clean_and_crash_gates_pass
+- s_latest_validation_status: new_1080_bmw_centerline_gate_failed
 - s_repair_design_status: generic_fusion_implemented
 - long_capture_lap_transition_status: new_confirmer_partial_validation_historical_replay_pending
 - quality_propagation_status: progress_and_speed_connected_other_fields_incomplete
@@ -97,6 +98,13 @@ the 6960.709 m effective calibration. Degradation remains visible through a 0.01
 checkpoint spread and 43.1 seconds of unavailable output; it is not hidden as observed
 or held progress.
 
+A new 2026-09-03 BMW session shows that this validation does not yet generalize to
+every native 1080p recording. Lap confirmation succeeds from lap 0 through lap 4 and
+three complete laps calibrate to 6962.810 m, but stable-map preparation rejects the
+visual topology as `multiple_cycles`. Consequently 791.133 of 793.167 seconds are
+unavailable. This safe failure reopens the visual-centerline portion of the `s` gate;
+the cause must be diagnosed generically before downstream segmentation begins.
+
 ## Approved generic `s` architecture
 
 The replacement must work across static full-map circuits; Spa is only the first
@@ -152,7 +160,8 @@ fresh observation.
 
 ### Priority 1 — trustworthy `s` anchor and progression
 
-Status: passed on the clean and crash-heavy representative gates.
+Status: reopened. The clean and crash-heavy representative gates pass, but the new
+2026-09-03 BMW 1080p replay fails centerline extraction with `multiple_cycles`.
 
 Required work:
 

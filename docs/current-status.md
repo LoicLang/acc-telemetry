@@ -16,10 +16,15 @@ change. Use `git log` for authoritative commit hashes and dates.
 
 ## Current objective
 
-Maintain the completed circuit-generic fused `s` milestone and close its integration.
+Validate circuit-generic fused `s` against new native 1080p sessions before starting
+corner analysis.
 
-- Active milestone: generic fused `s` production correction
-- Status: implementation and representative validation complete; merged locally into `main` at `f7888ae`; push pending explicit user request
+- Active milestone: new-session generic `s` robustness
+- Previous milestone status: implementation and representative validation complete;
+  merged locally into `main` at `f7888ae`
+- Current validation status: lap confirmation and odometric calibration pass on the 2026-09-03 BMW
+  session, but visual centerline extraction fails with `multiple_cycles`; production
+  code is unchanged and the local merge remains unpushed
 - Active specification: `docs/superpowers/specs/2026-09-03-generic-s-fusion-design.md`
 - Active plan: `docs/superpowers/plans/2026-09-03-generic-s-fusion.md` (complete)
 - Last completed technical plan: `docs/superpowers/plans/2026-09-02-native-1080-and-s-diagnostics.md`
@@ -36,6 +41,19 @@ Maintain the completed circuit-generic fused `s` milestone and close its integra
 5. Continue from the first unchecked plan step.
 
 ## Recently completed
+
+- The previously unanalysed `/Users/loiclang/Movies/2026-09-03 22-42-08.mov`
+  BMW session was replayed with `ps5_full_map_1080p`. All 47,589 processed frames
+  preserve a clean raw/confirmed sequence from lap 0 through lap 4. Boundaries at
+  286.367, 431.433, 577.417, and 722.617 seconds calibrate three complete laps to an
+  effective 6962.810 m. There are zero unconfirmed resets and zero premature
+  completion entries.
+- That replay does not validate fused progress: stable-map preparation rejects the
+  visual topology as `multiple_cycles`. The result contains 47,469 missing, 116
+  predicted, and 4 boundary-observed frames, with 791.133 seconds unavailable. This
+  is a safe failure rather than a fabricated coordinate, but it reopens centerline
+  robustness for the current recording format. Ignored evidence is under
+  `data/lab/2026-09-04-new-1080-bmw/replay/`.
 
 - `feature/generic-s-fusion` was fast-forward merged into local `main` on 2026-09-04.
   The merged result passes all 158 tests and Python compilation. The feature branch is
@@ -298,10 +316,14 @@ committed.
 
 ## Priority order
 
-1. Replay the historical 2026-09-01 long capture through the new lap confirmer.
-2. Propagate field-level quality and anomalies for lap number, gear, and controls.
-3. Version or document CSV/API compatibility for the expanded progress contract.
-4. Only after those gates pass, validate one manually reviewed corner segment.
+1. Diagnose the generic `multiple_cycles` centerline failure on the new 2026-09-03
+   BMW 1080p session without adding circuit-specific rules.
+2. Convert the smallest confirmed generic cause into a RED regression, correct it,
+   and rerun this BMW session plus the previously passing representative clips.
+3. Replay the historical 2026-09-01 long capture through the new lap confirmer.
+4. Propagate field-level quality and anomalies for lap number, gear, and controls.
+5. Version or document CSV/API compatibility for the expanded progress contract.
+6. Only after those gates pass, validate one manually reviewed corner segment.
 
 Corner segmentation, driving-event extraction, reference comparison, coaching
 rules, dashboards, and generative feedback remain blocked until the reliability
@@ -309,7 +331,8 @@ gates pass on controlled Spa evidence.
 
 ## Current next action
 
-Push local `main` only after explicit user request. The next technical cycle should
-replay a representative window from the historical 2026-09-01 false-transition
-capture through the new lap confirmer, then finish remaining field-quality propagation.
-Do not start corner analysis before those separate gates pass.
+Explain and design the smallest diagnostic that identifies which stable white-map
+components create the `multiple_cycles` result on the new BMW session. Do not tune a
+Spa coordinate or change production behavior before that evidence exists. Push local
+`main` only after explicit user request, and do not start corner analysis before the
+reopened `s` gate and remaining quality gates pass.
