@@ -26,8 +26,9 @@ corner analysis.
   historical 1080p controls; the new replay exposes a separate missing-boundary-dot
   anchor gap that leaves its first complete lap unavailable
 - Active specification: `docs/superpowers/specs/2026-09-03-generic-s-fusion-design.md`
-- Active plan: `docs/superpowers/plans/2026-09-04-temporal-centerline-selection.md` (complete)
-- Last completed implementation plan: `docs/superpowers/plans/2026-09-03-generic-s-fusion.md`
+- Active plan: none; the visual-anchor correction requires review before planning
+- Last completed implementation plan: `docs/superpowers/plans/2026-09-04-temporal-centerline-selection.md`
+- Prior completed implementation plan: `docs/superpowers/plans/2026-09-03-generic-s-fusion.md`
 - Last completed technical plan: `docs/superpowers/plans/2026-09-02-native-1080-and-s-diagnostics.md`
 - Last completed plan: `docs/superpowers/plans/2026-09-02-agent-handoff-documentation.md`
 - Technical ACC implementation: Tasks 1-10 complete
@@ -64,11 +65,11 @@ corner analysis.
   passing control, the map was only narrowly dominant at 2,825 pixels versus 2,796
   pixels across all remaining components. The failure is a generic component-selection
   defect exposed by car/cockpit imagery, not a malformed Spa map.
-- Temporal centerline selection is implemented on
-  `feature/temporal-centerline-selection`. The stable-white threshold is 0.60 and each
-  disconnected component is evaluated independently; exactly one ROI-relative long
-  closed cycle is accepted. No circuit shape, Spa coordinate, or car-specific crop is
-  used.
+- Temporal centerline selection was fast-forward merged into local `main` at
+  `7d332e5`; its feature branch was deleted after merged-result verification. The
+  stable-white threshold is 0.60 and each disconnected component is evaluated
+  independently; exactly one ROI-relative long closed cycle is accepted. No circuit
+  shape, Spa coordinate, or car-specific crop is used.
 - The corrected new BMW replay extracts the centerline and retains the same four
   confirmed boundaries, three calibration laps, and 6962.810 m effective length. It
   records zero unconfirmed resets, nonlocal jumps, or premature completions. Sources
@@ -281,8 +282,10 @@ Verification for the active generic fused `s` implementation plan:
 ### Longitudinal coordinate `s`
 
 Status: generic replacement implemented; representative clean and crash-heavy gates
-pass. The historical legacy failure below remains evidence for why the old tracker is
-not safe.
+pass, and temporal centerline selection passes the new BMW session. The new replay
+still loses its first complete lap when the exact confirmed-boundary frame has no
+red-dot candidate. The historical legacy failure below remains evidence for why the
+old tracker is not safe.
 
 Evidence from the controlled Spa capture on 2026-09-01:
 
@@ -330,6 +333,8 @@ New immutable external captures for the active milestone:
   1920x1080/60 FPS, 2326.033333 seconds, at least 12 visible laps;
 - `/Users/loiclang/Movies/2026-09-02 22-40-01.mov`: secondary robustness session,
   1920x1080/60 FPS, 1137.016667 seconds, recent car change and crashes.
+- `/Users/loiclang/Movies/2026-09-03 22-42-08.mov`: new BMW validation session,
+  1920x1080/60 FPS, 793.166667 seconds, four confirmed boundaries.
 
 Ignored local A/B evidence:
 
@@ -339,6 +344,8 @@ Ignored local A/B evidence:
 Ignored local position evidence:
 
 - `data/lab/2026-09-02_native-1080-position/trace.csv`
+- `data/lab/2026-09-04-new-1080-bmw/replay-after-fix/`
+- `data/lab/2026-09-04-temporal-centerline-selection/`
 
 Verify these paths exist before using them. Their summarized findings above are the
 durable repository record; personal videos and full telemetry exports must not be

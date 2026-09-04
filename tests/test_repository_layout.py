@@ -148,7 +148,7 @@ class TestRepositoryLayout(unittest.TestCase):
         self.assertIn("Generic position estimation", architecture)
         self.assertIn("2026-09-03-generic-s-fusion-design.md", status)
         self.assertIn(
-            "Active plan: `docs/superpowers/plans/2026-09-04-temporal-centerline-selection.md`",
+            "Last completed implementation plan: `docs/superpowers/plans/2026-09-04-temporal-centerline-selection.md`",
             status,
         )
         self.assertIn("implementation and representative validation complete", status)

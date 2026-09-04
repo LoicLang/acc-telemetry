@@ -282,7 +282,9 @@ evaluation on known corners.
 
 ## Next planning gate
 
-The generic fused `s` milestone is complete. The next reliability work is a focused
-replay of the historical long capture through the new confirmer, followed by remaining
-field-quality propagation. Downstream coaching remains blocked until those separate
-gates pass; the next product-facing milestone is still one manually reviewed corner.
+Temporal centerline selection is complete and merged locally. The next reliability
+work is a focused correction for confirmed boundaries whose exact frame lacks a visual
+dot despite valid nearby observations. It must preserve confirmed lap state as the
+only reset authority and pass the new BMW plus both representative controls. The
+historical long-capture replay and remaining field-quality propagation follow that
+gate. The next product-facing milestone remains one manually reviewed corner.
