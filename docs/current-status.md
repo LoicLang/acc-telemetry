@@ -26,7 +26,8 @@ corner analysis.
   session, but visual centerline extraction fails with `multiple_cycles`; production
   code is unchanged and the local merge remains unpushed
 - Active specification: `docs/superpowers/specs/2026-09-03-generic-s-fusion-design.md`
-- Active plan: `docs/superpowers/plans/2026-09-03-generic-s-fusion.md` (complete)
+- Active plan: `docs/superpowers/plans/2026-09-04-temporal-centerline-selection.md`
+- Last completed implementation plan: `docs/superpowers/plans/2026-09-03-generic-s-fusion.md`
 - Last completed technical plan: `docs/superpowers/plans/2026-09-02-native-1080-and-s-diagnostics.md`
 - Last completed plan: `docs/superpowers/plans/2026-09-02-agent-handoff-documentation.md`
 - Technical ACC implementation: Tasks 1-10 complete
