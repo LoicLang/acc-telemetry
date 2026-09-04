@@ -53,7 +53,7 @@ but must not be mistaken for validated domain `s`.
 ## Generic position estimation
 
 The implemented estimator is generic across circuits using the static full-map HUD.
-Its production wiring is complete; real-session validation gates remain open.
+Its production wiring and representative clean/crash validation gates are complete.
 
 ```text
 speed + delta time -> integrated distance -> s_odometry + uncertainty
@@ -91,6 +91,10 @@ to confirm boundaries, calibrate measured lap distance, align the visual centerl
 and fuse progress. It owns video lifetime and closes the capture in a `finally` block.
 CLI and web adapters construct the same application engine and do not duplicate fusion
 rules.
+
+`PositionTrackerV2` remains importable for compatibility and the legacy diagnostic,
+but normal component construction does not instantiate it. Production CLI and web
+paths use only `ProgressSessionEstimator` for longitudinal progress.
 
 ## Testing
 

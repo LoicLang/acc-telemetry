@@ -8,7 +8,6 @@ from datetime import datetime
 from acc_telemetry.extraction.video import VideoProcessor
 from acc_telemetry.extraction.controls import TelemetryExtractor
 from acc_telemetry.extraction.laps import LapDetector
-from acc_telemetry.extraction.position import PositionTrackerV2
 from acc_telemetry.visualization.interactive import InteractiveTelemetryVisualizer
 from acc_telemetry.application.pipeline import TelemetryPipeline
 from acc_telemetry.application.config import load_settings
@@ -101,17 +100,12 @@ class VideoProcessingService:
 
         lap_detector = LapDetector(lap_roi_config, enable_performance_stats=False)
         position_config = roi_config.get('position_tracking', {})
-        position_tracker = PositionTrackerV2(
-            white_lower=position_config.get('white_lower'),
-            white_upper=position_config.get('white_upper'),
-        )
         progress_estimator = self._build_progress_estimator(active_profile_name)
 
         pipeline = TelemetryPipeline(
             video=processor,
             controls=extractor,
             laps=lap_detector,
-            position=position_tracker,
             progress=progress_estimator,
             has_track_map='track_map' in roi_config,
             sample_count=int(position_config.get('sample_count', 11)),

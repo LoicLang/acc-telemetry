@@ -50,7 +50,10 @@ def run_diagnostic(video_path: Path, profile_name: str, output_path: Path) -> No
         profile_name,
         settings=settings,
         enable_performance_stats=True,
+        legacy_position=True,
     )
+    if components.position is None:
+        raise RuntimeError("legacy position tracker was not constructed")
     output_path.parent.mkdir(parents=True, exist_ok=True)
     with output_path.open("w", encoding="utf-8", newline="") as handle:
         writer = csv.DictWriter(handle, fieldnames=TRACE_FIELDS)

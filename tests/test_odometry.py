@@ -132,11 +132,35 @@ class TestLapDistanceCalibration(unittest.TestCase):
         self.assertEqual([lap.lap_number for lap in calibration.rejected_laps], [4])
         self.assertIn("calibration_lap_rejected", calibration.rejected_laps[0].reasons)
 
+    def test_rejects_a_duration_outlier_even_when_distance_is_similar(self):
+        laps = [
+            LapDistanceSummary(1, 0.0, 100.0, 7000.0, 0.0, True, ()),
+            LapDistanceSummary(2, 100.0, 201.0, 7010.0, 0.0, True, ()),
+            LapDistanceSummary(3, 201.0, 331.0, 7020.0, 0.0, True, ()),
+        ]
+
+        calibration = calibrate_effective_lap_length(
+            laps,
+            max_missing_speed_fraction=0.01,
+            max_relative_mad=0.03,
+        )
+
+        self.assertEqual(
+            [lap.lap_number for lap in calibration.accepted_laps],
+            [1, 2],
+        )
+        self.assertEqual(
+            [lap.lap_number for lap in calibration.rejected_laps],
+            [3],
+        )
+        self.assertIn("duration_outlier", calibration.rejected_laps[0].reasons)
+
     def test_rejects_incomplete_invalid_or_speed_degraded_laps(self):
         laps = [
             LapDistanceSummary(1, 0.0, 100.0, 7000.0, 0.0, False, ("missing_boundary",)),
             LapDistanceSummary(2, 0.0, 100.0, 0.0, 0.0, True, ()),
             LapDistanceSummary(3, 0.0, 100.0, 7000.0, 0.02, True, ("speed_missing",)),
+            LapDistanceSummary(4, 100.0, 100.0, 7000.0, 0.0, True, ()),
         ]
 
         calibration = calibrate_effective_lap_length(
@@ -147,7 +171,8 @@ class TestLapDistanceCalibration(unittest.TestCase):
 
         self.assertIsNone(calibration.effective_lap_length_m)
         self.assertEqual(len(calibration.accepted_laps), 0)
-        self.assertEqual(len(calibration.rejected_laps), 3)
+        self.assertEqual(len(calibration.rejected_laps), 4)
+        self.assertIn("non_positive_duration", calibration.rejected_laps[-1].reasons)
 
     def test_single_clean_lap_has_explicit_calibration_uncertainty(self):
         calibration = calibrate_effective_lap_length(

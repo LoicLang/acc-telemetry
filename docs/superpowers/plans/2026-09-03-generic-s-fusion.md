@@ -689,7 +689,7 @@ git commit -m "test: validate fused progress on clean laps"
 - Modify: `docs/architecture.md` when the production data flow has actually migrated
 - Modify: `README.md` when the user-visible diagnostic command is stable
 
-- [ ] **Step 1: Run the secondary replay without changing code**
+- [x] **Step 1: Run the secondary replay without changing code**
 
 ```bash
 stat -f '%z %N' '/Users/loiclang/Movies/2026-09-02 22-40-01.mov'
@@ -705,19 +705,19 @@ Required robustness criteria:
 - no silent fallback to legacy `track_position` saturation;
 - legacy 720p profile unit/integration tests remain green.
 
-- [ ] **Step 2: Convert each real failure into a generic RED test**
+- [x] **Step 2: Convert each real failure into a generic RED test**
 
 For every failed metric, extract only minimal numeric facts into a synthetic test—never an image crop, Spa coordinate, or video frame. Examples: a long zero-speed crash interval, a 40% visual branch jump, a false one-frame lap increment, or a 30% lap-distance outlier. Run the focused test and confirm it fails for the measured reason.
 
-- [ ] **Step 3: Implement the smallest generic correction and rerun both sessions**
+- [x] **Step 3: Implement the smallest generic correction and rerun both sessions**
 
 Change validated configuration or the owning pure function. Run focused tests, full tests, clean replay, then crash-heavy replay. Both validation summaries must pass simultaneously; a robustness fix that regresses the clean 0.2-point spread is not accepted.
 
-- [ ] **Step 4: Remove obsolete production behavior only after both gates pass**
+- [x] **Step 4: Remove obsolete production behavior only after both gates pass**
 
 Delete the production call path to geometric start detection, unconditional backward hold, and `_apply_completion_handling()`. Keep a compatibility module only if an external import test requires it. Replace legacy assertions expecting `MISSING_HELD`, `BACKWARD_HELD`, `JUMP_CLAMPED`, or `FORCED_COMPLETION` with fused-contract assertions; do not merely delete coverage.
 
-- [ ] **Step 5: Perform final verification and documentation alignment**
+- [x] **Step 5: Perform final verification and documentation alignment**
 
 ```bash
 ./scripts/docs-list
@@ -729,7 +729,7 @@ git status --short --branch
 
 Confirm with `rg -n -i 'spa|francorchamps|la source|raidillon|les combes|bruxelles|359, 0|70, 155' src tests config` that no circuit-specific production/test rule was introduced. References are allowed only in documentation and ignored validation output.
 
-- [ ] **Step 6: Commit the robustness gate atomically**
+- [x] **Step 6: Commit the robustness gate atomically**
 
 Stage only tracked source, tests, and aligned documentation. Inspect `git diff --cached --stat` and `git diff --cached` before committing:
 

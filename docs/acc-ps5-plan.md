@@ -7,17 +7,17 @@ read_when:
 
 # ACC PS5 telemetry plan
 
-Last verified: 2026-09-03
+Last verified: 2026-09-04
 
 ## Current state
 
 - capture_status: native_1080p60_validated
 - controls_speed_gears_status: usable
 - track_path_extraction_status: usable
-- s_status: failed_validation
-- s_repair_design_status: approved_pending_implementation_plan
-- long_capture_lap_transition_status: failed_validation
-- quality_propagation_status: incomplete
+- s_status: representative_clean_and_crash_gates_pass
+- s_repair_design_status: generic_fusion_implemented
+- long_capture_lap_transition_status: new_confirmer_partial_validation_historical_replay_pending
+- quality_propagation_status: progress_and_speed_connected_other_fields_incomplete
 - downstream_coaching_status: blocked
 
 The repository provides a solid ACC PS5 video-extraction foundation, but it does not
@@ -80,6 +80,23 @@ threshold tuning is not the root fix. The production correction must address dot
 candidate selection, unique or continuity-aware path projection, and trusted lap
 anchoring before reevaluating smoothing.
 
+## Validated generic `s` replacement
+
+The replacement is implemented on `feature/generic-s-fusion`. Production CLI and web
+processing now use two-pass generic fusion; the legacy contour tracker is constructed
+only by the explicit legacy diagnostic.
+
+Representative clean validation covers two complete laps and three confirmed
+boundaries. It records zero unconfirmed resets, zero nonlocal jumps, zero premature
+completion-band entries, and a maximum `s_fused` spread of 0.001522 across 99 exact
+odometric checkpoints, passing the 0.002 target.
+
+Representative robustness validation covers two regular laps followed by one degraded
+177.85-second lap. The degraded lap is rejected as a duration outlier and cannot change
+the 6960.709 m effective calibration. Degradation remains visible through a 0.016398
+checkpoint spread and 43.1 seconds of unavailable output; it is not hidden as observed
+or held progress.
+
 ## Approved generic `s` architecture
 
 The replacement must work across static full-map circuits; Spa is only the first
@@ -125,14 +142,17 @@ The domain `TelemetrySample` models field-level observed, missing, held,
 interpolated, and anomalous states. Normalization can also retain source values and
 anomaly reasons.
 
-The active `TelemetryPipeline`, CSV export, and API-facing data still use legacy
-records without field-level quality or anomaly output. Quality propagation is
-therefore an implemented contract in isolation, not an end-to-end capability.
-Holding a value must never make it indistinguishable from a fresh observation.
+The active `TelemetryPipeline` now exports fused progress source, uncertainty, and
+reasons, and speed distinguishes observed, held, missing, and anomalous evidence.
+Lap number, gear, controls, and every analysis/API consumer still need the same
+end-to-end treatment. Holding a value must never make it indistinguishable from a
+fresh observation.
 
 ## Reliability stage gates
 
 ### Priority 1 — trustworthy `s` anchor and progression
+
+Status: passed on the clean and crash-heavy representative gates.
 
 Required work:
 
@@ -159,6 +179,9 @@ Exit criteria:
 
 ### Priority 2 — robust lap transitions
 
+Status: implemented and validated on the full clean replay and representative clips;
+the historical 2026-09-01 false-transition capture still requires an end-to-end replay.
+
 Required work:
 
 1. retain raw lap-number observations separately from confirmed lap state;
@@ -175,6 +198,9 @@ Exit criteria:
 - existing short-video and adapter behavior remains covered.
 
 ### Priority 3 — end-to-end quality propagation
+
+Status: progress and speed provenance are connected; lap number, gear, controls, and
+all output consumers remain incomplete.
 
 Required work:
 
@@ -224,7 +250,7 @@ evaluation on known corners.
 
 ## Next planning gate
 
-The generic fusion design is approved, but no implementation plan is active. The next
-agent must read the design and create a detailed TDD plan before modifying position
-behavior. The first implementation slice is `s_odometry`; downstream coaching remains
-blocked until fused `s` passes the Spa criteria.
+The generic fused `s` milestone is complete. The next reliability work is a focused
+replay of the historical long capture through the new confirmer, followed by remaining
+field-quality propagation. Downstream coaching remains blocked until those separate
+gates pass; the next product-facing milestone is still one manually reviewed corner.

@@ -118,7 +118,8 @@ class TestRepositoryLayout(unittest.TestCase):
             encoding="utf-8"
         )
         for expected in (
-            "s_status: failed_validation",
+            "s_status: representative_clean_and_crash_gates_pass",
+            "generic_fusion_implemented",
             "88.033333",
             "50.027742",
             "initial_s_anchor",
@@ -150,7 +151,8 @@ class TestRepositoryLayout(unittest.TestCase):
             "Active plan: `docs/superpowers/plans/2026-09-03-generic-s-fusion.md`",
             status,
         )
-        self.assertIn("implementation in progress", status)
+        self.assertIn("implementation and representative validation complete", status)
+        self.assertIn("Tasks 1-10 complete", status)
 
 
 if __name__ == "__main__":

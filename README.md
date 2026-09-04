@@ -73,7 +73,8 @@ Compatibility modules under `src/` keep older imports working during the migrati
 - ROI profiles are resolution and HUD dependent.
 - The full static minimap is supported; the scrolling minimap is not.
 - The generic fused progress pipeline is implemented but remains blocked from coaching
-  use until clean and crash-heavy real-session validation passes.
+  use until the remaining long-capture lap and field-quality gates pass. Its clean and
+  crash-heavy representative validation gates pass.
 - Legacy map-only position remains importable for compatibility; production CLI and
   web processing use `s_odometry`, `s_visual`, and `s_fused`.
 - Lateral distance `d` remains future work.
@@ -98,4 +99,12 @@ To run the API locally:
 
 ```bash
 PYTHONPATH=src uvicorn acc_telemetry.adapters.web.main:app --reload
+```
+
+To generate an ignored progress-validation trace from a representative clip:
+
+```bash
+PYTHONPATH=src python scripts/diagnose_progress.py CLIP.mov \
+  --profile ps5_full_map_1080p \
+  --output-dir data/lab/generic-progress-check
 ```

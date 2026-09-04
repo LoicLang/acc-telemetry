@@ -19,7 +19,7 @@ class ProcessingComponents:
     laps: LapDetector
     lap_confirmer: LapTransitionConfirmer
     progress: ProgressSessionEstimator
-    position: PositionTrackerV2
+    position: PositionTrackerV2 | None
     profile_name: str
     sample_count: int
     frequency_threshold: float
@@ -32,6 +32,7 @@ def build_components(
     fps: float = 30.0,
     enable_performance_stats: bool = False,
     settings: TelemetrySettings | None = None,
+    legacy_position: bool = False,
 ) -> ProcessingComponents:
     """Build every extraction component from one validated settings object."""
     active_settings = settings or load_settings()
@@ -50,11 +51,15 @@ def build_components(
     )
     laps._max_speed_ocr_delta_kmh = active_settings.ocr.max_speed_delta_kmh
     laps._speed_ocr_recovery_tolerance_kmh = active_settings.ocr.recovery_tolerance_kmh
-    position = PositionTrackerV2(
-        fps=fps,
-        max_jump_per_frame=active_settings.position.max_jump_per_frame,
-        white_lower=profile.white_lower,
-        white_upper=profile.white_upper,
+    position = (
+        PositionTrackerV2(
+            fps=fps,
+            max_jump_per_frame=active_settings.position.max_jump_per_frame,
+            white_lower=profile.white_lower,
+            white_upper=profile.white_upper,
+        )
+        if legacy_position
+        else None
     )
     lap_confirmer = LapTransitionConfirmer(
         consecutive_observations=(

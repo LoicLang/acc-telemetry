@@ -195,7 +195,6 @@ def run_diagnostic(
         video=components.video,
         controls=components.controls,
         laps=components.laps,
-        position=components.position,
         progress=components.progress,
         has_track_map="track_map" in profile.rois,
         sample_count=components.sample_count,

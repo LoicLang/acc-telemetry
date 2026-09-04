@@ -30,7 +30,7 @@ class TelemetryPipeline:
         video: Any,
         controls: Any,
         laps: Any,
-        position: Any,
+        position: Any | None = None,
         progress: Any | None = None,
         has_track_map: bool,
         sample_count: int = 11,

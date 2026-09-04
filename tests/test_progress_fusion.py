@@ -12,6 +12,7 @@ from acc_telemetry.application.progress import (
     ProgressSessionEstimator,
     VisualSelection,
     estimate_progress,
+    infer_centerline_direction,
     select_visual_projection,
 )
 from acc_telemetry.extraction.map_progress import VisualProjection
@@ -129,6 +130,38 @@ class TestVisualSelection(unittest.TestCase):
         self.assertIsNone(selection.s_visual)
         self.assertEqual(selection.source, ProgressSource.MISSING)
         self.assertEqual(selection.reasons, ("visual_missing",))
+
+
+class TestCenterlineDirection(unittest.TestCase):
+    def test_does_not_lock_direction_from_submargin_jitter(self):
+        direction = infer_centerline_direction(
+            (_projection(0.00001),),
+            anchor_s=0.0,
+            predicted_s=0.0001,
+            min_error_margin=0.006,
+        )
+
+        self.assertIsNone(direction)
+
+    def test_selects_reverse_order_when_it_matches_odometry(self):
+        direction = infer_centerline_direction(
+            (_projection(0.99),),
+            anchor_s=0.0,
+            predicted_s=0.01,
+            min_error_margin=0.006,
+        )
+
+        self.assertEqual(direction, -1)
+
+    def test_selects_forward_order_when_it_matches_odometry(self):
+        direction = infer_centerline_direction(
+            (_projection(0.01),),
+            anchor_s=0.0,
+            predicted_s=0.01,
+            min_error_margin=0.006,
+        )
+
+        self.assertEqual(direction, 1)
 
 
 def _odometry(

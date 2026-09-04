@@ -238,8 +238,15 @@ def summarize_lap_distances(
     return summaries
 
 
-def _reject(summary: LapDistanceSummary) -> LapDistanceSummary:
-    reasons = tuple(dict.fromkeys((*summary.reasons, "calibration_lap_rejected")))
+def _reject(
+    summary: LapDistanceSummary,
+    *extra_reasons: str,
+) -> LapDistanceSummary:
+    reasons = tuple(
+        dict.fromkeys(
+            (*summary.reasons, *extra_reasons, "calibration_lap_rejected")
+        )
+    )
     return replace(summary, reasons=reasons)
 
 
@@ -253,7 +260,9 @@ def calibrate_effective_lap_length(
     eligible: list[LapDistanceSummary] = []
     rejected: list[LapDistanceSummary] = []
     for summary in summaries:
-        if (
+        if summary.end_time_s <= summary.start_time_s:
+            rejected.append(_reject(summary, "non_positive_duration"))
+        elif (
             not summary.complete
             or summary.distance_m <= 0
             or summary.missing_speed_fraction > max_missing_speed_fraction
@@ -265,11 +274,18 @@ def calibrate_effective_lap_length(
     accepted = eligible
     if len(eligible) >= 3:
         initial_median = median(summary.distance_m for summary in eligible)
+        duration_median = median(
+            summary.end_time_s - summary.start_time_s for summary in eligible
+        )
         accepted = []
         for summary in eligible:
             relative_deviation = abs(summary.distance_m - initial_median) / initial_median
+            duration = summary.end_time_s - summary.start_time_s
+            duration_deviation = abs(duration - duration_median) / duration_median
             if relative_deviation > max_relative_mad:
-                rejected.append(_reject(summary))
+                rejected.append(_reject(summary, "distance_outlier"))
+            elif duration_deviation > max_relative_mad:
+                rejected.append(_reject(summary, "duration_outlier"))
             else:
                 accepted.append(summary)
 

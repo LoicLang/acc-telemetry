@@ -101,6 +101,41 @@ def wrapped_delta(value: float, reference: float) -> float:
     return delta - 1.0 if delta > 0.5 else delta
 
 
+def infer_centerline_direction(
+    projections: tuple[VisualProjection, ...],
+    *,
+    anchor_s: float,
+    predicted_s: float,
+    min_error_margin: float,
+) -> int | None:
+    """Choose centerline order only when one orientation clearly fits odometry."""
+    hypotheses = sorted(
+        (
+            (
+                abs(
+                    wrapped_delta(
+                        ((projection.s_visual - anchor_s) * direction) % 1.0,
+                        predicted_s,
+                    )
+                ),
+                direction,
+            )
+            for projection in projections
+            for direction in (1, -1)
+        ),
+        key=lambda item: (item[0], -item[1]),
+    )
+    if not hypotheses:
+        return None
+    best_error, best_direction = hypotheses[0]
+    competing_errors = [
+        error for error, direction in hypotheses if direction != best_direction
+    ]
+    if not competing_errors or min(competing_errors) - best_error < min_error_margin:
+        return None
+    return best_direction
+
+
 def select_visual_projection(
     projections: tuple[VisualProjection, ...],
     *,
@@ -588,6 +623,19 @@ class ProgressSessionEstimator:
             selected = self._missing_visual(
                 self.map_error_reason or "visual_missing"
             )
+            effective_length = calibration.effective_lap_length_m
+            predicted_s = (
+                0.0
+                if effective_length is None
+                else min(
+                    1.0,
+                    max(
+                        0.0,
+                        (point.distance_m - lap_start_distance_m)
+                        / effective_length,
+                    ),
+                )
+            )
             if boundary is not None:
                 lap_start_distance_m = point.distance_m
                 lap_start_odometry_uncertainty = point.uncertainty
@@ -629,12 +677,16 @@ class ProgressSessionEstimator:
                         projection.distance_px,
                     ),
                 )
-                raw_delta = wrapped_delta(
-                    raw.s_visual,
-                    last_raw_s if last_raw_s is not None else raw_anchor_s,
-                )
-                if direction is None and abs(raw_delta) > 1e-6:
-                    direction = 1 if raw_delta > 0 else -1
+                if direction is None:
+                    direction = infer_centerline_direction(
+                        projections,
+                        anchor_s=raw_anchor_s,
+                        predicted_s=predicted_s,
+                        min_error_margin=(
+                            self.settings.projection.min_score_margin
+                            * self.settings.projection.max_progress_error
+                        ),
+                    )
                 last_raw_s = raw.s_visual
                 if direction is not None:
                     normalized_projections = tuple(
@@ -648,19 +700,6 @@ class ProgressSessionEstimator:
                             centroid=projection.centroid,
                         )
                         for projection in projections
-                    )
-                    effective_length = calibration.effective_lap_length_m
-                    predicted_s = (
-                        0.0
-                        if effective_length is None
-                        else min(
-                            1.0,
-                            max(
-                                0.0,
-                                (point.distance_m - lap_start_distance_m)
-                                / effective_length,
-                            ),
-                        )
                     )
                     selected = select_visual_projection(
                         normalized_projections,

@@ -195,12 +195,8 @@ class TestTelemetryConfiguration(unittest.TestCase):
         detector = lap_detector.return_value
         self.assertEqual(detector._max_speed_ocr_delta_kmh, 20)
         self.assertEqual(detector._speed_ocr_recovery_tolerance_kmh, 3)
-        position_tracker.assert_called_once_with(
-            fps=30.0,
-            max_jump_per_frame=1.0,
-            white_lower=(0, 0, 150),
-            white_upper=(180, 100, 255),
-        )
+        position_tracker.assert_not_called()
+        self.assertIsNone(components.position)
         lap_confirmer.assert_called_once_with(consecutive_observations=5)
         self.assertIs(components.lap_confirmer, lap_confirmer.return_value)
         progress_estimator.assert_called_once_with(
@@ -212,6 +208,39 @@ class TestTelemetryConfiguration(unittest.TestCase):
         self.assertIs(components.progress, progress_estimator.return_value)
         self.assertEqual(components.sample_count, 60)
         self.assertEqual(components.frequency_threshold, 0.45)
+
+    @patch("acc_telemetry.application.components.ProgressSessionEstimator")
+    @patch("acc_telemetry.application.components.LapTransitionConfirmer")
+    @patch("acc_telemetry.application.components.PositionTrackerV2")
+    @patch("acc_telemetry.application.components.LapDetector")
+    @patch("acc_telemetry.application.components.TelemetryExtractor")
+    @patch("acc_telemetry.application.components.VideoProcessor")
+    def test_legacy_position_is_constructed_only_when_explicitly_requested(
+        self,
+        video_processor,
+        telemetry_extractor,
+        lap_detector,
+        position_tracker,
+        lap_confirmer,
+        progress_estimator,
+    ):
+        from acc_telemetry.application.components import build_components
+
+        components = build_components(
+            "session.mp4",
+            "ps5_full_map_720p",
+            fps=30.0,
+            settings=load_settings(ROOT),
+            legacy_position=True,
+        )
+
+        position_tracker.assert_called_once_with(
+            fps=30.0,
+            max_jump_per_frame=1.0,
+            white_lower=(0, 0, 150),
+            white_upper=(180, 100, 255),
+        )
+        self.assertIs(components.position, position_tracker.return_value)
 
 
 if __name__ == "__main__":

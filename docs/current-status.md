@@ -16,16 +16,15 @@ change. Use `git log` for authoritative commit hashes and dates.
 
 ## Current objective
 
-Prepare the implementation of a circuit-generic fused `s`, using Spa as the first
-validation dataset.
+Deliver a circuit-generic fused `s`, using Spa only as the first validation dataset.
 
 - Active milestone: generic fused `s` production correction
-- Status: implementation in progress on `feature/generic-s-fusion`
+- Status: implementation and representative validation complete on `feature/generic-s-fusion`; integration decision pending
 - Active specification: `docs/superpowers/specs/2026-09-03-generic-s-fusion-design.md`
-- Active plan: `docs/superpowers/plans/2026-09-03-generic-s-fusion.md`
+- Active plan: `docs/superpowers/plans/2026-09-03-generic-s-fusion.md` (complete)
 - Last completed technical plan: `docs/superpowers/plans/2026-09-02-native-1080-and-s-diagnostics.md`
 - Last completed plan: `docs/superpowers/plans/2026-09-02-agent-handoff-documentation.md`
-- Technical ACC implementation: Tasks 1-9 complete; crash-heavy robustness is next
+- Technical ACC implementation: Tasks 1-10 complete
 - Documentation milestone: verified complete
 
 ## Resume here
@@ -80,8 +79,8 @@ validation dataset.
 - Raw lap observations now feed a pure confirmation state machine. Initialization and
   each sequential `+1` transition require five consecutive observations; missing,
   isolated, decreasing, and jumping values remain inspectable without emitting a
-  boundary. The configured confirmer is constructed but does not yet reset production
-  position. All 127 tests pass.
+  boundary. Production fusion anchors only on the resulting confirmed boundary. All
+  127 tests passed at that implementation slice.
 - The fused estimator now stays unavailable before a confirmed boundary, anchors only
   on that boundary, predicts from odometric distance, applies wrapped visual correction
   without implicit lap resets, and exposes interpolation, prediction, ambiguity, and
@@ -101,9 +100,21 @@ validation dataset.
   boundaries, two complete calibration laps, and 18,902 extracted frames. It learns an
   effective distance of 6965.332 m, records zero unconfirmed resets, zero nonlocal jumps,
   zero premature completion-band entries, and a maximum interpolated checkpoint spread
-  of 0.001522 across 99 checkpoints, passing the 0.002 target. Source counts are 17,700
-  fused, 447 predicted, 3 interpolated, 749 missing, and 3 boundary-observed frames.
+  of 0.001522 across 99 checkpoints, passing the 0.002 target. Source counts are 17,673
+  fused, 474 predicted, 3 interpolated, 749 missing, and 3 boundary-observed frames.
   The derived video, trace, and JSON summary remain ignored under `data/lab/`.
+- The representative crash-heavy clip covers four confirmed boundaries and three
+  complete laps. Two regular laps calibrate `effective_lap_length_m` at 6960.709 m;
+  the 177.85-second degraded lap is rejected with `duration_outlier` and cannot alter
+  calibration. The trace records zero unconfirmed resets, zero nonlocal jumps, and zero
+  premature completion-band entries. It deliberately exposes degradation: checkpoint
+  spread rises to 0.016398 and 43.1 seconds become unavailable instead of being held as
+  observed. Source counts are 26,124 fused, 680 predicted, 8 interpolated, 2,586
+  missing, and 4 boundary-observed frames.
+- The final robustness fixes infer centerline direction only after one orientation wins
+  against odometry by a configured margin, reject duration outliers as well as distance
+  outliers, and keep the legacy tracker outside production CLI/web construction. The
+  complete repository suite contains 158 passing tests.
 
 - OCR runtime prerequisite: verified. `LapDetector` now discovers
   `data/shared/tessdata/eng.traineddata`, and the real tesserocr backend initializes
@@ -218,7 +229,9 @@ Verification for the active generic fused `s` implementation plan:
 
 ### Longitudinal coordinate `s`
 
-Status: failed validation; not safe for corner segmentation or lap alignment.
+Status: generic replacement implemented; representative clean and crash-heavy gates
+pass. The historical legacy failure below remains evidence for why the old tracker is
+not safe.
 
 Evidence from the controlled Spa capture on 2026-09-01:
 
@@ -231,7 +244,10 @@ The longer Spa session reproduces `initial_s_anchor: fail_reproduced`.
 
 ### Lap transitions on long captures
 
-Status: failed validation.
+Status: confirmation state machine implemented and validated on the full 139,561-frame
+clean replay plus both representative clips. The earlier 2026-09-01 false-transition
+capture has not been replayed end to end with the new confirmer and remains a separate
+verification item.
 
 The longer 2026-09-01 session records
 `long_capture_lap_number_ocr: fail_false_transitions`. A false confirmed transition
@@ -240,11 +256,13 @@ multiple laps.
 
 ### Quality propagation
 
-Status: modeled but not connected end to end.
+Status: fused progress and speed provenance are connected end to end. Complete
+field-level quality for lap number, controls, gear, CSV/API consumers, and analysis
+remains incomplete.
 
-`TelemetrySample` supports field-level observed, missing, held, interpolated, and
-anomalous states. The active pipeline and session CSV exports still contain legacy
-records without field-quality or anomaly output.
+`TelemetrySample` supports field-level observed, missing, held, interpolated,
+predicted, fused, and anomalous states. Progress and speed use this evidence; the
+remaining fields and consumers do not yet propagate it completely.
 
 ## Local evidence
 
@@ -277,13 +295,10 @@ committed.
 
 ## Priority order
 
-1. Implement and validate the independent `s_odometry` baseline.
-2. Make red-dot candidate extraction survive large red backgrounds.
-3. Build a unique generic map centerline.
-4. Fuse visual candidates with odometric prediction and trusted lap anchors.
-5. Validate `s_fused` on clean then crash-heavy Spa evidence.
-6. Confirm lap transitions robustly on long captures.
-7. Propagate field-level quality and anomalies through the complete pipeline.
+1. Replay the historical 2026-09-01 long capture through the new lap confirmer.
+2. Propagate field-level quality and anomalies for lap number, gear, and controls.
+3. Version or document CSV/API compatibility for the expanded progress contract.
+4. Only after those gates pass, validate one manually reviewed corner segment.
 
 Corner segmentation, driving-event extraction, reference comparison, coaching
 rules, dashboards, and generative feedback remain blocked until the reliability
@@ -291,7 +306,6 @@ gates pass on controlled Spa evidence.
 
 ## Current next action
 
-Begin Task 10 in `docs/superpowers/plans/2026-09-03-generic-s-fusion.md`: select a
-small crash-heavy window from the immutable secondary capture, run the tested generic
-diagnostic, turn each failed metric into a synthetic RED regression, and rerun both
-representative clips before removing the legacy production path.
+Review the completed `feature/generic-s-fusion` branch and choose whether to merge it
+locally, push it for a pull request, or keep it for later. Do not start corner analysis
+until the separate long-capture lap confirmation and remaining quality gates pass.
