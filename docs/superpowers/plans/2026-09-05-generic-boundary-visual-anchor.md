@@ -331,6 +331,7 @@ recover_boundary_visual_anchor(
     effective_lap_length_m: float,
     last_raw_s: float | None,
     max_centerline_distance_px: float,
+    max_progress_error: float,
     min_score_margin: float,
     unavailable_uncertainty: float,
     settings: BoundaryAnchorSettings,

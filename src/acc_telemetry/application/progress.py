@@ -198,13 +198,30 @@ def _nearest_projection_frame(
     frames: tuple[AnchorFrameEvidence, ...],
     boundary_index: int,
     step: int,
+    *,
+    max_centerline_distance_px: float,
+    max_gap_s: float,
+    max_distance_fraction: float,
+    lap_length: float,
 ) -> AnchorFrameEvidence | None:
+    boundary = frames[boundary_index]
     index = boundary_index + step
     while 0 <= index < len(frames):
         frame = frames[index]
         if frame.boundary is not None:
             return None
-        if frame.projections:
+        if not _inside_gap(
+            frame,
+            boundary,
+            max_gap_s=max_gap_s,
+            max_distance_fraction=max_distance_fraction,
+            lap_length=lap_length,
+        ):
+            return None
+        if any(
+            projection.distance_px <= max_centerline_distance_px
+            for projection in frame.projections
+        ):
             return frame
         index += step
     return None
@@ -217,6 +234,7 @@ def recover_boundary_visual_anchor(
     effective_lap_length_m: float,
     last_raw_s: float | None,
     max_centerline_distance_px: float,
+    max_progress_error: float,
     min_score_margin: float,
     unavailable_uncertainty: float,
     settings: BoundaryAnchorSettings,
@@ -246,11 +264,30 @@ def recover_boundary_visual_anchor(
             uncertainty=0.0,
             source=BoundaryAnchorSource.EXACT,
         )
-    if boundary.projections:
+    if any(
+        projection.distance_px <= max_centerline_distance_px
+        for projection in boundary.projections
+    ):
         return missing
 
-    before = _nearest_projection_frame(frames, boundary_index, -1)
-    after = _nearest_projection_frame(frames, boundary_index, 1)
+    before = _nearest_projection_frame(
+        frames,
+        boundary_index,
+        -1,
+        max_centerline_distance_px=max_centerline_distance_px,
+        max_gap_s=settings.max_bracketing_gap_s,
+        max_distance_fraction=settings.max_bracketing_distance_fraction,
+        lap_length=effective_lap_length_m,
+    )
+    after = _nearest_projection_frame(
+        frames,
+        boundary_index,
+        1,
+        max_centerline_distance_px=max_centerline_distance_px,
+        max_gap_s=settings.max_bracketing_gap_s,
+        max_distance_fraction=settings.max_bracketing_distance_fraction,
+        lap_length=effective_lap_length_m,
+    )
     bracketing_frames = (before, after)
     if before is not None and after is not None and all(
         _inside_gap(
@@ -283,6 +320,8 @@ def recover_boundary_visual_anchor(
                     )
                     - normalized_distance
                 )
+                if pair_error > max_progress_error:
+                    continue
                 score = (
                     pair_error
                     + before_projection.distance_px / max_centerline_distance_px
@@ -349,8 +388,7 @@ def recover_boundary_visual_anchor(
                 ),
                 source=BoundaryAnchorSource.INTERPOLATED,
             )
-        if pairs:
-            return missing
+        return missing
 
     one_sided: list[tuple[AnchorFrameEvidence, VisualProjection]] = []
     for frame in bracketing_frames:
