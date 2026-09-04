@@ -16,10 +16,10 @@ change. Use `git log` for authoritative commit hashes and dates.
 
 ## Current objective
 
-Deliver a circuit-generic fused `s`, using Spa only as the first validation dataset.
+Maintain the completed circuit-generic fused `s` milestone and close its integration.
 
 - Active milestone: generic fused `s` production correction
-- Status: implementation and representative validation complete on `feature/generic-s-fusion`; integration decision pending
+- Status: implementation and representative validation complete; merged locally into `main` at `f7888ae`; push pending explicit user request
 - Active specification: `docs/superpowers/specs/2026-09-03-generic-s-fusion-design.md`
 - Active plan: `docs/superpowers/plans/2026-09-03-generic-s-fusion.md` (complete)
 - Last completed technical plan: `docs/superpowers/plans/2026-09-02-native-1080-and-s-diagnostics.md`
@@ -37,6 +37,9 @@ Deliver a circuit-generic fused `s`, using Spa only as the first validation data
 
 ## Recently completed
 
+- `feature/generic-s-fusion` was fast-forward merged into local `main` on 2026-09-04.
+  The merged result passes all 158 tests and Python compilation. The feature branch is
+  safe to delete after this handoff update; `main` has not been pushed after the merge.
 - The generic fused `s` design was decomposed into a ten-commit TDD execution plan
   covering independent odometry, all plausible red candidates, a validated unique
   centerline, odometry-guided projection, confirmed lap anchors, fused uncertainty,
@@ -306,6 +309,7 @@ gates pass on controlled Spa evidence.
 
 ## Current next action
 
-Review the completed `feature/generic-s-fusion` branch and choose whether to merge it
-locally, push it for a pull request, or keep it for later. Do not start corner analysis
-until the separate long-capture lap confirmation and remaining quality gates pass.
+Push local `main` only after explicit user request. The next technical cycle should
+replay a representative window from the historical 2026-09-01 false-transition
+capture through the new lap confirmer, then finish remaining field-quality propagation.
+Do not start corner analysis before those separate gates pass.
