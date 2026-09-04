@@ -27,7 +27,7 @@ corner analysis.
   anchor gap that leaves its first complete lap unavailable
 - Active specification: `docs/superpowers/specs/2026-09-05-generic-boundary-visual-anchor-design.md`
 - Parent specification: `docs/superpowers/specs/2026-09-03-generic-s-fusion-design.md`
-- Active plan: none; the approved design requires written-spec review before planning
+- Active plan: `docs/superpowers/plans/2026-09-05-generic-boundary-visual-anchor.md`
 - Last completed implementation plan: `docs/superpowers/plans/2026-09-04-temporal-centerline-selection.md`
 - Prior completed implementation plan: `docs/superpowers/plans/2026-09-03-generic-s-fusion.md`
 - Last completed technical plan: `docs/superpowers/plans/2026-09-02-native-1080-and-s-diagnostics.md`
@@ -368,8 +368,8 @@ gates pass on controlled Spa evidence.
 
 ## Current next action
 
-Review the written generic boundary visual-anchor specification with the user, then
-write a TDD implementation plan for layered compact-candidate retention and bounded
-confirmed-boundary anchor recovery. Do not weaken confirmed-boundary anchoring or
-infer resets from map geometry. Push only after explicit user request, and do not
-start corner analysis before the reopened `s` gate and remaining quality gates pass.
+Execute the first unchecked step of the active TDD plan: add RED configuration tests
+for dimensionless compact-candidate thresholds. Do not weaken confirmed-boundary
+anchoring or infer resets from map geometry. Push only after explicit user request,
+and do not start corner analysis before the reopened `s` gate and remaining quality
+gates pass.
