@@ -16,9 +16,9 @@
 - Modify: `tests/test_configuration.py`
 - Modify: `tests/test_map_progress.py`
 
-- [ ] Change the expected production frequency threshold from `0.45` to `0.60`; run `PYTHONPATH=src .venv/bin/python -m unittest tests.test_configuration -v` and confirm RED against the current configuration.
-- [ ] Add `test_selects_the_only_long_closed_component_even_when_a_distractor_is_larger`: construct a 500×500 mask containing a thin 460×460 closed track plus a larger disconnected compact component with two holes. Assert `_build(mask)` returns a centerline longer than the ROI-relative minimum and follows the outer track.
-- [ ] Run `PYTHONPATH=src .venv/bin/python -m unittest tests.test_map_progress.TestCenterline -v` and confirm RED because the current area-dominance rule chooses or rejects the distractor.
+- [x] Change the expected production frequency threshold from `0.45` to `0.60`; run `PYTHONPATH=src .venv/bin/python -m unittest tests.test_configuration -v` and confirm RED against the current configuration.
+- [x] Add `test_selects_the_only_long_closed_component_even_when_a_distractor_is_larger`: construct a 500×500 mask containing a thin 460×460 closed track plus a larger disconnected compact component with two holes. Assert `_build(mask)` returns a centerline longer than the ROI-relative minimum and follows the outer track.
+- [x] Run `PYTHONPATH=src .venv/bin/python -m unittest tests.test_map_progress.TestCenterline -v` and confirm RED because the current area-dominance rule chooses or rejects the distractor.
 
 ### Task 2: Implement the minimal generic correction
 
@@ -26,10 +26,10 @@
 - Modify: `config/telemetry.yaml`
 - Modify: `src/acc_telemetry/extraction/map_progress.py`
 
-- [ ] Set `position.frequency_threshold` to `0.60`; do not change the ROI.
-- [ ] In `build_centerline`, split the thresholded mask into connected components. For each component, thin it, prune short branches, order its dominant cycle, and measure the ordered cycle against `min_cycle_diagonal_fraction * ROI diagonal`.
-- [ ] Accept exactly one long valid cycle. Raise `multiple_cycles` for multiple long cycles; preserve `discontinuous_path`, `no_closed_cycle`, `excessive_branches`, and `implausibly_short_path` for the existing characterized cases.
-- [ ] Run `PYTHONPATH=src .venv/bin/python -m unittest tests.test_map_progress tests.test_configuration -v`, then the full suite. Commit only after GREEN.
+- [x] Set `position.frequency_threshold` to `0.60`; do not change the ROI.
+- [x] In `build_centerline`, split the thresholded mask into connected components. For each component, thin it, prune short branches, order its dominant cycle, and measure the ordered cycle against `min_cycle_diagonal_fraction * ROI diagonal`.
+- [x] Accept exactly one long valid cycle. Raise `multiple_cycles` for multiple long cycles; preserve `discontinuous_path`, `no_closed_cycle`, `excessive_branches`, and `implausibly_short_path` for the existing characterized cases.
+- [x] Run `PYTHONPATH=src .venv/bin/python -m unittest tests.test_map_progress tests.test_configuration -v`, then the full suite. Commit only after GREEN.
 
 ### Task 3: Validate real captures and record evidence
 

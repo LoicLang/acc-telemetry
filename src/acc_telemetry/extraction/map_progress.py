@@ -202,44 +202,20 @@ def _connected_components(graph: PixelGraph) -> list[set[Pixel]]:
     return components
 
 
-def _component_has_hole(component: np.ndarray) -> bool:
-    contours, hierarchy = cv2.findContours(
-        component,
-        cv2.RETR_CCOMP,
-        cv2.CHAIN_APPROX_SIMPLE,
-    )
-    if not contours or hierarchy is None:
-        return False
-    return any(entry[3] >= 0 for entry in hierarchy[0])
-
-
-def _single_component(binary: np.ndarray) -> np.ndarray:
+def _component_masks(binary: np.ndarray) -> tuple[np.ndarray, ...]:
+    """Return connected foreground components from largest to smallest."""
     count, labels, stats, _ = cv2.connectedComponentsWithStats(binary, connectivity=8)
-    labels_present = list(range(1, count))
-    if not labels_present:
-        raise CenterlineTopologyError("no_closed_cycle")
-    if len(labels_present) > 1:
-        labels_present.sort(
-            key=lambda label: int(stats[label, cv2.CC_STAT_AREA]),
-            reverse=True,
-        )
-        largest_area = int(stats[labels_present[0], cv2.CC_STAT_AREA])
-        remaining_area = sum(
-            int(stats[label, cv2.CC_STAT_AREA]) for label in labels_present[1:]
-        )
-        if largest_area <= remaining_area:
-            cycle_components = 0
-            for label in labels_present:
-                component = np.zeros_like(binary)
-                component[labels == label] = 255
-                cycle_components += int(_component_has_hole(component))
-            reason = (
-                "multiple_cycles" if cycle_components > 1 else "discontinuous_path"
-            )
-            raise CenterlineTopologyError(reason)
-    component = np.zeros_like(binary)
-    component[labels == labels_present[0]] = 255
-    return component
+    labels_present = sorted(
+        range(1, count),
+        key=lambda label: int(stats[label, cv2.CC_STAT_AREA]),
+        reverse=True,
+    )
+    components = []
+    for label in labels_present:
+        component = np.zeros_like(binary)
+        component[labels == label] = 255
+        components.append(component)
+    return tuple(components)
 
 
 def _remove_nodes(graph: PixelGraph, nodes: set[Pixel]) -> None:
@@ -389,6 +365,28 @@ def _order_dominant_cycle(
     return [(float(x), float(y)) for y, x in dominant]
 
 
+def _order_component_cycle(
+    component: np.ndarray,
+    max_branch_length_fraction: float,
+) -> list[tuple[float, float]]:
+    """Order the usable cycle within one disconnected white component."""
+    graph = _pixel_graph(_thin(component))
+    graph = _prune_short_terminal_branches(graph, max_branch_length_fraction)
+    if all(len(neighbours) == 2 for neighbours in graph.values()):
+        return _order_cycle(graph)
+    return _order_dominant_cycle(graph, max_branch_length_fraction)
+
+
+def _closed_path_length(points: list[tuple[float, float]]) -> float:
+    return sum(
+        hypot(
+            points[(index + 1) % len(points)][0] - point[0],
+            points[(index + 1) % len(points)][1] - point[1],
+        )
+        for index, point in enumerate(points)
+    )
+
+
 def _resample_closed_path(
     points: list[tuple[float, float]],
     spacing: float,
@@ -438,24 +436,49 @@ def build_centerline(
     if white_probability.ndim != 2 or white_probability.size == 0:
         raise CenterlineTopologyError("no_closed_cycle")
     binary = (white_probability >= frequency_threshold).astype(np.uint8) * 255
-    component = _single_component(binary)
-    graph = _pixel_graph(_thin(component))
-    graph = _prune_short_terminal_branches(graph, max_branch_length_fraction)
-    if all(len(neighbours) == 2 for neighbours in graph.values()):
-        ordered = _order_cycle(graph)
-    else:
-        ordered = _order_dominant_cycle(graph, max_branch_length_fraction)
-
     height, width = white_probability.shape
     diagonal = hypot(height, width)
-    source_length = sum(
-        hypot(
-            ordered[(index + 1) % len(ordered)][0] - point[0],
-            ordered[(index + 1) % len(ordered)][1] - point[1],
-        )
-        for index, point in enumerate(ordered)
-    )
-    if source_length < min_cycle_diagonal_fraction * diagonal:
+    minimum_length = min_cycle_diagonal_fraction * diagonal
+    components = _component_masks(binary)
+    if not components:
+        raise CenterlineTopologyError("no_closed_cycle")
+
+    ordered_cycles: list[tuple[float, list[tuple[float, float]]]] = []
+    failures: list[str] = []
+    for component in components:
+        try:
+            ordered = _order_component_cycle(
+                component,
+                max_branch_length_fraction,
+            )
+        except CenterlineTopologyError as error:
+            failures.append(error.reason)
+            continue
+        ordered_cycles.append((_closed_path_length(ordered), ordered))
+
+    valid_cycles = [
+        (length, ordered)
+        for length, ordered in ordered_cycles
+        if length >= minimum_length
+    ]
+    if len(valid_cycles) > 1:
+        raise CenterlineTopologyError("multiple_cycles")
+    if len(valid_cycles) == 1:
+        source_length, ordered = valid_cycles[0]
+    elif len(ordered_cycles) > 1:
+        raise CenterlineTopologyError("multiple_cycles")
+    elif len(ordered_cycles) == 1:
+        raise CenterlineTopologyError("implausibly_short_path")
+    elif len(components) > 1 and all(
+        reason == "no_closed_cycle" for reason in failures
+    ):
+        raise CenterlineTopologyError("discontinuous_path")
+    elif failures:
+        raise CenterlineTopologyError(failures[0])
+    else:
+        raise CenterlineTopologyError("no_closed_cycle")
+
+    if source_length < minimum_length:
         raise CenterlineTopologyError("implausibly_short_path")
     spacing = resample_spacing_diagonal_fraction * diagonal
     return _resample_closed_path(ordered, spacing)

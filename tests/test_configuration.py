@@ -74,7 +74,7 @@ class TestTelemetryConfiguration(unittest.TestCase):
         self.assertEqual(profile.white_lower, (0, 0, 150))
         self.assertEqual(profile.white_upper, (180, 100, 255))
         self.assertEqual(settings.position.max_jump_per_frame, 1.0)
-        self.assertEqual(settings.position.frequency_threshold, 0.45)
+        self.assertEqual(settings.position.frequency_threshold, 0.60)
         self.assertEqual(settings.ocr.max_speed_delta_kmh, 20)
         self.assertEqual(settings.ocr.recovery_tolerance_kmh, 3)
         self.assertEqual(settings.progress.odometry.max_interpolation_gap_s, 0.25)
@@ -207,7 +207,7 @@ class TestTelemetryConfiguration(unittest.TestCase):
         )
         self.assertIs(components.progress, progress_estimator.return_value)
         self.assertEqual(components.sample_count, 60)
-        self.assertEqual(components.frequency_threshold, 0.45)
+        self.assertEqual(components.frequency_threshold, 0.60)
 
     @patch("acc_telemetry.application.components.ProgressSessionEstimator")
     @patch("acc_telemetry.application.components.LapTransitionConfirmer")

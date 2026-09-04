@@ -1,5 +1,5 @@
 position:
-  frequency_threshold: 0.45
+  frequency_threshold: 0.60
   max_jump_per_frame: 1.0
 
 ocr:

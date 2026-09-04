@@ -225,6 +225,22 @@ class TestCenterline(unittest.TestCase):
         self.assertGreater(len(centerline.points), 100)
         self.assertTrue(all(x <= 225.0 and y <= 225.0 for x, y in centerline.points))
 
+    def test_selects_the_only_long_closed_component_when_a_distractor_is_larger(self):
+        mask = np.zeros((500, 500), dtype=np.uint8)
+        cv2.rectangle(mask, (10, 10), (490, 490), 255, 5)
+        cv2.rectangle(mask, (140, 170), (360, 330), 255, -1)
+        cv2.circle(mask, (205, 250), 35, 0, -1)
+        cv2.circle(mask, (295, 250), 35, 0, -1)
+
+        centerline = _build(mask)
+
+        xs = [point[0] for point in centerline.points]
+        ys = [point[1] for point in centerline.points]
+        self.assertLess(min(xs), 20.0)
+        self.assertGreater(max(xs), 480.0)
+        self.assertLess(min(ys), 20.0)
+        self.assertGreater(max(ys), 480.0)
+
     def test_rejects_an_excessive_branch(self):
         mask = np.zeros((240, 240), dtype=np.uint8)
         cv2.rectangle(mask, (30, 30), (210, 210), 255, 9)
