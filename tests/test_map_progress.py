@@ -168,6 +168,45 @@ class TestRedDotCandidates(unittest.TestCase):
 
         self.assertEqual(candidates, ())
 
+    def test_rejects_compact_concavity_only_when_convex_compactness_is_low(self):
+        image = np.zeros((200, 200, 3), dtype=np.uint8)
+        compact_concave = np.array(
+            [
+                (20, 20), (23, 20), (23, 32), (33, 32),
+                (33, 20), (36, 20), (36, 36), (20, 36),
+            ],
+            dtype=np.int32,
+        )
+        cv2.fillPoly(image, [compact_concave], (0, 0, 255))
+        contour = cv2.findContours(
+            cv2.inRange(image, (0, 0, 255), (0, 0, 255)),
+            cv2.RETR_EXTERNAL,
+            cv2.CHAIN_APPROX_SIMPLE,
+        )[0][0]
+        area = float(cv2.contourArea(contour))
+        perimeter = float(cv2.arcLength(contour, True))
+        _, _, width, height = cv2.boundingRect(contour)
+        hull_perimeter = float(cv2.arcLength(cv2.convexHull(contour), True))
+        circularity = 4.0 * np.pi * area / (perimeter * perimeter)
+        aspect_ratio = min(width, height) / max(width, height)
+        filled_extent = area / float(width * height)
+        convex_compactness = (
+            4.0 * np.pi * area / (hull_perimeter * hull_perimeter)
+        )
+        settings = _candidate_settings()
+
+        self.assertLess(circularity, settings["min_circularity"])
+        self.assertGreaterEqual(
+            aspect_ratio,
+            settings["min_compact_aspect_ratio"],
+        )
+        self.assertGreaterEqual(filled_extent, settings["min_filled_extent"])
+        self.assertLess(
+            convex_compactness,
+            settings["min_convex_compactness"],
+        )
+        self.assertEqual(extract_red_candidates(image, **settings), ())
+
 
 class TestCenterline(unittest.TestCase):
     def test_orders_and_resamples_one_thick_closed_ring(self):

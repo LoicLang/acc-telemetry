@@ -52,7 +52,7 @@
 - Modify: `tests/test_map_progress.py`
 - Modify: `tests/test_position_tracker_v2.py`
 
-- [ ] **Step 1: Write RED configuration tests for the new dimensionless thresholds**
+- [x] **Step 1: Write RED configuration tests for the new dimensionless thresholds**
 
 Extend `progress.candidates` in `_telemetry_with_progress()` and assert the production
 values load:
@@ -71,7 +71,7 @@ values load:
 Add each new key with values `0` and `1.1` to the invalid-case loop and require a
 `ConfigurationError` naming the full key.
 
-- [ ] **Step 2: Run the configuration test and confirm RED**
+- [x] **Step 2: Run the configuration test and confirm RED**
 
 Run:
 
@@ -82,7 +82,7 @@ PYTHONPATH=src .venv/bin/python -m unittest tests.test_configuration.TestTelemet
 Expected: FAIL because `CandidateSettings` and `load_settings()` do not expose the
 three compact-shape fields.
 
-- [ ] **Step 3: Add and validate the candidate settings**
+- [x] **Step 3: Add and validate the candidate settings**
 
 Extend the frozen settings type:
 
@@ -101,7 +101,7 @@ Load all three new values with `_fraction()` under `progress.candidates`, and ad
 exact YAML values from Step 1. Do not add defaults in Python; missing versioned
 configuration must fail explicitly.
 
-- [ ] **Step 4: Confirm configuration GREEN**
+- [x] **Step 4: Confirm configuration GREEN**
 
 Run:
 
@@ -111,7 +111,7 @@ PYTHONPATH=src .venv/bin/python -m unittest tests.test_configuration -v
 
 Expected: all configuration and component-wiring tests pass.
 
-- [ ] **Step 5: Write RED contour tests for the measured failure shape**
+- [x] **Step 5: Write RED contour tests for the measured failure shape**
 
 Create a 16 by 16 compact jagged red polygon whose raw circularity is below `0.35`
 but whose aspect ratio, filled extent, and convex compactness pass the new thresholds.
@@ -163,7 +163,7 @@ self.assertLess(candidates[0].circularity, 0.35)
 self.assertEqual(len(candidates), 1)
 ```
 
-- [ ] **Step 6: Run candidate tests and confirm RED**
+- [x] **Step 6: Run candidate tests and confirm RED**
 
 Run:
 
@@ -175,7 +175,7 @@ Expected: FAIL because `extract_red_candidates()` does not accept the three new
 arguments and rejects the irregular compact contour under the current circularity
 gate.
 
-- [ ] **Step 7: Implement the minimal alternate compact-shape path**
+- [x] **Step 7: Implement the minimal alternate compact-shape path**
 
 Extend `extract_red_candidates()` with required keyword-only parameters. After the
 existing area check, calculate:
@@ -204,7 +204,7 @@ Keep the existing area, perimeter, moments, stable ordering, and `RedDotCandidat
 contract unchanged. Pass the three settings from `ProgressSessionEstimator.observe_frame()`
 and update every direct test call, including the legacy characterization.
 
-- [ ] **Step 8: Run focused and full GREEN verification**
+- [x] **Step 8: Run focused and full GREEN verification**
 
 Run:
 
@@ -216,7 +216,7 @@ git diff --check
 
 Expected: focused tests and the complete suite pass; no whitespace errors.
 
-- [ ] **Step 9: Commit candidate retention atomically**
+- [x] **Step 9: Commit candidate retention atomically**
 
 ```bash
 git add config/telemetry.yaml src/acc_telemetry/application/config.py src/acc_telemetry/extraction/map_progress.py src/acc_telemetry/application/progress.py tests/test_configuration.py tests/test_map_progress.py tests/test_position_tracker_v2.py
