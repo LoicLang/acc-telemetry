@@ -623,13 +623,13 @@ git commit -m "feat: propagate fused progress through telemetry"
 - Create: `tests/test_progress_diagnostic_cli.py`
 - Modify: `docs/current-status.md`
 
-- [ ] **Step 1: Write failing diagnostic schema and metric tests**
+- [x] **Step 1: Write failing diagnostic schema and metric tests**
 
 Define stable per-frame fields: frame, time, raw/confirmed lap, boundary confidence, candidate count, selected centroid, `s_odometry`, `s_visual`, `s_fused`, distance, effective lap length, uncertainty, source, reasons, and anchored. Define summary JSON fields: input path, file size, profile, frame count, confirmed boundary count, calibration lap count, rejected calibration laps, premature completion count, unconfirmed reset count, nonlocal visual jump count, comparable-checkpoint spread, source counts, unavailable duration, and pass/fail criteria.
 
 Unit-test metric functions with small rows. In particular, `premature_completion_count` counts entries into `s_fused >= 0.999` before a boundary, `unconfirmed_reset_count` counts wrapped resets without a boundary, and checkpoint spread uses the same odometric distance bins across accepted repeated laps.
 
-- [ ] **Step 2: Run and confirm RED, then implement the CLI**
+- [x] **Step 2: Run and confirm RED, then implement the CLI**
 
 ```bash
 PYTHONPATH=src .venv/bin/python -m unittest tests.test_progress_diagnostic_cli -v
@@ -637,7 +637,7 @@ PYTHONPATH=src .venv/bin/python -m unittest tests.test_progress_diagnostic_cli -
 
 Expected RED: module missing. Implement `write_trace()`, `summarize_trace()`, and argument validation. The CLI must refuse an output path equal to either input video path.
 
-- [ ] **Step 3: Run unit/full verification before touching real evidence**
+- [x] **Step 3: Run unit/full verification before touching real evidence**
 
 ```bash
 ./scripts/docs-list
@@ -647,7 +647,7 @@ PYTHONPATH=src .venv/bin/python -m unittest discover -s tests -v
 
 Expected: documentation discovery succeeds, compilation is silent, and all tests pass.
 
-- [ ] **Step 4: Replay the clean BMW session into ignored output**
+- [x] **Step 4: Replay the clean BMW session into ignored output**
 
 First re-check size and existence, then run:
 
@@ -668,7 +668,7 @@ Required clean-session exit criteria:
 
 If a criterion fails, do not tune against Spa coordinates. Add a minimal generic synthetic RED regression reproducing the failure, implement the generic correction in the owning task’s module, rerun focused/full tests, and create a separate atomic fix commit.
 
-- [ ] **Step 5: Record only durable summary evidence and commit**
+- [x] **Step 5: Record only durable summary evidence and commit**
 
 Update `docs/current-status.md` with command, input size, summary metrics, exact pass/fail gates, and the next action. Do not commit trace CSV, JSON output, frames, screenshots, or video.
 

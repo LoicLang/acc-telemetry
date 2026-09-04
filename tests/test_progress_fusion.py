@@ -212,6 +212,22 @@ class TestFusedEstimator(unittest.TestCase):
         self.assertTrue(estimate.anchored)
         self.assertIn("lap_boundary_confirmed", estimate.reasons)
 
+    def test_boundary_resets_session_accumulated_odometry_uncertainty(self):
+        boundary_estimate = self.estimator.update(
+            _odometry(1000.0, 70000.0, 10.0, uncertainty=0.2),
+            _visual(None),
+            boundary=_boundary(1000.0),
+        )
+        next_estimate = self.estimator.update(
+            _odometry(1000.1, 70010.0, 10.0, uncertainty=0.2001),
+            _visual(0.01, uncertainty=0.001),
+            boundary=None,
+        )
+
+        self.assertEqual(boundary_estimate.uncertainty, 0.0)
+        self.assertIsNotNone(next_estimate.s_fused)
+        self.assertEqual(next_estimate.source, ProgressSource.FUSED)
+
     def test_fuses_visual_correction_into_odometric_prediction(self):
         self.estimator.update(_odometry(0.0, 0.0, None), _visual(None), _boundary(0.0))
 

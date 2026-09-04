@@ -221,6 +221,7 @@ class FusedProgressEstimator:
         self._last_time_s: float | None = None
         self._last_visual_time_s: float | None = None
         self._uncertainty = 0.0
+        self._lap_start_odometry_uncertainty = 0.0
 
     def _unavailable(
         self,
@@ -254,7 +255,8 @@ class FusedProgressEstimator:
             self._last_s = 0.0
             self._last_time_s = odometry.time_s
             self._last_visual_time_s = odometry.time_s
-            self._uncertainty = min(1.0, odometry.uncertainty)
+            self._lap_start_odometry_uncertainty = odometry.uncertainty
+            self._uncertainty = 0.0
             if self.effective_lap_length_m is None:
                 return self._unavailable(
                     odometry,
@@ -293,7 +295,11 @@ class FusedProgressEstimator:
             if self._last_time_s is None
             else max(0.0, odometry.time_s - self._last_time_s)
         )
-        base_uncertainty = max(self._uncertainty, odometry.uncertainty)
+        lap_odometry_uncertainty = max(
+            0.0,
+            odometry.uncertainty - self._lap_start_odometry_uncertainty,
+        )
+        base_uncertainty = max(self._uncertainty, lap_odometry_uncertainty)
 
         if visual.s_visual is not None:
             correction = wrapped_delta(visual.s_visual, predicted)
@@ -573,6 +579,7 @@ class ProgressSessionEstimator:
         last_centroid: tuple[float, float] | None = None
         previous_displacement_px: float | None = None
         lap_start_distance_m = 0.0
+        lap_start_odometry_uncertainty = 0.0
         results: list[ProgressFrameResult] = []
 
         for frame, point in zip(self._frames, odometry):
@@ -583,6 +590,7 @@ class ProgressSessionEstimator:
             )
             if boundary is not None:
                 lap_start_distance_m = point.distance_m
+                lap_start_odometry_uncertainty = point.uncertainty
                 if projections:
                     anchor = min(
                         projections,
@@ -657,7 +665,10 @@ class ProgressSessionEstimator:
                     selected = select_visual_projection(
                         normalized_projections,
                         predicted_s=predicted_s,
-                        current_uncertainty=point.uncertainty,
+                        current_uncertainty=max(
+                            0.0,
+                            point.uncertainty - lap_start_odometry_uncertainty,
+                        ),
                         last_centroid=last_centroid,
                         previous_displacement_px=previous_displacement_px,
                         speed_kmh=frame.speed_kmh,

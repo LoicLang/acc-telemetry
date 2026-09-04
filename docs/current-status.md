@@ -8,7 +8,7 @@ read_when:
 
 # Current status
 
-Last verified: 2026-09-03
+Last verified: 2026-09-04
 
 This document is the mandatory living handoff for the repository. Update it from
 verified evidence whenever active work, blockers, stage gates, or the next action
@@ -25,7 +25,7 @@ validation dataset.
 - Active plan: `docs/superpowers/plans/2026-09-03-generic-s-fusion.md`
 - Last completed technical plan: `docs/superpowers/plans/2026-09-02-native-1080-and-s-diagnostics.md`
 - Last completed plan: `docs/superpowers/plans/2026-09-02-agent-handoff-documentation.md`
-- Technical ACC implementation: Tasks 1-8 complete; clean-session validation is next
+- Technical ACC implementation: Tasks 1-9 complete; crash-heavy robustness is next
 - Documentation milestone: verified complete
 
 ## Resume here
@@ -93,6 +93,17 @@ validation dataset.
   component signals, uncertainty, source, and reasons. Speed OCR now distinguishes a
   fresh observation from held, missing, or anomalous evidence. A global OpenCV mock
   that made test results order-dependent was removed. All 146 tests pass.
+- Clean-session validation first replayed all 139,561 extracted frames. That run exposed
+  session-global odometry uncertainty leaking across lap boundaries and two biased
+  diagnostic metrics; each defect received a synthetic RED regression before correction.
+- Per the user's 2026-09-04 direction, subsequent video checks use small representative
+  derived clips. The clean clip covers source time 275-590 seconds, three confirmed
+  boundaries, two complete calibration laps, and 18,902 extracted frames. It learns an
+  effective distance of 6965.332 m, records zero unconfirmed resets, zero nonlocal jumps,
+  zero premature completion-band entries, and a maximum interpolated checkpoint spread
+  of 0.001522 across 99 checkpoints, passing the 0.002 target. Source counts are 17,700
+  fused, 447 predicted, 3 interpolated, 749 missing, and 3 boundary-observed frames.
+  The derived video, trace, and JSON summary remain ignored under `data/lab/`.
 
 - OCR runtime prerequisite: verified. `LapDetector` now discovers
   `data/shared/tessdata/eng.traineddata`, and the real tesserocr backend initializes
@@ -280,6 +291,7 @@ gates pass on controlled Spa evidence.
 
 ## Current next action
 
-Begin Task 9 in `docs/superpowers/plans/2026-09-03-generic-s-fusion.md`: add the
-tested progress-diagnostic schema and metrics, then replay the immutable clean BMW
-capture into ignored `data/lab/` output and evaluate every clean-session gate.
+Begin Task 10 in `docs/superpowers/plans/2026-09-03-generic-s-fusion.md`: select a
+small crash-heavy window from the immutable secondary capture, run the tested generic
+diagnostic, turn each failed metric into a synthetic RED regression, and rerun both
+representative clips before removing the legacy production path.

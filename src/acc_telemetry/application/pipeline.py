@@ -18,6 +18,7 @@ class PipelineResult:
     records: list[dict[str, Any]]
     video_info: dict[str, Any]
     lap_transitions: list[dict[str, Any]]
+    progress_calibration: Any | None = None
 
 
 class TelemetryPipeline:
@@ -113,16 +114,18 @@ class TelemetryPipeline:
         )
         self._progress(15, message)
 
-    def _report_generic_progress(self, frame_result: Any) -> None:
+    def _report_generic_progress(self, frame_result: Any, *, time_s: float) -> None:
         if self.position_diagnostic_callback is None:
             return
         estimate = frame_result.estimate
         selected = frame_result.selected_centroid
         self.position_diagnostic_callback({
             "frame": frame_result.frame,
+            "time": time_s,
             "raw_lap_number": frame_result.raw_lap_number,
             "confirmed_lap_number": frame_result.confirmed_lap_number,
             "boundary_confidence": frame_result.boundary_confidence,
+            "boundary_confirmed": frame_result.boundary is not None,
             "candidate_count": frame_result.candidate_count,
             "selected_x": None if selected is None else selected[0],
             "selected_y": None if selected is None else selected[1],
@@ -280,9 +283,21 @@ class TelemetryPipeline:
                             "to_lap": boundary.to_lap,
                             "completed_lap_time": None,
                         })
-                    self._report_generic_progress(frame_result)
+                    self._report_generic_progress(
+                        frame_result,
+                        time_s=record["time"],
+                    )
 
             self._progress(85, "Generating outputs...")
-            return PipelineResult(records, video_info, transitions)
+            return PipelineResult(
+                records,
+                video_info,
+                transitions,
+                (
+                    progress_result.calibration
+                    if self.progress is not None
+                    else None
+                ),
+            )
         finally:
             self.video.close()
