@@ -232,7 +232,7 @@ git commit -m "fix: retain compact red map candidates"
 - Modify: `tests/test_configuration.py`
 - Modify: `tests/test_progress_fusion.py`
 
-- [ ] **Step 1: Write RED settings tests for dual recovery gates**
+- [x] **Step 1: Write RED settings tests for dual recovery gates**
 
 Add this section to test configuration and production YAML:
 
@@ -248,7 +248,7 @@ Assert all values load through a frozen `BoundaryAnchorSettings`. Add invalid ca
 for zero, negative, or greater-than-one distance fractions. Add cross-field tests
 requiring each one-sided limit to be less than or equal to its bracketing counterpart.
 
-- [ ] **Step 2: Run settings tests and confirm RED**
+- [x] **Step 2: Run settings tests and confirm RED**
 
 Run:
 
@@ -258,7 +258,7 @@ PYTHONPATH=src .venv/bin/python -m unittest tests.test_configuration.TestTelemet
 
 Expected: FAIL because `ProgressSettings.boundary_anchor` is missing.
 
-- [ ] **Step 3: Implement the validated recovery settings**
+- [x] **Step 3: Implement the validated recovery settings**
 
 Add:
 
@@ -292,7 +292,7 @@ if (
 Add `boundary_anchor` to `ProgressSettings` and confirm the full configuration module
 passes before writing recovery behavior.
 
-- [ ] **Step 4: Define the RED pure recovery contract**
+- [x] **Step 4: Define the RED pure recovery contract**
 
 Import these not-yet-existing application-local types in the test to fix their public
 contract before implementation:
@@ -351,7 +351,7 @@ Cover these exact cases:
 - two equally plausible projection pairs return `MISSING` rather than selecting by
   tuple order.
 
-- [ ] **Step 5: Run pure recovery tests and confirm RED**
+- [x] **Step 5: Run pure recovery tests and confirm RED**
 
 Run:
 
@@ -361,7 +361,7 @@ PYTHONPATH=src .venv/bin/python -m unittest tests.test_progress_fusion.TestBound
 
 Expected: FAIL because the recovery types and function do not exist.
 
-- [ ] **Step 6: Implement exact, bracketing, nearest, and missing selection**
+- [x] **Step 6: Implement exact, bracketing, nearest, and missing selection**
 
 Import `StrEnum` from `enum`, implement the three immutable types from Step 4 in
 `progress.py`, then implement these private stages:
@@ -407,7 +407,7 @@ rule. Return its raw coordinate and add at most `0.50 * unavailable_uncertainty`
 scaled by the larger consumed one-sided gate fraction. Return `MISSING` with
 `uncertainty=unavailable_uncertainty` when no unique bounded result exists.
 
-- [ ] **Step 7: Run focused and full GREEN verification**
+- [x] **Step 7: Run focused and full GREEN verification**
 
 Run:
 
@@ -419,7 +419,7 @@ git diff --check
 
 Expected: all recovery/configuration tests and the complete suite pass.
 
-- [ ] **Step 8: Commit pure anchor recovery atomically**
+- [x] **Step 8: Commit pure anchor recovery atomically**
 
 ```bash
 git add config/telemetry.yaml src/acc_telemetry/application/config.py src/acc_telemetry/application/progress.py tests/test_configuration.py tests/test_progress_fusion.py

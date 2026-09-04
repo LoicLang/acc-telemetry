@@ -59,6 +59,12 @@ def _telemetry_with_progress() -> dict:
             "short_visual_gap_s": 0.5,
             "unavailable_uncertainty": 0.05,
         },
+        "boundary_anchor": {
+            "max_bracketing_gap_s": 0.25,
+            "max_bracketing_distance_fraction": 0.005,
+            "max_one_sided_gap_s": 0.10,
+            "max_one_sided_distance_fraction": 0.002,
+        },
         "lap_confirmation": {"consecutive_observations": 5},
         "calibration": {
             "max_missing_speed_fraction": 0.01,
@@ -99,6 +105,22 @@ class TestTelemetryConfiguration(unittest.TestCase):
         self.assertEqual(settings.progress.projection.min_score_margin, 0.15)
         self.assertEqual(settings.progress.fusion.visual_gain, 0.35)
         self.assertEqual(settings.progress.fusion.short_visual_gap_s, 0.5)
+        self.assertEqual(
+            settings.progress.boundary_anchor.max_bracketing_gap_s,
+            0.25,
+        )
+        self.assertEqual(
+            settings.progress.boundary_anchor.max_bracketing_distance_fraction,
+            0.005,
+        )
+        self.assertEqual(
+            settings.progress.boundary_anchor.max_one_sided_gap_s,
+            0.10,
+        )
+        self.assertEqual(
+            settings.progress.boundary_anchor.max_one_sided_distance_fraction,
+            0.002,
+        )
         self.assertEqual(settings.progress.lap_confirmation.consecutive_observations, 5)
         self.assertEqual(settings.progress.calibration.max_relative_mad, 0.03)
 
@@ -114,6 +136,16 @@ class TestTelemetryConfiguration(unittest.TestCase):
             ("progress.candidates.min_convex_compactness", ("progress", "candidates", "min_convex_compactness"), 0),
             ("progress.candidates.min_convex_compactness", ("progress", "candidates", "min_convex_compactness"), 1.1),
             ("progress.fusion.visual_gain", ("progress", "fusion", "visual_gain"), 1.1),
+            ("progress.boundary_anchor.max_bracketing_gap_s", ("progress", "boundary_anchor", "max_bracketing_gap_s"), 0),
+            ("progress.boundary_anchor.max_bracketing_gap_s", ("progress", "boundary_anchor", "max_bracketing_gap_s"), -0.1),
+            ("progress.boundary_anchor.max_bracketing_distance_fraction", ("progress", "boundary_anchor", "max_bracketing_distance_fraction"), 0),
+            ("progress.boundary_anchor.max_bracketing_distance_fraction", ("progress", "boundary_anchor", "max_bracketing_distance_fraction"), -0.1),
+            ("progress.boundary_anchor.max_bracketing_distance_fraction", ("progress", "boundary_anchor", "max_bracketing_distance_fraction"), 1.1),
+            ("progress.boundary_anchor.max_one_sided_gap_s", ("progress", "boundary_anchor", "max_one_sided_gap_s"), 0),
+            ("progress.boundary_anchor.max_one_sided_gap_s", ("progress", "boundary_anchor", "max_one_sided_gap_s"), -0.1),
+            ("progress.boundary_anchor.max_one_sided_distance_fraction", ("progress", "boundary_anchor", "max_one_sided_distance_fraction"), 0),
+            ("progress.boundary_anchor.max_one_sided_distance_fraction", ("progress", "boundary_anchor", "max_one_sided_distance_fraction"), -0.1),
+            ("progress.boundary_anchor.max_one_sided_distance_fraction", ("progress", "boundary_anchor", "max_one_sided_distance_fraction"), 1.1),
             ("progress.lap_confirmation.consecutive_observations", ("progress", "lap_confirmation", "consecutive_observations"), 0),
         )
 
@@ -127,6 +159,35 @@ class TestTelemetryConfiguration(unittest.TestCase):
                 target[path[-1]] = invalid
                 _write_configuration(root, changed)
                 with self.assertRaisesRegex(ConfigurationError, expected.replace(".", r"\.")):
+                    load_settings(root)
+
+    def test_rejects_one_sided_anchor_gates_larger_than_bracketing_gates(self):
+        cases = (
+            (
+                "max_one_sided_gap_s",
+                0.26,
+                "progress.boundary_anchor.max_one_sided_gap_s must not exceed "
+                "progress.boundary_anchor.max_bracketing_gap_s",
+            ),
+            (
+                "max_one_sided_distance_fraction",
+                0.006,
+                "progress.boundary_anchor.max_one_sided_distance_fraction must not exceed "
+                "progress.boundary_anchor.max_bracketing_distance_fraction",
+            ),
+        )
+
+        for key, invalid, expected in cases:
+            with self.subTest(key=key), tempfile.TemporaryDirectory() as directory:
+                telemetry = _telemetry_with_progress()
+                telemetry["progress"]["boundary_anchor"][key] = invalid
+                root = Path(directory)
+                _write_configuration(root, telemetry)
+
+                with self.assertRaisesRegex(
+                    ConfigurationError,
+                    expected.replace(".", r"\."),
+                ):
                     load_settings(root)
 
     def test_rejects_overlapping_candidate_area_range(self):

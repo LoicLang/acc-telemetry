@@ -7,17 +7,21 @@ import numpy as np
 
 from acc_telemetry.application.odometry import OdometryPoint
 from acc_telemetry.application.progress import (
+    AnchorFrameEvidence,
+    BoundaryAnchorSource,
+    BoundaryVisualAnchor,
     FusedProgressEstimator,
     ProgressReplayObservation,
     ProgressSessionEstimator,
     VisualSelection,
     estimate_progress,
     infer_centerline_direction,
+    recover_boundary_visual_anchor,
     select_visual_projection,
 )
 from acc_telemetry.extraction.map_progress import VisualProjection
 from acc_telemetry.domain.progress import Centerline, ConfirmedLapBoundary, ProgressSource
-from acc_telemetry.application.config import load_settings
+from acc_telemetry.application.config import BoundaryAnchorSettings, load_settings
 from acc_telemetry.application.lap_state import LapTransitionConfirmer
 
 
@@ -210,6 +214,159 @@ def _boundary(time_s: float, from_lap: int = 8) -> ConfirmedLapBoundary:
         to_lap=from_lap + 1,
         confidence=1.0,
     )
+
+
+def _anchor_settings() -> BoundaryAnchorSettings:
+    return BoundaryAnchorSettings(
+        max_bracketing_gap_s=0.25,
+        max_bracketing_distance_fraction=0.005,
+        max_one_sided_gap_s=0.10,
+        max_one_sided_distance_fraction=0.002,
+    )
+
+
+def _anchor_frame(
+    time_s: float,
+    distance_m: float,
+    projections: tuple[VisualProjection, ...] = (),
+    boundary: ConfirmedLapBoundary | None = None,
+) -> AnchorFrameEvidence:
+    return AnchorFrameEvidence(time_s, distance_m, projections, boundary)
+
+
+class TestBoundaryVisualAnchor(unittest.TestCase):
+    def _recover(
+        self,
+        frames,
+        *,
+        boundary_index,
+        last_raw_s=None,
+        effective_lap_length_m=1000.0,
+    ):
+        return recover_boundary_visual_anchor(
+            tuple(frames),
+            boundary_index=boundary_index,
+            effective_lap_length_m=effective_lap_length_m,
+            last_raw_s=last_raw_s,
+            max_centerline_distance_px=10.0,
+            min_score_margin=0.15,
+            unavailable_uncertainty=0.05,
+            settings=_anchor_settings(),
+        )
+
+    def test_exact_projection_is_preferred_without_added_uncertainty(self):
+        frames = (
+            _anchor_frame(0.9, 99.0, (_projection(0.998),)),
+            _anchor_frame(1.0, 100.0, (_projection(0.002),), _boundary(1.0)),
+            _anchor_frame(1.1, 101.0, (_projection(0.006),)),
+        )
+
+        anchor = self._recover(frames, boundary_index=1, last_raw_s=0.999)
+
+        self.assertIsInstance(anchor, BoundaryVisualAnchor)
+        self.assertEqual(anchor.source, BoundaryAnchorSource.EXACT)
+        self.assertEqual(anchor.raw_s, 0.002)
+        self.assertEqual(anchor.centroid, (10.0, 10.0))
+        self.assertEqual(anchor.uncertainty, 0.0)
+
+    def test_refuses_to_recover_without_a_confirmed_boundary(self):
+        frames = (_anchor_frame(1.0, 100.0, (_projection(0.002),)),)
+
+        anchor = self._recover(frames, boundary_index=0)
+
+        self.assertEqual(anchor.source, BoundaryAnchorSource.MISSING)
+
+    def test_interpolates_across_the_wrapped_start_finish_interval(self):
+        frames = (
+            _anchor_frame(0.9, 99.0, (_projection(0.998),)),
+            _anchor_frame(1.0, 100.0, boundary=_boundary(1.0)),
+            _anchor_frame(1.1, 101.0, (_projection(0.002),)),
+        )
+
+        anchor = self._recover(
+            frames,
+            boundary_index=1,
+            effective_lap_length_m=2000.0,
+        )
+
+        self.assertEqual(anchor.source, BoundaryAnchorSource.INTERPOLATED)
+        self.assertAlmostEqual(anchor.raw_s, 0.0)
+
+    def test_weights_interpolation_by_odometry_instead_of_time(self):
+        frames = (
+            _anchor_frame(0.8, 100.0, (_projection(0.10),)),
+            _anchor_frame(0.9, 102.0, boundary=_boundary(0.9)),
+            _anchor_frame(1.0, 108.0, (_projection(0.20),)),
+        )
+
+        anchor = self._recover(
+            frames,
+            boundary_index=1,
+            effective_lap_length_m=2000.0,
+        )
+
+        self.assertEqual(anchor.source, BoundaryAnchorSource.INTERPOLATED)
+        self.assertAlmostEqual(anchor.raw_s, 0.125)
+
+    def test_recovers_one_sided_projection_inside_both_strict_gates(self):
+        frames = (
+            _anchor_frame(0.92, 98.5, (_projection(0.997),)),
+            _anchor_frame(1.0, 100.0, boundary=_boundary(1.0)),
+        )
+
+        anchor = self._recover(frames, boundary_index=1)
+
+        self.assertEqual(anchor.source, BoundaryAnchorSource.NEAREST)
+        self.assertEqual(anchor.raw_s, 0.997)
+        self.assertGreater(anchor.uncertainty, 0.0)
+        self.assertLessEqual(anchor.uncertainty, 0.025)
+
+    def test_rejects_one_sided_projection_when_either_gate_fails(self):
+        cases = (
+            _anchor_frame(0.89, 99.0, (_projection(0.997),)),
+            _anchor_frame(0.95, 97.9, (_projection(0.997),)),
+        )
+
+        for evidence in cases:
+            with self.subTest(evidence=evidence):
+                anchor = self._recover(
+                    (evidence, _anchor_frame(1.0, 100.0, boundary=_boundary(1.0))),
+                    boundary_index=1,
+                )
+
+                self.assertEqual(anchor.source, BoundaryAnchorSource.MISSING)
+                self.assertIsNone(anchor.raw_s)
+                self.assertIsNone(anchor.centroid)
+                self.assertEqual(anchor.uncertainty, 0.05)
+
+    def test_search_stops_at_another_confirmed_boundary(self):
+        frames = (
+            _anchor_frame(0.90, 99.0, (_projection(0.997),)),
+            _anchor_frame(0.95, 99.5, boundary=_boundary(0.95, 7)),
+            _anchor_frame(1.00, 100.0, boundary=_boundary(1.0, 8)),
+        )
+
+        anchor = self._recover(frames, boundary_index=2)
+
+        self.assertEqual(anchor.source, BoundaryAnchorSource.MISSING)
+
+    def test_rejects_equally_plausible_bracketing_pairs(self):
+        frames = (
+            _anchor_frame(
+                0.9,
+                99.0,
+                (
+                    _projection(0.998, centroid=(9.0, 10.0)),
+                    _projection(0.998, centroid=(11.0, 10.0)),
+                ),
+            ),
+            _anchor_frame(1.0, 100.0, boundary=_boundary(1.0)),
+            _anchor_frame(1.1, 101.0, (_projection(0.002),)),
+        )
+
+        anchor = self._recover(frames, boundary_index=1)
+
+        self.assertEqual(anchor.source, BoundaryAnchorSource.MISSING)
 
 
 class TestFusedEstimator(unittest.TestCase):

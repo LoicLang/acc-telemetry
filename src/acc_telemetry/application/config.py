@@ -71,6 +71,14 @@ class FusionSettings:
 
 
 @dataclass(frozen=True)
+class BoundaryAnchorSettings:
+    max_bracketing_gap_s: float
+    max_bracketing_distance_fraction: float
+    max_one_sided_gap_s: float
+    max_one_sided_distance_fraction: float
+
+
+@dataclass(frozen=True)
 class LapConfirmationSettings:
     consecutive_observations: int
 
@@ -88,6 +96,7 @@ class ProgressSettings:
     centerline: CenterlineSettings
     projection: ProjectionSettings
     fusion: FusionSettings
+    boundary_anchor: BoundaryAnchorSettings
     lap_confirmation: LapConfirmationSettings
     calibration: CalibrationSettings
 
@@ -315,6 +324,46 @@ def load_settings(root: Path | str | None = None) -> TelemetrySettings:
         ),
     )
 
+    boundary_anchor_raw = _mapping(
+        progress_raw.get("boundary_anchor"),
+        "progress.boundary_anchor",
+    )
+    boundary_anchor = BoundaryAnchorSettings(
+        max_bracketing_gap_s=_positive(
+            boundary_anchor_raw,
+            "max_bracketing_gap_s",
+            "progress.boundary_anchor",
+        ),
+        max_bracketing_distance_fraction=_fraction(
+            boundary_anchor_raw,
+            "max_bracketing_distance_fraction",
+            "progress.boundary_anchor",
+        ),
+        max_one_sided_gap_s=_positive(
+            boundary_anchor_raw,
+            "max_one_sided_gap_s",
+            "progress.boundary_anchor",
+        ),
+        max_one_sided_distance_fraction=_fraction(
+            boundary_anchor_raw,
+            "max_one_sided_distance_fraction",
+            "progress.boundary_anchor",
+        ),
+    )
+    if boundary_anchor.max_one_sided_gap_s > boundary_anchor.max_bracketing_gap_s:
+        raise ConfigurationError(
+            "progress.boundary_anchor.max_one_sided_gap_s must not exceed "
+            "progress.boundary_anchor.max_bracketing_gap_s"
+        )
+    if (
+        boundary_anchor.max_one_sided_distance_fraction
+        > boundary_anchor.max_bracketing_distance_fraction
+    ):
+        raise ConfigurationError(
+            "progress.boundary_anchor.max_one_sided_distance_fraction must not exceed "
+            "progress.boundary_anchor.max_bracketing_distance_fraction"
+        )
+
     confirmation_raw = _mapping(
         progress_raw.get("lap_confirmation"),
         "progress.lap_confirmation",
@@ -354,6 +403,7 @@ def load_settings(root: Path | str | None = None) -> TelemetrySettings:
         centerline=centerline,
         projection=projection,
         fusion=fusion,
+        boundary_anchor=boundary_anchor,
         lap_confirmation=lap_confirmation,
         calibration=calibration,
     )

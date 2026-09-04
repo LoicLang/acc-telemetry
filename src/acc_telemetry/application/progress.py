@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+from enum import StrEnum
 from math import hypot
 
 import numpy as np
@@ -15,7 +16,7 @@ from acc_telemetry.application.odometry import (
     integrate_speed,
     summarize_lap_distances,
 )
-from acc_telemetry.application.config import ProgressSettings
+from acc_telemetry.application.config import BoundaryAnchorSettings, ProgressSettings
 from acc_telemetry.application.lap_state import LapState, LapTransitionConfirmer
 from acc_telemetry.domain.progress import (
     ConfirmedLapBoundary,
@@ -44,6 +45,29 @@ class VisualSelection:
     uncertainty: float
     source: ProgressSource
     reasons: tuple[str, ...]
+
+
+class BoundaryAnchorSource(StrEnum):
+    EXACT = "boundary_anchor_exact"
+    INTERPOLATED = "boundary_anchor_interpolated"
+    NEAREST = "boundary_anchor_nearest"
+    MISSING = "boundary_anchor_missing"
+
+
+@dataclass(frozen=True)
+class AnchorFrameEvidence:
+    time_s: float
+    distance_m: float
+    projections: tuple[VisualProjection, ...]
+    boundary: ConfirmedLapBoundary | None
+
+
+@dataclass(frozen=True)
+class BoundaryVisualAnchor:
+    raw_s: float | None
+    centroid: tuple[float, float] | None
+    uncertainty: float
+    source: BoundaryAnchorSource
 
 
 @dataclass(frozen=True)
@@ -99,6 +123,268 @@ def wrapped_delta(value: float, reference: float) -> float:
     """Return value-reference on the normalized interval (-0.5, 0.5]."""
     delta = (value - reference) % 1.0
     return delta - 1.0 if delta > 0.5 else delta
+
+
+def _wrapped01(value: float) -> float:
+    return value % 1.0
+
+
+def _distance_fraction(
+    first: AnchorFrameEvidence,
+    second: AnchorFrameEvidence,
+    lap_length: float,
+) -> float:
+    return abs(second.distance_m - first.distance_m) / lap_length
+
+
+def _inside_gap(
+    frame: AnchorFrameEvidence,
+    boundary: AnchorFrameEvidence,
+    *,
+    max_gap_s: float,
+    max_distance_fraction: float,
+    lap_length: float,
+) -> bool:
+    return (
+        abs(frame.time_s - boundary.time_s) <= max_gap_s
+        and _distance_fraction(frame, boundary, lap_length)
+        <= max_distance_fraction
+    )
+
+
+def _missing_boundary_anchor(unavailable_uncertainty: float) -> BoundaryVisualAnchor:
+    return BoundaryVisualAnchor(
+        raw_s=None,
+        centroid=None,
+        uncertainty=unavailable_uncertainty,
+        source=BoundaryAnchorSource.MISSING,
+    )
+
+
+def _unique_projection(
+    projections: tuple[VisualProjection, ...],
+    *,
+    last_raw_s: float | None,
+    max_centerline_distance_px: float,
+    min_score_margin: float,
+) -> VisualProjection | None:
+    scored = []
+    for projection in projections:
+        if projection.distance_px > max_centerline_distance_px:
+            continue
+        continuity = (
+            0.0
+            if last_raw_s is None
+            else abs(wrapped_delta(projection.s_visual, last_raw_s)) / 0.5
+        )
+        score = projection.distance_px / max_centerline_distance_px + continuity
+        scored.append((score, projection))
+    scored.sort(
+        key=lambda item: (
+            item[0],
+            item[1].s_visual,
+            item[1].centroid[1],
+            item[1].centroid[0],
+        )
+    )
+    if not scored:
+        return None
+    if len(scored) > 1 and scored[1][0] - scored[0][0] < min_score_margin:
+        return None
+    return scored[0][1]
+
+
+def _nearest_projection_frame(
+    frames: tuple[AnchorFrameEvidence, ...],
+    boundary_index: int,
+    step: int,
+) -> AnchorFrameEvidence | None:
+    index = boundary_index + step
+    while 0 <= index < len(frames):
+        frame = frames[index]
+        if frame.boundary is not None:
+            return None
+        if frame.projections:
+            return frame
+        index += step
+    return None
+
+
+def recover_boundary_visual_anchor(
+    frames: tuple[AnchorFrameEvidence, ...],
+    *,
+    boundary_index: int,
+    effective_lap_length_m: float,
+    last_raw_s: float | None,
+    max_centerline_distance_px: float,
+    min_score_margin: float,
+    unavailable_uncertainty: float,
+    settings: BoundaryAnchorSettings,
+) -> BoundaryVisualAnchor:
+    """Recover visual evidence for an already confirmed lap boundary."""
+    missing = _missing_boundary_anchor(unavailable_uncertainty)
+    if (
+        not 0 <= boundary_index < len(frames)
+        or effective_lap_length_m <= 0
+        or max_centerline_distance_px <= 0
+    ):
+        return missing
+
+    boundary = frames[boundary_index]
+    if boundary.boundary is None:
+        return missing
+    exact = _unique_projection(
+        boundary.projections,
+        last_raw_s=last_raw_s,
+        max_centerline_distance_px=max_centerline_distance_px,
+        min_score_margin=min_score_margin,
+    )
+    if exact is not None:
+        return BoundaryVisualAnchor(
+            raw_s=exact.s_visual,
+            centroid=exact.centroid,
+            uncertainty=0.0,
+            source=BoundaryAnchorSource.EXACT,
+        )
+    if boundary.projections:
+        return missing
+
+    before = _nearest_projection_frame(frames, boundary_index, -1)
+    after = _nearest_projection_frame(frames, boundary_index, 1)
+    bracketing_frames = (before, after)
+    if before is not None and after is not None and all(
+        _inside_gap(
+            frame,
+            boundary,
+            max_gap_s=settings.max_bracketing_gap_s,
+            max_distance_fraction=settings.max_bracketing_distance_fraction,
+            lap_length=effective_lap_length_m,
+        )
+        for frame in bracketing_frames
+    ):
+        pairs: list[tuple[float, VisualProjection, VisualProjection]] = []
+        normalized_distance = _distance_fraction(
+            before,
+            after,
+            effective_lap_length_m,
+        )
+        for before_projection in before.projections:
+            if before_projection.distance_px > max_centerline_distance_px:
+                continue
+            for after_projection in after.projections:
+                if after_projection.distance_px > max_centerline_distance_px:
+                    continue
+                pair_error = abs(
+                    abs(
+                        wrapped_delta(
+                            after_projection.s_visual,
+                            before_projection.s_visual,
+                        )
+                    )
+                    - normalized_distance
+                )
+                score = (
+                    pair_error
+                    + before_projection.distance_px / max_centerline_distance_px
+                    + after_projection.distance_px / max_centerline_distance_px
+                )
+                pairs.append((score, before_projection, after_projection))
+        pairs.sort(
+            key=lambda item: (
+                item[0],
+                item[1].s_visual,
+                item[2].s_visual,
+                item[1].centroid,
+                item[2].centroid,
+            )
+        )
+        if pairs and (
+            len(pairs) == 1 or pairs[1][0] - pairs[0][0] >= min_score_margin
+        ):
+            _, before_projection, after_projection = pairs[0]
+            total_distance = abs(after.distance_m - before.distance_m)
+            if total_distance > 0:
+                ratio = abs(boundary.distance_m - before.distance_m) / total_distance
+            else:
+                total_time = abs(after.time_s - before.time_s)
+                ratio = (
+                    0.5
+                    if total_time == 0
+                    else abs(boundary.time_s - before.time_s) / total_time
+                )
+            raw_s = _wrapped01(
+                before_projection.s_visual
+                + wrapped_delta(
+                    after_projection.s_visual,
+                    before_projection.s_visual,
+                )
+                * ratio
+            )
+            centroid = (
+                before_projection.centroid[0]
+                + (after_projection.centroid[0] - before_projection.centroid[0])
+                * ratio,
+                before_projection.centroid[1]
+                + (after_projection.centroid[1] - before_projection.centroid[1])
+                * ratio,
+            )
+            consumed_gate = max(
+                abs(frame.time_s - boundary.time_s)
+                / settings.max_bracketing_gap_s
+                for frame in bracketing_frames
+            )
+            consumed_gate = max(
+                consumed_gate,
+                *(
+                    _distance_fraction(frame, boundary, effective_lap_length_m)
+                    / settings.max_bracketing_distance_fraction
+                    for frame in bracketing_frames
+                ),
+            )
+            return BoundaryVisualAnchor(
+                raw_s=raw_s,
+                centroid=centroid,
+                uncertainty=(
+                    0.25 * unavailable_uncertainty * min(1.0, consumed_gate)
+                ),
+                source=BoundaryAnchorSource.INTERPOLATED,
+            )
+        if pairs:
+            return missing
+
+    one_sided: list[tuple[AnchorFrameEvidence, VisualProjection]] = []
+    for frame in bracketing_frames:
+        if frame is None or not _inside_gap(
+            frame,
+            boundary,
+            max_gap_s=settings.max_one_sided_gap_s,
+            max_distance_fraction=settings.max_one_sided_distance_fraction,
+            lap_length=effective_lap_length_m,
+        ):
+            continue
+        projection = _unique_projection(
+            frame.projections,
+            last_raw_s=last_raw_s,
+            max_centerline_distance_px=max_centerline_distance_px,
+            min_score_margin=min_score_margin,
+        )
+        if projection is not None:
+            one_sided.append((frame, projection))
+    if len(one_sided) != 1:
+        return missing
+
+    frame, projection = one_sided[0]
+    consumed_gate = max(
+        abs(frame.time_s - boundary.time_s) / settings.max_one_sided_gap_s,
+        _distance_fraction(frame, boundary, effective_lap_length_m)
+        / settings.max_one_sided_distance_fraction,
+    )
+    return BoundaryVisualAnchor(
+        raw_s=projection.s_visual,
+        centroid=projection.centroid,
+        uncertainty=0.50 * unavailable_uncertainty * min(1.0, consumed_gate),
+        source=BoundaryAnchorSource.NEAREST,
+    )
 
 
 def infer_centerline_direction(

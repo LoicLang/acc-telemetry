@@ -36,6 +36,11 @@ progress:
     visual_gain: 0.35
     short_visual_gap_s: 0.5
     unavailable_uncertainty: 0.05
+  boundary_anchor:
+    max_bracketing_gap_s: 0.25
+    max_bracketing_distance_fraction: 0.005
+    max_one_sided_gap_s: 0.10
+    max_one_sided_distance_fraction: 0.002
   lap_confirmation:
     consecutive_observations: 5
   calibration:
