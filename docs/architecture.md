@@ -72,10 +72,14 @@ normalized by their measured integrated distance; the median becomes an effectiv
 lap-length calibration. Official circuit length is optional sanity evidence, not the
 primary denominator.
 
-The visual side uses a single centerline, not the external outline of the thick map
-stroke. It retains all plausible red-dot candidates and uses odometric prediction
-plus temporal continuity to disambiguate nearby branches. A visual gap may be bridged
-briefly with explicitly predicted/interpolated progress; long uncertain gaps become
+The visual side first retains white pixels that recur in at least 60% of sampled
+frames. It evaluates disconnected components independently and accepts exactly one
+component whose pruned skeleton yields a sufficiently long closed cycle. This uses
+the fixed HUD evidence without a circuit template or car-specific crop. The selected
+cycle becomes a single centerline, not the external outline of the thick map stroke.
+All plausible red-dot candidates are then retained, and odometric prediction plus
+temporal continuity disambiguates nearby branches. A visual gap may be bridged briefly
+with explicitly predicted/interpolated progress; long uncertain gaps become
 unavailable.
 
 Only a confirmed lap boundary may reset `s_fused` to zero. The opening partial lap is

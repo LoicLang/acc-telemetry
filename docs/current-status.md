@@ -22,11 +22,11 @@ corner analysis.
 - Active milestone: new-session generic `s` robustness
 - Previous milestone status: implementation and representative validation complete;
   merged locally into `main` at `f7888ae`
-- Current validation status: lap confirmation and odometric calibration pass on the 2026-09-03 BMW
-  session, but visual centerline extraction fails with `multiple_cycles`; production
-  code is unchanged and the local merge remains unpushed
+- Current validation status: temporal centerline selection passes the new BMW and both
+  historical 1080p controls; the new replay exposes a separate missing-boundary-dot
+  anchor gap that leaves its first complete lap unavailable
 - Active specification: `docs/superpowers/specs/2026-09-03-generic-s-fusion-design.md`
-- Active plan: `docs/superpowers/plans/2026-09-04-temporal-centerline-selection.md`
+- Active plan: `docs/superpowers/plans/2026-09-04-temporal-centerline-selection.md` (complete)
 - Last completed implementation plan: `docs/superpowers/plans/2026-09-03-generic-s-fusion.md`
 - Last completed technical plan: `docs/superpowers/plans/2026-09-02-native-1080-and-s-diagnostics.md`
 - Last completed plan: `docs/superpowers/plans/2026-09-02-agent-handoff-documentation.md`
@@ -59,11 +59,31 @@ corner analysis.
   stable white cockpit evidence below the minimap. On the failing BMW recording, the
   left mirror/sky component occupies 3,093 stable-mask pixels at ROI box
   `(x=36, y=363, width=101, height=45)`, while the actual closed map component is
-  second at 2,763 pixels. The current `_single_component()` area-dominance rule
+  second at 2,763 pixels. The former `_single_component()` area-dominance rule
   therefore rejects the frame set before it evaluates the map topology. On the
   passing control, the map was only narrowly dominant at 2,825 pixels versus 2,796
   pixels across all remaining components. The failure is a generic component-selection
   defect exposed by car/cockpit imagery, not a malformed Spa map.
+- Temporal centerline selection is implemented on
+  `feature/temporal-centerline-selection`. The stable-white threshold is 0.60 and each
+  disconnected component is evaluated independently; exactly one ROI-relative long
+  closed cycle is accepted. No circuit shape, Spa coordinate, or car-specific crop is
+  used.
+- The corrected new BMW replay extracts the centerline and retains the same four
+  confirmed boundaries, three calibration laps, and 6962.810 m effective length. It
+  records zero unconfirmed resets, nonlocal jumps, or premature completions. Sources
+  are 20,098 fused, 1,280 predicted, 10 interpolated, 4 boundary-observed, and 26,197
+  missing frames; maximum checkpoint spread is 0.003187.
+- The 436.617-second unavailable total is now explained. The 286.267-second opening
+  partial lap is intentionally unanchored. At the first confirmed boundary, the red
+  dot is missing on the exact confirmation frame, so no visual anchor is retained and
+  the whole following 144.567-second lap remains unavailable. Later boundaries have
+  a dot and their laps contain only about 1.8-2.0 unavailable seconds. This is a
+  separate generic visual-anchor gap, not a centerline regression.
+- The clean control still passes its 0.002 spread target at 0.001547, with 17,633
+  fused frames and 13.167 unavailable seconds. The crash control still rejects lap 6
+  for `duration_outlier`, calibrates to 6960.709 m from two accepted laps, records
+  zero resets/jumps/premature completions, and exposes 43.300 unavailable seconds.
 
 - `feature/generic-s-fusion` was fast-forward merged into local `main` on 2026-09-04.
   The merged result passes all 158 tests and Python compilation. The feature branch is
@@ -326,11 +346,9 @@ committed.
 
 ## Priority order
 
-1. Convert the confirmed non-track-component dominance cause into a minimal generic
-   RED regression, then select a unique topology-valid closed track component without
-   relying on raw area dominance.
-2. Correct the component selection and rerun this BMW session plus the previously
-   passing representative clips.
+1. Preserve or recover a visual anchor when a confirmed boundary frame has no red-dot
+   candidate, without resetting from an unconfirmed observation.
+2. Rerun the new BMW and both representative controls after that isolated correction.
 3. Replay the historical 2026-09-01 long capture through the new lap confirmer.
 4. Propagate field-level quality and anomalies for lap number, gear, and controls.
 5. Version or document CSV/API compatibility for the expanded progress contract.
@@ -342,9 +360,8 @@ gates pass on controlled Spa evidence.
 
 ## Current next action
 
-Explain and design a minimal generic RED regression in which a valid closed track is
-not the largest white component. The future correction must select one uniquely
-topology-valid circuit component without ROI coordinates or car-specific cropping,
-then pass the new BMW replay and the existing clean/crash controls. Push local `main`
-only after explicit user request, and do not start corner analysis before the reopened
-`s` gate and remaining quality gates pass.
+Explain and design a minimal generic RED regression for a confirmed lap boundary whose
+exact frame has no visual projection although a valid red-dot observation exists just
+before or after it. Do not weaken confirmed-boundary anchoring or infer resets from map
+geometry. Push local `main` only after explicit user request, and do not start corner
+analysis before the reopened `s` gate and remaining quality gates pass.

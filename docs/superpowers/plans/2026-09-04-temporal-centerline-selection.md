@@ -37,7 +37,7 @@
 - Modify: `docs/current-status.md`
 - Modify: `docs/acc-ps5-plan.md`
 
-- [ ] Replay the new BMW session with `ps5_full_map_1080p`; require successful centerline extraction, three calibration laps, four confirmed boundaries, zero premature completions, and zero unconfirmed resets.
-- [ ] Replay the previously passing clean and crash representative clips; require both to retain successful centerline extraction and their existing safety gates.
-- [ ] Record source counts, effective length, checkpoint spread, unavailable duration, and any rejected laps. Do not commit videos, traces, screenshots, or JSON reports.
-- [ ] Run `./scripts/docs-list`, Python compilation, the full suite, `git diff --check`, and the circuit-specific-rule search before the final documentation commit.
+- [x] Replay the new BMW session with `ps5_full_map_1080p`; require successful centerline extraction, three calibration laps, four confirmed boundaries, zero premature completions, and zero unconfirmed resets.
+- [x] Replay the previously passing clean and crash representative clips; require both to retain successful centerline extraction and their existing safety gates.
+- [x] Record source counts, effective length, checkpoint spread, unavailable duration, and any rejected laps. Do not commit videos, traces, screenshots, or JSON reports.
+- [x] Run `./scripts/docs-list`, Python compilation, the full suite, `git diff --check`, and the circuit-specific-rule search before the final documentation commit.

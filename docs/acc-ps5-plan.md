@@ -14,9 +14,9 @@ Last verified: 2026-09-04
 - capture_status: native_1080p60_validated
 - controls_speed_gears_status: usable
 - track_path_extraction_status: usable
-- centerline_component_selection_status: fails_when_cockpit_component_dominates_roi
+- centerline_component_selection_status: temporal_persistence_and_unique_long_cycle_validated
 - s_status: representative_clean_and_crash_gates_pass
-- s_latest_validation_status: new_1080_bmw_centerline_gate_failed
+- s_latest_validation_status: centerline_passes_missing_boundary_dot_anchor_gap_found
 - s_repair_design_status: generic_fusion_implemented
 - long_capture_lap_transition_status: new_confirmer_partial_validation_historical_replay_pending
 - quality_propagation_status: progress_and_speed_connected_other_fields_incomplete
@@ -114,6 +114,19 @@ map itself. In the passing control, the map was only narrowly larger than all re
 components combined. Component selection must therefore use unique circuit topology,
 not largest-area dominance or a car-specific ROI crop.
 
+The generic correction retains pixels present in at least 60% of sampled frames and
+evaluates each disconnected component independently. It accepts exactly one cycle
+longer than the configured ROI-relative minimum. The new BMW session and both prior
+1080p controls now extract a centerline without changing the ROI or encoding a circuit
+shape.
+
+The new BMW replay exposes the next independent limitation. Its first confirmed
+boundary occurs on a frame with no red-dot candidate, so the current estimator cannot
+store the visual anchor and leaves the following complete lap unavailable. Later
+boundaries contain a candidate and work normally. The next correction must bridge this
+short boundary-observation gap while keeping confirmed lap state as the only reset
+authority.
+
 ## Approved generic `s` architecture
 
 The replacement must work across static full-map circuits; Spa is only the first
@@ -169,8 +182,9 @@ fresh observation.
 
 ### Priority 1 — trustworthy `s` anchor and progression
 
-Status: reopened. The clean and crash-heavy representative gates pass, but the new
-2026-09-03 BMW 1080p replay fails centerline extraction with `multiple_cycles`.
+Status: reopened. Temporal centerline selection now passes the clean, crash-heavy, and
+new BMW 1080p replays. The new session still loses its first complete lap when the
+confirmed boundary frame has no red-dot candidate.
 
 Required work:
 
