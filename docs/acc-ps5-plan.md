@@ -14,6 +14,7 @@ Last verified: 2026-09-04
 - capture_status: native_1080p60_validated
 - controls_speed_gears_status: usable
 - track_path_extraction_status: usable
+- centerline_component_selection_status: fails_when_cockpit_component_dominates_roi
 - s_status: representative_clean_and_crash_gates_pass
 - s_latest_validation_status: new_1080_bmw_centerline_gate_failed
 - s_repair_design_status: generic_fusion_implemented
@@ -104,6 +105,14 @@ three complete laps calibrate to 6962.810 m, but stable-map preparation rejects 
 visual topology as `multiple_cycles`. Consequently 791.133 of 793.167 seconds are
 unavailable. This safe failure reopens the visual-centerline portion of the `s` gate;
 the cause must be diagnosed generically before downstream segmentation begins.
+
+The cause is confirmed in the stable white mask. The broad ROI includes the left
+mirror below the minimap. In the failing session, its persistent bright sky and border
+form a 3,093-pixel component, larger than the actual 2,763-pixel map component. The
+current area-dominance rule rejects the set as `multiple_cycles` before evaluating the
+map itself. In the passing control, the map was only narrowly larger than all remaining
+components combined. Component selection must therefore use unique circuit topology,
+not largest-area dominance or a car-specific ROI crop.
 
 ## Approved generic `s` architecture
 

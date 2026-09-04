@@ -54,6 +54,15 @@ corner analysis.
   is a safe failure rather than a fabricated coordinate, but it reopens centerline
   robustness for the current recording format. Ignored evidence is under
   `data/lab/2026-09-04-new-1080-bmw/replay/`.
+- The `multiple_cycles` root cause is confirmed. The broad 1080p map ROI contains
+  stable white cockpit evidence below the minimap. On the failing BMW recording, the
+  left mirror/sky component occupies 3,093 stable-mask pixels at ROI box
+  `(x=36, y=363, width=101, height=45)`, while the actual closed map component is
+  second at 2,763 pixels. The current `_single_component()` area-dominance rule
+  therefore rejects the frame set before it evaluates the map topology. On the
+  passing control, the map was only narrowly dominant at 2,825 pixels versus 2,796
+  pixels across all remaining components. The failure is a generic component-selection
+  defect exposed by car/cockpit imagery, not a malformed Spa map.
 
 - `feature/generic-s-fusion` was fast-forward merged into local `main` on 2026-09-04.
   The merged result passes all 158 tests and Python compilation. The feature branch is
@@ -316,10 +325,11 @@ committed.
 
 ## Priority order
 
-1. Diagnose the generic `multiple_cycles` centerline failure on the new 2026-09-03
-   BMW 1080p session without adding circuit-specific rules.
-2. Convert the smallest confirmed generic cause into a RED regression, correct it,
-   and rerun this BMW session plus the previously passing representative clips.
+1. Convert the confirmed non-track-component dominance cause into a minimal generic
+   RED regression, then select a unique topology-valid closed track component without
+   relying on raw area dominance.
+2. Correct the component selection and rerun this BMW session plus the previously
+   passing representative clips.
 3. Replay the historical 2026-09-01 long capture through the new lap confirmer.
 4. Propagate field-level quality and anomalies for lap number, gear, and controls.
 5. Version or document CSV/API compatibility for the expanded progress contract.
@@ -331,8 +341,9 @@ gates pass on controlled Spa evidence.
 
 ## Current next action
 
-Explain and design the smallest diagnostic that identifies which stable white-map
-components create the `multiple_cycles` result on the new BMW session. Do not tune a
-Spa coordinate or change production behavior before that evidence exists. Push local
-`main` only after explicit user request, and do not start corner analysis before the
-reopened `s` gate and remaining quality gates pass.
+Explain and design a minimal generic RED regression in which a valid closed track is
+not the largest white component. The future correction must select one uniquely
+topology-valid circuit component without ROI coordinates or car-specific cropping,
+then pass the new BMW replay and the existing clean/crash controls. Push local `main`
+only after explicit user request, and do not start corner analysis before the reopened
+`s` gate and remaining quality gates pass.
