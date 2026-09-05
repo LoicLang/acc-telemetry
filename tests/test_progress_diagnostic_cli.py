@@ -14,6 +14,14 @@ from scripts.diagnose_progress import (
 
 
 class TestProgressDiagnosticCLI(unittest.TestCase):
+    def test_places_boundary_anchor_source_after_boundary_confirmation(self):
+        boundary_index = TRACE_FIELDS.index("boundary_confirmed")
+
+        self.assertEqual(
+            TRACE_FIELDS[boundary_index + 1],
+            "boundary_anchor_source",
+        )
+
     def test_write_trace_uses_the_stable_progress_schema(self):
         row = {field: None for field in TRACE_FIELDS}
         row.update({"frame": 1, "time": 0.5, "source": "predicted"})
@@ -83,6 +91,45 @@ class TestProgressDiagnosticCLI(unittest.TestCase):
         self.assertEqual(summary["unconfirmed_reset_count"], 1)
         self.assertEqual(summary["nonlocal_visual_jump_count"], 3)
         self.assertEqual(summary["source_counts"], {"observed": 1, "fused": 2, "predicted": 2})
+
+    def test_counts_anchor_sources_only_on_confirmed_boundary_rows(self):
+        sources = (
+            "boundary_anchor_exact",
+            "boundary_anchor_interpolated",
+            "boundary_anchor_nearest",
+            "boundary_anchor_missing",
+        )
+        rows = [
+            {
+                "boundary_confirmed": True,
+                "boundary_anchor_source": source,
+            }
+            for source in sources
+        ]
+        rows.extend(
+            (
+                {
+                    "boundary_confirmed": False,
+                    "boundary_anchor_source": "boundary_anchor_exact",
+                },
+                {
+                    "boundary_confirmed": True,
+                    "boundary_anchor_source": "",
+                },
+            )
+        )
+
+        summary = summarize_trace(rows)
+
+        self.assertEqual(
+            summary["boundary_anchor_source_counts"],
+            {
+                "boundary_anchor_exact": 1,
+                "boundary_anchor_interpolated": 1,
+                "boundary_anchor_nearest": 1,
+                "boundary_anchor_missing": 1,
+            },
+        )
 
     def test_does_not_count_reappearance_after_missing_frames_as_a_jump(self):
         rows = [

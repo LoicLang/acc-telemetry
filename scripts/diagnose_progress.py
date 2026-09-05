@@ -24,6 +24,7 @@ TRACE_FIELDS = (
     "confirmed_lap_number",
     "boundary_confidence",
     "boundary_confirmed",
+    "boundary_anchor_source",
     "candidate_count",
     "selected_x",
     "selected_y",
@@ -73,6 +74,12 @@ def summarize_trace(rows: Iterable[Mapping[str, Any]]) -> dict[str, Any]:
     )
     confirmed_boundary_count = sum(
         _truthy(row.get("boundary_confirmed")) for row in materialized
+    )
+    boundary_anchor_source_counts = Counter(
+        str(row.get("boundary_anchor_source"))
+        for row in materialized
+        if _truthy(row.get("boundary_confirmed"))
+        and row.get("boundary_anchor_source")
     )
     premature_completion_count = sum(
         not _truthy(row.get("boundary_confirmed"))
@@ -163,6 +170,7 @@ def summarize_trace(rows: Iterable[Mapping[str, Any]]) -> dict[str, Any]:
         "max_checkpoint_spread": max(spreads) if spreads else None,
         "comparable_checkpoint_count": len(spreads),
         "source_counts": dict(source_counts),
+        "boundary_anchor_source_counts": dict(boundary_anchor_source_counts),
         "unavailable_duration_s": unavailable_duration,
     }
 

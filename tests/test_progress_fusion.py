@@ -216,6 +216,15 @@ def _boundary(time_s: float, from_lap: int = 8) -> ConfirmedLapBoundary:
     )
 
 
+def _exact_anchor(raw_s: float = 0.0) -> BoundaryVisualAnchor:
+    return BoundaryVisualAnchor(
+        raw_s=raw_s,
+        centroid=(10.0, 10.0),
+        uncertainty=0.0,
+        source=BoundaryAnchorSource.EXACT,
+    )
+
+
 def _anchor_settings() -> BoundaryAnchorSettings:
     return BoundaryAnchorSettings(
         max_bracketing_gap_s=0.25,
@@ -467,11 +476,86 @@ class TestFusedEstimator(unittest.TestCase):
         self.assertTrue(estimate.anchored)
         self.assertIn("lap_boundary_confirmed", estimate.reasons)
 
+    def test_boundary_anchor_provenance_sets_source_reason_and_uncertainty(self):
+        cases = (
+            (BoundaryAnchorSource.EXACT, ProgressSource.OBSERVED, 0.0),
+            (BoundaryAnchorSource.INTERPOLATED, ProgressSource.INTERPOLATED, 0.01),
+            (BoundaryAnchorSource.NEAREST, ProgressSource.PREDICTED, 0.02),
+            (BoundaryAnchorSource.MISSING, ProgressSource.OBSERVED, 0.05),
+        )
+
+        for anchor_source, expected_source, uncertainty in cases:
+            with self.subTest(anchor_source=anchor_source):
+                estimator = FusedProgressEstimator(
+                    effective_lap_length_m=1000.0,
+                    visual_gain=0.35,
+                    short_visual_gap_s=0.5,
+                    unavailable_uncertainty=0.05,
+                )
+                anchor = BoundaryVisualAnchor(
+                    raw_s=(None if anchor_source is BoundaryAnchorSource.MISSING else 0.25),
+                    centroid=(
+                        None
+                        if anchor_source is BoundaryAnchorSource.MISSING
+                        else (10.0, 10.0)
+                    ),
+                    uncertainty=uncertainty,
+                    source=anchor_source,
+                )
+
+                estimate = estimator.update(
+                    _odometry(1.0, 100.0, 10.0),
+                    _visual(None),
+                    boundary=_boundary(1.0),
+                    boundary_anchor=anchor,
+                )
+
+                self.assertEqual(estimate.s_fused, 0.0)
+                self.assertEqual(estimate.s_odometry, 0.0)
+                self.assertEqual(estimate.source, expected_source)
+                self.assertEqual(estimate.uncertainty, uncertainty)
+                self.assertEqual(
+                    estimate.reasons,
+                    ("lap_boundary_confirmed", anchor_source.value),
+                )
+
+    def test_calibration_unavailable_preserves_boundary_anchor_reason(self):
+        estimator = FusedProgressEstimator(
+            effective_lap_length_m=None,
+            visual_gain=0.35,
+            short_visual_gap_s=0.5,
+            unavailable_uncertainty=0.05,
+        )
+        anchor = BoundaryVisualAnchor(
+            raw_s=0.25,
+            centroid=(10.0, 10.0),
+            uncertainty=0.01,
+            source=BoundaryAnchorSource.INTERPOLATED,
+        )
+
+        estimate = estimator.update(
+            _odometry(1.0, 100.0, 10.0),
+            _visual(None),
+            boundary=_boundary(1.0),
+            boundary_anchor=anchor,
+        )
+
+        self.assertEqual(
+            estimate.reasons,
+            (
+                "lap_boundary_confirmed",
+                "boundary_anchor_interpolated",
+                "calibration_unavailable",
+            ),
+        )
+        self.assertEqual(estimate.uncertainty, 0.01)
+
     def test_boundary_resets_session_accumulated_odometry_uncertainty(self):
         boundary_estimate = self.estimator.update(
             _odometry(1000.0, 70000.0, 10.0, uncertainty=0.2),
             _visual(None),
             boundary=_boundary(1000.0),
+            boundary_anchor=_exact_anchor(),
         )
         next_estimate = self.estimator.update(
             _odometry(1000.1, 70010.0, 10.0, uncertainty=0.2001),
@@ -484,7 +568,12 @@ class TestFusedEstimator(unittest.TestCase):
         self.assertEqual(next_estimate.source, ProgressSource.FUSED)
 
     def test_fuses_visual_correction_into_odometric_prediction(self):
-        self.estimator.update(_odometry(0.0, 0.0, None), _visual(None), _boundary(0.0))
+        self.estimator.update(
+            _odometry(0.0, 0.0, None),
+            _visual(None),
+            _boundary(0.0),
+            boundary_anchor=_exact_anchor(),
+        )
 
         estimate = self.estimator.update(
             _odometry(0.1, 100.0, 100.0),
@@ -498,7 +587,12 @@ class TestFusedEstimator(unittest.TestCase):
         self.assertEqual(estimate.source, ProgressSource.FUSED)
 
     def test_short_visual_gap_is_explicitly_predicted(self):
-        self.estimator.update(_odometry(0.0, 0.0, None), _visual(None), _boundary(0.0))
+        self.estimator.update(
+            _odometry(0.0, 0.0, None),
+            _visual(None),
+            _boundary(0.0),
+            boundary_anchor=_exact_anchor(),
+        )
         observed = self.estimator.update(
             _odometry(0.1, 100.0, 100.0), _visual(0.1), None
         )
@@ -512,7 +606,12 @@ class TestFusedEstimator(unittest.TestCase):
         self.assertIsNotNone(predicted.s_fused)
 
     def test_interpolated_odometry_remains_explicit(self):
-        self.estimator.update(_odometry(0.0, 0.0, None), _visual(None), _boundary(0.0))
+        self.estimator.update(
+            _odometry(0.0, 0.0, None),
+            _visual(None),
+            _boundary(0.0),
+            boundary_anchor=_exact_anchor(),
+        )
 
         estimate = self.estimator.update(
             _odometry(
@@ -530,7 +629,12 @@ class TestFusedEstimator(unittest.TestCase):
         self.assertIn("speed_gap_interpolated", estimate.reasons)
 
     def test_long_visual_gap_becomes_unavailable(self):
-        self.estimator.update(_odometry(0.0, 0.0, None), _visual(None), _boundary(0.0))
+        self.estimator.update(
+            _odometry(0.0, 0.0, None),
+            _visual(None),
+            _boundary(0.0),
+            boundary_anchor=_exact_anchor(),
+        )
         self.estimator.update(_odometry(0.1, 100.0, 100.0), _visual(0.1), None)
 
         estimate = self.estimator.update(
@@ -542,7 +646,12 @@ class TestFusedEstimator(unittest.TestCase):
         self.assertIn("uncertainty_limit", estimate.reasons)
 
     def test_visual_wrap_cannot_reset_without_a_boundary(self):
-        self.estimator.update(_odometry(0.0, 0.0, None), _visual(None), _boundary(0.0))
+        self.estimator.update(
+            _odometry(0.0, 0.0, None),
+            _visual(None),
+            _boundary(0.0),
+            boundary_anchor=_exact_anchor(),
+        )
         self.estimator.update(_odometry(1.0, 990.0, 990.0), _visual(0.99), None)
 
         estimate = self.estimator.update(
@@ -608,6 +717,103 @@ class TestOfflineProgressReplay(unittest.TestCase):
 
 
 class TestProgressSessionEstimator(unittest.TestCase):
+    @staticmethod
+    def _square_centerline() -> Centerline:
+        return Centerline(
+            points=(
+                (100.0, 100.0),
+                (1100.0, 100.0),
+                (1100.0, 1100.0),
+                (100.0, 1100.0),
+            ),
+            cumulative_length_px=(0.0, 1000.0, 2000.0, 3000.0),
+            total_length_px=4000.0,
+        )
+
+    @staticmethod
+    def _map_roi(position: tuple[int, int] | None) -> np.ndarray:
+        roi = np.zeros((1200, 1200, 3), dtype=np.uint8)
+        if position is not None:
+            cv2.circle(roi, position, 10, (0, 0, 255), -1)
+        return roi
+
+    def test_recovers_first_boundary_anchor_and_fuses_the_following_lap(self):
+        settings = load_settings().progress
+        estimator = ProgressSessionEstimator(
+            settings=settings,
+            lap_confirmer=LapTransitionConfirmer(consecutive_observations=2),
+            white_lower=(0, 0, 150),
+            white_upper=(180, 100, 255),
+            centerline=self._square_centerline(),
+        )
+        observations = (
+            (0.00, 8, (480, 100)),
+            (0.10, 8, (490, 100)),
+            (9.95, 9, (490, 100)),
+            (10.00, 9, None),
+            (10.05, 9, (510, 100)),
+            (10.50, 9, (600, 100)),
+            (29.95, 10, (490, 100)),
+            (30.00, 10, (500, 100)),
+        )
+        for frame, (time_s, lap_number, position) in enumerate(observations):
+            estimator.observe_frame(
+                frame=frame,
+                time_s=time_s,
+                speed_kmh=36.0,
+                raw_lap_number=lap_number,
+                map_roi=self._map_roi(position),
+            )
+
+        result = estimator.finalize()
+        first_boundary_index = 3
+
+        self.assertEqual(
+            result.frames[first_boundary_index].boundary_anchor_source,
+            BoundaryAnchorSource.INTERPOLATED,
+        )
+        self.assertEqual(result.frames[first_boundary_index].estimate.s_fused, 0.0)
+        self.assertIsNotNone(
+            result.frames[first_boundary_index + 2].estimate.s_visual
+        )
+        self.assertEqual(
+            result.frames[first_boundary_index + 2].estimate.source,
+            ProgressSource.FUSED,
+        )
+        self.assertEqual(
+            sum(frame.boundary is not None for frame in result.frames),
+            2,
+        )
+
+    def test_visual_wrap_without_confirmed_boundary_cannot_create_an_anchor_or_reset(self):
+        settings = load_settings().progress
+        estimator = ProgressSessionEstimator(
+            settings=settings,
+            lap_confirmer=LapTransitionConfirmer(consecutive_observations=2),
+            white_lower=(0, 0, 150),
+            white_upper=(180, 100, 255),
+            centerline=self._square_centerline(),
+        )
+        for frame, position in enumerate(((110, 100), (100, 110), (110, 100))):
+            estimator.observe_frame(
+                frame=frame,
+                time_s=frame * 0.1,
+                speed_kmh=36.0,
+                raw_lap_number=8,
+                map_roi=self._map_roi(position),
+            )
+
+        result = estimator.finalize()
+
+        self.assertTrue(
+            all(frame.boundary_anchor_source is None for frame in result.frames)
+        )
+        self.assertTrue(all(frame.boundary is None for frame in result.frames))
+        self.assertTrue(all(frame.estimate.s_fused is None for frame in result.frames))
+        self.assertTrue(
+            all("lap_boundary_confirmed" not in frame.estimate.reasons for frame in result.frames)
+        )
+
     def test_prepares_a_centerline_from_stable_map_frames(self):
         settings = load_settings().progress
         estimator = ProgressSessionEstimator(
@@ -642,7 +848,16 @@ class TestProgressSessionEstimator(unittest.TestCase):
             white_upper=(180, 100, 255),
             centerline=centerline,
         )
-        positions = ((10, 10), (10, 10), (10, 10), (10, 10), (50, 10), (50, 50), (10, 50), (10, 10))
+        positions = (
+            (26, 10),
+            (26, 10),
+            (26, 10),
+            (26, 10),
+            (50, 26),
+            (26, 50),
+            (10, 34),
+            (26, 10),
+        )
         laps = (8, 8, 9, 9, 9, 9, 10, 10)
         for frame, (position, lap_number) in enumerate(zip(positions, laps)):
             map_roi = np.zeros((100, 100, 3), dtype=np.uint8)
@@ -690,7 +905,8 @@ class TestProgressSessionEstimator(unittest.TestCase):
         self.assertIsNone(result.frames[0].estimate.s_fused)
         self.assertEqual(result.frames[3].estimate.s_fused, 0.0)
         self.assertEqual(result.frames[4].estimate.s_odometry, 0.5)
-        self.assertEqual(result.frames[4].estimate.source, ProgressSource.PREDICTED)
+        self.assertIsNone(result.frames[4].estimate.s_fused)
+        self.assertEqual(result.frames[4].estimate.source, ProgressSource.MISSING)
         self.assertEqual(result.frames[5].estimate.s_fused, 0.0)
         self.assertEqual(
             [frame.boundary.to_lap for frame in result.frames if frame.boundary],

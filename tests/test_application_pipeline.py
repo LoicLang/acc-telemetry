@@ -3,7 +3,11 @@
 import unittest
 
 from acc_telemetry.application.pipeline import TelemetryPipeline
-from acc_telemetry.application.progress import ProgressFrameResult, ProgressSessionResult
+from acc_telemetry.application.progress import (
+    BoundaryAnchorSource,
+    ProgressFrameResult,
+    ProgressSessionResult,
+)
 from acc_telemetry.domain.progress import ProgressEstimate, ProgressSource
 from acc_telemetry.domain.telemetry import QualityFlag
 from acc_telemetry.extraction.position import PositionDecision, PositionDiagnostic
@@ -123,6 +127,7 @@ class FakeGenericProgress:
                         reasons=("visual_correction",),
                         anchored=True,
                     ),
+                    boundary_anchor_source=BoundaryAnchorSource.EXACT,
                 ),
             ),
             calibration=None,
@@ -160,9 +165,14 @@ class TestTelemetryPipeline(unittest.TestCase):
         self.assertEqual(result.records[0]["s_uncertainty"], 0.002)
         self.assertEqual(result.records[0]["s_source"], "fused")
         self.assertEqual(result.records[0]["s_reasons"], "visual_correction")
+        self.assertNotIn("boundary_anchor_source", result.records[0])
         self.assertEqual(diagnostics[0]["candidate_count"], 2)
         self.assertEqual(diagnostics[0]["selected_x"], 12.0)
         self.assertEqual(diagnostics[0]["confirmed_lap_number"], 9)
+        self.assertEqual(
+            diagnostics[0]["boundary_anchor_source"],
+            "boundary_anchor_exact",
+        )
 
     def test_extracts_one_stable_legacy_record_and_reports_progress(self):
         video = FakeVideo()

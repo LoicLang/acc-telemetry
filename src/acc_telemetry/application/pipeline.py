@@ -126,6 +126,11 @@ class TelemetryPipeline:
             "confirmed_lap_number": frame_result.confirmed_lap_number,
             "boundary_confidence": frame_result.boundary_confidence,
             "boundary_confirmed": frame_result.boundary is not None,
+            "boundary_anchor_source": (
+                None
+                if frame_result.boundary_anchor_source is None
+                else frame_result.boundary_anchor_source.value
+            ),
             "candidate_count": frame_result.candidate_count,
             "selected_x": None if selected is None else selected[0],
             "selected_y": None if selected is None else selected[1],

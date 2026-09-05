@@ -99,6 +99,7 @@ class ProgressFrameResult:
     candidate_count: int
     selected_centroid: tuple[float, float] | None
     estimate: ProgressEstimate
+    boundary_anchor_source: BoundaryAnchorSource | None = None
 
 
 @dataclass(frozen=True)
@@ -613,20 +614,46 @@ class FusedProgressEstimator:
         odometry: OdometryPoint,
         visual: VisualSelection,
         boundary: ConfirmedLapBoundary | None,
+        *,
+        boundary_anchor: BoundaryVisualAnchor | None = None,
     ) -> ProgressEstimate:
         """Advance one frame without allowing implicit lap wraparound."""
         if boundary is not None:
+            anchor_reason = (
+                BoundaryAnchorSource.MISSING.value
+                if boundary_anchor is None
+                else boundary_anchor.source.value
+            )
+            anchor_uncertainty = (
+                self.unavailable_uncertainty
+                if boundary_anchor is None
+                else boundary_anchor.uncertainty
+            )
+            boundary_source = {
+                BoundaryAnchorSource.EXACT: ProgressSource.OBSERVED,
+                BoundaryAnchorSource.INTERPOLATED: ProgressSource.INTERPOLATED,
+                BoundaryAnchorSource.NEAREST: ProgressSource.PREDICTED,
+                BoundaryAnchorSource.MISSING: ProgressSource.OBSERVED,
+            }[
+                BoundaryAnchorSource.MISSING
+                if boundary_anchor is None
+                else boundary_anchor.source
+            ]
             self._anchored = True
             self._lap_start_distance_m = odometry.distance_m
             self._last_s = 0.0
             self._last_time_s = odometry.time_s
             self._last_visual_time_s = odometry.time_s
             self._lap_start_odometry_uncertainty = odometry.uncertainty
-            self._uncertainty = 0.0
+            self._uncertainty = anchor_uncertainty
             if self.effective_lap_length_m is None:
                 return self._unavailable(
                     odometry,
-                    ("lap_boundary_confirmed", "calibration_unavailable"),
+                    (
+                        "lap_boundary_confirmed",
+                        anchor_reason,
+                        "calibration_unavailable",
+                    ),
                     anchored=True,
                 )
             return ProgressEstimate(
@@ -636,8 +663,8 @@ class FusedProgressEstimator:
                 distance_m=odometry.distance_m,
                 effective_lap_length_m=self.effective_lap_length_m,
                 uncertainty=self._uncertainty,
-                source=ProgressSource.OBSERVED,
-                reasons=("lap_boundary_confirmed",),
+                source=boundary_source,
+                reasons=("lap_boundary_confirmed", anchor_reason),
                 anchored=True,
             )
 
@@ -945,6 +972,19 @@ class ProgressSessionEstimator:
             short_visual_gap_s=self.settings.fusion.short_visual_gap_s,
             unavailable_uncertainty=self.settings.fusion.unavailable_uncertainty,
         )
+        projection_frames = tuple(
+            AnchorFrameEvidence(
+                time_s=frame.time_s,
+                distance_m=point.distance_m,
+                projections=self._projections(frame.candidates),
+                boundary=frame.lap_state.boundary,
+            )
+            for frame, point in zip(self._frames, odometry)
+        )
+        maximum_centerline_distance_px = (
+            (self._roi_diagonal_px or 1.0)
+            * self.settings.projection.max_centerline_distance_diagonal_fraction
+        )
 
         raw_anchor_s: float | None = None
         direction: int | None = None
@@ -955,9 +995,11 @@ class ProgressSessionEstimator:
         lap_start_odometry_uncertainty = 0.0
         results: list[ProgressFrameResult] = []
 
-        for frame, point in zip(self._frames, odometry):
-            projections = self._projections(frame.candidates)
+        for frame_index, (frame, point) in enumerate(zip(self._frames, odometry)):
+            projections = projection_frames[frame_index].projections
             boundary = frame.lap_state.boundary
+            boundary_anchor: BoundaryVisualAnchor | None = None
+            boundary_anchor_source: BoundaryAnchorSource | None = None
             selected = self._missing_visual(
                 self.map_error_reason or "visual_missing"
             )
@@ -977,21 +1019,32 @@ class ProgressSessionEstimator:
             if boundary is not None:
                 lap_start_distance_m = point.distance_m
                 lap_start_odometry_uncertainty = point.uncertainty
-                if projections:
-                    anchor = min(
-                        projections,
-                        key=lambda projection: (
-                            0.0
-                            if last_raw_s is None
-                            else abs(wrapped_delta(projection.s_visual, last_raw_s)),
-                            projection.distance_px,
-                            projection.s_visual,
-                        ),
-                    )
-                    raw_anchor_s = anchor.s_visual
-                    last_raw_s = anchor.s_visual
-                    last_centroid = anchor.centroid
+                boundary_anchor = recover_boundary_visual_anchor(
+                    projection_frames,
+                    boundary_index=frame_index,
+                    effective_lap_length_m=effective_length or 0.0,
+                    last_raw_s=last_raw_s,
+                    max_centerline_distance_px=maximum_centerline_distance_px,
+                    max_progress_error=self.settings.projection.max_progress_error,
+                    min_score_margin=self.settings.projection.min_score_margin,
+                    unavailable_uncertainty=(
+                        self.settings.fusion.unavailable_uncertainty
+                    ),
+                    settings=self.settings.boundary_anchor,
+                )
+                boundary_anchor_source = boundary_anchor.source
+                if boundary_anchor.source is BoundaryAnchorSource.MISSING:
+                    raw_anchor_s = None
+                    direction = None
+                    last_raw_s = None
+                    last_centroid = None
                     previous_displacement_px = None
+                else:
+                    raw_anchor_s = boundary_anchor.raw_s
+                    last_raw_s = boundary_anchor.raw_s
+                    last_centroid = boundary_anchor.centroid
+                    previous_displacement_px = None
+                    direction = None
             elif projections and raw_anchor_s is None:
                 raw = min(
                     projections,
@@ -1069,7 +1122,12 @@ class ProgressSessionEstimator:
                             )
                         last_centroid = selected.centroid
 
-            estimate = estimator.update(point, selected, boundary)
+            estimate = estimator.update(
+                point,
+                selected,
+                boundary,
+                boundary_anchor=boundary_anchor,
+            )
             results.append(
                 ProgressFrameResult(
                     frame=frame.frame,
@@ -1080,6 +1138,7 @@ class ProgressSessionEstimator:
                     candidate_count=len(frame.candidates),
                     selected_centroid=selected.centroid,
                     estimate=estimate,
+                    boundary_anchor_source=boundary_anchor_source,
                 )
             )
         return ProgressSessionResult(tuple(results), calibration)

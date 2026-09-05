@@ -437,7 +437,7 @@ git commit -m "feat: recover bounded boundary visual anchors"
 - Modify: `tests/test_application_pipeline.py`
 - Modify: `tests/test_progress_diagnostic_cli.py`
 
-- [ ] **Step 1: Write the RED session regression matching the real failure**
+- [x] **Step 1: Write the RED session regression matching the real failure**
 
 In `TestProgressSessionEstimator`, use a synthetic square centerline, two-observation
 lap confirmation, and enough constant-speed frames for two complete boundaries. Put
@@ -462,7 +462,7 @@ Add a companion case containing visually wrapped projections without a confirmed
 boundary; assert no anchor source changes to exact/interpolated/nearest and no reset
 occurs.
 
-- [ ] **Step 2: Run the session regression and confirm RED**
+- [x] **Step 2: Run the session regression and confirm RED**
 
 Run:
 
@@ -473,7 +473,7 @@ PYTHONPATH=src .venv/bin/python -m unittest tests.test_progress_fusion.TestProgr
 Expected: FAIL because `ProgressFrameResult` has no anchor provenance and `finalize()`
 still initializes `raw_anchor_s` only from exact boundary-frame projections.
 
-- [ ] **Step 3: Precompute frame projection evidence and integrate recovery**
+- [x] **Step 3: Precompute frame projection evidence and integrate recovery**
 
 In `ProgressSessionEstimator.finalize()`, construct one `AnchorFrameEvidence` per raw
 frame after odometry and calibration are available. Call
@@ -512,7 +512,7 @@ class ProgressFrameResult:
 Non-boundary frames use `None`. Boundary frames always expose one of the four source
 values.
 
-- [ ] **Step 4: Propagate boundary reason and uncertainty through the fused estimator**
+- [x] **Step 4: Propagate boundary reason and uncertainty through the fused estimator**
 
 Extend `FusedProgressEstimator.update()` with a keyword-only optional anchor:
 
@@ -549,7 +549,7 @@ coordinate at zero but use `INTERPOLATED` and `PREDICTED` source respectively. M
 visual anchoring must not cancel the confirmed odometric zero; it reports
 `boundary_anchor_missing` and existing uncertainty behavior.
 
-- [ ] **Step 5: Run progress tests and confirm GREEN**
+- [x] **Step 5: Run progress tests and confirm GREEN**
 
 Run:
 
@@ -560,7 +560,7 @@ PYTHONPATH=src .venv/bin/python -m unittest tests.test_progress_fusion -v
 Expected: all pure fusion, recovery, and session tests pass; visual evidence still
 cannot reset without a boundary.
 
-- [ ] **Step 6: Write RED diagnostic provenance tests**
+- [x] **Step 6: Write RED diagnostic provenance tests**
 
 Update `FakeGenericProgress` to supply `boundary_anchor_source`. Assert the diagnostic
 callback contains `boundary_anchor_source`, `TRACE_FIELDS` contains the column after
@@ -577,7 +577,7 @@ callback contains `boundary_anchor_source`, `TRACE_FIELDS` contains the column a
 
 Only count non-empty values on confirmed boundary rows.
 
-- [ ] **Step 7: Run diagnostic tests and confirm RED**
+- [x] **Step 7: Run diagnostic tests and confirm RED**
 
 Run:
 
@@ -588,7 +588,7 @@ PYTHONPATH=src .venv/bin/python -m unittest tests.test_application_pipeline test
 Expected: FAIL because pipeline diagnostics and trace summaries do not expose anchor
 provenance.
 
-- [ ] **Step 8: Implement diagnostic-only provenance propagation**
+- [x] **Step 8: Implement diagnostic-only provenance propagation**
 
 Add this field to `_report_generic_progress()`:
 
@@ -604,7 +604,7 @@ Add `boundary_anchor_source` to `TRACE_FIELDS`. In `summarize_trace()`, count no
 anchor sources only where `boundary_confirmed` is truthy. Do not add this field to the
 legacy production record dictionary or normalized telemetry contract.
 
-- [ ] **Step 9: Run focused/full verification and commit integration**
+- [x] **Step 9: Run focused/full verification and commit integration**
 
 Run:
 
