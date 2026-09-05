@@ -13,6 +13,7 @@ from acc_telemetry.application.progress import (
     FusedProgressEstimator,
     ProgressReplayObservation,
     ProgressSessionEstimator,
+    ProgressSessionResult,
     VisualSelection,
     estimate_progress,
     infer_centerline_direction,
@@ -550,6 +551,31 @@ class TestFusedEstimator(unittest.TestCase):
         )
         self.assertEqual(estimate.uncertainty, 0.01)
 
+    def test_remains_anchored_after_boundary_when_calibration_is_unavailable(self):
+        estimator = FusedProgressEstimator(
+            effective_lap_length_m=None,
+            visual_gain=0.35,
+            short_visual_gap_s=0.5,
+            unavailable_uncertainty=0.05,
+        )
+        estimator.update(
+            _odometry(1.0, 100.0, 10.0),
+            _visual(None),
+            boundary=_boundary(1.0),
+            boundary_anchor=_exact_anchor(),
+        )
+
+        estimate = estimator.update(
+            _odometry(1.1, 110.0, 10.0),
+            _visual(0.01),
+            boundary=None,
+        )
+
+        self.assertTrue(estimate.anchored)
+        self.assertIsNone(estimate.s_fused)
+        self.assertIn("calibration_unavailable", estimate.reasons)
+        self.assertNotIn("unanchored", estimate.reasons)
+
     def test_boundary_resets_session_accumulated_odometry_uncertainty(self):
         boundary_estimate = self.estimator.update(
             _odometry(1000.0, 70000.0, 10.0, uncertainty=0.2),
@@ -736,6 +762,108 @@ class TestProgressSessionEstimator(unittest.TestCase):
         if position is not None:
             cv2.circle(roi, position, 10, (0, 0, 255), -1)
         return roi
+
+    def _finalize_square_session(
+        self,
+        observations: tuple[tuple[float, int, tuple[int, int] | None], ...],
+    ) -> ProgressSessionResult:
+        estimator = ProgressSessionEstimator(
+            settings=load_settings().progress,
+            lap_confirmer=LapTransitionConfirmer(consecutive_observations=2),
+            white_lower=(0, 0, 150),
+            white_upper=(180, 100, 255),
+            centerline=self._square_centerline(),
+        )
+        for frame, (time_s, lap_number, position) in enumerate(observations):
+            estimator.observe_frame(
+                frame=frame,
+                time_s=time_s,
+                speed_kmh=36.0,
+                raw_lap_number=lap_number,
+                map_roi=self._map_roi(position),
+            )
+        return estimator.finalize()
+
+    def test_exact_boundary_restarts_fusion_after_a_missing_boundary(self):
+        result = self._finalize_square_session(
+            (
+                (0.00, 8, (480, 100)),
+                (0.10, 8, (490, 100)),
+                (9.50, 9, None),
+                (10.00, 9, None),
+                (10.50, 9, (600, 100)),
+                (29.97, 10, (490, 100)),
+                (30.00, 10, (500, 100)),
+                (30.50, 10, (600, 100)),
+                (49.97, 11, (490, 100)),
+                (50.00, 11, (500, 100)),
+            )
+        )
+
+        self.assertEqual(
+            result.frames[3].boundary_anchor_source,
+            BoundaryAnchorSource.MISSING,
+        )
+        self.assertIsNone(result.frames[4].estimate.s_visual)
+        self.assertEqual(
+            result.frames[6].boundary_anchor_source,
+            BoundaryAnchorSource.EXACT,
+        )
+        self.assertIsNotNone(result.frames[7].estimate.s_visual)
+        self.assertEqual(result.frames[7].estimate.source, ProgressSource.FUSED)
+
+    def test_nearest_boundary_restarts_fusion_after_an_exact_lap(self):
+        result = self._finalize_square_session(
+            (
+                (0.00, 8, (480, 100)),
+                (0.10, 8, (490, 100)),
+                (9.97, 9, (490, 100)),
+                (10.00, 9, (500, 100)),
+                (10.50, 9, (600, 100)),
+                (29.97, 10, (490, 100)),
+                (30.00, 10, None),
+                (30.50, 10, (600, 100)),
+                (49.97, 11, (490, 100)),
+                (50.00, 11, (500, 100)),
+            )
+        )
+
+        self.assertEqual(
+            result.frames[3].boundary_anchor_source,
+            BoundaryAnchorSource.EXACT,
+        )
+        self.assertEqual(
+            result.frames[6].boundary_anchor_source,
+            BoundaryAnchorSource.NEAREST,
+        )
+        self.assertEqual(result.frames[6].estimate.source, ProgressSource.PREDICTED)
+        self.assertIsNotNone(result.frames[7].estimate.s_visual)
+        self.assertEqual(result.frames[7].estimate.source, ProgressSource.FUSED)
+
+    def test_missing_boundary_clears_previous_lap_visual_state(self):
+        result = self._finalize_square_session(
+            (
+                (0.00, 8, (480, 100)),
+                (0.10, 8, (490, 100)),
+                (9.97, 9, (490, 100)),
+                (10.00, 9, (500, 100)),
+                (10.50, 9, (600, 100)),
+                (29.50, 10, None),
+                (30.00, 10, None),
+                (30.50, 10, (600, 100)),
+                (49.97, 11, (490, 100)),
+                (50.00, 11, (500, 100)),
+            )
+        )
+
+        self.assertEqual(result.frames[4].estimate.source, ProgressSource.FUSED)
+        self.assertEqual(
+            result.frames[6].boundary_anchor_source,
+            BoundaryAnchorSource.MISSING,
+        )
+        self.assertIsNone(result.frames[7].estimate.s_visual)
+        self.assertEqual(result.frames[7].estimate.source, ProgressSource.MISSING)
+        self.assertNotIn("visual_correction", result.frames[7].estimate.reasons)
 
     def test_recovers_first_boundary_anchor_and_fuses_the_following_lap(self):
         settings = load_settings().progress

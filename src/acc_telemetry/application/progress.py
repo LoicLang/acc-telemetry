@@ -668,10 +668,18 @@ class FusedProgressEstimator:
                 anchored=True,
             )
 
-        if not self._anchored or self.effective_lap_length_m is None:
+        if not self._anchored:
             self._last_time_s = odometry.time_s
             self._uncertainty = max(self._uncertainty, odometry.uncertainty)
             return self._unavailable(odometry, ("unanchored",), anchored=False)
+        if self.effective_lap_length_m is None:
+            self._last_time_s = odometry.time_s
+            self._uncertainty = max(self._uncertainty, odometry.uncertainty)
+            return self._unavailable(
+                odometry,
+                ("calibration_unavailable",),
+                anchored=True,
+            )
 
         delta_distance_m = odometry.delta_distance_m or 0.0
         predicted = min(
@@ -918,10 +926,7 @@ class ProgressSessionEstimator:
     ) -> tuple[VisualProjection, ...]:
         if self.centerline is None or self._roi_diagonal_px is None:
             return ()
-        maximum = (
-            self._roi_diagonal_px
-            * self.settings.projection.max_centerline_distance_diagonal_fraction
-        )
+        maximum = self._max_centerline_distance_px()
         return tuple(
             projection
             for candidate in candidates
@@ -930,6 +935,12 @@ class ProgressSessionEstimator:
                 self.centerline,
                 max_distance_px=maximum,
             )
+        )
+
+    def _max_centerline_distance_px(self) -> float:
+        return (
+            (self._roi_diagonal_px or 1.0)
+            * self.settings.projection.max_centerline_distance_diagonal_fraction
         )
 
     def finalize(self) -> ProgressSessionResult:
@@ -981,10 +992,7 @@ class ProgressSessionEstimator:
             )
             for frame, point in zip(self._frames, odometry)
         )
-        maximum_centerline_distance_px = (
-            (self._roi_diagonal_px or 1.0)
-            * self.settings.projection.max_centerline_distance_diagonal_fraction
-        )
+        maximum_centerline_distance_px = self._max_centerline_distance_px()
 
         raw_anchor_s: float | None = None
         direction: int | None = None
