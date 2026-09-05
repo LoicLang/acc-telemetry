@@ -7,7 +7,7 @@ read_when:
 
 # ACC PS5 telemetry plan
 
-Last verified: 2026-09-04
+Last verified: 2026-09-05
 
 ## Current state
 
@@ -16,7 +16,7 @@ Last verified: 2026-09-04
 - track_path_extraction_status: usable
 - centerline_component_selection_status: temporal_persistence_and_unique_long_cycle_validated
 - s_status: representative_clean_and_crash_gates_pass
-- s_latest_validation_status: centerline_passes_missing_boundary_dot_anchor_gap_found
+- s_latest_validation_status: isolated_missing_boundary_dot_anchor_gap_resolved
 - s_repair_design_status: generic_fusion_implemented
 - long_capture_lap_transition_status: new_confirmer_partial_validation_historical_replay_pending
 - quality_propagation_status: progress_and_speed_connected_other_fields_incomplete
@@ -120,12 +120,15 @@ longer than the configured ROI-relative minimum. The new BMW session and both pr
 1080p controls now extract a centerline without changing the ROI or encoding a circuit
 shape.
 
-The new BMW replay exposes the next independent limitation. Its first confirmed
-boundary occurs on a frame with no red-dot candidate, so the current estimator cannot
-store the visual anchor and leaves the following complete lap unavailable. Later
-boundaries contain a candidate and work normally. The next correction must bridge this
-short boundary-observation gap while keeping confirmed lap state as the only reset
-authority.
+The generic boundary-anchor correction resolves the next independent limitation. On
+the new replay, all four confirmed boundaries now use exact visual anchors and three
+complete laps retain the same 6962.810185 m calibration. The first complete lap after
+286.366667 seconds contains 8,515 fused rows instead of remaining unavailable. The
+clean control retains its 0.001547 spread target, while the crash-heavy control still
+rejects lap 6 for `duration_outlier` and keeps degradation explicit. All three captures
+record zero unconfirmed resets, nonlocal jumps, and premature completions. The new BMW
+spread increased from 0.003187 to 0.005740; this gate had no BMW spread threshold, so
+that comparison remains recorded for later cross-session evaluation.
 
 ## Approved generic `s` architecture
 
@@ -182,9 +185,9 @@ fresh observation.
 
 ### Priority 1 — trustworthy `s` anchor and progression
 
-Status: reopened. Temporal centerline selection now passes the clean, crash-heavy, and
-new BMW 1080p replays. The new session still loses its first complete lap when the
-confirmed boundary frame has no red-dot candidate.
+Status: passed on the new BMW plus clean and crash-heavy representative 1080p replays.
+The isolated missing-boundary-dot failure is resolved without giving visual evidence
+authority to create or reset a lap.
 
 Required work:
 
@@ -282,9 +285,8 @@ evaluation on known corners.
 
 ## Next planning gate
 
-Temporal centerline selection is complete and merged locally. The next reliability
-work is a focused correction for confirmed boundaries whose exact frame lacks a visual
-dot despite valid nearby observations. It must preserve confirmed lap state as the
-only reset authority and pass the new BMW plus both representative controls. The
-historical long-capture replay and remaining field-quality propagation follow that
-gate. The next product-facing milestone remains one manually reviewed corner.
+Generic boundary visual-anchor recovery now passes the new BMW plus both representative
+controls. The next reliability work is the historical 2026-09-01 long-capture replay
+through the new lap confirmer, followed by remaining field-quality propagation and
+explicit CSV/API compatibility. Corner analysis remains blocked until those gates
+pass; the next product-facing milestone is still one manually reviewed corner.

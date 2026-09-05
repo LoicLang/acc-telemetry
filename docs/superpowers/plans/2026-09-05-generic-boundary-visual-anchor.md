@@ -633,7 +633,7 @@ git commit -m "feat: integrate confirmed boundary anchor recovery"
 - Modify: `docs/superpowers/plans/2026-09-05-generic-boundary-visual-anchor.md`
 - Local ignored output: `data/lab/2026-09-05-boundary-visual-anchor/`
 
-- [ ] **Step 1: Verify immutable inputs and ignored output before replay**
+- [x] **Step 1: Verify immutable inputs and ignored output before replay**
 
 Run:
 
@@ -652,7 +652,7 @@ Expected sizes before replay:
 
 The ignored-output check must print the requested trace path.
 
-- [ ] **Step 2: Run the new BMW replay first**
+- [x] **Step 2: Run the new BMW replay first**
 
 ```bash
 PYTHONPATH=src .venv/bin/python scripts/diagnose_progress.py '/Users/loiclang/Movies/2026-09-03 22-42-08.mov' --profile ps5_full_map_1080p --output-dir data/lab/2026-09-05-boundary-visual-anchor/new-bmw
@@ -672,7 +672,7 @@ Require:
 If this fails, stop. Convert the smallest numeric failure into a synthetic RED test in
 the owning task before changing production code.
 
-- [ ] **Step 3: Run both representative controls**
+- [x] **Step 3: Run both representative controls**
 
 ```bash
 PYTHONPATH=src .venv/bin/python scripts/diagnose_progress.py data/lab/2026-09-03-generic-s-fusion/clean-bmw-representative.mov --profile ps5_full_map_1080p --output-dir data/lab/2026-09-05-boundary-visual-anchor/clean-control
@@ -693,7 +693,7 @@ Require crash control:
 - zero resets, jumps, or premature completions;
 - missing/degraded evidence remains explicit rather than forced observed.
 
-- [ ] **Step 4: Inspect anchor provenance and update durable status**
+- [x] **Step 4: Inspect anchor provenance and update durable status**
 
 Read the three `summary.json` files and boundary rows in their traces. Record in
 `docs/current-status.md`:
@@ -709,7 +709,7 @@ resolved while keeping the historical 2026-09-01 confirmer replay and remaining
 field-quality gates ahead of corner analysis. Check off this plan only for work
 actually completed.
 
-- [ ] **Step 5: Run final verification**
+- [x] **Step 5: Run final verification**
 
 ```bash
 ./scripts/docs-list
@@ -724,7 +724,7 @@ Expected: documentation discovery succeeds, compilation is silent, all tests pas
 and the circuit search finds no new production or test rule. Documentation may retain
 Spa evidence. The worktree contains only the intended documentation changes.
 
-- [ ] **Step 6: Commit verified replay evidence without local artifacts**
+- [x] **Step 6: Commit verified replay evidence without local artifacts**
 
 Inspect the staged diff before committing:
 

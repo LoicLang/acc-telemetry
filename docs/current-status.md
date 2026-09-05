@@ -8,7 +8,7 @@ read_when:
 
 # Current status
 
-Last verified: 2026-09-04
+Last verified: 2026-09-05
 
 This document is the mandatory living handoff for the repository. Update it from
 verified evidence whenever active work, blockers, stage gates, or the next action
@@ -22,9 +22,9 @@ corner analysis.
 - Active milestone: generic boundary visual-anchor robustness
 - Previous milestone status: implementation and representative validation complete;
   merged locally into `main` at `f7888ae`
-- Current validation status: temporal centerline selection passes the new BMW and both
-  historical 1080p controls; the new replay exposes a separate missing-boundary-dot
-  anchor gap that leaves its first complete lap unavailable
+- Current validation status: the generic boundary visual-anchor correction passes the
+  new BMW and both historical 1080p controls; the isolated missing-boundary-dot gap is
+  resolved and the first complete BMW lap now contains fused visual progress
 - Active specification: `docs/superpowers/specs/2026-09-05-generic-boundary-visual-anchor-design.md`
 - Parent specification: `docs/superpowers/specs/2026-09-03-generic-s-fusion-design.md`
 - Active plan: `docs/superpowers/plans/2026-09-05-generic-boundary-visual-anchor.md`
@@ -44,6 +44,32 @@ corner analysis.
 5. Continue from the first unchecked plan step.
 
 ## Recently completed
+
+- The generic boundary visual-anchor correction was validated on all three required
+  captures. The new BMW replay retains four exact boundary anchors and three accepted
+  calibration laps at an effective 6962.810185 m. Sources are 29,704 fused, 228
+  predicted, 17,653 missing, and 4 boundary-observed frames; no lap is rejected. The
+  opening partial lap accounts for 17,182 unanchored rows, but the first complete lap
+  after 286.366667 seconds is recovered with 8,515 fused rows, beginning at
+  286.833333 seconds. Unavailable duration falls from 436.616667 to 294.216667 seconds.
+  Maximum checkpoint spread changes from 0.003187 to 0.005740; no BMW spread threshold
+  was specified for this gate, so retain this increase as comparison evidence.
+- The clean control retains three exact boundary anchors, two accepted laps, effective
+  length 6965.332176 m, maximum checkpoint spread 0.001547, and 13.166667 seconds
+  unavailable. Sources are 17,907 fused, 202 predicted, 790 missing, and 3
+  boundary-observed frames; no lap is rejected.
+- The crash-heavy control retains four exact boundary anchors. Lap 6 remains rejected
+  with `duration_outlier` and `calibration_lap_rejected`; two regular laps calibrate to
+  6960.709491 m. Sources are 26,402 fused, 389 predicted, 8 interpolated, 2,599
+  missing, and 4 boundary-observed frames. Its 0.017384 checkpoint spread and
+  43.316667 unavailable seconds keep degradation explicit.
+- All three replays record zero unconfirmed resets, zero nonlocal visual jumps, and
+  zero premature completion entries. Their ignored traces and summaries are under
+  `data/lab/2026-09-05-boundary-visual-anchor/`; no source video was modified.
+- Final branch verification lists all active documentation, compiles `src`, `scripts`,
+  `tests`, and both launchers, and passes all 186 tests. Diff checks are clean and a
+  word-bounded search finds no circuit name or measured coordinate in production,
+  tests, or configuration.
 
 - The previously unanalysed `/Users/loiclang/Movies/2026-09-03 22-42-08.mov`
   BMW session was replayed with `ps5_full_map_1080p`. All 47,589 processed frames
@@ -107,6 +133,12 @@ corner analysis.
 - The ACC PS5 plan was corrected from the 2026-09-01 evidence in commit `457a1e1`.
 
 ## Active milestone progress
+
+- Boundary visual-anchor recovery now retains compact irregular candidates and can
+  recover only around an already confirmed lap boundary. Real-capture validation on
+  the new BMW and both representative controls passes the planned boundary,
+  calibration, safety, and clean-spread gates. Every real boundary in these captures
+  used `boundary_anchor_exact`; the recovery paths remain covered synthetically.
 
 - Generic progress contracts and validated circuit-independent settings are implemented
   on `feature/generic-s-fusion`. The Task 1 RED tests failed on the missing contracts
@@ -282,11 +314,11 @@ Verification for the active generic fused `s` implementation plan:
 
 ### Longitudinal coordinate `s`
 
-Status: generic replacement implemented; representative clean and crash-heavy gates
-pass, and temporal centerline selection passes the new BMW session. The new replay
-still loses its first complete lap when the exact confirmed-boundary frame has no
-red-dot candidate. The historical legacy failure below remains evidence for why the
-old tracker is not safe.
+Status: the generic replacement and isolated boundary-anchor correction pass the new
+BMW plus clean and crash-heavy representative gates. The first complete BMW lap is
+now fused, all eleven replayed boundaries anchor exactly, and all three captures retain
+zero unconfirmed resets, nonlocal jumps, and premature completions. The historical
+legacy failure below remains evidence for why the old tracker is not safe.
 
 Evidence from the controlled Spa capture on 2026-09-01:
 
@@ -347,6 +379,7 @@ Ignored local position evidence:
 - `data/lab/2026-09-02_native-1080-position/trace.csv`
 - `data/lab/2026-09-04-new-1080-bmw/replay-after-fix/`
 - `data/lab/2026-09-04-temporal-centerline-selection/`
+- `data/lab/2026-09-05-boundary-visual-anchor/`
 
 Verify these paths exist before using them. Their summarized findings above are the
 durable repository record; personal videos and full telemetry exports must not be
@@ -354,13 +387,10 @@ committed.
 
 ## Priority order
 
-1. Preserve or recover a visual anchor when a confirmed boundary frame has no red-dot
-   candidate, without resetting from an unconfirmed observation.
-2. Rerun the new BMW and both representative controls after that isolated correction.
-3. Replay the historical 2026-09-01 long capture through the new lap confirmer.
-4. Propagate field-level quality and anomalies for lap number, gear, and controls.
-5. Version or document CSV/API compatibility for the expanded progress contract.
-6. Only after those gates pass, validate one manually reviewed corner segment.
+1. Replay the historical 2026-09-01 long capture through the new lap confirmer.
+2. Propagate field-level quality and anomalies for lap number, gear, and controls.
+3. Version or document CSV/API compatibility for the expanded progress contract.
+4. Only after those gates pass, validate one manually reviewed corner segment.
 
 Corner segmentation, driving-event extraction, reference comparison, coaching
 rules, dashboards, and generative feedback remain blocked until the reliability
@@ -368,8 +398,9 @@ gates pass on controlled Spa evidence.
 
 ## Current next action
 
-Execute the first unchecked step of the active TDD plan: add RED configuration tests
-for dimensionless compact-candidate thresholds. Do not weaken confirmed-boundary
-anchoring or infer resets from map geometry. Push only after explicit user request,
-and do not start corner analysis before the reopened `s` gate and remaining quality
-gates pass.
+Replay
+`data/sessions/2026/2026-09-01_spa_ps5_braking-baseline-aborted/raw/part-0.mov`
+end to end with `ps5_full_map_720p`, then compare raw lap observations, confirmed
+boundaries, and unconfirmed-reset counts against the recorded false-transition
+failure. Do not start corner analysis until that historical confirmer gate and the
+remaining field-quality gate pass. Push only after explicit user request.
