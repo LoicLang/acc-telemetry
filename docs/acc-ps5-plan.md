@@ -11,6 +11,14 @@ Last verified: 2026-09-05
 
 ## Current state
 
+The September 5 technical audit narrows the meaning of earlier validation claims:
+representative internal-consistency metrics pass, but independent spatial accuracy
+has not been established. The lap confirmer receives prefiltered/held observations,
+and speed quality is lost in exported records. These integration defects must be
+addressed before closing the remaining gates. See
+`technical-audit-2026-09-05.md` for reproduced evidence and proposed next steps;
+the proposed coaching/ML roadmap is not yet an approved implementation decision.
+
 - capture_status: native_1080p60_validated
 - controls_speed_gears_status: usable
 - track_path_extraction_status: usable
@@ -18,8 +26,8 @@ Last verified: 2026-09-05
 - s_status: representative_clean_and_crash_gates_pass
 - s_latest_validation_status: isolated_missing_boundary_dot_anchor_gap_resolved
 - s_repair_design_status: generic_fusion_implemented
-- long_capture_lap_transition_status: new_confirmer_partial_validation_historical_replay_pending
-- quality_propagation_status: progress_and_speed_connected_other_fields_incomplete
+- long_capture_lap_transition_status: raw_observation_integration_defect_historical_replay_pending
+- quality_propagation_status: speed_export_and_comparison_provenance_defects_other_fields_incomplete
 - downstream_coaching_status: blocked
 
 The repository provides a solid ACC PS5 video-extraction foundation, but it does not
@@ -185,7 +193,9 @@ fresh observation.
 
 ### Priority 1 — trustworthy `s` anchor and progression
 
-Status: passed on the new BMW plus clean and crash-heavy representative 1080p replays.
+Status: internal-consistency checks passed on the new BMW plus clean and crash-heavy
+representative 1080p replays; independent physical-checkpoint accuracy is still
+unverified, and the upstream lap-observation integration needs correction.
 The isolated missing-boundary-dot failure is resolved without giving visual evidence
 authority to create or reset a lap.
 
@@ -214,8 +224,9 @@ Exit criteria:
 
 ### Priority 2 — robust lap transitions
 
-Status: implemented and validated on the full clean replay and representative clips;
-the historical 2026-09-01 false-transition capture still requires an end-to-end replay.
+Status: pure confirmation state machine implemented, but production inputs are
+prefiltered and held rather than raw OCR. Correct this integration before interpreting
+the historical 2026-09-01 end-to-end replay as validation of fresh-observation consensus.
 
 Required work:
 
@@ -234,8 +245,9 @@ Exit criteria:
 
 ### Priority 3 — end-to-end quality propagation
 
-Status: progress and speed provenance are connected; lap number, gear, controls, and
-all output consumers remain incomplete.
+Status: progress provenance reaches records; speed provenance reaches fusion but is
+lost in records. The typed comparison API also strips modern progress fields. Lap
+number, gear, controls, and analysis consumers remain incomplete.
 
 Required work:
 

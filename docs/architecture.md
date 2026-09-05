@@ -46,9 +46,15 @@ Longitudinal progress additionally carries its odometric and visual components,
 uncertainty, source, and stable reasons. Lateral `d` is not present because video
 evidence does not yet support it reliably.
 
-The current legacy `track_position` remains map-only and is not reliable enough for
-analysis. Diagnostic output may expose its raw projection and filtering decisions,
-but must not be mistaken for validated domain `s`.
+In production, compatibility `track_position` is derived from available `s_fused *
+100`. Only the explicit legacy tracker diagnostic remains map-only. Neither numeric
+output alone proves spatial accuracy.
+
+The September 5 audit confirms integration gaps: lap observations arrive prefiltered
+and held, speed quality is passed to fusion but lost in records, and the comparison
+API omits modern progress provenance. `TelemetrySample` is an available contract,
+not yet the universal application/consumer boundary. See
+`technical-audit-2026-09-05.md` before relying on field quality for analysis.
 
 ## Generic position estimation
 

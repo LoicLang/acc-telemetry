@@ -16,10 +16,37 @@ change. Use `git log` for authoritative commit hashes and dates.
 
 ## Current objective
 
-Replay the historical 2026-09-01 capture through the new lap confirmer before
-field-quality propagation or corner analysis.
+Review the verified integration defects from the September 5 technical audit and
+agree the raw-observation/provenance correction before relying on the historical
+2026-09-01 confirmer replay or starting corner analysis.
 
-- Active milestone: historical long-capture lap-transition validation
+The user requested a technical/product evaluation, not implementation. Their first
+desired outcome is a post-session debrief with one priority, an exercise, and a
+measurable success criterion; targeted comparisons support that outcome. A longer
+training programme comes later. The proposed roadmap and replay/ML experiments in
+`docs/technical-audit-2026-09-05.md` are recommendations, not an approved design.
+
+### Audit findings superseding earlier reliability claims
+
+- `extract_lap_number()` already smooths and holds values before the pipeline calls
+  them raw observations. A synthetic sequence confirms a boundary on the fourth
+  missing OCR read. The pure confirmer tests do not validate this integration.
+- Speed provenance reaches fusion but is omitted from output records; normalization
+  can turn HELD speed into OBSERVED. Earlier claims of end-to-end speed quality below
+  are superseded by this finding.
+- Black control ROIs become observed zero inputs. Position comparison fills absent
+  intervals and extends partial laps; the typed comparison API strips modern progress
+  provenance. These are confirmed software defects, not measured prevalence in video.
+- Existing replay metrics remain valid internal-consistency results; their odometric
+  checkpoints and completion tests are not independent spatial ground truth. Metric
+  accuracy and confidence calibration remain unverified.
+- Local evidence: `data/lab/2026-09-05-technical-audit/`, containing integration and
+  metric counterexamples plus test logs. All 186 existing tests pass under Python
+  3.13.2; documentation discovery and diff checks pass. No production code changed.
+- Next decision: agree a focused correction of raw lap observations and exported
+  field provenance, then validate the historical replay against annotated events.
+
+- Active milestone: audit review before historical lap-transition validation
 - Previous milestone status: generic boundary visual-anchor robustness implementation
   and representative validation complete at `4a101a8`; the new BMW and both controls
   pass their replay gates with zero unconfirmed resets, nonlocal jumps, or premature
@@ -397,7 +424,8 @@ committed.
 
 ## Priority order
 
-1. Replay the historical 2026-09-01 long capture through the new lap confirmer.
+1. Agree and address the audit's raw-observation/provenance defects, then replay the
+   historical 2026-09-01 long capture against independent annotated boundaries.
 2. Propagate field-level quality and anomalies for lap number, gear, and controls.
 3. Version or document CSV/API compatibility for the expanded progress contract.
 4. Only after those gates pass, validate one manually reviewed corner segment.
@@ -408,9 +436,11 @@ gates pass on controlled Spa evidence.
 
 ## Current next action
 
-Replay
+Review `docs/technical-audit-2026-09-05.md` with the user and define the focused
+raw-lap-observation and field-provenance correction. No implementation plan is active.
+After correcting the observation path, replay
 `data/sessions/2026/2026-09-01_spa_ps5_braking-baseline-aborted/raw/part-0.mov`
 end to end with `ps5_full_map_720p`, then compare raw lap observations, confirmed
-boundaries, and unconfirmed-reset counts against the recorded false-transition
+boundaries, and annotated actual crossings against the recorded false-transition
 failure. Do not start corner analysis until that historical confirmer gate and the
 remaining field-quality gate pass. Push only after explicit user request.

@@ -79,6 +79,9 @@ Compatibility modules under `src/` keep older imports working during the migrati
   web processing use `s_odometry`, `s_visual`, and `s_fused`.
 - Lateral distance `d` remains future work.
 - OCR and map observations can be missing or anomalous and must not be treated as unquestioned truth.
+- The September 5 audit identifies lap-observation and output-quality integration
+  defects. Current replay checks establish internal consistency, not independent
+  spatial accuracy; see the technical audit before using comparisons for coaching.
 
 ## Reference documents
 
@@ -86,6 +89,7 @@ Compatibility modules under `src/` keep older imports working during the migrati
 - [Product context](docs/product-context.md)
 - [Architecture](docs/architecture.md)
 - [ACC PS5 plan](docs/acc-ps5-plan.md)
+- [Technical audit and coaching proposal](docs/technical-audit-2026-09-05.md)
 - [Contribution rules](CONTRIBUTING.md)
 - [Historical documentation](docs/legacy/README.md)
 
