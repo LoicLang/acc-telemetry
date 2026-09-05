@@ -55,8 +55,8 @@ joints si l'interface utilisée les accepte ; aucune capacité vidéo n'est supp
 La [spécification commune](specs/2026-09-05-reference-corner-coach-design.md)
 fixe les contrats et limites. Le plan A est le premier travail d'implémentation ; B
 ne commence pas tant que son gate échoue. C est de la recherche séparée, non un
-prérequis au débrief visuel. Aucune de ces implémentations n'a commencé au moment
-de l'écriture du plan.
+prérequis au débrief visuel. L’exécution A0/A1 est maintenant autorisée ; `current-status.md` et les cases
+du plan A portent l’avancement vérifié.
 
 ## Qui fait quoi
 

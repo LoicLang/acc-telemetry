@@ -9,7 +9,8 @@ read_when:
 
 **Statut :** base de conception du plan demandé le 5 septembre 2026. Ce document
 décrit le travail proposé ; il ne certifie ni gate passé ni résultat de coaching.
-La demande actuelle porte sur le plan, pas sur son exécution.
+L’exécution du plan A est désormais demandée ; son avancement fait autorité dans
+`../current-status.md` et les cases du plan actif.
 
 ## Besoin et critère de réussite
 

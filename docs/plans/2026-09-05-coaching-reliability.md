@@ -68,11 +68,11 @@ Les chemins sans préfixe dans ce tableau sont sous `src/acc_telemetry/`.
 
 **Fichiers :** lecture seule code ; mise à jour `docs/current-status.md`.
 
-- [ ] Vérifier la branche propre ; créer `codex/coaching-reliability` depuis l'état
+- [x] Vérifier la branche propre ; créer `codex/coaching-reliability` depuis l'état
   courant contenant les plans (réutiliser si c'est déjà la branche de reprise).
-- [ ] Exécuter les 186 tests de base. Si l'état a évolué, noter le nombre réel et
+- [x] Exécuter les 186 tests de base. Si l'état a évolué, noter le nombre réel et
   expliquer les écarts avant de commencer, sans ramener le repo à un ancien commit.
-- [ ] Exécuter les deux reproductions de l'audit si elles existent localement :
+- [x] Exécuter les deux reproductions de l'audit si elles existent localement :
 
 ```bash
 PYTHONPATH=src .venv/bin/python data/lab/2026-09-05-technical-audit/reproduce_integration.py
@@ -81,9 +81,9 @@ PYTHONPATH=src .venv/bin/python data/lab/2026-09-05-technical-audit/reproduce_me
 
   Leurs PASS signifient « défaut reproduit », pas « logiciel correct ». Si elles
   manquent, les cas de régression des tâches suivantes reconstruisent les preuves.
-- [ ] Confirmer les vidéos du handoff et `.venv/bin/python`, `ffmpeg`, `ffprobe` ;
+- [x] Confirmer les vidéos du handoff et `.venv/bin/python`, `ffmpeg`, `ffprobe` ;
   utiliser les fichiers existants, aucune réinstallation automatique nécessaire.
-- [ ] Noter état initial et commande suivante A1 dans le handoff ; commit
+- [x] Noter état initial et commande suivante A1 dans le handoff ; commit
   `docs: start coaching reliability implementation` après vérification commune.
 
 ### A1 — Donner l'OCR réellement brut au confirmeur

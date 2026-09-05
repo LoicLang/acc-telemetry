@@ -18,9 +18,7 @@ change. Use `git log` for authoritative commit hashes and dates.
 
 Implementation planning is complete for a first reference-based corner coaching
 dossier. The user explicitly requires a relevant reference and visibility into the
-driver's trajectory, not just comparisons of pedal traces. Their latest request was
-to prepare a detailed implementation plan for themselves and a future agent; no
-production implementation has started.
+driver's trajectory, not just comparisons of pedal traces. Implementation is now authorized, starting with reliability A0/A1.
 
 Start with `docs/coaching-implementation-roadmap.md`. Execute reliability plan A
 before dossier plan B; optional replay plan C remains separate and inactive.
@@ -47,14 +45,13 @@ reference explanation. Multi-week training and metric lateral ML remain later wo
   3.13.2; documentation discovery and diff checks pass. No production code changed.
 - Planning delivered: common specification, detailed reliability/dossier tasks,
   separate replay feasibility experiment, source-admission rules, seven metric
-  definitions, target CLI/artifact formats and human review gates. All implementation
-  checkboxes remain unchecked. The suggested Spa/Bruxelles case and reference source
+  definitions, target CLI/artifact formats and human review gates. A0 is complete; implementation checkboxes advance only with verified tasks. The suggested Spa/Bruxelles case and reference source
   must be verified on real inputs; no reference has been acquired.
 - Planning verification: documentation discovery succeeds; all 186 existing tests
   pass, including the four focused documentation-index tests. Local plan links and
   frontmatter were checked. No executable source/configuration files were changed.
 
-- Active milestone: plan A prepared; reliability implementation not started
+- Active milestone: A0 verified; A1 raw OCR regression tests next
 - Previous milestone status: generic boundary visual-anchor robustness implementation
   and representative validation complete at `4a101a8`; the new BMW and both controls
   pass their replay gates with zero unconfirmed resets, nonlocal jumps, or premature
@@ -466,7 +463,11 @@ gates pass on controlled Spa evidence.
 
 ## Current next action
 
-When implementation is requested, execute task A0 in
-`docs/plans/2026-09-05-coaching-reliability.md`, then task A1. Do not start
-plan B until gate A passes. Planning is complete; code, gates, reference acquisition
-and real coaching evaluation are not. Push only after explicit user request.
+Execute A1 in `docs/plans/2026-09-05-coaching-reliability.md`: write and run
+`tests/test_lap_observations.py` RED before changing extraction/pipeline behavior.
+Work on `codex/coaching-reliability`; A0 started from clean `a2ed225`.
+A0 verification: 187 tests pass (186 audit tests plus the workflow-removal guard),
+both local audit scripts reproduce their defects, Python 3.13.2 and ffmpeg/ffprobe
+are available, and all handoff video/evidence paths exist. Logs are ignored under
+`data/lab/coaching-reliability/run-001/a0-*.log`. No production change in A0.
+Gate A remains unvalidated, B blocked, C inactive. No push authorized.
