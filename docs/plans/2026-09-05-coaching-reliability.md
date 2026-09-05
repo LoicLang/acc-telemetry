@@ -93,7 +93,7 @@ PYTHONPATH=src .venv/bin/python data/lab/2026-09-05-technical-audit/reproduce_me
 **Créer :** `src/acc_telemetry/domain/observations.py`, `tests/test_lap_observations.py`.
 **Modifier tests :** `tests/test_application_pipeline.py`, `tests/test_lap_state.py`.
 
-- [ ] Écrire `test_blank_ocr_is_missing_even_after_a_valid_lap` et
+- [x] Écrire `test_blank_ocr_is_missing_even_after_a_valid_lap` et
   `test_pipeline_passes_raw_not_held_lap_to_confirmer`. Utiliser un faux backend texte
   comme dans la reproduction audit ; ne pas simuler seulement le confirmeur pur.
 
@@ -114,9 +114,9 @@ self.assertEqual(detector.observe_lap_number(frame).value, 1)
   passage réel suivi d'un trou, OCR erroné +1 puis retour. Exiger absence de frontière
   après une seule lecture fraîche suivie de quatre absences ; cinq vrais +1 donnent
   une seule frontière. Garder la limitation documentée des erreurs OCR soutenues.
-- [ ] Lancer `PYTHONPATH=src .venv/bin/python -m unittest discover -s tests -p 'test_lap_observations.py' -v`.
+- [x] Lancer `PYTHONPATH=src .venv/bin/python -m unittest discover -s tests -p 'test_lap_observations.py' -v`.
   Attendu RED sur helper/méthode manquants.
-- [ ] Introduire le type suivant ; mettre imports et dataclass dans le domaine :
+- [x] Introduire le type suivant ; mettre imports et dataclass dans le domaine :
 
 ```python
 from dataclasses import dataclass
@@ -154,10 +154,10 @@ raw_lap_number = lap_observation.value
   observation manquante ; ne pas déplacer l'ancre au premier candidat dans ce commit.
   Exporter le dernier instant frais de l'ancien tour pour borner le passage probable.
   Le ratio de consensus reste un score, pas une probabilité d'exactitude.
-- [ ] Exécuter les nouveaux tests, `test_lap_state.py`, `test_application_pipeline.py`,
+- [x] Exécuter les nouveaux tests, `test_lap_state.py`, `test_application_pipeline.py`,
   puis vérification commune. Adapter FakeLaps pour exposer le nouveau contrat,
   sans supprimer les tests du chemin historique.
-- [ ] Commit `fix: confirm laps from fresh OCR observations`.
+- [x] Commit `fix: confirm laps from fresh OCR observations`.
 
 ### A2 — Conserver vitesse et rapport avec leurs preuves
 

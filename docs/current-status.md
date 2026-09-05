@@ -28,9 +28,11 @@ reference explanation. Multi-week training and metric lateral ML remain later wo
 
 ### Audit findings superseding earlier reliability claims
 
-- `extract_lap_number()` already smooths and holds values before the pipeline calls
-  them raw observations. A synthetic sequence confirms a boundary on the fourth
-  missing OCR read. The pure confirmer tests do not validate this integration.
+- A1 corrects the audited raw-lap integration defect: production now uses strict,
+  fresh `observe_lap_number()`. The legacy wrapper still smooths/holds intentionally.
+  Real detector -> pipeline -> confirmer synthetic regressions verify missing reads,
+  rejected jumps, isolated errors and one boundary after five fresh increments.
+  This does not establish the false-boundary rate on real video.
 - Speed provenance reaches fusion but is omitted from output records; normalization
   can turn HELD speed into OBSERVED. Earlier claims of end-to-end speed quality below
   are superseded by this finding.
@@ -45,13 +47,13 @@ reference explanation. Multi-week training and metric lateral ML remain later wo
   3.13.2; documentation discovery and diff checks pass. No production code changed.
 - Planning delivered: common specification, detailed reliability/dossier tasks,
   separate replay feasibility experiment, source-admission rules, seven metric
-  definitions, target CLI/artifact formats and human review gates. A0 is complete; implementation checkboxes advance only with verified tasks. The suggested Spa/Bruxelles case and reference source
+  definitions, target CLI/artifact formats and human review gates. A0/A1 are complete; later tasks remain unchecked. The suggested Spa/Bruxelles case and reference source
   must be verified on real inputs; no reference has been acquired.
 - Planning verification: documentation discovery succeeds; all 186 existing tests
   pass, including the four focused documentation-index tests. Local plan links and
   frontmatter were checked. No executable source/configuration files were changed.
 
-- Active milestone: A0 verified; A1 raw OCR regression tests next
+- Active milestone: A0/A1 complete; A2 speed/gear provenance next
 - Previous milestone status: generic boundary visual-anchor robustness implementation
   and representative validation complete at `4a101a8`; the new BMW and both controls
   pass their replay gates with zero unconfirmed resets, nonlocal jumps, or premature
@@ -90,6 +92,16 @@ reference explanation. Multi-week training and metric lateral ML remain later wo
    follow `Current next action` below.
 
 ## Recently completed
+
+- A1 adds immutable `FieldObservation`, strict lap parsing, and fresh OCR in the
+  generic pipeline. Crop/preprocessing and legacy smoothing remain compatible.
+  Missing evidence restarts the candidate; transition exports retain first candidate,
+  confirmation, and last fresh previous-lap times. Anchoring remains at confirmation.
+- Verified: RED integration/timing logs preceded changes; 15 focused tests and all
+  192 tests pass. Logs: `data/lab/coaching-reliability/run-001/a1-*.log`.
+  Sustained plausible OCR errors can still pass consensus; no independent video
+  validation was performed, and the consensus score is not an accuracy probability.
+
 
 - Removed the repository's dependency on the former external workflow package.
   All dated working material now lives under neutral `docs/plans/` and `docs/specs/`
@@ -450,7 +462,7 @@ committed.
 
 ## Priority order
 
-1. Execute plan A0/A1: baseline and raw lap observations, then follow plan A through
+1. Execute plan A2: speed/gear/lap provenance, then follow plan A through
    provenance, bounded comparison and independent historical/recent validation.
 2. Only when A passes, execute plan B: acquire/admit a reference, review physical
    landmarks and trajectory images, compute seven metrics and export a ChatGPT dossier.
@@ -463,11 +475,12 @@ gates pass on controlled Spa evidence.
 
 ## Current next action
 
-Execute A1 in `docs/plans/2026-09-05-coaching-reliability.md`: write and run
-`tests/test_lap_observations.py` RED before changing extraction/pipeline behavior.
-Work on `codex/coaching-reliability`; A0 started from clean `a2ed225`.
-A0 verification: 187 tests pass (186 audit tests plus the workflow-removal guard),
-both local audit scripts reproduce their defects, Python 3.13.2 and ffmpeg/ffprobe
-are available, and all handoff video/evidence paths exist. Logs are ignored under
-`data/lab/coaching-reliability/run-001/a0-*.log`. No production change in A0.
+Execute A2 in `docs/plans/2026-09-05-coaching-reliability.md`: add
+`tests/test_quality_roundtrip.py` and run it RED before changing speed/gear records.
+Continue on `codex/coaching-reliability`; A0 baseline commit is `7f60245`, with 187
+passing tests (186 audit tests plus the workflow-removal guard). Both audit scripts
+reproduced the defects before A1. The old integration script uses the historical
+wrapper and obsolete fake interfaces: preserve it as baseline evidence; the tracked
+A1 tests exercise current production. Python 3.13.2, ffmpeg/ffprobe and all handoff
+video/evidence paths were verified present. No source video changed.
 Gate A remains unvalidated, B blocked, C inactive. No push authorized.

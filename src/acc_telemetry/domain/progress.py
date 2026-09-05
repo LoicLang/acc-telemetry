@@ -69,10 +69,16 @@ class LapObservation:
 
 @dataclass(frozen=True)
 class ConfirmedLapBoundary:
-    """A trusted sequential lap transition that may anchor progress."""
+    """A sequential transition anchored at confirmation, not first candidate.
+
+    Timing bounds describe fresh OCR evidence, not independently proven crossing.
+    """
 
     frame: int
     time_s: float
     from_lap: int
     to_lap: int
     confidence: float
+    first_candidate_time_s: float | None = None
+    confirmed_at_s: float | None = None
+    last_previous_lap_observed_time_s: float | None = None

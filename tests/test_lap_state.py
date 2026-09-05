@@ -76,6 +76,17 @@ class TestLapTransitionConfirmer(unittest.TestCase):
         self.assertTrue(all(state.confirmed_lap_number == 8 for state in states))
         self.assertTrue(all("lap_observation_rejected" in state.reasons for state in states))
 
+    def test_gap_restarts_candidate_timing_without_moving_confirmation_anchor(self):
+        self.initialize_lap_eight()
+        states = _observe(self.confirmer, [9, None, 9, 9, 9, 9, 9, None], start_frame=5)
+        boundary = states[-2].boundary
+        self.assertEqual(boundary.first_candidate_time_s, 7 / 60)
+        self.assertEqual(boundary.last_previous_lap_observed_time_s, 4 / 60)
+        self.assertEqual(boundary.confirmed_at_s, 11 / 60)
+        self.assertEqual(boundary.time_s, boundary.confirmed_at_s)
+        self.assertIsNone(states[-1].boundary)
+        self.assertEqual(states[-1].confirmed_lap_number, 9)
+
     def test_pending_confidence_tracks_stable_observation_count(self):
         self.initialize_lap_eight()
 

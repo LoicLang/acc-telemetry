@@ -50,9 +50,13 @@ In production, compatibility `track_position` is derived from available `s_fused
 100`. Only the explicit legacy tracker diagnostic remains map-only. Neither numeric
 output alone proves spatial accuracy.
 
-The September 5 audit confirms integration gaps: lap observations arrive prefiltered
-and held, speed quality is passed to fusion but lost in records, and the comparison
-API omits modern progress provenance. `TelemetrySample` is an available contract,
+A1 resolves the audited lap integration gap: the generic pipeline reads one strict
+fresh `FieldObservation` per lap label, while the explicit legacy path retains
+smoothing/holding. Missing observations restart confirmation. Boundaries export
+first-candidate, confirmation and last fresh previous-lap times; anchors remain at
+confirmation. Sustained plausible OCR errors remain a limitation, and consensus is
+not a calibrated probability. Speed quality is still lost in records, and the
+comparison API still omits modern progress provenance. `TelemetrySample` is an available contract,
 not yet the universal application/consumer boundary. See
 `technical-audit-2026-09-05.md` before relying on field quality for analysis.
 

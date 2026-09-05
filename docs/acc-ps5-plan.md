@@ -13,14 +13,14 @@ Last verified: 2026-09-05
 
 The September 5 technical audit narrows the meaning of earlier validation claims:
 representative internal-consistency metrics pass, but independent spatial accuracy
-has not been established. The lap confirmer receives prefiltered/held observations,
-and speed quality is lost in exported records. These integration defects must be
+has not been established. A1 now supplies fresh strict lap observations to the confirmer;
+speed quality remains lost in exported records. These integration defects must be
 addressed before closing the remaining gates. See
 `technical-audit-2026-09-05.md` for reproduced evidence and proposed next steps;
 the audit's broad ML roadmap is not an approved implementation decision. The user
 subsequently requested detailed implementation planning for a reference-based visual
 corner dossier; see `coaching-implementation-roadmap.md` and its specification/plans.
-These plans are written but unexecuted; no reliability gate is changed to passed.
+A0/A1 are implemented and synthetically verified; no reliability gate is passed.
 
 - capture_status: native_1080p60_validated
 - controls_speed_gears_status: usable
@@ -29,7 +29,7 @@ These plans are written but unexecuted; no reliability gate is changed to passed
 - s_status: representative_clean_and_crash_gates_pass
 - s_latest_validation_status: isolated_missing_boundary_dot_anchor_gap_resolved
 - s_repair_design_status: generic_fusion_implemented
-- long_capture_lap_transition_status: raw_observation_integration_defect_historical_replay_pending
+- long_capture_lap_transition_status: fresh_observations_tested_historical_replay_pending
 - quality_propagation_status: speed_export_and_comparison_provenance_defects_other_fields_incomplete
 - downstream_coaching_status: blocked
 
@@ -227,9 +227,10 @@ Exit criteria:
 
 ### Priority 2 — robust lap transitions
 
-Status: pure confirmation state machine implemented, but production inputs are
-prefiltered and held rather than raw OCR. Correct this integration before interpreting
-the historical 2026-09-01 end-to-end replay as validation of fresh-observation consensus.
+Status: A1 integrates fresh strict OCR with the confirmation state machine, covered
+by real-detector synthetic pipeline tests. Historical 2026-09-01 replay against
+independent annotations remains pending. Consensus cannot reject sustained plausible
+OCR errors and is not an accuracy probability.
 
 Required work:
 

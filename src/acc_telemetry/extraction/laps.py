@@ -13,9 +13,22 @@ from typing import Optional, Tuple
 from pathlib import Path
 from .templates import TemplateMatcher
 from acc_telemetry.domain.telemetry import QualityFlag
+from acc_telemetry.domain.observations import FieldObservation
 
 MAX_SPEED_OCR_DELTA_KMH = 20
 SPEED_OCR_RECOVERY_TOLERANCE_KMH = 3
+
+
+def parse_lap_text(text: str) -> int | None:
+    """Accept only a complete decimal lap label in the supported range."""
+    value = text.strip()
+    if not value.isdecimal():
+        return None
+    try:
+        number = int(value)
+    except ValueError:
+        return None
+    return number if 0 <= number <= 999 else None
 
 
 def find_tessdata_path(project_root: Path | None = None) -> Path | None:
@@ -144,26 +157,15 @@ class LapDetector:
         else:
             print("ℹ️  Using pytesseract (~50ms per frame). Install tesserocr for 25x speedup!")
     
-    def extract_lap_number(self, frame: np.ndarray) -> Optional[int]:
-        """
-        Extract lap number from the red flag area in top-left corner.
-        
-        Uses direct OCR on raw ROI (no preprocessing overhead).
-        The lap number appears as white digits on a red background flag icon.
-        
-        Args:
-            frame: Full video frame (BGR format)
-            
-        Returns:
-            Lap number as integer, or None if extraction fails
-        """
+    def _read_lap_text(self, frame: np.ndarray) -> str:
+        """Read one OCR text using the historical crop and preprocessing."""
         if frame is None or frame.size == 0:
-            return self._last_valid_lap_number
+            return ""
         
         # Extract ROI
         roi = self._extract_roi(frame, self.lap_number_roi)
         if roi is None or roi.size == 0:
-            return self._last_valid_lap_number
+            return ""
         
         # Track statistics
         if self._enable_performance_stats:
@@ -203,6 +205,25 @@ class LapDetector:
             # if self._enable_performance_stats:
             #     print(f"[DEBUG Frame {self._total_frames_processed}] OCR took {ocr_time:.2f}ms - result: '{text}'")
             
+            return text
+        except Exception:
+            return ""
+
+    def observe_lap_number(self, frame: np.ndarray) -> FieldObservation[int]:
+        """Return fresh evidence without reading or updating legacy history."""
+        text = self._read_lap_text(frame)
+        value = parse_lap_text(text)
+        return FieldObservation(
+            value, QualityFlag.OBSERVED if value is not None else QualityFlag.MISSING,
+            text, () if value is not None else (
+                "lap_ocr_missing" if not text.strip() else "lap_ocr_invalid",
+            ),
+        )
+
+    def extract_lap_number(self, frame: np.ndarray) -> Optional[int]:
+        """Compatibility wrapper retaining historical filtering and holding."""
+        text = self._read_lap_text(frame)
+        try:
             # Parse lap number (should be 1-2 digits)
             if text.isdigit():
                 lap_number = int(text)

@@ -10,6 +10,7 @@ from acc_telemetry.application.progress import (
 )
 from acc_telemetry.domain.progress import ProgressEstimate, ProgressSource
 from acc_telemetry.domain.telemetry import QualityFlag
+from acc_telemetry.domain.observations import FieldObservation
 from acc_telemetry.extraction.position import PositionDecision, PositionDiagnostic
 
 
@@ -48,6 +49,9 @@ class FakeControls:
 
 
 class FakeLaps:
+    def observe_lap_number(self, frame):
+        return FieldObservation(9, QualityFlag.OBSERVED, "9")
+
     def extract_lap_number(self, frame):
         return 9
 

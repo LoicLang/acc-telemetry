@@ -170,7 +170,11 @@ class TelemetryPipeline:
 
             for frame_number, timestamp, rois in self.video.process_frames():
                 controls = self.controls.extract_frame_telemetry(rois)
-                lap_number = self.laps.extract_lap_number(self.video.current_frame)
+                lap_number = (
+                    self.laps.observe_lap_number(self.video.current_frame).value
+                    if self.progress is not None
+                    else self.laps.extract_lap_number(self.video.current_frame)
+                )
                 speed = self.laps.extract_speed(self.video.current_frame)
                 speed_quality = (
                     self.laps.get_last_speed_quality()
@@ -250,7 +254,9 @@ class TelemetryPipeline:
                     )
                     last_progress = current_progress
 
-            final_lap = self.laps.finalize_lap_detection()
+            final_lap = (
+                self.laps.finalize_lap_detection() if self.progress is None else None
+            )
             if final_lap is not None and (previous_lap is None or final_lap > previous_lap):
                 if previous_lap is not None and final_lap == previous_lap + 1:
                     for record in reversed(records):
@@ -284,6 +290,11 @@ class TelemetryPipeline:
                         transitions.append({
                             "frame": boundary.frame,
                             "time": boundary.time_s,
+                            "first_candidate_time_s": boundary.first_candidate_time_s,
+                            "confirmed_at_s": boundary.confirmed_at_s,
+                            "last_previous_lap_observed_time_s": (
+                                boundary.last_previous_lap_observed_time_s
+                            ),
                             "from_lap": boundary.from_lap,
                             "to_lap": boundary.to_lap,
                             "completed_lap_time": None,
