@@ -16,20 +16,27 @@ change. Use `git log` for authoritative commit hashes and dates.
 
 ## Current objective
 
-Validate circuit-generic fused `s` against new native 1080p sessions before starting
-corner analysis.
+Replay the historical 2026-09-01 capture through the new lap confirmer before
+field-quality propagation or corner analysis.
 
-- Active milestone: generic boundary visual-anchor robustness
-- Previous milestone status: implementation and representative validation complete;
+- Active milestone: historical long-capture lap-transition validation
+- Previous milestone status: generic boundary visual-anchor robustness implementation
+  and representative validation complete at `4a101a8`; the new BMW and both controls
+  pass their replay gates with zero unconfirmed resets, nonlocal jumps, or premature
+  completions
+- Earlier milestone status: generic fusion implementation and representative validation complete;
   merged locally into `main` at `f7888ae`
-- Current validation status: the generic boundary visual-anchor correction passes the
-  new BMW and both historical 1080p controls; the isolated missing-boundary-dot gap is
-  resolved and the first complete BMW lap now contains fused visual progress
-- Active specification: `docs/superpowers/specs/2026-09-05-generic-boundary-visual-anchor-design.md`
-- Parent specification: `docs/superpowers/specs/2026-09-03-generic-s-fusion-design.md`
-- Active plan: `docs/superpowers/plans/2026-09-05-generic-boundary-visual-anchor.md`
-- Last completed implementation plan: `docs/superpowers/plans/2026-09-04-temporal-centerline-selection.md`
-- Prior completed implementation plan: `docs/superpowers/plans/2026-09-03-generic-s-fusion.md`
+- Current validation status: the isolated missing-boundary-dot gap is resolved and the
+  first complete BMW lap now contains fused visual progress
+- Active specification: none; this replay validates existing behavior without changing
+  production rules
+- Last completed specification: `docs/superpowers/specs/2026-09-05-generic-boundary-visual-anchor-design.md`
+- Generic fusion design reference: `docs/superpowers/specs/2026-09-03-generic-s-fusion-design.md`
+- Active plan: none
+- Last completed implementation plan: `docs/superpowers/plans/2026-09-05-generic-boundary-visual-anchor.md`
+- Prior completed implementation plan: `docs/superpowers/plans/2026-09-04-temporal-centerline-selection.md`
+- Prior milestone handoff record — Last completed implementation plan: `docs/superpowers/plans/2026-09-04-temporal-centerline-selection.md`
+- Earlier completed implementation plan: `docs/superpowers/plans/2026-09-03-generic-s-fusion.md`
 - Last completed technical plan: `docs/superpowers/plans/2026-09-02-native-1080-and-s-diagnostics.md`
 - Last completed plan: `docs/superpowers/plans/2026-09-02-agent-handoff-documentation.md`
 - Technical ACC implementation: Tasks 1-10 complete
@@ -39,9 +46,12 @@ corner analysis.
 
 1. Run `./scripts/docs-list`.
 2. Read this document.
-3. Read the active specification above; if an active plan is named, read it too.
+3. Read any active specification named above; otherwise read the last completed
+   specification only when the current work touches its decisions. If an active plan
+   is named, read it too.
 4. Inspect `git status --short --branch` and `git log --oneline -10`.
-5. Continue from the first unchecked plan step.
+5. If an active plan is named, continue from its first unchecked step; otherwise
+   follow `Current next action` below.
 
 ## Recently completed
 
