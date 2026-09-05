@@ -23,9 +23,13 @@ Before changing code, tests, configuration, or active documentation:
 6. Inspect `git status --short --branch` and recent commits.
 7. Confirm that local evidence referenced by a document exists before relying on it.
 
-Do not load every historical Markdown file by default. `docs/legacy/`,
-`docs/archive/`, and `docs/superpowers/` contain history or working material and are
-excluded from normal discovery.
+Do not load every historical or working Markdown file by default. `docs/legacy/`,
+`docs/archive/`, `docs/plans/`, and `docs/specs/` are excluded from normal discovery.
+Read the active plan and specification named by `docs/current-status.md` directly.
+
+The repository does not require any external agent skill or workflow package.
+Plans are ordinary Markdown checklists: execute them directly, keep their checkboxes
+current, and follow the repository's own testing, documentation, and commit rules.
 
 ## Scope
 

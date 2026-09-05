@@ -41,6 +41,24 @@ class TestRepositoryLayout(unittest.TestCase):
             with self.subTest(path=relative_path):
                 self.assertFalse((ROOT / relative_path).exists())
 
+    def test_repository_does_not_require_external_workflow_packages(self):
+        legacy_skill_dir = "super" + "powers"
+        self.assertFalse((ROOT / "docs" / legacy_skill_dir).exists())
+        self.assertTrue((ROOT / "docs" / "plans").is_dir())
+        self.assertTrue((ROOT / "docs" / "specs").is_dir())
+        checked_paths = (
+            ROOT / "AGENTS.md",
+            ROOT / "README.md",
+            ROOT / "CONTRIBUTING.md",
+            ROOT / "scripts" / "docs_list.py",
+            *(ROOT / "docs").rglob("*.md"),
+        )
+        for path in checked_paths:
+            content = path.read_text(encoding="utf-8").lower()
+            with self.subTest(path=path.relative_to(ROOT)):
+                self.assertNotIn(legacy_skill_dir, content)
+                self.assertNotIn("required sub-skill", content)
+
     def test_public_package_boundaries_are_importable(self):
         imports = {
             "acc_telemetry.extraction.video": "VideoProcessor",
@@ -148,7 +166,7 @@ class TestRepositoryLayout(unittest.TestCase):
         self.assertIn("Generic position estimation", architecture)
         self.assertIn("2026-09-03-generic-s-fusion-design.md", status)
         self.assertIn(
-            "Last completed implementation plan: `docs/superpowers/plans/2026-09-04-temporal-centerline-selection.md`",
+            "Last completed implementation plan: `docs/plans/2026-09-04-temporal-centerline-selection.md`",
             status,
         )
         self.assertIn("implementation and representative validation complete", status)

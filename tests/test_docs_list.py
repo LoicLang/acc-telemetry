@@ -32,7 +32,8 @@ class TestDocsList(unittest.TestCase):
                 "current-status.md",
                 "legacy/old.md",
                 "archive/old.md",
-                "superpowers/plans/work.md",
+                "plans/work.md",
+                "specs/design.md",
             ):
                 path = root / relative
                 path.parent.mkdir(parents=True, exist_ok=True)
@@ -45,14 +46,15 @@ class TestDocsList(unittest.TestCase):
 
         self.assertEqual(files, ["current-status.md"])
 
-    def test_all_includes_history_but_not_superpowers(self):
+    def test_all_includes_history_but_not_working_material(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
             for relative in (
                 "current-status.md",
                 "legacy/old.md",
                 "archive/old.md",
-                "superpowers/specs/work.md",
+                "plans/work.md",
+                "specs/design.md",
             ):
                 path = root / relative
                 path.parent.mkdir(parents=True, exist_ok=True)

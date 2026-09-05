@@ -7,7 +7,6 @@ read_when:
 
 # C — Faisabilité `.rpy -> vidéo + labels` : Implementation Plan
 
-> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking. No subagent delegation is required by this plan.
 
 **Goal:** Produire une décision démontrée sur la possibilité de générer des images
 cockpit avec labels spatiaux depuis un replay ACC, sans lancer un dataset massif.

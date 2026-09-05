@@ -1,6 +1,5 @@
 # Temporal Centerline Selection Implementation Plan
 
-> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** Identify a circuit from pixels that persist across sampled frames and from one uniquely valid long closed cycle, without circuit templates or car-specific cropping.
 

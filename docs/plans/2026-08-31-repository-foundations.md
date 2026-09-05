@@ -1,6 +1,5 @@
 # ACC Telemetry Repository Foundations Implementation Plan
 
-> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** Establish a durable ACC PS5 telemetry repository with explicit package boundaries, validated configuration, quality-aware normalized samples, representative fixtures, long-lived session storage, and concise operational documentation.
 

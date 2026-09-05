@@ -9,7 +9,7 @@ from pathlib import Path
 
 
 DOCS_DIR = Path(__file__).resolve().parent.parent / "docs"
-ALWAYS_EXCLUDED_DIRS = {"superpowers"}
+WORKING_MATERIAL_DIRS = {"plans", "specs"}
 HISTORICAL_DIRS = {"archive", "legacy"}
 
 
@@ -28,7 +28,7 @@ def walk_markdown_files(root: Path, *, include_all: bool = False) -> list[Path]:
         relative = path.relative_to(root)
         if any(part.startswith(".") for part in relative.parts):
             continue
-        if any(part in ALWAYS_EXCLUDED_DIRS for part in relative.parts):
+        if any(part in WORKING_MATERIAL_DIRS for part in relative.parts):
             continue
         if not include_all and any(
             part in HISTORICAL_DIRS for part in relative.parts

@@ -7,7 +7,6 @@ read_when:
 
 # B — Virage, référence et dossier ChatGPT : Implementation Plan
 
-> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking. No subagent delegation is required by this plan.
 
 **Goal:** Livrer un dossier réel où ChatGPT dispose de tes mesures, d'une référence
 expliquée et d'images permettant d'examiner la trajectoire des deux passages.

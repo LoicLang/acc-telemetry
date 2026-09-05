@@ -1,6 +1,5 @@
 # Native 1080p and Position Diagnostics Implementation Plan
 
-> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** Validate an explicit native 1080p ACC PS5 profile, measure its OCR value against the same frames downscaled to 720p, and expose a non-breaking diagnostic trace that identifies the first invalid `s` transition.
 
@@ -393,7 +392,7 @@ git commit -m "feat: add position diagnostic trace"
 - Local only: `data/lab/2026-09-02_native-1080-position/`
 - Modify: `docs/current-status.md`
 - Modify: `docs/acc-ps5-plan.md` only if the root-cause statement changes
-- Modify: `docs/superpowers/plans/2026-09-02-native-1080-and-s-diagnostics.md`
+- Modify: `docs/plans/2026-09-02-native-1080-and-s-diagnostics.md`
 
 - [x] **Step 1: Run the clean-session diagnostic**
 
@@ -436,7 +435,7 @@ the next exact correction. Mark this plan complete and set active plan to none.
 Run all existing tests and documentation checks, then commit only durable documents:
 
 ```bash
-git add docs/current-status.md docs/acc-ps5-plan.md docs/superpowers/plans/2026-09-02-native-1080-and-s-diagnostics.md
+git add docs/current-status.md docs/acc-ps5-plan.md docs/plans/2026-09-02-native-1080-and-s-diagnostics.md
 git commit -m "docs: record initial position root cause"
 ```
 

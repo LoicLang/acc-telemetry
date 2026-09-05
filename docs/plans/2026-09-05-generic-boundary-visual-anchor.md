@@ -1,6 +1,5 @@
 # Generic Boundary Visual Anchor Implementation Plan
 
-> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** Retain compact imperfect red-dot observations and recover a visual centerline anchor around a confirmed lap boundary without permitting visual evidence to create or reset a lap.
 
@@ -630,7 +629,7 @@ git commit -m "feat: integrate confirmed boundary anchor recovery"
 **Files:**
 - Modify: `docs/current-status.md`
 - Modify: `docs/acc-ps5-plan.md` only if the `s` stage gate changes
-- Modify: `docs/superpowers/plans/2026-09-05-generic-boundary-visual-anchor.md`
+- Modify: `docs/plans/2026-09-05-generic-boundary-visual-anchor.md`
 - Local ignored output: `data/lab/2026-09-05-boundary-visual-anchor/`
 
 - [x] **Step 1: Verify immutable inputs and ignored output before replay**
@@ -729,7 +728,7 @@ Spa evidence. The worktree contains only the intended documentation changes.
 Inspect the staged diff before committing:
 
 ```bash
-git add docs/current-status.md docs/superpowers/plans/2026-09-05-generic-boundary-visual-anchor.md
+git add docs/current-status.md docs/plans/2026-09-05-generic-boundary-visual-anchor.md
 git add docs/acc-ps5-plan.md  # only when the stage-gate text changed
 git diff --cached --check
 git diff --cached --stat

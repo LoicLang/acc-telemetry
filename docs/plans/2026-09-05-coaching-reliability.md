@@ -7,7 +7,6 @@ read_when:
 
 # A — Fiabilité des mesures : Implementation Plan
 
-> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking. No subagent delegation is required by this plan.
 
 **Goal:** Fermer les cinq défauts reproduits dans l'audit et livrer des mesures dont
 la qualité reste visible jusqu'aux consommateurs, avec validation indépendante.
@@ -21,7 +20,7 @@ les vrais enchaînements. Le corpus annoté valide les mesures indépendamment d
 ## Lecture et état initial
 
 Lire `AGENTS.md`, `docs/current-status.md`, `docs/technical-audit-2026-09-05.md`,
-`docs/superpowers/specs/2026-09-05-reference-corner-coach-design.md` et les fonctions
+`docs/specs/2026-09-05-reference-corner-coach-design.md` et les fonctions
 citées dans chaque tâche. Base auditée : `d24809f` (code identique à `c6a06bb`).
 Le commit de plan se trouve ensuite dans l'historique ; utiliser la branche contenant
 ces documents, pas un `main` plus ancien qui perdrait les corrections déjà réalisées.

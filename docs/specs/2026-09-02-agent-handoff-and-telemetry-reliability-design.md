@@ -13,7 +13,7 @@ The active documentation has four distinct responsibilities:
 1. `AGENTS.md` defines permanent repository rules and the required handoff protocol.
 2. `docs/current-status.md` is the single living entry point for the current state of the project.
 3. `docs/acc-ps5-plan.md` explains the durable ACC PS5 product direction and stage gates.
-4. A dated implementation plan under `docs/superpowers/plans/` defines the exact test-driven tasks and atomic commits for the active milestone.
+4. A dated implementation plan under `docs/plans/` defines the exact test-driven tasks and atomic commits for the active milestone.
 
 These files must link to one another. A new agent starts with `AGENTS.md`, then reads `docs/current-status.md`, then follows the active implementation plan.
 
@@ -31,7 +31,7 @@ read_when:
 ---
 ```
 
-The repository provides `scripts/docs-list`, backed by `scripts/docs_list.py`, to list each active document with its summary and `read_when` hints. The default listing excludes `docs/legacy/`, `docs/archive/`, and `docs/superpowers/`. An explicit `--all` option may include historical product documents, but dated superpowers specifications and plans remain excluded from discovery because they are working history rather than general project guidance.
+The repository provides `scripts/docs-list`, backed by `scripts/docs_list.py`, to list each active document with its summary and `read_when` hints. The default listing excludes `docs/legacy/`, `docs/archive/`, `docs/plans/`, and `docs/specs/`. An explicit `--all` option may include historical product documents, while dated specifications and plans remain excluded from discovery because they are working history rather than general project guidance.
 
 `docs/current-status.md` is the exception to purely dynamic routing: every agent reads it after running the index. It contains the path of the one active dated plan when a plan exists. This keeps historical plans out of the default context while still making the current implementation plan discoverable.
 

@@ -145,7 +145,7 @@ that comparison remains recorded for later cross-session evaluation.
 
 The replacement must work across static full-map circuits; Spa is only the first
 validation dataset. The approved design is documented in
-`docs/superpowers/specs/2026-09-03-generic-s-fusion-design.md`.
+`docs/specs/2026-09-03-generic-s-fusion-design.md`.
 
 It exposes three independently inspectable coordinates:
 

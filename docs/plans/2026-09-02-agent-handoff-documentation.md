@@ -1,6 +1,5 @@
 # Agent Handoff Documentation Implementation Plan
 
-> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [x]`) syntax for tracking.
 
 **Goal:** Make the repository self-explaining through a tested documentation index, mandatory handoff rules, a current-status entry point, and an ACC PS5 plan aligned with the failed 2026-09-01 `s` validation.
 
@@ -52,7 +51,7 @@ class TestDocsList(unittest.TestCase):
                 "current-status.md",
                 "legacy/old.md",
                 "archive/old.md",
-                "superpowers/plans/work.md",
+                "plans/work.md",
             ):
                 path = root / relative
                 path.parent.mkdir(parents=True, exist_ok=True)
@@ -65,14 +64,14 @@ class TestDocsList(unittest.TestCase):
 
         self.assertEqual(files, ["current-status.md"])
 
-    def test_all_includes_history_but_not_superpowers(self):
+    def test_all_includes_history_but_not_working_material(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
             for relative in (
                 "current-status.md",
                 "legacy/old.md",
                 "archive/old.md",
-                "superpowers/specs/work.md",
+                "specs/work.md",
             ):
                 path = root / relative
                 path.parent.mkdir(parents=True, exist_ok=True)
@@ -138,7 +137,7 @@ from pathlib import Path
 
 
 DOCS_DIR = Path(__file__).resolve().parent.parent / "docs"
-ALWAYS_EXCLUDED_DIRS = {"superpowers"}
+WORKING_MATERIAL_DIRS = {"plans", "specs"}
 HISTORICAL_DIRS = {"archive", "legacy"}
 
 
@@ -339,7 +338,7 @@ Create `docs/current-status.md` containing:
 - confirmed long-capture false lap transitions;
 - modeled-but-not-propagated quality status;
 - `active_milestone: repository handoff documentation`;
-- `active_plan: docs/superpowers/plans/2026-09-02-agent-handoff-documentation.md`;
+- `active_plan: docs/plans/2026-09-02-agent-handoff-documentation.md`;
 - downstream ACC development marked `blocked_pending_review`;
 - exact next action: complete documentation verification and review with Loïc.
 

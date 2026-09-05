@@ -48,11 +48,11 @@ joints si l'interface utilisée les accepte ; aucune capacité vidéo n'est supp
 
 | Ordre | Plan | Livrable | Condition pour continuer |
 | --- | --- | --- | --- |
-| 1 | [A — fiabilité](superpowers/plans/2026-09-05-coaching-reliability.md) | Observations fiables, exports sans perte et benchmark indépendant | Rapport de gate A validé, défauts audit couverts par tests |
-| 2 | [B — virage + référence](superpowers/plans/2026-09-05-reference-corner-dossier.md) | Dossier réel vérifié et premier exercice | Référence et images présentes, nombres traçables, revue humaine |
-| Séparé | [C — faisabilité replays](superpowers/plans/2026-09-05-replay-spatial-feasibility.md) | Décision go/no-go sur `.rpy -> vidéo + labels` | Labels et synchronisation démontrés avant tout dataset ML |
+| 1 | [A — fiabilité](plans/2026-09-05-coaching-reliability.md) | Observations fiables, exports sans perte et benchmark indépendant | Rapport de gate A validé, défauts audit couverts par tests |
+| 2 | [B — virage + référence](plans/2026-09-05-reference-corner-dossier.md) | Dossier réel vérifié et premier exercice | Référence et images présentes, nombres traçables, revue humaine |
+| Séparé | [C — faisabilité replays](plans/2026-09-05-replay-spatial-feasibility.md) | Décision go/no-go sur `.rpy -> vidéo + labels` | Labels et synchronisation démontrés avant tout dataset ML |
 
-La [spécification commune](superpowers/specs/2026-09-05-reference-corner-coach-design.md)
+La [spécification commune](specs/2026-09-05-reference-corner-coach-design.md)
 fixe les contrats et limites. Le plan A est le premier travail d'implémentation ; B
 ne commence pas tant que son gate échoue. C est de la recherche séparée, non un
 prérequis au débrief visuel. Aucune de ces implémentations n'a commencé au moment

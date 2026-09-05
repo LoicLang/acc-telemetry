@@ -63,21 +63,21 @@ reference explanation. Multi-week training and metric lateral ML remain later wo
   merged locally into `main` at `f7888ae`
 - Current validation status: the isolated missing-boundary-dot gap is resolved and the
   first complete BMW lap now contains fused visual progress
-- Active specification: `docs/superpowers/specs/2026-09-05-reference-corner-coach-design.md`
+- Active specification: `docs/specs/2026-09-05-reference-corner-coach-design.md`
   (planning specification; no production gates newly passed)
-- Last completed specification: `docs/superpowers/specs/2026-09-05-generic-boundary-visual-anchor-design.md`
-- Generic fusion design reference: `docs/superpowers/specs/2026-09-03-generic-s-fusion-design.md`
-- Active plan: `docs/superpowers/plans/2026-09-05-coaching-reliability.md`
-- Downstream plan: `docs/superpowers/plans/2026-09-05-reference-corner-dossier.md`
+- Last completed specification: `docs/specs/2026-09-05-generic-boundary-visual-anchor-design.md`
+- Generic fusion design reference: `docs/specs/2026-09-03-generic-s-fusion-design.md`
+- Active plan: `docs/plans/2026-09-05-coaching-reliability.md`
+- Downstream plan: `docs/plans/2026-09-05-reference-corner-dossier.md`
   (blocked until gate A passes)
-- Optional research plan: `docs/superpowers/plans/2026-09-05-replay-spatial-feasibility.md`
+- Optional research plan: `docs/plans/2026-09-05-replay-spatial-feasibility.md`
   (inactive; not a prerequisite for the visual-reference dossier)
-- Last completed implementation plan: `docs/superpowers/plans/2026-09-05-generic-boundary-visual-anchor.md`
-- Prior completed implementation plan: `docs/superpowers/plans/2026-09-04-temporal-centerline-selection.md`
-- Prior milestone handoff record — Last completed implementation plan: `docs/superpowers/plans/2026-09-04-temporal-centerline-selection.md`
-- Earlier completed implementation plan: `docs/superpowers/plans/2026-09-03-generic-s-fusion.md`
-- Last completed technical plan: `docs/superpowers/plans/2026-09-02-native-1080-and-s-diagnostics.md`
-- Last completed plan: `docs/superpowers/plans/2026-09-02-agent-handoff-documentation.md`
+- Last completed implementation plan: `docs/plans/2026-09-05-generic-boundary-visual-anchor.md`
+- Prior completed implementation plan: `docs/plans/2026-09-04-temporal-centerline-selection.md`
+- Prior milestone handoff record — Last completed implementation plan: `docs/plans/2026-09-04-temporal-centerline-selection.md`
+- Earlier completed implementation plan: `docs/plans/2026-09-03-generic-s-fusion.md`
+- Last completed technical plan: `docs/plans/2026-09-02-native-1080-and-s-diagnostics.md`
+- Last completed plan: `docs/plans/2026-09-02-agent-handoff-documentation.md`
 - Technical ACC implementation: Tasks 1-10 complete
 - Documentation milestone: verified complete
 
@@ -93,6 +93,22 @@ reference explanation. Multi-week training and metric lateral ML remain later wo
    follow `Current next action` below.
 
 ## Recently completed
+
+- Removed the repository's dependency on the former external workflow package.
+  All dated working material now lives under neutral `docs/plans/` and `docs/specs/`
+  paths, every active and historical link was updated, and mandatory skill headers
+  were removed from the plans. `AGENTS.md` now defines plans as ordinary repository
+  checklists governed only by the local testing, documentation, and commit rules.
+- Documentation discovery excludes `docs/plans/` and `docs/specs/` in both default
+  and `--all` modes. Focused tests cover this behavior and prevent the legacy workflow
+  directory or instruction markers from returning to repository guidance.
+- The corresponding global package under `.codex` and its discovery symlink under
+  `.agents/skills` were moved to the macOS Trash. This is recoverable and affects
+  future skill discovery; an already running Codex session may retain its initial
+  in-memory catalog until restarted.
+- Verification after the migration: all changed Markdown links resolve, documentation
+  discovery and `git diff --check` pass, Python compilation succeeds, and all 187
+  repository tests pass. No production telemetry behavior changed.
 
 - The generic boundary visual-anchor correction was validated on all three required
   captures. The new BMW replay retains four exact boundary anchors and three accepted
@@ -451,6 +467,6 @@ gates pass on controlled Spa evidence.
 ## Current next action
 
 When implementation is requested, execute task A0 in
-`docs/superpowers/plans/2026-09-05-coaching-reliability.md`, then task A1. Do not start
+`docs/plans/2026-09-05-coaching-reliability.md`, then task A1. Do not start
 plan B until gate A passes. Planning is complete; code, gates, reference acquisition
 and real coaching evaluation are not. Push only after explicit user request.

@@ -1,6 +1,5 @@
 # PS5 Telemetry Calibration Implementation Plan
 
-> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** Make full-map ACC PS5 recordings produce stable speed and 0-100% track-position telemetry.
 
