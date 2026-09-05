@@ -100,6 +100,8 @@ class ProgressFrameResult:
     selected_centroid: tuple[float, float] | None
     estimate: ProgressEstimate
     boundary_anchor_source: BoundaryAnchorSource | None = None
+    lap_quality: QualityFlag = QualityFlag.MISSING
+    lap_reasons: tuple[str, ...] = ()
 
 
 @dataclass(frozen=True)
@@ -1143,6 +1145,8 @@ class ProgressSessionEstimator:
                     confirmed_lap_number=frame.lap_state.confirmed_lap_number,
                     boundary=boundary,
                     boundary_confidence=frame.lap_state.confidence,
+                    lap_quality=frame.lap_state.quality,
+                    lap_reasons=frame.lap_state.reasons,
                     candidate_count=len(frame.candidates),
                     selected_centroid=selected.centroid,
                     estimate=estimate,

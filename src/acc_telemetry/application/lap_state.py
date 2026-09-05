@@ -2,6 +2,7 @@
 
 from dataclasses import dataclass
 
+from acc_telemetry.domain.telemetry import QualityFlag
 from acc_telemetry.domain.progress import ConfirmedLapBoundary, LapObservation
 
 
@@ -14,6 +15,14 @@ class LapState:
     boundary: ConfirmedLapBoundary | None
     confidence: float
     reasons: tuple[str, ...]
+
+    @property
+    def quality(self) -> QualityFlag:
+        """Quality of the confirmed label at this frame, not of the raw OCR."""
+        if self.confirmed_lap_number is None:
+            return QualityFlag.MISSING
+        return (QualityFlag.OBSERVED if self.raw_lap_number == self.confirmed_lap_number
+                else QualityFlag.HELD)
 
 
 class LapTransitionConfirmer:

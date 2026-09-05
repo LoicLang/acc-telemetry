@@ -462,6 +462,8 @@ class LapDetector:
         Returns:
             Speed in km/h as integer, or None if extraction fails
         """
+        self._last_speed_raw = None
+        self._last_speed_reasons = ("speed_ocr_missing",)
         if frame is None or frame.size == 0:
             self._last_speed_quality = (
                 QualityFlag.HELD
@@ -500,6 +502,7 @@ class LapDetector:
                     roi, config=self.tesseract_config_speed
                 )
             
+            self._last_speed_raw = text
             text = text.strip()
             
             # Parse speed (should be 1-3 digits)
@@ -517,6 +520,10 @@ class LapDetector:
 
         # Validate: speed should be reasonable (0-400 km/h for ACC)
         anomalous_speed = speed is not None and not 0 <= speed <= 400
+        self._last_speed_reasons = (
+            ("speed_out_of_range",) if anomalous_speed
+            else (("speed_ocr_missing",) if speed is None else ())
+        )
         if anomalous_speed:
             speed = None
 
@@ -555,9 +562,11 @@ class LapDetector:
                 self._speed_history = [confirmed_speed] * self._history_size
                 self._clear_pending_speed_recovery()
                 self._last_speed_quality = QualityFlag.OBSERVED
+                self._last_speed_reasons = ("speed_recovery_confirmed",)
                 return confirmed_speed
 
             speed = None
+            self._last_speed_reasons = ("speed_jump_pending",)
         
         if speed is not None:
             # Add to history for temporal smoothing
@@ -569,6 +578,8 @@ class LapDetector:
             smoothed_speed = self._get_smoothed_speed()
 
             if smoothed_speed is not None:
+                if smoothed_speed != speed:
+                    self._last_speed_reasons = ("speed_median_filtered",)
                 self._last_valid_speed = smoothed_speed
                 self._last_speed_quality = QualityFlag.OBSERVED
                 return smoothed_speed
@@ -580,6 +591,16 @@ class LapDetector:
             else (QualityFlag.ANOMALOUS if anomalous_speed else QualityFlag.MISSING)
         )
         return self._last_valid_speed
+
+    def observe_speed(self, frame: np.ndarray) -> FieldObservation[int]:
+        """Retain the existing speed filter, together with this read's evidence."""
+        value = self.extract_speed(frame)
+        return FieldObservation(
+            value,
+            QualityFlag.MISSING if value is None else self.get_last_speed_quality(),
+            self._last_speed_raw,
+            self._last_speed_reasons,
+        )
 
     def get_last_speed_quality(self) -> QualityFlag:
         """Return the provenance of the most recent speed output."""
@@ -605,26 +626,15 @@ class LapDetector:
         self._pending_speed_candidate_count = 0
         self._pending_speed_values = []
     
-    def extract_gear(self, frame: np.ndarray) -> Optional[int]:
-        """
-        Extract current gear (1-6) from the HUD gear display.
-        
-        Uses direct OCR on raw ROI (no preprocessing overhead).
-        The gear appears as a white digit in the center of the rev meter arc.
-        
-        Args:
-            frame: Full video frame (BGR format)
-            
-        Returns:
-            Gear as integer (1-6), or None if extraction fails
-        """
+    def _read_gear_text(self, frame: np.ndarray, *, whitelist: str) -> str:
+        """Read one gear symbol, restoring shared OCR state afterwards."""
         if frame is None or frame.size == 0:
-            return self._last_valid_gear
+            return ""
         
         # Extract ROI
         roi = self._extract_roi(frame, self.gear_roi)
         if roi is None or roi.size == 0:
-            return self._last_valid_gear
+            return ""
         
         # Run OCR directly on raw BGR ROI
         # No preprocessing needed - Tesseract handles it well
@@ -635,20 +645,39 @@ class LapDetector:
                 pil_image = Image.fromarray(roi_rgb)
                 
                 # Temporarily set character whitelist for gears (1-6)
-                self._tesserocr_api.SetVariable("tessedit_char_whitelist", "123456")
-                self._tesserocr_api.SetImage(pil_image)
-                text = self._tesserocr_api.GetUTF8Text()
-                
-                # Reset to digit-only (0-9) for lap numbers/speed
-                self._tesserocr_api.SetVariable("tessedit_char_whitelist", "0123456789")
+                self._tesserocr_api.SetVariable("tessedit_char_whitelist", whitelist)
+                try:
+                    self._tesserocr_api.SetImage(pil_image)
+                    text = self._tesserocr_api.GetUTF8Text()
+                finally:
+                    self._tesserocr_api.SetVariable("tessedit_char_whitelist", "0123456789")
             else:
                 # Slow path: pytesseract (50ms)
                 import pytesseract
-                tesseract_config_gear = '--psm 8 --oem 3 -c tessedit_char_whitelist=123456'
+                tesseract_config_gear = f'--psm 8 --oem 3 -c tessedit_char_whitelist={whitelist}'
                 text = pytesseract.image_to_string(roi, config=tesseract_config_gear)
             
             text = text.strip()
             
+            return text
+        except Exception:
+            return ""
+
+    def observe_gear(self, frame: np.ndarray) -> FieldObservation[int]:
+        """Fresh gear only; unsupported symbols and unreadable labels abstain."""
+        text = self._read_gear_text(frame, whitelist="123456NR")
+        value = int(text) if text in ("1", "2", "3", "4", "5", "6") else None
+        reasons = () if value is not None else (
+            "unsupported_gear_symbol" if text in ("N", "R")
+            else ("gear_ocr_missing" if not text else "gear_ocr_invalid"),
+        )
+        return FieldObservation(value, QualityFlag.OBSERVED if value is not None
+                                else QualityFlag.MISSING, text, reasons)
+
+    def extract_gear(self, frame: np.ndarray) -> Optional[int]:
+        """Legacy gear smoothing and holding compatibility wrapper."""
+        text = self._read_gear_text(frame, whitelist="123456")
+        try:
             # Parse gear (should be single digit 1-6)
             if text.isdigit():
                 gear = int(text)

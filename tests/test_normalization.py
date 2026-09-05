@@ -132,6 +132,33 @@ class TestTelemetryNormalization(unittest.TestCase):
         self.assertIsNone(sample.s_source)
         self.assertEqual(sample.field_quality["s"], QualityFlag.OBSERVED)
 
+    def test_all_modern_progress_fields_can_be_null(self):
+        sample = normalize_row(dict(frame=1, time=0.1, s_fused=None, s_visual=None,
+            s_odometry=None, s_uncertainty=None, s_source=None, s_reasons=None), self.settings)
+        for name in ('s', 's_visual', 's_odometry', 's_uncertainty', 's_source'):
+            self.assertIsNone(getattr(sample, name))
+        self.assertEqual(sample.s_reasons, ())
+        self.assertEqual(sample.field_quality['s'], QualityFlag.MISSING)
+
+    def test_modern_nonfinite_progress_and_time_are_rejected(self):
+        for field in ('time', 's_fused', 's_odometry', 's_visual', 's_uncertainty', 'lap_time'):
+            for value in ('nan', 'inf', '-inf'):
+                with self.subTest(field=field, value=value):
+                    row = dict(frame=1, time=0.1, s_source='missing')
+                    row[field] = value
+                    with self.assertRaisesRegex(ValueError, 'non-finite'):
+                        normalize_row(row, self.settings)
+
+    def test_field_reasons_are_validated_and_immutable(self):
+        sample = normalize_row(dict(frame=1, time=0.1,
+            field_reasons='{"gear": ["unsupported_gear_symbol"]}'), self.settings)
+        self.assertEqual(sample.field_reasons['gear'], ('unsupported_gear_symbol',))
+        with self.assertRaises(TypeError):
+            sample.field_reasons['gear'] = ()
+        for reasons in ('[]', '{"gear": "reason"}', '{"gear": [1]}'):
+            with self.assertRaises(ValueError):
+                normalize_row(dict(frame=1, time=0.1, field_reasons=reasons), self.settings)
+
     def test_loads_representative_fixture(self):
         samples = load_csv_samples(FIXTURE, self.settings)
 

@@ -1,5 +1,7 @@
 """Shared sequential telemetry extraction use case."""
 
+import json
+
 from dataclasses import dataclass
 from typing import Any, Callable
 
@@ -175,17 +177,15 @@ class TelemetryPipeline:
                     if self.progress is not None
                     else self.laps.extract_lap_number(self.video.current_frame)
                 )
-                speed = self.laps.extract_speed(self.video.current_frame)
-                speed_quality = (
-                    self.laps.get_last_speed_quality()
-                    if hasattr(self.laps, "get_last_speed_quality")
-                    else (
-                        QualityFlag.OBSERVED
-                        if speed is not None
-                        else QualityFlag.MISSING
-                    )
-                )
-                gear = self.laps.extract_gear(self.video.current_frame)
+                if self.progress is not None:
+                    speed_observation = self.laps.observe_speed(self.video.current_frame)
+                    gear_observation = self.laps.observe_gear(self.video.current_frame)
+                    speed = speed_observation.value
+                    speed_quality = speed_observation.quality
+                    gear = gear_observation.value
+                else:
+                    speed = self.laps.extract_speed(self.video.current_frame)
+                    gear = self.laps.extract_gear(self.video.current_frame)
 
                 track_position = None
                 if self.progress is not None:
@@ -244,6 +244,22 @@ class TelemetryPipeline:
                     "tc_active": controls["tc_active"],
                     "abs_active": controls["abs_active"],
                 })
+                if self.progress is not None:
+                    records[-1].update({
+                        "raw_lap_number": lap_number,
+                        "speed_raw": speed_observation.raw_value,
+                        "gear_raw": gear_observation.raw_value,
+                        "quality_hint": ";".join(
+                            f"{name}:{flag.value}" for name, flag in sorted({
+                                "speed_kmh": speed_observation.quality,
+                                "gear": gear_observation.quality,
+                            }.items())
+                        ),
+                        "field_reasons": json.dumps({
+                            "speed_kmh": speed_observation.reasons,
+                            "gear": gear_observation.reasons,
+                        }),
+                    })
                 previous_lap = lap_number
 
                 current_progress = 20 + int((frame_number / total_frames) * 60)
@@ -276,6 +292,10 @@ class TelemetryPipeline:
                 for record, frame_result in zip(records, progress_result.frames):
                     estimate = frame_result.estimate
                     record["lap_number"] = frame_result.confirmed_lap_number
+                    record["quality_hint"] += f";lap_number:{frame_result.lap_quality.value}"
+                    field_reasons = json.loads(record["field_reasons"])
+                    field_reasons["lap_number"] = frame_result.lap_reasons
+                    record["field_reasons"] = json.dumps(field_reasons)
                     record["track_position"] = (
                         None if estimate.s_fused is None else estimate.s_fused * 100.0
                     )

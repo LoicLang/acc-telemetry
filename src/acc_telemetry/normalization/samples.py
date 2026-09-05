@@ -1,6 +1,8 @@
 """Normalize legacy extractor rows without silently correcting evidence."""
 
 import csv
+import json
+import math
 from pathlib import Path
 from types import MappingProxyType
 from typing import Any, Mapping, Protocol
@@ -62,6 +64,27 @@ def _reasons(value: Any) -> tuple[str, ...]:
 
 def normalize_row(row: Mapping[str, Any], limits: NormalizationLimits) -> TelemetrySample:
     """Convert a legacy CSV row into the stable domain contract."""
+    modern = any(key in row for key in ("s_fused", "s_source", "quality_hint"))
+    if modern:
+        for field in ("frame", "time", "lap_number", "raw_lap_number", "speed", "gear",
+                      "throttle", "brake", "steering", "tc_active", "abs_active",
+                      "track_position", "s_fused", "s_odometry", "s_visual", "s_uncertainty"):
+            value = _optional_float(row.get(field))
+            if value is not None and not math.isfinite(value):
+                raise ValueError(f"non-finite modern field: {field}")
+        lap_time = _lap_time_seconds(row.get("lap_time"))
+        if lap_time is not None and not math.isfinite(lap_time):
+            raise ValueError("non-finite modern field: lap_time")
+    raw_reasons = row.get("field_reasons")
+    field_reasons = {} if raw_reasons is None or raw_reasons == "" else (
+        json.loads(raw_reasons) if isinstance(raw_reasons, str) else raw_reasons
+    )
+    if not isinstance(field_reasons, Mapping) or any(
+        not isinstance(k, str) or not isinstance(v, (list, tuple))
+        or any(not isinstance(reason, str) for reason in v)
+        for k, v in field_reasons.items()
+    ):
+        raise ValueError("invalid field_reasons")
     source = dict(row)
     quality: dict[str, QualityFlag] = {}
     anomalies: list[str] = []
@@ -142,6 +165,7 @@ def normalize_row(row: Mapping[str, Any], limits: NormalizationLimits) -> Teleme
         tc_active=values["tc_active"],
         abs_active=values["abs_active"],
         field_quality=MappingProxyType(quality),
+        field_reasons=MappingProxyType({k: tuple(v) for k, v in field_reasons.items()}),
         anomalies=tuple(anomalies),
         source_values=MappingProxyType(source),
         s_odometry=s_odometry,

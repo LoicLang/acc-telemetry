@@ -165,7 +165,7 @@ raw_lap_number = lap_observation.value
 `normalization/samples.py`, `tests/test_speed_ocr_mode.py`, `tests/test_normalization.py`.
 **Créer :** `tests/test_quality_roundtrip.py`.
 
-- [ ] Écrire les tests vrais pipeline -> DataFrame -> CSV temporaire -> `normalize_row`.
+- [x] Écrire les tests vrais pipeline -> DataFrame -> CSV temporaire -> `normalize_row`.
   Cas vitesse HELD, vitesse manquante, rejet hors plage avec valeur brute conservée,
   rapport OCR manquant après rapport valide, et nombres non finis refusés en moderne.
 
@@ -177,8 +177,8 @@ sample = normalize_row(row, settings.normalization)
 self.assertEqual(sample.field_quality["speed_kmh"], QualityFlag.HELD)
 ```
 
-- [ ] Lancer le fichier ciblé ; attendu RED car le record perd la qualité.
-- [ ] Exposer `observe_speed` et `observe_gear` retournant `FieldObservation` : une
+- [x] Lancer le fichier ciblé ; attendu RED car le record perd la qualité.
+- [x] Exposer `observe_speed` et `observe_gear` retournant `FieldObservation` : une
   seule lecture backend par frame/champ, texte avant validation conservé, valeur
   maintenue marquée HELD, valeur absente MISSING. Ne pas modifier silencieusement le
   filtrage vitesse existant. Pour le rapport, lire le symbole frais ; ne pas classer
@@ -200,9 +200,9 @@ record["gear_raw"] = gear_observation.raw_value
   confirmé, mais sa qualité à une frame dépend de l'évidence fraîche ; un état
   maintenu n'est pas `observed`. Conserver les raisons du confirmeur dans le résultat
   session pour que le pipeline ne les reconstruise pas par heuristique.
-- [ ] Tester également export/import des raisons et de tous les champs `s_*` avec
+- [x] Tester également export/import des raisons et de tous les champs `s_*` avec
   valeurs nulles ; vérification commune.
-- [ ] Commit `fix: preserve speed gear and lap provenance through records`.
+- [x] Commit `fix: preserve speed gear and lap provenance through records`.
 
 ### A3 — Distinguer commande à zéro et absence de HUD
 
@@ -460,4 +460,4 @@ PYTHONPATH=src .venv/bin/python main.py \
 - [ ] Vitesse/frein/gaz du corpus sélectionné satisfont les seuils, ou le gate reste en échec.
 - [ ] Provenance CSV/JSON/API reste intacte et les absences ne sont jamais recréées.
 - [ ] `gate-a.json`, code/config/source hashes et annotations existent localement.
-- [ ] Handoff, roadmap et cases synchronisés ; aucun push, aucune modification de raw.
+- [ ] Handoff, roadmap et cases synchronisés ; push seulement autorisé, aucune modification de raw.

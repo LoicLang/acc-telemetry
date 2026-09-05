@@ -55,8 +55,13 @@ fresh `FieldObservation` per lap label, while the explicit legacy path retains
 smoothing/holding. Missing observations restart confirmation. Boundaries export
 first-candidate, confirmation and last fresh previous-lap times; anchors remain at
 confirmation. Sustained plausible OCR errors remain a limitation, and consensus is
-not a calibrated probability. Speed quality is still lost in records, and the
-comparison API still omits modern progress provenance. `TelemetrySample` is an available contract,
+not a calibrated probability. A2 preserves speed/gear/confirmed-lap quality in
+`quality_hint` and reasons in CSV JSON `field_reasons`; normalization retains both.
+`speed_raw`, `gear_raw` and `raw_lap_number` retain extraction evidence. Speed filtering
+is unchanged, with median/recovery reasons exposed; production gear uses fresh
+symbols and marks N/R unsupported. Modern numeric normalization rejects NaN/inf;
+CSV nulls must be imported as empty strings or None (the CSV loader does this), not
+pandas-inferred NaN. The comparison API still omits modern progress provenance. `TelemetrySample` is an available contract,
 not yet the universal application/consumer boundary. See
 `technical-audit-2026-09-05.md` before relying on field quality for analysis.
 

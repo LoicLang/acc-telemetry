@@ -44,3 +44,4 @@ class TelemetrySample:
     s_uncertainty: float | None = None
     s_source: ProgressSource | None = None
     s_reasons: tuple[str, ...] = ()
+    field_reasons: Mapping[str, tuple[str, ...]] = MappingProxyType({})

@@ -49,6 +49,12 @@ class FakeControls:
 
 
 class FakeLaps:
+    def observe_speed(self, frame):
+        return FieldObservation(171, QualityFlag.OBSERVED, "171")
+
+    def observe_gear(self, frame):
+        return FieldObservation(4, QualityFlag.OBSERVED, "4")
+
     def observe_lap_number(self, frame):
         return FieldObservation(9, QualityFlag.OBSERVED, "9")
 

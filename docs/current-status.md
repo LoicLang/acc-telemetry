@@ -18,7 +18,7 @@ change. Use `git log` for authoritative commit hashes and dates.
 
 Implementation planning is complete for a first reference-based corner coaching
 dossier. The user explicitly requires a relevant reference and visibility into the
-driver's trajectory, not just comparisons of pedal traces. Implementation is now authorized, starting with reliability A0/A1.
+driver's trajectory, not just comparisons of pedal traces. Reliability implementation is active; A0–A2 are complete.
 
 Start with `docs/coaching-implementation-roadmap.md`. Execute reliability plan A
 before dossier plan B; optional replay plan C remains separate and inactive.
@@ -33,9 +33,11 @@ reference explanation. Multi-week training and metric lateral ML remain later wo
   Real detector -> pipeline -> confirmer synthetic regressions verify missing reads,
   rejected jumps, isolated errors and one boundary after five fresh increments.
   This does not establish the false-boundary rate on real video.
-- Speed provenance reaches fusion but is omitted from output records; normalization
-  can turn HELD speed into OBSERVED. Earlier claims of end-to-end speed quality below
-  are superseded by this finding.
+- A2 fixes speed provenance loss through production records and CSV normalization.
+  Speed raw text, held/missing quality and filter/rejection reasons are retained.
+  Gear uses fresh symbols; absent/unsupported labels remain missing. Confirmed-lap
+  quality and reasons come from the confirmer. This is software provenance evidence,
+  not independent OCR accuracy validation.
 - Black control ROIs become observed zero inputs. Position comparison fills absent
   intervals and extends partial laps; the typed comparison API strips modern progress
   provenance. These are confirmed software defects, not measured prevalence in video.
@@ -47,13 +49,13 @@ reference explanation. Multi-week training and metric lateral ML remain later wo
   3.13.2; documentation discovery and diff checks pass. No production code changed.
 - Planning delivered: common specification, detailed reliability/dossier tasks,
   separate replay feasibility experiment, source-admission rules, seven metric
-  definitions, target CLI/artifact formats and human review gates. A0/A1 are complete; later tasks remain unchecked. The suggested Spa/Bruxelles case and reference source
+  definitions, target CLI/artifact formats and human review gates. A0–A2 are complete; later tasks remain unchecked. The suggested Spa/Bruxelles case and reference source
   must be verified on real inputs; no reference has been acquired.
 - Planning verification: documentation discovery succeeds; all 186 existing tests
   pass, including the four focused documentation-index tests. Local plan links and
   frontmatter were checked. No executable source/configuration files were changed.
 
-- Active milestone: A0/A1 complete; A2 speed/gear provenance next
+- Active milestone: A0–A2 complete; A3 control visibility next
 - Previous milestone status: generic boundary visual-anchor robustness implementation
   and representative validation complete at `4a101a8`; the new BMW and both controls
   pass their replay gates with zero unconfirmed resets, nonlocal jumps, or premature
@@ -92,6 +94,20 @@ reference explanation. Multi-week training and metric lateral ML remain later wo
    follow `Current next action` below.
 
 ## Recently completed
+
+- A2 adds `observe_speed`/`observe_gear`, CSV-compatible quality hints and JSON
+  `field_reasons`, propagated to immutable normalized field reasons. Numeric speed
+  filtering remains unchanged; median/recovery outputs retain their filter reasons.
+  Modern normalization rejects nonfinite numeric evidence. Gear has no historical
+  smoothing in production; the legacy wrapper retains it. N/R are unsupported.
+- A2 verification: OCR and roundtrip RED logs precede implementation; all 203 tests
+  pass, including the actual detector -> pipeline -> DataFrame -> CSV -> normalization
+  sequence. Evidence is ignored under `data/lab/coaching-reliability/run-001/a2-*.log`.
+  This validates software behavior only. A3 visibility, A4 versioned artifacts,
+  A5 comparison/API and A6/A7 independent annotations/validation remain pending.
+- User authorized ongoing pushes on 2026-09-05. A0/A1 were pushed to
+  `origin/codex/coaching-reliability`; push verified A2 after its atomic commit.
+
 
 - A1 adds immutable `FieldObservation`, strict lap parsing, and fresh OCR in the
   generic pipeline. Crop/preprocessing and legacy smoothing remain compatible.
@@ -418,9 +434,8 @@ multiple laps.
 ### Quality propagation
 
 Status: fused progress provenance reaches records, but the comparison API strips it.
-Speed provenance reaches fusion and is lost in output records. Complete field-level
-quality for lap number, controls, gear, CSV/API consumers, and analysis remains
-incomplete. See the audit and active plan A for reproduced defects and corrections.
+A2 preserves speed/gear/confirmed-lap provenance through records and CSV
+normalization. Controls, typed API consumers and analysis remain incomplete. See the audit and active plan A for reproduced defects and corrections.
 
 `TelemetrySample` supports field-level observed, missing, held, interpolated,
 predicted, fused, and anomalous states. The available contract does not imply every
@@ -462,8 +477,8 @@ committed.
 
 ## Priority order
 
-1. Execute plan A2: speed/gear/lap provenance, then follow plan A through
-   provenance, bounded comparison and independent historical/recent validation.
+1. Execute A3: reviewed control visibility, then A4 artifacts, A5 bounded comparison
+   and A6/A7 independent historical/recent validation.
 2. Only when A passes, execute plan B: acquire/admit a reference, review physical
    landmarks and trajectory images, compute seven metrics and export a ChatGPT dossier.
 3. Review a real coaching response and measure the exercise at a subsequent session.
@@ -475,12 +490,12 @@ gates pass on controlled Spa evidence.
 
 ## Current next action
 
-Execute A2 in `docs/plans/2026-09-05-coaching-reliability.md`: add
-`tests/test_quality_roundtrip.py` and run it RED before changing speed/gear records.
-Continue on `codex/coaching-reliability`; A0 baseline commit is `7f60245`, with 187
-passing tests (186 audit tests plus the workflow-removal guard). Both audit scripts
-reproduced the defects before A1. The old integration script uses the historical
-wrapper and obsolete fake interfaces: preserve it as baseline evidence; the tracked
-A1 tests exercise current production. Python 3.13.2, ffmpeg/ffprobe and all handoff
-video/evidence paths were verified present. No source video changed.
-Gate A remains unvalidated, B blocked, C inactive. No push authorized.
+Execute A3 in `docs/plans/2026-09-05-coaching-reliability.md`: write and run
+`tests/test_control_observations.py` RED for absent HUD versus observed zero before
+changing controls or CLI behavior. Continue on `codex/coaching-reliability`.
+A0/A1 commits are `7f60245`/`7f826c1`; use Git history for the A2 commit.
+The old audit script uses obsolete fake interfaces and the historical lap wrapper;
+preserve it as baseline evidence. Tracked A1/A2 tests cover current production.
+A1 evidence paths were rechecked locally before A2. No private video was needed or
+modified for A2. Gate A remains unvalidated, B blocked, C inactive. Ongoing push to
+origin is authorized; no merge to main or change to upstream is requested.

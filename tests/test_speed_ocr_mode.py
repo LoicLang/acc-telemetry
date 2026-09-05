@@ -298,6 +298,55 @@ class TestSpeedOCRFallback(unittest.TestCase):
         self.assertIn("--psm 7", config)
         self.assertNotIn("--psm 8", config)
 
+class TestFieldOCRObservations(unittest.TestCase):
+    def make_detector(self):
+        detector = lap_detector.LapDetector.__new__(lap_detector.LapDetector)
+        detector.speed_roi = detector.gear_roi = dict(x=0, y=0, width=10, height=10)
+        detector._speed_history = []
+        detector._gear_history = [3] * 15
+        detector._history_size = 15
+        detector._last_valid_speed = None
+        detector._last_valid_gear = 3
+        detector._tesserocr_api = None
+        detector.tesseract_config_speed = '--psm 7'
+        return detector
+
+    def test_speed_raw_rejection_missing_and_existing_filter_are_preserved(self):
+        detector = self.make_detector()
+        texts = ['100', '', '682', '120']
+        with patch('pytesseract.image_to_string', side_effect=texts) as backend:
+            observations = [detector.observe_speed(np.zeros((10, 10, 3), np.uint8)) for _ in texts]
+        self.assertEqual(backend.call_count, 4)
+        self.assertEqual([o.raw_value for o in observations], texts)
+        self.assertEqual([o.value for o in observations], [100, 100, 100, 110])
+        self.assertEqual([o.quality for o in observations], [QualityFlag.OBSERVED,
+            QualityFlag.HELD, QualityFlag.HELD, QualityFlag.OBSERVED])
+        self.assertIn('speed_out_of_range', observations[2].reasons)
+        self.assertIn('speed_median_filtered', observations[3].reasons)
+
+    def test_speed_unavailable_has_no_value_even_when_raw_is_out_of_range(self):
+        detector = self.make_detector()
+        with patch('pytesseract.image_to_string', return_value='682'):
+            observation = detector.observe_speed(np.zeros((10, 10, 3), np.uint8))
+        self.assertIsNone(observation.value)
+        self.assertEqual(observation.quality, QualityFlag.MISSING)
+        self.assertEqual(observation.raw_value, '682')
+        self.assertIn('speed_out_of_range', observation.reasons)
+
+    def test_fresh_gear_does_not_relabel_history_and_neutral_reverse_stay_missing(self):
+        detector = self.make_detector()
+        texts = ['4', '', 'N', 'R', '4x']
+        with patch('pytesseract.image_to_string', side_effect=texts) as backend:
+            observations = [detector.observe_gear(np.zeros((10, 10, 3), np.uint8)) for _ in texts]
+        self.assertEqual(backend.call_count, 5)
+        self.assertEqual([o.value for o in observations], [4, None, None, None, None])
+        self.assertEqual([o.raw_value for o in observations], texts)
+        self.assertEqual(observations[1].quality, QualityFlag.MISSING)
+        self.assertEqual(observations[2].reasons, ('unsupported_gear_symbol',))
+        self.assertEqual(observations[3].reasons, ('unsupported_gear_symbol',))
+        self.assertEqual(detector._gear_history, [3] * 15)
+        self.assertIn('NR', backend.call_args.kwargs['config'])
+
 
 if __name__ == "__main__":
     unittest.main()

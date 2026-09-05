@@ -10,6 +10,7 @@ from acc_telemetry.application.lap_state import LapTransitionConfirmer
 from acc_telemetry.application.pipeline import TelemetryPipeline
 from acc_telemetry.application.progress import ProgressSessionEstimator
 from acc_telemetry.domain.telemetry import QualityFlag
+from acc_telemetry.domain.observations import FieldObservation
 from test_application_pipeline import FakeControls, FakeVideo
 
 
@@ -68,6 +69,8 @@ class TestLapObservations(unittest.TestCase):
         for texts, count in cases:
             with self.subTest(texts=texts):
                 detector = detector_with_texts(texts)
+                detector.observe_speed = Mock(return_value=FieldObservation(100, QualityFlag.OBSERVED, "100"))
+                detector.observe_gear = Mock(return_value=FieldObservation(3, QualityFlag.OBSERVED, "3"))
                 detector.extract_speed = Mock(return_value=100)
                 detector.get_last_speed_quality = Mock(return_value=QualityFlag.OBSERVED)
                 detector.extract_gear = Mock(return_value=3)

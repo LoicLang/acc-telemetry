@@ -79,9 +79,9 @@ Compatibility modules under `src/` keep older imports working during the migrati
   web processing use `s_odometry`, `s_visual`, and `s_fused`.
 - Lateral distance `d` remains future work.
 - OCR and map observations can be missing or anomalous and must not be treated as unquestioned truth.
-- A1 fixes fresh lap observations and exports confirmation timing; independent video
-  validation remains pending. The September 5 audit identifies output-quality integration
-  defects. Current replay checks establish internal consistency, not independent
+- A1/A2 preserve fresh lap evidence, confirmation timing and speed/gear/lap quality
+  through CSV normalization. Independent video validation, control visibility and
+  comparison/API provenance remain pending. Current replay checks establish internal consistency, not independent
   spatial accuracy; see the technical audit before using comparisons for coaching.
 
 ## Reference documents
