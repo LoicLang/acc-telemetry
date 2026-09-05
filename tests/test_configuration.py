@@ -190,6 +190,34 @@ class TestTelemetryConfiguration(unittest.TestCase):
                 ):
                     load_settings(root)
 
+    def test_rejects_non_finite_boundary_anchor_gaps(self):
+        cases = (
+            ({"max_bracketing_gap_s": float("nan")}, "max_bracketing_gap_s"),
+            ({"max_bracketing_gap_s": float("inf")}, "max_bracketing_gap_s"),
+            ({"max_one_sided_gap_s": float("nan")}, "max_one_sided_gap_s"),
+            ({"max_one_sided_gap_s": float("inf")}, "max_one_sided_gap_s"),
+            (
+                {
+                    "max_bracketing_gap_s": float("inf"),
+                    "max_one_sided_gap_s": float("inf"),
+                },
+                "max_bracketing_gap_s",
+            ),
+        )
+
+        for changes, invalid_key in cases:
+            with self.subTest(changes=changes), tempfile.TemporaryDirectory() as directory:
+                telemetry = _telemetry_with_progress()
+                telemetry["progress"]["boundary_anchor"].update(changes)
+                root = Path(directory)
+                _write_configuration(root, telemetry)
+
+                with self.assertRaisesRegex(
+                    ConfigurationError,
+                    rf"progress\.boundary_anchor\.{invalid_key} must be finite",
+                ):
+                    load_settings(root)
+
     def test_rejects_overlapping_candidate_area_range(self):
         telemetry = _telemetry_with_progress()
         telemetry["progress"]["candidates"]["min_area_fraction"] = 0.005

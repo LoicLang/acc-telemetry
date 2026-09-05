@@ -242,6 +242,7 @@ class TestBoundaryVisualAnchor(unittest.TestCase):
         boundary_index,
         last_raw_s=None,
         effective_lap_length_m=1000.0,
+        min_score_margin=0.15,
     ):
         return recover_boundary_visual_anchor(
             tuple(frames),
@@ -250,7 +251,7 @@ class TestBoundaryVisualAnchor(unittest.TestCase):
             last_raw_s=last_raw_s,
             max_centerline_distance_px=10.0,
             max_progress_error=0.04,
-            min_score_margin=0.15,
+            min_score_margin=min_score_margin,
             unavailable_uncertainty=0.05,
             settings=_anchor_settings(),
         )
@@ -274,6 +275,23 @@ class TestBoundaryVisualAnchor(unittest.TestCase):
         frames = (_anchor_frame(1.0, 100.0, (_projection(0.002),)),)
 
         anchor = self._recover(frames, boundary_index=0)
+
+        self.assertEqual(anchor.source, BoundaryAnchorSource.MISSING)
+
+    def test_rejects_equal_exact_scores_when_margin_is_zero(self):
+        frames = (
+            _anchor_frame(
+                1.0,
+                100.0,
+                (
+                    _projection(0.001, centroid=(9.0, 10.0)),
+                    _projection(0.002, centroid=(11.0, 10.0)),
+                ),
+                _boundary(1.0),
+            ),
+        )
+
+        anchor = self._recover(frames, boundary_index=0, min_score_margin=0.0)
 
         self.assertEqual(anchor.source, BoundaryAnchorSource.MISSING)
 
@@ -366,6 +384,24 @@ class TestBoundaryVisualAnchor(unittest.TestCase):
         )
 
         anchor = self._recover(frames, boundary_index=1)
+
+        self.assertEqual(anchor.source, BoundaryAnchorSource.MISSING)
+
+    def test_rejects_equal_bracketing_pair_scores_when_margin_is_zero(self):
+        frames = (
+            _anchor_frame(
+                0.9,
+                99.0,
+                (
+                    _projection(0.998, centroid=(9.0, 10.0)),
+                    _projection(0.998, centroid=(11.0, 10.0)),
+                ),
+            ),
+            _anchor_frame(1.0, 100.0, boundary=_boundary(1.0)),
+            _anchor_frame(1.1, 101.0, (_projection(0.002),)),
+        )
+
+        anchor = self._recover(frames, boundary_index=1, min_score_margin=0.0)
 
         self.assertEqual(anchor.source, BoundaryAnchorSource.MISSING)
 

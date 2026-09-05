@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from enum import StrEnum
-from math import hypot
+from math import hypot, isclose
 
 import numpy as np
 
@@ -189,8 +189,10 @@ def _unique_projection(
     )
     if not scored:
         return None
-    if len(scored) > 1 and scored[1][0] - scored[0][0] < min_score_margin:
-        return None
+    if len(scored) > 1:
+        score_gap = scored[1][0] - scored[0][0]
+        if isclose(scored[1][0], scored[0][0]) or score_gap < min_score_margin:
+            return None
     return scored[0][1]
 
 
@@ -337,9 +339,14 @@ def recover_boundary_visual_anchor(
                 item[2].centroid,
             )
         )
-        if pairs and (
-            len(pairs) == 1 or pairs[1][0] - pairs[0][0] >= min_score_margin
-        ):
+        has_unique_best_pair = bool(pairs) and (
+            len(pairs) == 1
+            or (
+                not isclose(pairs[1][0], pairs[0][0])
+                and pairs[1][0] - pairs[0][0] >= min_score_margin
+            )
+        )
+        if has_unique_best_pair:
             _, before_projection, after_projection = pairs[0]
             total_distance = abs(after.distance_m - before.distance_m)
             if total_distance > 0:

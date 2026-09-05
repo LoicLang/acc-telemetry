@@ -1,5 +1,6 @@
 """Validated, immutable settings for telemetry processing."""
 
+import math
 from dataclasses import dataclass
 from pathlib import Path
 from types import MappingProxyType
@@ -138,7 +139,10 @@ def _number(mapping: Mapping[str, Any], key: str, path: str) -> float:
     value = mapping.get(key)
     if isinstance(value, bool) or not isinstance(value, (int, float)):
         raise ConfigurationError(f"{path}.{key} must be numeric")
-    return float(value)
+    number = float(value)
+    if not math.isfinite(number):
+        raise ConfigurationError(f"{path}.{key} must be finite")
+    return number
 
 
 def _positive(mapping: Mapping[str, Any], key: str, path: str) -> float:
