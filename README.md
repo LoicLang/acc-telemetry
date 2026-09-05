@@ -90,6 +90,7 @@ Compatibility modules under `src/` keep older imports working during the migrati
 - [Architecture](docs/architecture.md)
 - [ACC PS5 plan](docs/acc-ps5-plan.md)
 - [Technical audit and coaching proposal](docs/technical-audit-2026-09-05.md)
+- [Implementation roadmap: reference-based corner coaching](docs/coaching-implementation-roadmap.md)
 - [Contribution rules](CONTRIBUTING.md)
 - [Historical documentation](docs/legacy/README.md)
 

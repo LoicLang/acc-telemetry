@@ -109,3 +109,12 @@ paths use only `ProgressSessionEstimator` for longitudinal progress.
 ## Testing
 
 Unit tests cover sampling, position direction and smoothing, OCR recovery, web profile propagation, configuration validation, pipeline closure, and normalization. The representative CSV fixture is synthetic and safe for Git. Full-video checks use ignored local session data.
+
+## Planned coaching extension (not implemented)
+
+`coaching-implementation-roadmap.md` links a reliability plan and a downstream
+reference-corner dossier plan. The planned flow retains these package boundaries:
+versioned observations -> normalized samples -> pure event/metric/comparison code ->
+Markdown/JSON and paired cockpit media. Physical landmark annotations and a sourced
+reference explanation are required for the first real dossier. ChatGPT receives
+user-attached files; no LLM API integration or metric lateral estimator exists yet.

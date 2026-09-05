@@ -17,7 +17,10 @@ has not been established. The lap confirmer receives prefiltered/held observatio
 and speed quality is lost in exported records. These integration defects must be
 addressed before closing the remaining gates. See
 `technical-audit-2026-09-05.md` for reproduced evidence and proposed next steps;
-the proposed coaching/ML roadmap is not yet an approved implementation decision.
+the audit's broad ML roadmap is not an approved implementation decision. The user
+subsequently requested detailed implementation planning for a reference-based visual
+corner dossier; see `coaching-implementation-roadmap.md` and its specification/plans.
+These plans are written but unexecuted; no reliability gate is changed to passed.
 
 - capture_status: native_1080p60_validated
 - controls_speed_gears_status: usable
@@ -297,8 +300,11 @@ evaluation on known corners.
 
 ## Next planning gate
 
-Generic boundary visual-anchor recovery now passes the new BMW plus both representative
-controls. The next reliability work is the historical 2026-09-01 long-capture replay
-through the new lap confirmer, followed by remaining field-quality propagation and
-explicit CSV/API compatibility. Corner analysis remains blocked until those gates
-pass; the next product-facing milestone is still one manually reviewed corner.
+Detailed plans are now available in `coaching-implementation-roadmap.md`. Plan A
+corrects raw lap observations and field provenance before the historical replay,
+then validates the output contract and independent accuracy. Plan B, blocked until A
+passes, implements one manually reviewed corner with an explained reference and
+paired cockpit evidence, seven qualified metrics and a dossier to attach to ChatGPT.
+The user has explicitly rejected a pedal-only dossier as insufficient for trajectory
+coaching. Metric `d/heading` remains separate research under optional plan C; no replay
+parser, reference acquisition, model or new implementation is claimed complete.

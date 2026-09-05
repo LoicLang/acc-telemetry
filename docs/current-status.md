@@ -16,15 +16,17 @@ change. Use `git log` for authoritative commit hashes and dates.
 
 ## Current objective
 
-Review the verified integration defects from the September 5 technical audit and
-agree the raw-observation/provenance correction before relying on the historical
-2026-09-01 confirmer replay or starting corner analysis.
+Implementation planning is complete for a first reference-based corner coaching
+dossier. The user explicitly requires a relevant reference and visibility into the
+driver's trajectory, not just comparisons of pedal traces. Their latest request was
+to prepare a detailed implementation plan for themselves and a future agent; no
+production implementation has started.
 
-The user requested a technical/product evaluation, not implementation. Their first
-desired outcome is a post-session debrief with one priority, an exercise, and a
-measurable success criterion; targeted comparisons support that outcome. A longer
-training programme comes later. The proposed roadmap and replay/ML experiments in
-`docs/technical-audit-2026-09-05.md` are recommendations, not an approved design.
+Start with `docs/coaching-implementation-roadmap.md`. Execute reliability plan A
+before dossier plan B; optional replay plan C remains separate and inactive.
+The first intended result is a post-session debrief with one priority, an exercise,
+and a measurable success criterion, supported by paired cockpit images and a sourced
+reference explanation. Multi-week training and metric lateral ML remain later work.
 
 ### Audit findings superseding earlier reliability claims
 
@@ -43,10 +45,16 @@ training programme comes later. The proposed roadmap and replay/ML experiments i
 - Local evidence: `data/lab/2026-09-05-technical-audit/`, containing integration and
   metric counterexamples plus test logs. All 186 existing tests pass under Python
   3.13.2; documentation discovery and diff checks pass. No production code changed.
-- Next decision: agree a focused correction of raw lap observations and exported
-  field provenance, then validate the historical replay against annotated events.
+- Planning delivered: common specification, detailed reliability/dossier tasks,
+  separate replay feasibility experiment, source-admission rules, seven metric
+  definitions, target CLI/artifact formats and human review gates. All implementation
+  checkboxes remain unchecked. The suggested Spa/Bruxelles case and reference source
+  must be verified on real inputs; no reference has been acquired.
+- Planning verification: documentation discovery succeeds; all 186 existing tests
+  pass, including the four focused documentation-index tests. Local plan links and
+  frontmatter were checked. No executable source/configuration files were changed.
 
-- Active milestone: audit review before historical lap-transition validation
+- Active milestone: plan A prepared; reliability implementation not started
 - Previous milestone status: generic boundary visual-anchor robustness implementation
   and representative validation complete at `4a101a8`; the new BMW and both controls
   pass their replay gates with zero unconfirmed resets, nonlocal jumps, or premature
@@ -55,11 +63,15 @@ training programme comes later. The proposed roadmap and replay/ML experiments i
   merged locally into `main` at `f7888ae`
 - Current validation status: the isolated missing-boundary-dot gap is resolved and the
   first complete BMW lap now contains fused visual progress
-- Active specification: none; this replay validates existing behavior without changing
-  production rules
+- Active specification: `docs/superpowers/specs/2026-09-05-reference-corner-coach-design.md`
+  (planning specification; no production gates newly passed)
 - Last completed specification: `docs/superpowers/specs/2026-09-05-generic-boundary-visual-anchor-design.md`
 - Generic fusion design reference: `docs/superpowers/specs/2026-09-03-generic-s-fusion-design.md`
-- Active plan: none
+- Active plan: `docs/superpowers/plans/2026-09-05-coaching-reliability.md`
+- Downstream plan: `docs/superpowers/plans/2026-09-05-reference-corner-dossier.md`
+  (blocked until gate A passes)
+- Optional research plan: `docs/superpowers/plans/2026-09-05-replay-spatial-feasibility.md`
+  (inactive; not a prerequisite for the visual-reference dossier)
 - Last completed implementation plan: `docs/superpowers/plans/2026-09-05-generic-boundary-visual-anchor.md`
 - Prior completed implementation plan: `docs/superpowers/plans/2026-09-04-temporal-centerline-selection.md`
 - Prior milestone handoff record — Last completed implementation plan: `docs/superpowers/plans/2026-09-04-temporal-centerline-selection.md`
@@ -380,13 +392,14 @@ multiple laps.
 
 ### Quality propagation
 
-Status: fused progress and speed provenance are connected end to end. Complete
-field-level quality for lap number, controls, gear, CSV/API consumers, and analysis
-remains incomplete.
+Status: fused progress provenance reaches records, but the comparison API strips it.
+Speed provenance reaches fusion and is lost in output records. Complete field-level
+quality for lap number, controls, gear, CSV/API consumers, and analysis remains
+incomplete. See the audit and active plan A for reproduced defects and corrections.
 
 `TelemetrySample` supports field-level observed, missing, held, interpolated,
-predicted, fused, and anomalous states. Progress and speed use this evidence; the
-remaining fields and consumers do not yet propagate it completely.
+predicted, fused, and anomalous states. The available contract does not imply every
+extractor and consumer uses it correctly.
 
 ## Local evidence
 
@@ -424,11 +437,12 @@ committed.
 
 ## Priority order
 
-1. Agree and address the audit's raw-observation/provenance defects, then replay the
-   historical 2026-09-01 long capture against independent annotated boundaries.
-2. Propagate field-level quality and anomalies for lap number, gear, and controls.
-3. Version or document CSV/API compatibility for the expanded progress contract.
-4. Only after those gates pass, validate one manually reviewed corner segment.
+1. Execute plan A0/A1: baseline and raw lap observations, then follow plan A through
+   provenance, bounded comparison and independent historical/recent validation.
+2. Only when A passes, execute plan B: acquire/admit a reference, review physical
+   landmarks and trajectory images, compute seven metrics and export a ChatGPT dossier.
+3. Review a real coaching response and measure the exercise at a subsequent session.
+4. Consider optional plan C separately; no dataset/ML implementation is active.
 
 Corner segmentation, driving-event extraction, reference comparison, coaching
 rules, dashboards, and generative feedback remain blocked until the reliability
@@ -436,11 +450,7 @@ gates pass on controlled Spa evidence.
 
 ## Current next action
 
-Review `docs/technical-audit-2026-09-05.md` with the user and define the focused
-raw-lap-observation and field-provenance correction. No implementation plan is active.
-After correcting the observation path, replay
-`data/sessions/2026/2026-09-01_spa_ps5_braking-baseline-aborted/raw/part-0.mov`
-end to end with `ps5_full_map_720p`, then compare raw lap observations, confirmed
-boundaries, and annotated actual crossings against the recorded false-transition
-failure. Do not start corner analysis until that historical confirmer gate and the
-remaining field-quality gate pass. Push only after explicit user request.
+When implementation is requested, execute task A0 in
+`docs/superpowers/plans/2026-09-05-coaching-reliability.md`, then task A1. Do not start
+plan B until gate A passes. Planning is complete; code, gates, reference acquisition
+and real coaching evaluation are not. Push only after explicit user request.
