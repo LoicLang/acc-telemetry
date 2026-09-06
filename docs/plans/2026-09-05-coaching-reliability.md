@@ -419,6 +419,12 @@ Contract and evidence paths: `docs/capture-annotations.md`.
   timing, N1 neutral, R1 reverse). `proposals.json` keeps all proposals unreviewed;
   this is a convenience for human review, not A6 acceptance or A7 truth.
 
+First user feedback is recorded per claim in the ignored `run-002/reports/user-feedback.json`.
+Five intermediate pedal values now have independent manual bar-length proposals;
+their calibration/tolerance still need review. Throttle release is distinct from
+first visible braking, and L2 timer reset is distinct from delayed lap-counter update.
+The user feedback does not check off the full A6 corpus gate.
+
 ### A7 — Rejouer l'historique et mesurer le gate A
 
 **Créer :** `scripts/validate_capture.py`, `tests/test_capture_validation.py`.

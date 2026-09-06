@@ -157,3 +157,16 @@ source hash, method and `reviewed: false`; it is not an annotation file and is n
 used by A7. The generated contact sheets and `B2-reading.png` were visually checked
 for readability. All sources remain development material previously used to tune the
 extractor. This package intentionally does not claim a holdout or corpus acceptance.
+
+The subsequent user response is retained in `run-002/reports/user-feedback.json`.
+It confirms specific throttle-release markers, reported new-lap frames and N1
+stationarity, not blanket approval of all 501 frames. Intermediate bars that were
+previously unquantified now have manual pixel-length estimates and ruler images.
+The apparent full-bar reference is distinguished from the wider extraction ROI;
+neither that calibration nor the new percentages is independently validated yet.
+No production detector output was used as the annotation reference.
+
+The updated portal keeps throttle release separate from first visible braking.
+For L2, the reported lap start/timer reset precedes the numeric-counter update by
+four frames. Do not silently label the old counter digit as the new lap, or use
+counter-update latency as physical crossing error without specifying that distinction.

@@ -97,6 +97,20 @@ reference explanation. Multi-week training and metric lateral ML remain later wo
 
 ## Recently completed
 
+- The user reviewed the first A6 window batch. Their throttle-release markers,
+  reported lap starts and N1 stationary interval are retained in ignored
+  `data/lab/coaching-reliability/run-002/reports/user-feedback.json` with per-claim
+  scope/source identity. These confirmations do not approve every field or frame.
+- Intermediate pedal proposals are now quantified from manually located native-pixel
+  bar edges and apparently full reference bars, independently of the production
+  extractor. The updated portal exposes rulers/calculations; percentages and their
+  proposed tolerance remain assistant estimates pending review. Do not replace
+  confirmed throttle release with first brake pressure: they are different events.
+- L2 needs separate event definitions: the user's new-lap marker coincides with the
+  visible timer reset, while the numeric lap counter updates four frames later.
+  Keep that display delay explicit when comparing A7 lap events. The feedback and
+  updated proposals have not been promoted to fully reviewed annotation files.
+
 - A6 tooling prepares source-hashed FFprobe manifests, 10-second selection sheets and
   native frame windows in new child directories. Labels start null/unreviewed; the
   validator refuses unreviewed, invalid or contradictory inputs and exports reviewed
@@ -566,10 +580,13 @@ second prepare command. Have the user review labels/visibility/physical passages
 repeat across captures, and obtain an untouched holdout recording. Corpus minima,
 lineage, holdout and reviewed counts are still unmet; see `capture-annotations.md`.
 A6 implementation tests are complete, but A6 human corpus acceptance is unchecked.
-For a shorter first review, use the prepared portal
-`data/lab/coaching-reliability/run-002/reports/START_HERE.html`: six windows, 501
-native frames and 16 unreviewed proposals. Correct or reject those proposals by
-identifier/frame; they do not become labels until explicitly reviewed.
+The first user feedback is now recorded. Use the updated portal
+`data/lab/coaching-reliability/run-002/reports/START_HERE.html` and its
+`user-feedback.json` before asking for any repeat review. Preserve user-confirmed
+throttle releases, reported lap starts and N1 stationarity with their exact scope.
+Next review the five manually quantified intermediate pedal values and distinguish
+physical lap start, timer reset and numeric-counter update before A7 matching.
+Full corpus counts, recording lineage and untouched holdout remain pending.
 Continue on `codex/coaching-reliability`; A5 is `a4c021b`, use Git history for A6.
 A5 evidence paths were rechecked. Gate A remains unvalidated, B blocked and C inactive.
 Push to origin is authorized; no merge to main requested.
