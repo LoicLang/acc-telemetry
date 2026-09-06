@@ -49,6 +49,6 @@ percentages use only nonmissing samples. Local reports accept unavailable contro
 
 Web processing uses the same strict pipeline. Its Python service accepts an optional
 `visibility_json` path; the HTTP upload/process forms do not yet expose annotations,
-so their controls default to missing. Metadata preserves null averages. The typed
-comparison endpoint remains pending A5 and must not be treated as coaching-ready.
+so their controls default to missing. Metadata preserves null averages. A5 makes the typed
+comparison endpoint nullable and preserves provenance; it remains diagnostic only.
 The reliability gate remains pending independent annotations and validation in A6/A7.

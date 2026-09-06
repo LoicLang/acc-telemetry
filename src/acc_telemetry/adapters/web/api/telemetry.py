@@ -170,7 +170,7 @@ async def get_telemetry_summary(video_name: str):
         raise HTTPException(status_code=404, detail="Telemetry data not found")
 
     # Generate summary using visualizer
-    from ...interactive_visualizer import InteractiveTelemetryVisualizer
+    from acc_telemetry.visualization.interactive import InteractiveTelemetryVisualizer
     visualizer = InteractiveTelemetryVisualizer()
     summary = visualizer.generate_summary(df)
 

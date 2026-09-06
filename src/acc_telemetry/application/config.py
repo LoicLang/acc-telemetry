@@ -103,6 +103,12 @@ class ProgressSettings:
 
 
 @dataclass(frozen=True)
+class ComparisonSettings:
+    max_position_gap_s: float
+    max_time_gap_s: float
+
+
+@dataclass(frozen=True)
 class ProfileSettings:
     name: str
     rois: Mapping[str, Mapping[str, int]]
@@ -118,6 +124,7 @@ class TelemetrySettings:
     normalization: NormalizationSettings
     progress: ProgressSettings
     profiles: Mapping[str, ProfileSettings]
+    comparison: ComparisonSettings
 
     def profile(self, name: str) -> ProfileSettings:
         try:
@@ -454,10 +461,14 @@ def load_settings(root: Path | str | None = None) -> TelemetrySettings:
             sample_count=sample_count,
         )
 
+    comparison_raw = _mapping(telemetry.get("comparison"), "comparison")
     return TelemetrySettings(
         position=PositionSettings(frequency_threshold, max_jump),
         ocr=OCRSettings(int(max_speed_delta), int(recovery_tolerance)),
         normalization=NormalizationSettings(speed_min, speed_max, pedal_min, pedal_max),
+        comparison=ComparisonSettings(
+            _fraction(comparison_raw, "max_position_gap_s", "comparison"),
+            _positive(comparison_raw, "max_time_gap_s", "comparison")),
         progress=progress,
         profiles=MappingProxyType(profiles),
     )

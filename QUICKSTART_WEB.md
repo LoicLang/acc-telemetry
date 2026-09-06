@@ -1,5 +1,11 @@
 # Quick Start Guide - Web Application
 
+> Current checkout (2026-09-06): the backend and Plotly reports are present, but the
+> `frontend/` directory referenced below is absent. Frontend setup instructions are
+> historical and require separately supplied client sources. A5 API controls are
+> nullable; compatibility of that older UI has not been verified. See
+> [comparison contract](docs/comparison-reliability.md).
+
 This guide will help you quickly get the ACC Telemetry Extractor web application up and running.
 
 ## Prerequisites

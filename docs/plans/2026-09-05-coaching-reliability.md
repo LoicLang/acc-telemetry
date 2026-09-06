@@ -301,11 +301,11 @@ recorded settings match applied settings. Contract: `docs/session-artifacts.md`.
 `adapters/web/models.py`, `adapters/web/api/telemetry.py`, `config/telemetry.yaml`,
 `application/config.py`.
 
-- [ ] RED : reprendre deux lignes entre 20 et 30% ; aucun point valide en dehors.
+- [x] RED : reprendre deux lignes entre 20 et 30% ; aucun point valide en dehors.
   Tester un trou interne, des doublons, une position qui recule, valeurs non finies,
   et aucune couverture commune. Le modèle API doit conserver champs modernes/null.
-- [ ] Lancer les deux nouveaux fichiers de test ; constater les régressions audit.
-- [ ] Implémenter une fonction pure (liste/NumPy, pas Plotly) avec ce contrat :
+- [x] Lancer les deux nouveaux fichiers de test ; constater les régressions audit.
+- [x] Implémenter une fonction pure (liste/NumPy, pas Plotly) avec ce contrat :
 
 ```python
 def bounded_interpolate(x, y, targets, *, max_x_gap):
@@ -346,10 +346,16 @@ def bounded_interpolate(x, y, targets, *, max_x_gap):
   planification ; ne pas introduire TestClient sans déclarer sa dépendance de test.
   Ajouter un smoke HTTP manuel de comparaison et résumé avec Uvicorn/curl, en notant
   que le test direct de fonction seul ne couvre pas le routage HTTP.
-- [ ] Recalculer le delta uniquement sur positions communes admises et temps depuis
+- [x] Recalculer le delta uniquement sur positions communes admises et temps depuis
   la frontière de tour confirmée, pas depuis le premier point survivant. Masquer les
   trous dans Plotly. Vérification commune et tests de compatibilité CSV/API.
-- [ ] Commit `fix: preserve evidence coverage in comparisons and API`.
+- [x] Commit `fix: preserve evidence coverage in comparisons and API`.
+
+A5 verification (2026-09-06): 15 focused tests and 243 full-suite tests pass.
+Real Uvicorn/curl comparison and summary requests return 200 with provenance/nulls.
+The available Plotly consumer is tested for null gap separators; no `frontend/` or
+tracked JS/TS client exists here, so older external UI compatibility is unverified,
+not assumed. Details: `docs/comparison-reliability.md`. Gate A remains pending A6/A7.
 
 ### A6 — Préparer des annotations indépendantes
 

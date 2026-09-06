@@ -61,7 +61,7 @@ not a calibrated probability. A2 preserves speed/gear/confirmed-lap quality in
 is unchanged, with median/recovery reasons exposed; production gear uses fresh
 symbols and marks N/R unsupported. Modern numeric normalization rejects NaN/inf;
 CSV nulls must be imported as empty strings or None (the CSV loader does this), not
-pandas-inferred NaN. The comparison API still omits modern progress provenance. `TelemetrySample` is an available contract,
+pandas-inferred NaN. The comparison API now retains modern progress provenance and nullable controls. `TelemetrySample` is an available contract,
 now an application result, but not yet the universal consumer boundary. See
 `technical-audit-2026-09-05.md` before relying on field quality for analysis.
 
@@ -77,6 +77,12 @@ provide those settings. `session_artifacts.py` writes and reloads `telemetry-v2`
 with source/configuration/module hashes and exclusive atomic directory publication.
 See `session-artifacts.md` for envelope contracts, optional adapter flags and the
 separation between CFR/PTS checks and the still-pending independent reliability gate.
+
+A5 delegates position alignment to pure `analysis/alignment.py`: temporal runs,
+bounded interpolation, explicit channel quality and common-coverage deltas relative
+to confirmed lap origins. Plotly masks gaps, and typed API responses preserve full
+evidence. Legacy unqualified data remains diagnostic only. See
+`comparison-reliability.md` for admission rules and absent frontend limitations.
 
 ## Generic position estimation
 

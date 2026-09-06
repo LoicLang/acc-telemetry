@@ -46,3 +46,7 @@ progress:
   calibration:
     max_missing_speed_fraction: 0.01
     max_relative_mad: 0.03
+
+comparison:
+  max_position_gap_s: 0.005  # normalized longitudinal s, not seconds
+  max_time_gap_s: 0.10

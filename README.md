@@ -81,8 +81,8 @@ Compatibility modules under `src/` keep older imports working during the migrati
 - OCR and map observations can be missing or anomalous and must not be treated as unquestioned truth.
 - A1/A2 preserve fresh lap evidence, confirmation timing and speed/gear/lap quality
   through CSV normalization. A3 requires [reviewed control visibility](docs/control-visibility.md)
-  (`--visibility-json`); otherwise controls remain missing. Independent video validation
-  and comparison/API provenance remain pending. Current replay checks establish internal consistency, not independent
+  (`--visibility-json`); otherwise controls remain missing. A5 bounds comparisons and preserves API provenance/nulls. Independent video
+  validation remains pending. Current replay checks establish internal consistency, not independent
   spatial accuracy; see the technical audit before using comparisons for coaching.
 
 Optional [versioned session artifacts](docs/session-artifacts.md) are available with

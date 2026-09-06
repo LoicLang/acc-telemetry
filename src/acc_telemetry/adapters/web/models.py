@@ -1,7 +1,7 @@
 """Pydantic models for API request/response validation."""
 
 from typing import Optional, List
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, ConfigDict
 
 
 class VideoProcessRequest(BaseModel):
@@ -48,11 +48,23 @@ class TelemetryDataPoint(BaseModel):
     track_position: Optional[float] = None
     speed: Optional[float] = None
     gear: Optional[int] = None
-    throttle: float
-    brake: float
-    steering: float
-    tc_active: bool
-    abs_active: bool
+    model_config = ConfigDict(extra="allow", allow_inf_nan=False)
+    throttle: Optional[float] = None
+    brake: Optional[float] = None
+    steering: Optional[float] = None
+    tc_active: Optional[bool] = None
+    abs_active: Optional[bool] = None
+    s_odometry: Optional[float] = None
+    s_visual: Optional[float] = None
+    s_fused: Optional[float] = None
+    s_uncertainty: Optional[float] = None
+    s_source: Optional[str] = None
+    s_reasons: Optional[str] = None
+    quality_hint: Optional[str] = None
+    field_reasons: Optional[str | dict] = None
+    raw_lap_number: Optional[int] = None
+    speed_raw: Optional[str | float | int] = None
+    gear_raw: Optional[str | float | int] = None
 
 
 class JobStatus(BaseModel):

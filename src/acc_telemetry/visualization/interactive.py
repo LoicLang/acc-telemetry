@@ -11,6 +11,9 @@ from datetime import datetime
 from pathlib import Path
 from typing import List, Dict, Optional
 
+from acc_telemetry.analysis.alignment import resample_records, common_time_delta
+from acc_telemetry.application.config import load_settings
+
 
 class InteractiveTelemetryVisualizer:
     """Handles interactive telemetry data visualization and export using Plotly."""
@@ -990,73 +993,35 @@ class InteractiveTelemetryVisualizer:
         return str(filepath)
     
     def _resample_lap_by_position(self, lap_df: pd.DataFrame, position_step: float = 0.5) -> pd.DataFrame:
-        """
-        Resample a single lap's telemetry data at fixed track position intervals.
-        
-        This allows position-based comparison between laps by ensuring both laps
-        have data points at the same track positions (e.g., 0%, 0.5%, 1.0%, ..., 100%).
-        
-        Args:
-            lap_df: DataFrame for a single lap with track_position column
-            position_step: Interval between position samples (default: 0.5% = 200 samples per lap)
-        
-        Returns:
-            Resampled DataFrame with columns: position, throttle, brake, steering, speed, time, frame
-        """
-        # Filter out rows with missing track_position
-        valid_df = lap_df[lap_df['track_position'].notna()].copy()
-        
-        if valid_df.empty:
-            return pd.DataFrame()
-        
-        # Sort by track_position to ensure interpolation works correctly
-        valid_df = valid_df.sort_values('track_position')
-        
-        # Create target positions from 0 to 100% at fixed intervals
-        target_positions = np.arange(0.0, 100.0 + position_step, position_step)
-        
-        # Interpolate each telemetry channel at target positions
-        resampled_data = {
-            'position': target_positions,
-            'throttle': np.interp(target_positions, valid_df['track_position'], valid_df['throttle']),
-            'brake': np.interp(target_positions, valid_df['track_position'], valid_df['brake']),
-            'steering': np.interp(target_positions, valid_df['track_position'], valid_df['steering']),
-            'time': np.interp(target_positions, valid_df['track_position'], valid_df['time']),
-            'frame': np.interp(target_positions, valid_df['track_position'], valid_df['frame'])
-        }
-        
-        # Add speed if available
-        if 'speed' in valid_df.columns:
-            resampled_data['speed'] = np.interp(target_positions, valid_df['track_position'], valid_df['speed'])
-        
-        return pd.DataFrame(resampled_data)
-    
-    def _calculate_time_delta(self, lap_a_df: pd.DataFrame, lap_b_df: pd.DataFrame, fps: float = 30.0) -> np.ndarray:
-        """
-        Calculate time delta between two laps at each track position.
-        
-        Delta = time_lap_a - time_lap_b
-        - Positive delta: Lap A is slower (behind) at this position
-        - Negative delta: Lap A is faster (ahead) at this position
-        
-        Args:
-            lap_a_df: Resampled DataFrame for lap A (baseline)
-            lap_b_df: Resampled DataFrame for lap B (comparison)
-            fps: Video frames per second (for frame-based calculation)
-        
-        Returns:
-            Array of time deltas in seconds at each position point
-        """
-        # Use time-based calculation (more accurate than frame-based)
-        # Subtract the starting time to get relative lap times
-        lap_a_relative_time = lap_a_df['time'].values - lap_a_df['time'].values[0]
-        lap_b_relative_time = lap_b_df['time'].values - lap_b_df['time'].values[0]
-        
-        # Delta = how much slower lap A is compared to lap B at each position
-        time_delta = lap_a_relative_time - lap_b_relative_time
-        
-        return time_delta
-    
+        """Diagnostic comparison with explicit quality and bounded temporal runs."""
+        if not np.isfinite(position_step) or not 0 < position_step <= 100:
+            raise ValueError("invalid position step")
+        settings = load_settings()
+        targets = np.arange(0., 100. + position_step, position_step)
+        targets = targets[targets <= 100.] / 100
+        return pd.DataFrame(resample_records(lap_df.to_dict('records'), targets,
+            max_position_gap_s=settings.comparison.max_position_gap_s,
+            max_time_gap_s=settings.comparison.max_time_gap_s,
+            max_s_uncertainty=settings.progress.fusion.unavailable_uncertainty))
+
+    def _calculate_time_delta(self, lap_a_df, lap_b_df, fps=30.0):
+        """Common admitted positions; unknown confirmed origins yield no delta."""
+        return common_time_delta(lap_a_df, lap_b_df)
+
+    @staticmethod
+    def _trace_coordinates(data, field):
+        """Insert null separators even when a hole falls between grid targets."""
+        x, y = [], []
+        previous = None
+        for position, value, run in zip(data['position'], data[field], data[field + '_run']):
+            if previous is not None and previous != run:
+                x.append(None)
+                y.append(None)
+            x.append(position)
+            y.append(value if np.isfinite(value) else None)
+            previous = run
+        return dict(x=x, y=y, connectgaps=False)
+
     def plot_position_based_comparison(self, df: pd.DataFrame, filename: Optional[str] = None,
                                       position_step: float = 0.5, fps: float = 30.0) -> str:
         """
@@ -1093,7 +1058,7 @@ class InteractiveTelemetryVisualizer:
             raise ValueError(f"DataFrame missing required columns: {missing_cols}")
         
         # Filter to only rows with valid lap_number and track_position
-        valid_df = df[(df['lap_number'].notna()) & (df['track_position'].notna())].copy()
+        valid_df = df[df['lap_number'].notna()].copy()
         
         if valid_df.empty:
             raise ValueError("No valid data with both lap_number and track_position")
@@ -1150,9 +1115,19 @@ class InteractiveTelemetryVisualizer:
             lap_a_data = resampled_laps[lap_a]
             lap_b_data = resampled_laps[lap_b]
             
+            lap_a_data, lap_b_data = lap_a_data.copy(), lap_b_data.copy()
+            for field in ('throttle', 'brake', 'steering', 'speed', 'time'):
+                common = np.isfinite(lap_a_data[field]) & np.isfinite(lap_b_data[field])
+                lap_a_data.loc[~common, field] = np.nan
+                lap_b_data.loc[~common, field] = np.nan
+
             # Calculate time delta
             time_delta = self._calculate_time_delta(lap_a_data, lap_b_data, fps)
             
+            delta_data = lap_a_data.copy()
+            delta_data['delta'] = time_delta
+            delta_data['delta_run'] = list(zip(lap_a_data['time_run'], lap_b_data['time_run']))
+
             # Determine colors
             color_a = colors[0]  # Green for first lap
             color_b = colors[1]  # Red for second lap
@@ -1167,8 +1142,7 @@ class InteractiveTelemetryVisualizer:
             # Lap A throttle
             fig.add_trace(
                 go.Scatter(
-                    x=lap_a_data['position'],
-                    y=lap_a_data['throttle'],
+                    **self._trace_coordinates(lap_a_data, 'throttle'),
                     mode='lines',
                     name=f'Lap {lap_a}',
                     line=dict(color=color_a, width=2),
@@ -1184,8 +1158,7 @@ class InteractiveTelemetryVisualizer:
             # Lap B throttle
             fig.add_trace(
                 go.Scatter(
-                    x=lap_b_data['position'],
-                    y=lap_b_data['throttle'],
+                    **self._trace_coordinates(lap_b_data, 'throttle'),
                     mode='lines',
                     name=f'Lap {lap_b}',
                     line=dict(color=color_b, width=2),
@@ -1201,8 +1174,7 @@ class InteractiveTelemetryVisualizer:
             # === BRAKE TRACES (Row 2) ===
             fig.add_trace(
                 go.Scatter(
-                    x=lap_a_data['position'],
-                    y=lap_a_data['brake'],
+                    **self._trace_coordinates(lap_a_data, 'brake'),
                     mode='lines',
                     name=f'Lap {lap_a}',
                     line=dict(color=color_a, width=2),
@@ -1217,8 +1189,7 @@ class InteractiveTelemetryVisualizer:
             
             fig.add_trace(
                 go.Scatter(
-                    x=lap_b_data['position'],
-                    y=lap_b_data['brake'],
+                    **self._trace_coordinates(lap_b_data, 'brake'),
                     mode='lines',
                     name=f'Lap {lap_b}',
                     line=dict(color=color_b, width=2),
@@ -1234,8 +1205,7 @@ class InteractiveTelemetryVisualizer:
             # === STEERING TRACES (Row 3) ===
             fig.add_trace(
                 go.Scatter(
-                    x=lap_a_data['position'],
-                    y=lap_a_data['steering'],
+                    **self._trace_coordinates(lap_a_data, 'steering'),
                     mode='lines',
                     name=f'Lap {lap_a}',
                     line=dict(color=color_a, width=2),
@@ -1250,8 +1220,7 @@ class InteractiveTelemetryVisualizer:
             
             fig.add_trace(
                 go.Scatter(
-                    x=lap_b_data['position'],
-                    y=lap_b_data['steering'],
+                    **self._trace_coordinates(lap_b_data, 'steering'),
                     mode='lines',
                     name=f'Lap {lap_b}',
                     line=dict(color=color_b, width=2),
@@ -1268,8 +1237,7 @@ class InteractiveTelemetryVisualizer:
             if 'speed' in lap_a_data.columns and 'speed' in lap_b_data.columns:
                 fig.add_trace(
                     go.Scatter(
-                        x=lap_a_data['position'],
-                        y=lap_a_data['speed'],
+                        **self._trace_coordinates(lap_a_data, 'speed'),
                         mode='lines',
                         name=f'Lap {lap_a}',
                         line=dict(color=color_a, width=2),
@@ -1284,8 +1252,7 @@ class InteractiveTelemetryVisualizer:
                 
                 fig.add_trace(
                     go.Scatter(
-                        x=lap_b_data['position'],
-                        y=lap_b_data['speed'],
+                        **self._trace_coordinates(lap_b_data, 'speed'),
                         mode='lines',
                         name=f'Lap {lap_b}',
                         line=dict(color=color_b, width=2),
@@ -1302,12 +1269,10 @@ class InteractiveTelemetryVisualizer:
             # Color: green where lap A is faster (negative delta), red where lap A is slower (positive delta)
             fig.add_trace(
                 go.Scatter(
-                    x=lap_a_data['position'],
-                    y=time_delta,
+                    **self._trace_coordinates(delta_data, 'delta'),
                     mode='lines',
                     name=f'Delta (Lap {lap_a} - Lap {lap_b})',
                     line=dict(color='#9B59B6', width=2),
-                    fill='tozeroy',
                     fillcolor='rgba(155, 89, 182, 0.3)',
                     legendgroup=f'comparison_{comparison_idx}',
                     showlegend=False,
@@ -1387,6 +1352,9 @@ class InteractiveTelemetryVisualizer:
             xaxis5=dict(rangeslider=dict(visible=False))
         )
         
+        fig.add_annotation(text="Diagnostic comparison: gaps are unavailable; delta requires confirmed lap origins.",
+                           xref="paper", yref="paper", x=0, y=-0.12, showarrow=False)
+
         # Generate filename
         if filename is None:
             timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
