@@ -176,3 +176,25 @@ snapshots that approval with hashes of the reviewed proposals/feedback: 16 readi
 five intermediate estimates with tolerance and the event clarifications. The portal
 marks this first review complete. The approval is scoped; it does not review every
 field in every frame, establish recording lineage, or satisfy corpus/holdout gates.
+
+## Second review batch (2026-09-07)
+
+`data/lab/coaching-reliability/run-003/reports/START_HERE.html` offers eight new cards
+with three proposed readings each (24 total): B3/B4/B5/B6 braking, G1/G2 release or
+throttle modulation, L3 displayed lap transition, and D1 visibility near a barrier.
+The user can respond by card/frame in chat; no JSON editing is required.
+
+Full frame windows are recorded in `run-003/processed/review-index.json` and the two
+selection JSON files. They contain 748 BMW and 724 incident-clip images (1,472 total).
+The portal shows cropped native HUD/counter evidence plus a frame-by-frame viewer.
+Fifteen intermediate pedal estimates retain hand-picked pixel endpoints and the
+144-pixel reference scale accepted for annotation in batch 1. The stated tolerance
+remains an annotation estimate, not a sensor accuracy claim.
+
+`run-003/reports/proposals.json` keeps every new reading unreviewed. D1's driving
+incident does not automatically count as an unreadable HUD or a degraded measurement.
+The first batch approval remains unchanged; these 24 additional candidates neither
+complete the 100-per-field requirement nor establish the event/degraded/holdout gates.
+Native dimensions, image hashes and all static links were checked. The browser tool
+could identify the tab but could not inspect this file URL under its URL policy;
+interactive browser validation is not claimed.

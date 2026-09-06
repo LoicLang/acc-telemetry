@@ -8,7 +8,7 @@ read_when:
 
 # Current status
 
-Last verified: 2026-09-06
+Last verified: 2026-09-07
 
 This document is the mandatory living handoff for the repository. Update it from
 verified evidence whenever active work, blockers, stage gates, or the next action
@@ -97,6 +97,15 @@ reference explanation. Multi-week training and metric lateral ML remain later wo
 
 ## Recently completed
 
+- A6 review batch 2 is prepared in ignored `run-003/reports/START_HERE.html`: eight
+  new cards (B3/B4/G1/B5/G2/B6/L3/D1), 24 manual reading proposals and 1,472 native
+  frames from the same two development sources. Fifteen intermediate pedal values
+  have manual endpoint calculations against the prior reference scale; none uses
+  production OCR/control outputs. Visibility is explicitly proposed for review.
+- The first batch approval is preserved. Batch 2 is entirely unreviewed and does not
+  satisfy corpus minima/holdout by itself. Native images, manual rulers and all static
+  page links were checked. Browser automation saw the new tab but its file-URL policy
+  blocked further UI inspection; no interactive-browser verification is claimed.
 - The user has now accepted the displayed first review batch ("okay tout est bon ce
   coup la"). The immutable ignored `run-002/reports/approval.json` snapshots 16
   accepted readings, five intermediate bar estimates with tolerance, and the scoped
@@ -589,10 +598,13 @@ The first user feedback is now recorded. Use the updated portal
 `data/lab/coaching-reliability/run-002/reports/START_HERE.html` and its
 `user-feedback.json` before asking for any repeat review. Preserve user-confirmed
 throttle releases, reported lap starts and N1 stationarity with their exact scope.
-The user accepted this first displayed batch; its authoritative approval is
-`run-002/reports/approval.json`. Next consolidate these accepted values with their
-review scope, then prepare additional independent annotation windows for the unmet
-corpus minima. Preserve the physical-start/timer-reset/counter-update distinction.
+The user accepted the first batch; its authoritative approval is
+`run-002/reports/approval.json`. The next action is user review of the prepared second
+batch at `run-003/reports/START_HERE.html`: confirm/correct the three displayed readings
+per card and their visibility, then specify event frames where possible. Record those
+responses without approving the other native frames. Preserve the physical-start,
+timer-reset and numeric-counter-update distinction. No JSON editing is required of
+the user; the agent records their scoped responses.
 Full corpus counts, recording lineage and untouched holdout remain pending.
 Continue on `codex/coaching-reliability`; A5 is `a4c021b`, use Git history for A6.
 A5 evidence paths were rechecked. Gate A remains unvalidated, B blocked and C inactive.

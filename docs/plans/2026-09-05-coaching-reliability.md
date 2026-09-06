@@ -429,6 +429,12 @@ The user feedback does not check off the full A6 corpus gate.
   estimates/tolerances and scoped event clarifications. Snapshot:
   `run-002/reports/approval.json` (ignored). Full A6 corpus acceptance remains unchecked.
 
+- [x] Prepare batch 2 (2026-09-07): `run-003/reports/START_HERE.html`, eight cards,
+  24 unreviewed manual readings, fifteen intermediate pedal calculations and 1,472
+  native frames. Static image/hash/link checks pass; the first approval is preserved.
+- [ ] Obtain user review of batch 2 and consolidate only the explicitly accepted
+  fields/events. This is additional development material, not holdout or corpus acceptance.
+
 ### A7 — Rejouer l'historique et mesurer le gate A
 
 **Créer :** `scripts/validate_capture.py`, `tests/test_capture_validation.py`.
