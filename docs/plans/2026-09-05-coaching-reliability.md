@@ -365,11 +365,11 @@ not assumed. Details: `docs/comparison-reliability.md`. Gate A remains pending A
 **Modifier :** `extraction/video.py` (préflight, statut de décodage),
 `tests/test_video_sampling.py`.
 
-- [ ] RED : timestamps non croissants, mauvaise résolution, decode incomplet,
+- [x] RED : timestamps non croissants, mauvaise résolution, decode incomplet,
   annotation hors vidéo et intervalle de frames inversé doivent invalider le run.
   Une absence de vérité terrain doit donner `not_evaluated`, jamais erreur zéro.
-- [ ] Lancer le fichier ciblé et `test_video_sampling.py`.
-- [ ] Implémenter deux sous-commandes :
+- [x] Lancer le fichier ciblé et `test_video_sampling.py`.
+- [x] Implémenter deux sous-commandes :
 
 ```bash
 PYTHONPATH=src .venv/bin/python scripts/annotate_capture.py prepare \
@@ -396,10 +396,22 @@ PYTHONPATH=src .venv/bin/python scripts/annotate_capture.py validate \
   deux captures minimum ; ne pas répartir les frames voisines entre dev et holdout.
   Ces tailles sont un minimum de PoC, pas une preuve de généralisation.
   L'agent prépare les images ; l'utilisateur confirme labels, visibilité et repères.
-- [ ] Tester génération sur une vidéo **synthétique temporaire**, aucune vidéo privée
+- [x] Tester génération sur une vidéo **synthétique temporaire**, aucune vidéo privée
   requise par unittest. Config : speed MAE2/P95 5, pedal MAE5 points, event P95 .10s,
   min coverage .95 ; tests de paramètres invalides, y compris NaN.
-- [ ] Commit `feat: add independent video annotation and validation inputs`.
+- [x] Commit `feat: add independent video annotation and validation inputs`.
+
+A6 software verification (2026-09-06): 255 tests pass, including 15 focused tests.
+Source-hashed real preparation produces 80 BMW, 32 clean-clip and 50 crash-clip
+thumbnails; a three-frame native preview leaves original labels unchanged. Comparing
+MOV coded counts to decoded output was corrected after a RED discard-packet test:
+non-discard presentation PTS are matched instead; genuine missing output still fails.
+Contract and evidence paths: `docs/capture-annotations.md`.
+
+- [ ] **A6 corpus acceptance remains pending:** user-reviewed labels/visibility and
+  physical passages, minimum readable/degraded/event counts, recording lineage and
+  untouched holdout. Prepared images do not satisfy this human review requirement;
+  `a6-corpus-readiness.json` is `not_evaluated`. Do not claim gate A or real A7 validation.
 
 ### A7 — Rejouer l'historique et mesurer le gate A
 

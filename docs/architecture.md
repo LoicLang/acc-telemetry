@@ -84,6 +84,13 @@ to confirmed lap origins. Plotly masks gaps, and typed API responses preserve fu
 evidence. Legacy unqualified data remains diagnostic only. See
 `comparison-reliability.md` for admission rules and absent frontend limitations.
 
+A6 separates annotation preparation from measurement inference. `capture_annotations`
+prepares unreviewed media and source manifests; pure `analysis/validation.py` validates
+human labels/corpus readiness. `validation_config.py` owns independent thresholds.
+Video preflight compares presentation packet PTS with decoded frames and profile
+resolution; runtime decode status remains visible. See `capture-annotations.md` for
+MOV discard-packet handling and the human-review gate that is still pending.
+
 ## Generic position estimation
 
 The implemented estimator is generic across circuits using the static full-map HUD.

@@ -57,7 +57,7 @@ reference explanation. Multi-week training and metric lateral ML remain later wo
   pass, including the four focused documentation-index tests. Local plan links and
   frontmatter were checked. No executable source/configuration files were changed.
 
-- Active milestone: A0–A5 complete; A6 independent annotations next
+- Active milestone: A6 tooling and initial sheets ready; reviewed corpus pending
 - Previous milestone status: generic boundary visual-anchor robustness implementation
   and representative validation complete at `4a101a8`; the new BMW and both controls
   pass their replay gates with zero unconfirmed resets, nonlocal jumps, or premature
@@ -96,6 +96,25 @@ reference explanation. Multi-week training and metric lateral ML remain later wo
    follow `Current next action` below.
 
 ## Recently completed
+
+- A6 tooling prepares source-hashed FFprobe manifests, 10-second selection sheets and
+  native frame windows in new child directories. Labels start null/unreviewed; the
+  validator refuses unreviewed, invalid or contradictory inputs and exports reviewed
+  A3 visibility. Validation targets and corpus minima are configured separately.
+- Presentation preflight rejects wrong resolution, incompatible CFR/PTS and missing
+  expected frames. Real MOV evidence exposed coded `nb_frames` including discard
+  packets, not missing display frames: 1 BMW, 92 clean-clip and 14 crash-clip packets.
+  A RED regression preceded matching non-discard packet PTS to decoded frames.
+  Early EOF remains rejected; pipeline metadata now retains decode status.
+- Initial local sheets are prepared: BMW 80 images, clean clip 32, crash clip 50.
+  Three native BMW frames are exported as a second-pass preview without changing
+  initial labels. All remain unreviewed/development; no independent labels or holdout
+  have been approved. See `capture-annotations.md` for paths and the review contract.
+- Verification: all 255 tests pass, including 15 focused annotation/video tests,
+  synthetic two-pass export, invalid-label rejection and visibility export. Docs,
+  compilation and diff checks pass. Logs are ignored as `data/lab/coaching-reliability/
+  run-001/a6-*`; corpus readiness is explicitly `not_evaluated`. No raw video changed.
+
 
 - A5 moves bounded interpolation into pure analysis. Partial laps are not extended,
   missing/held/anomalous evidence breaks runs, duplicates and overlapping passages
@@ -528,7 +547,7 @@ committed.
 
 ## Priority order
 
-1. Execute A6: independent annotations, then A7 historical/recent validation.
+1. Complete A6 human review and corpus selection, then A7 historical/recent validation.
 2. Only when A passes, execute plan B: acquire/admit a reference, review physical
    landmarks and trajectory images, compute seven metrics and export a ChatGPT dossier.
 3. Review a real coaching response and measure the exercise at a subsequent session.
@@ -540,11 +559,13 @@ gates pass on controlled Spa evidence.
 
 ## Current next action
 
-Execute A6 in `docs/plans/2026-09-05-coaching-reliability.md`: add RED tests in
-`tests/test_capture_annotations.py` and `tests/test_video_sampling.py` before
-implementing annotation preparation, validation configuration and decode preflight.
-Read `comparison-reliability.md` and `session-artifacts.md` for the current contracts.
-Continue on `codex/coaching-reliability`; A4 is `b0c4d88`, use Git history for A5.
-A4 evidence logs were rechecked locally. A5 used synthetic CSV/arrays and local HTTP,
-not private captures. Gate A remains unvalidated; B blocked and C inactive.
+Complete the A6 reviewed corpus before claiming real A7 validation. Open
+`data/lab/coaching-reliability/run-001/annotations-bmw/selection.html`, select useful
+frame windows in its `selection.json`, and export native frames with the documented
+second prepare command. Have the user review labels/visibility/physical passages,
+repeat across captures, and obtain an untouched holdout recording. Corpus minima,
+lineage, holdout and reviewed counts are still unmet; see `capture-annotations.md`.
+A6 implementation tests are complete, but A6 human corpus acceptance is unchecked.
+Continue on `codex/coaching-reliability`; A5 is `a4c021b`, use Git history for A6.
+A5 evidence paths were rechecked. Gate A remains unvalidated, B blocked and C inactive.
 Push to origin is authorized; no merge to main requested.

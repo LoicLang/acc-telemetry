@@ -306,6 +306,9 @@ class TelemetryPipeline:
                     )
                     last_progress = current_progress
 
+            if hasattr(self.video, 'decode_status'):
+                video_info['decode_status'] = dict(self.video.decode_status)
+
             final_lap = (
                 self.laps.finalize_lap_detection() if self.progress is None else None
             )

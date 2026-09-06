@@ -1,0 +1,14 @@
+speed_mae_kmh: 2
+speed_p95_kmh: 5
+pedal_mae_pct: 5
+event_p95_s: 0.10
+min_coverage: 0.95
+selection_step_s: 10
+min_readable_frames: 100
+min_degraded_frames: 20
+min_event_windows: 20
+min_sources: 2
+min_passages_per_source: 2
+resolutions:
+  ps5_full_map_720p: [1280, 720]
+  ps5_full_map_1080p: [1920, 1080]

@@ -80,9 +80,10 @@ quantization, not an empirically tuned accuracy threshold. Failure is recorded a
 this path; no private capture was replayed for A4.
 
 `decode_coverage` and `gate_a` remain `not_evaluated`; `coaching_eligible` remains false
-on export and reload, even when the timestamp check passes. A6/A7 must still verify
-profile/resolution, actual pipeline decoding coverage and time alignment, independent
-labels, measurement errors and holdout performance. Hashes provide traceability and
+on export and reload, even when the timestamp check passes. A6 annotation preflight now verifies profile/resolution and presentation timestamps;
+pipeline video metadata also carries decode status. A7 must still cross-check
+artifact coverage/time alignment against those inputs, independent labels, measurement
+errors and holdout performance. See `capture-annotations.md`. Hashes provide traceability and
 integrity, not proof that the input annotations or measurements are correct.
 
 These files support downstream analysis without repeating OCR. They do not contain

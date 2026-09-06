@@ -90,6 +90,11 @@ Optional [versioned session artifacts](docs/session-artifacts.md) are available 
 source/configuration manifest. These exports remain ineligible for coaching until
 the independent reliability gate passes.
 
+[Independent annotation preparation](docs/capture-annotations.md) is available via
+`scripts/annotate_capture.py prepare` and `validate`. It produces unreviewed selection
+sheets and native frame windows; human labels and an independent holdout are still
+required before validating measurement accuracy.
+
 ## Reference documents
 
 - [Current status](docs/current-status.md)
