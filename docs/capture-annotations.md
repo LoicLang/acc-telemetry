@@ -170,3 +170,9 @@ The updated portal keeps throttle release separate from first visible braking.
 For L2, the reported lap start/timer reset precedes the numeric-counter update by
 four frames. Do not silently label the old counter digit as the new lap, or use
 counter-update latency as physical crossing error without specifying that distinction.
+
+The user subsequently approved the displayed batch. `run-002/reports/approval.json`
+snapshots that approval with hashes of the reviewed proposals/feedback: 16 readings,
+five intermediate estimates with tolerance and the event clarifications. The portal
+marks this first review complete. The approval is scoped; it does not review every
+field in every frame, establish recording lineage, or satisfy corpus/holdout gates.

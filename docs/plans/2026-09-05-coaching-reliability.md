@@ -425,6 +425,10 @@ their calibration/tolerance still need review. Throttle release is distinct from
 first visible braking, and L2 timer reset is distinct from delayed lap-counter update.
 The user feedback does not check off the full A6 corpus gate.
 
+- [x] User approved the displayed first batch: 16 readings, five intermediate pedal
+  estimates/tolerances and scoped event clarifications. Snapshot:
+  `run-002/reports/approval.json` (ignored). Full A6 corpus acceptance remains unchecked.
+
 ### A7 — Rejouer l'historique et mesurer le gate A
 
 **Créer :** `scripts/validate_capture.py`, `tests/test_capture_validation.py`.

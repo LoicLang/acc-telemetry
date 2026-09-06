@@ -97,6 +97,11 @@ reference explanation. Multi-week training and metric lateral ML remain later wo
 
 ## Recently completed
 
+- The user has now accepted the displayed first review batch ("okay tout est bon ce
+  coup la"). The immutable ignored `run-002/reports/approval.json` snapshots 16
+  accepted readings, five intermediate bar estimates with tolerance, and the scoped
+  event clarifications. The portal displays that acceptance. Do not ask the user to
+  repeat this review or extend it to all 501 frames, unexamined fields or corpus gates.
 - The user reviewed the first A6 window batch. Their throttle-release markers,
   reported lap starts and N1 stationary interval are retained in ignored
   `data/lab/coaching-reliability/run-002/reports/user-feedback.json` with per-claim
@@ -104,7 +109,7 @@ reference explanation. Multi-week training and metric lateral ML remain later wo
 - Intermediate pedal proposals are now quantified from manually located native-pixel
   bar edges and apparently full reference bars, independently of the production
   extractor. The updated portal exposes rulers/calculations; percentages and their
-  proposed tolerance remain assistant estimates pending review. Do not replace
+  proposed tolerance have now been accepted as annotation estimates. Do not replace
   confirmed throttle release with first brake pressure: they are different events.
 - L2 needs separate event definitions: the user's new-lap marker coincides with the
   visible timer reset, while the numeric lap counter updates four frames later.
@@ -584,8 +589,10 @@ The first user feedback is now recorded. Use the updated portal
 `data/lab/coaching-reliability/run-002/reports/START_HERE.html` and its
 `user-feedback.json` before asking for any repeat review. Preserve user-confirmed
 throttle releases, reported lap starts and N1 stationarity with their exact scope.
-Next review the five manually quantified intermediate pedal values and distinguish
-physical lap start, timer reset and numeric-counter update before A7 matching.
+The user accepted this first displayed batch; its authoritative approval is
+`run-002/reports/approval.json`. Next consolidate these accepted values with their
+review scope, then prepare additional independent annotation windows for the unmet
+corpus minima. Preserve the physical-start/timer-reset/counter-update distinction.
 Full corpus counts, recording lineage and untouched holdout remain pending.
 Continue on `codex/coaching-reliability`; A5 is `a4c021b`, use Git history for A6.
 A5 evidence paths were rechecked. Gate A remains unvalidated, B blocked and C inactive.
