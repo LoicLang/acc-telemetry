@@ -413,6 +413,12 @@ Contract and evidence paths: `docs/capture-annotations.md`.
   untouched holdout. Prepared images do not satisfy this human review requirement;
   `a6-corpus-readiness.json` is `not_evaluated`. Do not claim gate A or real A7 validation.
 
+- [ ] **Review package prepared (2026-09-06):** ignored portal
+  `data/lab/coaching-reliability/run-002/reports/START_HERE.html` contains six
+  windows/501 native frames and 16 assistant proposals (B1/B2 braking, L1/L2 lap
+  timing, N1 neutral, R1 reverse). `proposals.json` keeps all proposals unreviewed;
+  this is a convenience for human review, not A6 acceptance or A7 truth.
+
 ### A7 — Rejouer l'historique et mesurer le gate A
 
 **Créer :** `scripts/validate_capture.py`, `tests/test_capture_validation.py`.

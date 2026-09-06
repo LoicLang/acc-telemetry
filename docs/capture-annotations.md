@@ -136,3 +136,24 @@ with the corrected presentation-packet preflight; only its existing representati
 clip is verified above. Old failure logs remain diagnostic history, not proof of
 corruption. No video has been modified. Selected thumbnail/native examples were
 visually inspected for output readability; no labels were approved by the agent.
+
+## Review portal prepared after A6 interruption
+
+An additional ignored review package is available at
+`data/lab/coaching-reliability/run-002/reports/START_HERE.html`. It contains six
+scoped windows and 501 native frames in total, with 16 assistant readings offered as
+proposals only:
+
+- B1: BMW braking window, 326.000–328.000 s;
+- B2: incident clip braking window, 187.000–190.000 s;
+- L1: BMW displayed lap transition, 431.000–431.500 s;
+- L2: timer/lap counter offset at the start of the incident clip, 0.000–0.500 s;
+- N1: BMW stationary neutral example, 0.000–0.250 s;
+- R1: incident clip reverse example, 369.000–371.000 s.
+
+The portal links each frame to its full native image plus HUD/counter crops and asks
+for corrections by frame. `proposals.json` records the assistant visual read,
+source hash, method and `reviewed: false`; it is not an annotation file and is not
+used by A7. The generated contact sheets and `B2-reading.png` were visually checked
+for readability. All sources remain development material previously used to tune the
+extractor. This package intentionally does not claim a holdout or corpus acceptance.

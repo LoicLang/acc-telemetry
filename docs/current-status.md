@@ -566,6 +566,10 @@ second prepare command. Have the user review labels/visibility/physical passages
 repeat across captures, and obtain an untouched holdout recording. Corpus minima,
 lineage, holdout and reviewed counts are still unmet; see `capture-annotations.md`.
 A6 implementation tests are complete, but A6 human corpus acceptance is unchecked.
+For a shorter first review, use the prepared portal
+`data/lab/coaching-reliability/run-002/reports/START_HERE.html`: six windows, 501
+native frames and 16 unreviewed proposals. Correct or reject those proposals by
+identifier/frame; they do not become labels until explicitly reviewed.
 Continue on `codex/coaching-reliability`; A5 is `a4c021b`, use Git history for A6.
 A5 evidence paths were rechecked. Gate A remains unvalidated, B blocked and C inactive.
 Push to origin is authorized; no merge to main requested.
