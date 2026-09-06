@@ -18,7 +18,7 @@ change. Use `git log` for authoritative commit hashes and dates.
 
 Implementation planning is complete for a first reference-based corner coaching
 dossier. The user explicitly requires a relevant reference and visibility into the
-driver's trajectory, not just comparisons of pedal traces. Reliability implementation is active; A0–A3 are complete.
+driver's trajectory, not just comparisons of pedal traces. Reliability implementation is active; A0–A4 are complete.
 
 Start with `docs/coaching-implementation-roadmap.md`. Execute reliability plan A
 before dossier plan B; optional replay plan C remains separate and inactive.
@@ -50,13 +50,13 @@ reference explanation. Multi-week training and metric lateral ML remain later wo
   3.13.2; documentation discovery and diff checks pass. No production code changed.
 - Planning delivered: common specification, detailed reliability/dossier tasks,
   separate replay feasibility experiment, source-admission rules, seven metric
-  definitions, target CLI/artifact formats and human review gates. A0–A3 are complete; later tasks remain unchecked. The suggested Spa/Bruxelles case and reference source
+  definitions, target CLI/artifact formats and human review gates. A0–A4 are complete; later tasks remain unchecked. The suggested Spa/Bruxelles case and reference source
   must be verified on real inputs; no reference has been acquired.
 - Planning verification: documentation discovery succeeds; all 186 existing tests
   pass, including the four focused documentation-index tests. Local plan links and
   frontmatter were checked. No executable source/configuration files were changed.
 
-- Active milestone: A0–A3 complete; A4 versioned evidence artifacts next
+- Active milestone: A0–A4 complete; A5 bounded comparison/API next
 - Previous milestone status: generic boundary visual-anchor robustness implementation
   and representative validation complete at `4a101a8`; the new BMW and both controls
   pass their replay gates with zero unconfirmed resets, nonlocal jumps, or premature
@@ -96,6 +96,23 @@ reference explanation. Multi-week training and metric lateral ML remain later wo
 
 ## Recently completed
 
+- A4 adds atomic `telemetry-v2` export/reload: observations JSONL, normalized samples
+  JSONL, compatible CSV and manifest. Source hashes before/after extraction, resolved
+  configuration/visibility, code hashes, profile, clip origin and payload hashes make
+  evidence inspectable. NaN/inf, changed sources, divergent records, unknown versions
+  and inconsistent envelopes are refused. See `session-artifacts.md`.
+- CLI `--artifact-dir` and optional parent clip origin are wired; the web Python service
+  also accepts artifact output. Web OCR thresholds now match its recorded settings,
+  covered by a RED regression before correction. Existing records remain available.
+- Verification: 14 A4 tests and all 228 repository tests pass, including actual
+  FFprobe on temporary synthetic CFR video, CLI/web export, typed reload, interrupted
+  writes, source access-time handling and concurrent no-replace publication.
+  Ignored logs: `data/lab/coaching-reliability/run-001/a4-*.log`, including RED runs.
+  Docs discovery, compilation and diff checks pass. No private capture was modified
+  or independently validated. CFR/PTS status is separate from decode coverage and
+  accuracy; gate A and coaching eligibility remain unvalidated/false.
+
+
 - A3 implements strict reviewed control visibility and `--visibility-json`, with
   structural and video-duration validation. Empty/black ROIs and absent steering dots
   remain missing. TC/ABS are unverified, regardless of visibility. Legacy wrappers
@@ -119,8 +136,7 @@ reference explanation. Multi-week training and metric lateral ML remain later wo
 - A2 verification: OCR and roundtrip RED logs precede implementation; all 203 tests
   pass, including the actual detector -> pipeline -> DataFrame -> CSV -> normalization
   sequence. Evidence is ignored under `data/lab/coaching-reliability/run-001/a2-*.log`.
-  This validates software behavior only. A4 versioned artifacts,
-  A5 comparison/API and A6/A7 independent annotations/validation remain pending.
+  This validates software behavior only. A5 comparison/API and A6/A7 independent annotations/validation remain pending.
 - User authorized ongoing pushes on 2026-09-05. A0/A1 were pushed to
   `origin/codex/coaching-reliability`; A2 was pushed as `9869385`. Ongoing verified
   atomic commits may be pushed to origin.
@@ -495,7 +511,7 @@ committed.
 
 ## Priority order
 
-1. Execute A4: versioned artifacts, then A5 bounded comparison
+1. Execute A5: bounded comparison/API
    and A6/A7 independent historical/recent validation.
 2. Only when A passes, execute plan B: acquire/admit a reference, review physical
    landmarks and trajectory images, compute seven metrics and export a ChatGPT dossier.
@@ -508,10 +524,10 @@ gates pass on controlled Spa evidence.
 
 ## Current next action
 
-Execute A4 in `docs/plans/2026-09-05-coaching-reliability.md`: write and run
-`tests/test_session_artifacts.py` RED before implementing atomic `telemetry-v2`
-artifacts. Read `control-visibility.md` for the A3 input contract.
-Continue on `codex/coaching-reliability`; A2 is `9869385`, use Git history for A3.
-A2 evidence logs were verified present before A3. Tests use synthetic images and
-mocked video/OCR, no private capture required or modified. Gate A remains unvalidated,
-B blocked, C inactive. Push to origin remains authorized; no merge to main requested.
+Execute A5 in `docs/plans/2026-09-05-coaching-reliability.md`: write and run
+`tests/test_alignment.py` and `tests/test_comparison_api_quality.py` RED before
+changing comparisons/API. Read `session-artifacts.md` for the A4 output contract.
+Continue on `codex/coaching-reliability`; A3 is `8b86952`, use Git history for A4.
+A3 evidence logs were rechecked locally. A4 uses synthetic inputs and mocked OCR;
+no personal capture has been replayed for independent accuracy. Gate A remains
+unvalidated, B blocked, C inactive. Push to origin is authorized; no main merge.

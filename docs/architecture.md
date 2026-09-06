@@ -62,7 +62,7 @@ is unchanged, with median/recovery reasons exposed; production gear uses fresh
 symbols and marks N/R unsupported. Modern numeric normalization rejects NaN/inf;
 CSV nulls must be imported as empty strings or None (the CSV loader does this), not
 pandas-inferred NaN. The comparison API still omits modern progress provenance. `TelemetrySample` is an available contract,
-not yet the universal application/consumer boundary. See
+now an application result, but not yet the universal consumer boundary. See
 `technical-audit-2026-09-05.md` before relying on field quality for analysis.
 
 A3 adds reviewed `VisibilitySpan` inputs (see `control-visibility.md`). Generic
@@ -70,6 +70,13 @@ control decoding requires a reviewed span and a nonempty/nonblack ROI; missing
 steering candidates remain unavailable. Quality and reasons reach CSV normalization.
 TC/ABS remain unsupported. CLI and web metadata/report consumers handle null controls;
 the explicit legacy extraction path retains its historical values.
+
+A4 makes normalized samples and extraction frame observations available alongside
+compatible records when explicit settings are supplied. The CLI and web service
+provide those settings. `session_artifacts.py` writes and reloads `telemetry-v2`
+with source/configuration/module hashes and exclusive atomic directory publication.
+See `session-artifacts.md` for envelope contracts, optional adapter flags and the
+separation between CFR/PTS checks and the still-pending independent reliability gate.
 
 ## Generic position estimation
 

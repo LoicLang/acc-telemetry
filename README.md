@@ -85,6 +85,11 @@ Compatibility modules under `src/` keep older imports working during the migrati
   and comparison/API provenance remain pending. Current replay checks establish internal consistency, not independent
   spatial accuracy; see the technical audit before using comparisons for coaching.
 
+Optional [versioned session artifacts](docs/session-artifacts.md) are available with
+`--artifact-dir NEW_DIRECTORY`: raw observations, normalized samples, CSV and a
+source/configuration manifest. These exports remain ineligible for coaching until
+the independent reliability gate passes.
+
 ## Reference documents
 
 - [Current status](docs/current-status.md)

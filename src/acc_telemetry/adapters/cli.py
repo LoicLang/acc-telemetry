@@ -7,6 +7,9 @@ from typing import Sequence
 from acc_telemetry.application.components import build_components
 from acc_telemetry.application.config import ConfigurationError, load_settings
 from acc_telemetry.application.pipeline import TelemetryPipeline
+from acc_telemetry.application.session_artifacts import (
+    check_destination, source_identity, write_session_artifacts,
+)
 from acc_telemetry.visualization.interactive import InteractiveTelemetryVisualizer
 
 
@@ -27,6 +30,9 @@ def _parser() -> argparse.ArgumentParser:
         help="directory for generated CSV and HTML files",
     )
     parser.add_argument("--visibility-json", type=Path, help="reviewed control visibility spans")
+    parser.add_argument("--artifact-dir", type=Path, help="new telemetry-v2 session directory")
+    parser.add_argument("--clip-source-id", help="parent source identifier for a derived clip")
+    parser.add_argument("--clip-start-s", type=float, default=0.0, help="clip start in parent seconds")
     return parser
 
 
@@ -36,6 +42,14 @@ def main(argv: Sequence[str] | None = None) -> int:
         _parser().error(f"video not found: {args.video}")
 
     try:
+        source_before = None
+        if args.artifact_dir is not None:
+            target = check_destination(args.artifact_dir, args.video)
+            if target == args.output.resolve() or target in args.output.resolve().parents:
+                raise ValueError("legacy reports must remain outside the artifact directory")
+            source_before = source_identity(args.video)
+        if args.clip_start_s != 0 and not args.clip_source_id:
+            raise ValueError("--clip-start-s requires --clip-source-id")
         settings = load_settings()
         components = build_components(
             str(args.video),
@@ -49,6 +63,7 @@ def main(argv: Sequence[str] | None = None) -> int:
 
     profile = settings.profile(args.profile)
     pipeline = TelemetryPipeline(
+        settings=settings,
         visibility=components.visibility,
         video=components.video,
         controls=components.controls,
@@ -60,6 +75,12 @@ def main(argv: Sequence[str] | None = None) -> int:
         progress_callback=lambda percent, message: print(f"[{percent:3d}%] {message}"),
     )
     result = pipeline.run()
+    if args.artifact_dir is not None:
+        output = write_session_artifacts(result, args.artifact_dir, source_path=args.video,
+            source_before=source_before, profile=args.profile,
+            clip_origin=({"source_id": args.clip_source_id, "start_s": args.clip_start_s}
+                         if args.clip_source_id else None))
+        print(f"Session artifacts: {output}")
     print("Controls require reviewed visibility; TC/ABS remain unavailable. Coaching gate pending.")
 
     visualizer = InteractiveTelemetryVisualizer(output_dir=str(args.output))

@@ -20,7 +20,7 @@ control visibility. Comparison/API provenance and independent validation remain 
 the audit's broad ML roadmap is not an approved implementation decision. The user
 subsequently requested detailed implementation planning for a reference-based visual
 corner dossier; see `coaching-implementation-roadmap.md` and its specification/plans.
-A0–A3 are implemented and synthetically verified; no reliability gate is passed.
+A0–A4 are implemented and synthetically verified; no reliability gate is passed.
 
 - capture_status: native_1080p60_validated
 - controls_speed_gears_status: usable
@@ -251,8 +251,8 @@ Exit criteria:
 
 Status: A2 preserves speed/gear/confirmed-lap provenance through records and CSV
 normalization. The typed comparison API still strips modern progress fields.
-A3 control visibility is implemented; reviewed real inputs, versioned artifacts and
-analysis consumers remain incomplete.
+A3 visibility and A4 versioned artifacts are implemented; reviewed real inputs
+and analysis consumers remain incomplete.
 
 Required work:
 

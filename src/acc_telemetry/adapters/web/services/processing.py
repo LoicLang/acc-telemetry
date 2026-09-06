@@ -10,6 +10,9 @@ from acc_telemetry.extraction.controls import TelemetryExtractor
 from acc_telemetry.extraction.laps import LapDetector
 from acc_telemetry.visualization.interactive import InteractiveTelemetryVisualizer
 from acc_telemetry.application.pipeline import TelemetryPipeline
+from acc_telemetry.application.session_artifacts import (
+    check_destination, source_identity, write_session_artifacts,
+)
 from acc_telemetry.application.visibility import load_visibility
 from acc_telemetry.application.config import load_settings
 from acc_telemetry.application.lap_state import LapTransitionConfirmer
@@ -59,6 +62,8 @@ class VideoProcessingService:
         progress_callback: Optional[Callable[[int, str], None]] = None,
         profile_name: Optional[str] = None,
         visibility_json: Optional[str] = None,
+        artifact_dir: Optional[str] = None,
+        clip_origin: Optional[dict] = None,
     ) -> VideoMetadata:
         """
         Process a video and extract telemetry data.
@@ -79,6 +84,15 @@ class VideoProcessingService:
 
         if not video_path_obj.exists():
             raise FileNotFoundError(f"Video file not found: {video_path}")
+
+        source_before = None
+        if artifact_dir is not None:
+            target = check_destination(artifact_dir, video_path)
+            reports = self.storage.get_video_directory(video_name).resolve()
+            if target == reports or target in reports.parents:
+                raise ValueError("legacy reports must remain outside the artifact directory")
+            source_before = source_identity(video_path)
+        telemetry_settings = load_settings()
 
         # Load configuration
         full_config = self.load_roi_config()
@@ -101,10 +115,13 @@ class VideoProcessingService:
             lap_roi_config['lap_number'] = roi_config['lap_number_training']
 
         lap_detector = LapDetector(lap_roi_config, enable_performance_stats=False)
+        lap_detector._max_speed_ocr_delta_kmh = telemetry_settings.ocr.max_speed_delta_kmh
+        lap_detector._speed_ocr_recovery_tolerance_kmh = telemetry_settings.ocr.recovery_tolerance_kmh
         position_config = roi_config.get('position_tracking', {})
         progress_estimator = self._build_progress_estimator(active_profile_name)
 
         pipeline = TelemetryPipeline(
+            settings=telemetry_settings,
             visibility=load_visibility(visibility_json),
             video=processor,
             controls=extractor,
@@ -116,6 +133,9 @@ class VideoProcessingService:
             progress_callback=progress_callback,
         )
         result = pipeline.run()
+        if artifact_dir is not None:
+            write_session_artifacts(result, artifact_dir, source_path=video_path,
+                source_before=source_before, profile=active_profile_name, clip_origin=clip_origin)
 
         visualizer = InteractiveTelemetryVisualizer(
             output_dir=str(self.storage.get_video_directory(video_name))

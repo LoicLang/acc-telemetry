@@ -2,12 +2,15 @@
 
 import json
 
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from typing import Any, Callable
 
 import cv2
 
-from acc_telemetry.domain.observations import VisibilitySpan, validate_visibility
+from acc_telemetry.domain.observations import FrameObservation, VisibilitySpan, validate_visibility
+from acc_telemetry.domain.telemetry import TelemetrySample, QualityFlag
+from acc_telemetry.normalization.samples import normalize_row
+from .config import TelemetrySettings
 from acc_telemetry.extraction.video import evenly_spaced_frame_indices
 
 
@@ -21,6 +24,9 @@ class PipelineResult:
     video_info: dict[str, Any]
     lap_transitions: list[dict[str, Any]]
     progress_calibration: Any | None = None
+    samples: tuple[TelemetrySample, ...] = ()
+    observations: tuple[FrameObservation, ...] = ()
+    resolved_config: Any | None = None
 
 
 class TelemetryPipeline:
@@ -36,11 +42,13 @@ class TelemetryPipeline:
         progress: Any | None = None,
         has_track_map: bool,
         visibility: tuple[VisibilitySpan, ...] = (),
+        settings: TelemetrySettings | None = None,
         sample_count: int = 11,
         frequency_threshold: float | None = None,
         progress_callback: ProgressCallback | None = None,
         position_diagnostic_callback: PositionDiagnosticCallback | None = None,
     ):
+        self.settings = settings
         self.visibility = tuple(visibility)
         self.video = video
         self.controls = controls
@@ -166,6 +174,8 @@ class TelemetryPipeline:
 
             self._progress(20, "Processing frames and extracting telemetry...")
             records: list[dict[str, Any]] = []
+            observations = []
+            last_observed = {}
             previous_lap = None
             transitions: list[dict[str, Any]] = []
             completed_lap_times: dict[int, str] = {}
@@ -180,20 +190,31 @@ class TelemetryPipeline:
                     controls = {k: o.value for k, o in control_observations.items()}
                 else:
                     controls = self.controls.extract_frame_telemetry(rois)
-                lap_number = (
-                    self.laps.observe_lap_number(self.video.current_frame).value
-                    if self.progress is not None
-                    else self.laps.extract_lap_number(self.video.current_frame)
-                )
                 if self.progress is not None:
+                    lap_observation = self.laps.observe_lap_number(self.video.current_frame)
+                    lap_number = lap_observation.value
                     speed_observation = self.laps.observe_speed(self.video.current_frame)
                     gear_observation = self.laps.observe_gear(self.video.current_frame)
                     speed = speed_observation.value
                     speed_quality = speed_observation.quality
                     gear = gear_observation.value
                 else:
+                    lap_number = self.laps.extract_lap_number(self.video.current_frame)
                     speed = self.laps.extract_speed(self.video.current_frame)
                     gear = self.laps.extract_gear(self.video.current_frame)
+
+                if self.progress is not None:
+                    names = {"throttle": "throttle_pct", "brake": "brake_pct"}
+                    fields = {names.get(k, k): v for k, v in control_observations.items()}
+                    fields.update(lap_number=lap_observation, speed_kmh=speed_observation,
+                                  gear=gear_observation)
+                    for name, observation in fields.items():
+                        if observation.quality == QualityFlag.OBSERVED:
+                            last_observed[name] = timestamp
+                        fields[name] = replace(observation, last_observed_time_s=(
+                            observation.last_observed_time_s if observation.last_observed_time_s is not None
+                            else last_observed.get(name)))
+                    observations.append(FrameObservation(frame_number, timestamp, fields))
 
                 track_position = None
                 if self.progress is not None:
@@ -349,6 +370,11 @@ class TelemetryPipeline:
                     if self.progress is not None
                     else None
                 ),
+                samples=tuple(normalize_row(row, self.settings.normalization) for row in records)
+                    if self.settings is not None else (),
+                observations=tuple(observations),
+                resolved_config={"settings": self.settings, "visibility": self.visibility}
+                    if self.settings is not None else None,
             )
         finally:
             self.video.close()

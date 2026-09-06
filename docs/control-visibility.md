@@ -34,7 +34,8 @@ processing and closes the video even if validation fails.
 Only declare spans after reviewing HUD readability. Split spans around overlays,
 menus, occlusions or camera changes; omitted intervals are unavailable. The loader
 validates structure, not the correctness of a review or its association with a source.
-Source/configuration binding and versioned artifacts remain A4 work.
+A4 stores the consumed spans alongside the source identity and configuration in
+versioned artifacts; see `session-artifacts.md`. This does not validate the review.
 
 Inside a reviewed span, an empty or entirely black ROI still refuses measurement.
 Otherwise the existing pedal decoder is used, including zero for a released pedal.

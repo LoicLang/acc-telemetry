@@ -260,11 +260,11 @@ included with this behavior change. Format and HTTP limitations are documented i
 **Créer :** `application/session_artifacts.py`, `tests/test_session_artifacts.py`.
 **Modifier :** `pipeline.py`, `adapters/cli.py`, `adapters/web/services/processing.py`.
 
-- [ ] RED : export JSONL puis relecture conserve valeur brute, held, raisons, null,
+- [x] RED : export JSONL puis relecture conserve valeur brute, held, raisons, null,
   source/frame ; destinations `raw/`, fichier source, sortie existante refusées.
   Les anciens records restent disponibles pour les consommateurs existants.
-- [ ] Lancer `test_session_artifacts.py` ; attendu méthode absente.
-- [ ] Ajouter `samples` et `observations` à `PipelineResult` avec defaults compatibles.
+- [x] Lancer `test_session_artifacts.py` ; attendu méthode absente.
+- [x] Ajouter `samples` et `observations` à `PipelineResult` avec defaults compatibles.
   Normaliser les records à la fin du pipeline avec les settings explicites transmis
   à sa construction. Les observations conservent la qualité à l'extraction. Écrire
   un manifeste `telemetry-v2` avec SHA-256, taille, code Git, hash config, profil,
@@ -282,10 +282,16 @@ serialized_source_values = dict(sample.source_values)
   Les analyses du plan B réutilisent ces fichiers. Ce commit ne promet pas de
   relancer la fusion sans OCR : les candidats visuels nécessaires à ce replay
   complet ne sont pas tous persistés par ce premier contrat.
-- [ ] Tester une interruption simulée : absence de dossier final partiel. Relecture
+- [x] Tester une interruption simulée : absence de dossier final partiel. Relecture
   de la version 2 obligatoire ; version inconnue refusée ; CSV legacy lisible mais
   manifeste absent -> `coaching_eligible=false`. Vérification commune.
-- [ ] Commit `feat: export versioned telemetry evidence artifacts`.
+- [x] Commit `feat: export versioned telemetry evidence artifacts`.
+
+A4 verification (2026-09-06): 14 focused tests and 228 full-suite tests pass.
+CFR/PTS validation runs through FFprobe; failure/unavailability is recorded explicitly.
+Pipeline decode coverage and coaching eligibility remain pending A6/A7, never inferred
+from successful export. The web OCR-setting wiring received its RED regression so
+recorded settings match applied settings. Contract: `docs/session-artifacts.md`.
 
 ### A5 — Empêcher comparateur et API de recréer des preuves
 

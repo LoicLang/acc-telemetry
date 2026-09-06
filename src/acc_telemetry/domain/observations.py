@@ -1,7 +1,8 @@
 """Extraction-independent evidence for one measured field."""
 import math
 from dataclasses import dataclass
-from typing import Generic, TypeVar
+from typing import Generic, TypeVar, Mapping
+from types import MappingProxyType
 
 from acc_telemetry.domain.telemetry import QualityFlag
 
@@ -51,3 +52,14 @@ def validate_visibility(spans, *, duration_s: float) -> tuple[VisibilitySpan, ..
 
 def visible_at(spans, field: str, time_s: float) -> bool:
     return any(s.field == field and s.start_s <= time_s < s.end_s for s in spans)
+
+
+@dataclass(frozen=True)
+class FrameObservation:
+    """Extraction evidence before confirmed state and normalization."""
+    frame: int
+    time_s: float
+    observations: Mapping[str, FieldObservation]
+
+    def __post_init__(self):
+        object.__setattr__(self, "observations", MappingProxyType(dict(self.observations)))
