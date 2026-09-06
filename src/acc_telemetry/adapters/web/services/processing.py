@@ -10,6 +10,7 @@ from acc_telemetry.extraction.controls import TelemetryExtractor
 from acc_telemetry.extraction.laps import LapDetector
 from acc_telemetry.visualization.interactive import InteractiveTelemetryVisualizer
 from acc_telemetry.application.pipeline import TelemetryPipeline
+from acc_telemetry.application.visibility import load_visibility
 from acc_telemetry.application.config import load_settings
 from acc_telemetry.application.lap_state import LapTransitionConfirmer
 from acc_telemetry.application.progress import ProgressSessionEstimator
@@ -57,6 +58,7 @@ class VideoProcessingService:
         has_overlay: bool = False,
         progress_callback: Optional[Callable[[int, str], None]] = None,
         profile_name: Optional[str] = None,
+        visibility_json: Optional[str] = None,
     ) -> VideoMetadata:
         """
         Process a video and extract telemetry data.
@@ -103,6 +105,7 @@ class VideoProcessingService:
         progress_estimator = self._build_progress_estimator(active_profile_name)
 
         pipeline = TelemetryPipeline(
+            visibility=load_visibility(visibility_json),
             video=processor,
             controls=extractor,
             laps=lap_detector,

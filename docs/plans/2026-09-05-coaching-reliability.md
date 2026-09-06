@@ -211,12 +211,12 @@ record["gear_raw"] = gear_observation.raw_value
 **Créer :** `tests/test_control_observations.py`.
 **Étendre :** `domain/observations.py` avec `VisibilitySpan(field,start_s,end_s,reviewer)`.
 
-- [ ] RED : ROI vide/noir -> MISSING et `None` ; HUD visible et pédale relâchée ->
+- [x] RED : ROI vide/noir -> MISSING et `None` ; HUD visible et pédale relâchée ->
   OBSERVED et 0 ; absence de candidat volant -> MISSING ; aucune annotation de
   visibilité -> pas d'affirmation de zéro observé. Tester un overlay qui invalide
   une plage et les bornes incluses/exclues.
-- [ ] Lancer `test_control_observations.py` et constater le défaut actuel.
-- [ ] Ajouter `observe_frame_telemetry(rois, *, time_s, visibility)` à côté du wrapper
+- [x] Lancer `test_control_observations.py` et constater le défaut actuel.
+- [x] Ajouter `observe_frame_telemetry(rois, *, time_s, visibility)` à côté du wrapper
   historique. Le premier mode strict utilise des plages de visibilité **revues**,
   lues depuis `--visibility-json` ; il n'essaie pas de deviner un HUD valide à partir
   d'un seul seuil de luminosité. Ajouter un validateur de spans triés, non inversés,
@@ -245,10 +245,15 @@ def unavailable_control(reason: str) -> FieldObservation[float]:
   TC/ABS : qualité MISSING `indicator_semantics_unverified` jusqu'à annotation
   confirmant qu'il s'agit d'une intervention, pas du réglage. Les valeurs historiques
   peuvent rester visibles dans les preuves brutes, pas dans le coaching.
-- [ ] Tester le roundtrip A2 avec ces commandes et chaque champ marqué missing.
+- [x] Tester le roundtrip A2 avec ces commandes et chaque champ marqué missing.
   Mettre à jour CLI/web : sans spans, sorties strictes dégradées, jamais succès de
   coaching implicite. Vérification commune.
-- [ ] Commit `fix: make control visibility explicit for coaching`.
+- [x] Commit `fix: make control visibility explicit for coaching`.
+
+A3 verification (2026-09-06): 11 focused tests and 214 full-suite tests pass.
+The all-missing-controls regression also required nullable summary/report handling,
+included with this behavior change. Format and HTTP limitations are documented in
+`docs/control-visibility.md`. No real visibility review or accuracy gate is claimed.
 
 ### A4 — Produire un artefact moderne rejouable pour l'analyse
 

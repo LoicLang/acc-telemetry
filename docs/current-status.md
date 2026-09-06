@@ -8,7 +8,7 @@ read_when:
 
 # Current status
 
-Last verified: 2026-09-05
+Last verified: 2026-09-06
 
 This document is the mandatory living handoff for the repository. Update it from
 verified evidence whenever active work, blockers, stage gates, or the next action
@@ -18,7 +18,7 @@ change. Use `git log` for authoritative commit hashes and dates.
 
 Implementation planning is complete for a first reference-based corner coaching
 dossier. The user explicitly requires a relevant reference and visibility into the
-driver's trajectory, not just comparisons of pedal traces. Reliability implementation is active; A0–A2 are complete.
+driver's trajectory, not just comparisons of pedal traces. Reliability implementation is active; A0–A3 are complete.
 
 Start with `docs/coaching-implementation-roadmap.md`. Execute reliability plan A
 before dossier plan B; optional replay plan C remains separate and inactive.
@@ -38,9 +38,10 @@ reference explanation. Multi-week training and metric lateral ML remain later wo
   Gear uses fresh symbols; absent/unsupported labels remain missing. Confirmed-lap
   quality and reasons come from the confirmer. This is software provenance evidence,
   not independent OCR accuracy validation.
-- Black control ROIs become observed zero inputs. Position comparison fills absent
-  intervals and extends partial laps; the typed comparison API strips modern progress
-  provenance. These are confirmed software defects, not measured prevalence in video.
+- A3 refuses missing/unreviewed control ROIs instead of publishing observed zero.
+  Only reviewed visibility permits pedal/steering decoding; TC/ABS remain unsupported.
+  Position comparison still fills gaps and extends partial laps, and the typed API
+  strips modern provenance. These are confirmed software defects, not measured prevalence in video.
 - Existing replay metrics remain valid internal-consistency results; their odometric
   checkpoints and completion tests are not independent spatial ground truth. Metric
   accuracy and confidence calibration remain unverified.
@@ -49,13 +50,13 @@ reference explanation. Multi-week training and metric lateral ML remain later wo
   3.13.2; documentation discovery and diff checks pass. No production code changed.
 - Planning delivered: common specification, detailed reliability/dossier tasks,
   separate replay feasibility experiment, source-admission rules, seven metric
-  definitions, target CLI/artifact formats and human review gates. A0–A2 are complete; later tasks remain unchecked. The suggested Spa/Bruxelles case and reference source
+  definitions, target CLI/artifact formats and human review gates. A0–A3 are complete; later tasks remain unchecked. The suggested Spa/Bruxelles case and reference source
   must be verified on real inputs; no reference has been acquired.
 - Planning verification: documentation discovery succeeds; all 186 existing tests
   pass, including the four focused documentation-index tests. Local plan links and
   frontmatter were checked. No executable source/configuration files were changed.
 
-- Active milestone: A0–A2 complete; A3 control visibility next
+- Active milestone: A0–A3 complete; A4 versioned evidence artifacts next
 - Previous milestone status: generic boundary visual-anchor robustness implementation
   and representative validation complete at `4a101a8`; the new BMW and both controls
   pass their replay gates with zero unconfirmed resets, nonlocal jumps, or premature
@@ -95,6 +96,21 @@ reference explanation. Multi-week training and metric lateral ML remain later wo
 
 ## Recently completed
 
+- A3 implements strict reviewed control visibility and `--visibility-json`, with
+  structural and video-duration validation. Empty/black ROIs and absent steering dots
+  remain missing. TC/ABS are unverified, regardless of visibility. Legacy wrappers
+  retain their behavior. See `control-visibility.md` for the JSON contract and limits.
+- A3 also fixes the consumer failure reproduced with all-missing controls: summary
+  aggregation no longer crashes on None steering or exports NaN/false zero indicator
+  counts. CLI reports and web metadata accept null controls. No HTTP annotation upload
+  is added; web extraction defaults safely to missing controls.
+- Verification: 11 A3 tests cover extraction, reviewed/overlay boundaries, validation,
+  CSV normalization, actual CLI and web service execution, and report/metadata output.
+  All 214 tests pass; docs discovery, compilation and diff checks pass. Ignored logs
+  are `data/lab/coaching-reliability/run-001/a3-*.log`, including pre-correction RED.
+  No real HUD annotations or independent accuracy claims were produced.
+
+
 - A2 adds `observe_speed`/`observe_gear`, CSV-compatible quality hints and JSON
   `field_reasons`, propagated to immutable normalized field reasons. Numeric speed
   filtering remains unchanged; median/recovery outputs retain their filter reasons.
@@ -103,10 +119,11 @@ reference explanation. Multi-week training and metric lateral ML remain later wo
 - A2 verification: OCR and roundtrip RED logs precede implementation; all 203 tests
   pass, including the actual detector -> pipeline -> DataFrame -> CSV -> normalization
   sequence. Evidence is ignored under `data/lab/coaching-reliability/run-001/a2-*.log`.
-  This validates software behavior only. A3 visibility, A4 versioned artifacts,
+  This validates software behavior only. A4 versioned artifacts,
   A5 comparison/API and A6/A7 independent annotations/validation remain pending.
 - User authorized ongoing pushes on 2026-09-05. A0/A1 were pushed to
-  `origin/codex/coaching-reliability`; push verified A2 after its atomic commit.
+  `origin/codex/coaching-reliability`; A2 was pushed as `9869385`. Ongoing verified
+  atomic commits may be pushed to origin.
 
 
 - A1 adds immutable `FieldObservation`, strict lap parsing, and fresh OCR in the
@@ -435,7 +452,8 @@ multiple laps.
 
 Status: fused progress provenance reaches records, but the comparison API strips it.
 A2 preserves speed/gear/confirmed-lap provenance through records and CSV
-normalization. Controls, typed API consumers and analysis remain incomplete. See the audit and active plan A for reproduced defects and corrections.
+normalization. A3 adds control visibility/provenance; typed API consumers and
+analysis remain incomplete. See the audit and active plan A for reproduced defects and corrections.
 
 `TelemetrySample` supports field-level observed, missing, held, interpolated,
 predicted, fused, and anomalous states. The available contract does not imply every
@@ -477,7 +495,7 @@ committed.
 
 ## Priority order
 
-1. Execute A3: reviewed control visibility, then A4 artifacts, A5 bounded comparison
+1. Execute A4: versioned artifacts, then A5 bounded comparison
    and A6/A7 independent historical/recent validation.
 2. Only when A passes, execute plan B: acquire/admit a reference, review physical
    landmarks and trajectory images, compute seven metrics and export a ChatGPT dossier.
@@ -490,12 +508,10 @@ gates pass on controlled Spa evidence.
 
 ## Current next action
 
-Execute A3 in `docs/plans/2026-09-05-coaching-reliability.md`: write and run
-`tests/test_control_observations.py` RED for absent HUD versus observed zero before
-changing controls or CLI behavior. Continue on `codex/coaching-reliability`.
-A0/A1 commits are `7f60245`/`7f826c1`; use Git history for the A2 commit.
-The old audit script uses obsolete fake interfaces and the historical lap wrapper;
-preserve it as baseline evidence. Tracked A1/A2 tests cover current production.
-A1 evidence paths were rechecked locally before A2. No private video was needed or
-modified for A2. Gate A remains unvalidated, B blocked, C inactive. Ongoing push to
-origin is authorized; no merge to main or change to upstream is requested.
+Execute A4 in `docs/plans/2026-09-05-coaching-reliability.md`: write and run
+`tests/test_session_artifacts.py` RED before implementing atomic `telemetry-v2`
+artifacts. Read `control-visibility.md` for the A3 input contract.
+Continue on `codex/coaching-reliability`; A2 is `9869385`, use Git history for A3.
+A2 evidence logs were verified present before A3. Tests use synthetic images and
+mocked video/OCR, no private capture required or modified. Gate A remains unvalidated,
+B blocked, C inactive. Push to origin remains authorized; no merge to main requested.

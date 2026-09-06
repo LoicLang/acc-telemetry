@@ -7,7 +7,7 @@ from typing import Any, Callable
 
 import cv2
 
-from acc_telemetry.domain.telemetry import QualityFlag
+from acc_telemetry.domain.observations import VisibilitySpan, validate_visibility
 from acc_telemetry.extraction.video import evenly_spaced_frame_indices
 
 
@@ -35,11 +35,13 @@ class TelemetryPipeline:
         position: Any | None = None,
         progress: Any | None = None,
         has_track_map: bool,
+        visibility: tuple[VisibilitySpan, ...] = (),
         sample_count: int = 11,
         frequency_threshold: float | None = None,
         progress_callback: ProgressCallback | None = None,
         position_diagnostic_callback: PositionDiagnosticCallback | None = None,
     ):
+        self.visibility = tuple(visibility)
         self.video = video
         self.controls = controls
         self.laps = laps
@@ -156,6 +158,7 @@ class TelemetryPipeline:
             if not self.video.open_video():
                 raise ValueError("Could not open video file")
             video_info = self.video.get_video_info()
+            validate_visibility(self.visibility, duration_s=video_info["duration"])
             self._progress(5, "Video opened successfully")
 
             if self.has_track_map:
@@ -171,7 +174,12 @@ class TelemetryPipeline:
             total_frames = max(int(video_info["frame_count"]), 1)
 
             for frame_number, timestamp, rois in self.video.process_frames():
-                controls = self.controls.extract_frame_telemetry(rois)
+                if self.progress is not None:
+                    control_observations = self.controls.observe_frame_telemetry(
+                        rois, time_s=timestamp, visibility=self.visibility)
+                    controls = {k: o.value for k, o in control_observations.items()}
+                else:
+                    controls = self.controls.extract_frame_telemetry(rois)
                 lap_number = (
                     self.laps.observe_lap_number(self.video.current_frame).value
                     if self.progress is not None
@@ -260,6 +268,13 @@ class TelemetryPipeline:
                             "gear": gear_observation.reasons,
                         }),
                     })
+                    control_names = {"throttle": "throttle_pct", "brake": "brake_pct"}
+                    field_reasons = json.loads(records[-1]["field_reasons"])
+                    for name, observation in control_observations.items():
+                        field = control_names.get(name, name)
+                        records[-1]["quality_hint"] += f";{field}:{observation.quality.value}"
+                        field_reasons[field] = observation.reasons
+                    records[-1]["field_reasons"] = json.dumps(field_reasons)
                 previous_lap = lap_number
 
                 current_progress = 20 + int((frame_number / total_frames) * 60)

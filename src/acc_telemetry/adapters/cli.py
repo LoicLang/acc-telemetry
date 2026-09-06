@@ -26,6 +26,7 @@ def _parser() -> argparse.ArgumentParser:
         default=Path("data/output"),
         help="directory for generated CSV and HTML files",
     )
+    parser.add_argument("--visibility-json", type=Path, help="reviewed control visibility spans")
     return parser
 
 
@@ -40,13 +41,15 @@ def main(argv: Sequence[str] | None = None) -> int:
             str(args.video),
             args.profile,
             settings=settings,
+            visibility_json=args.visibility_json,
             enable_performance_stats=True,
         )
-    except ConfigurationError as error:
+    except (ConfigurationError, ValueError, OSError) as error:
         _parser().error(str(error))
 
     profile = settings.profile(args.profile)
     pipeline = TelemetryPipeline(
+        visibility=components.visibility,
         video=components.video,
         controls=components.controls,
         laps=components.laps,
@@ -57,6 +60,7 @@ def main(argv: Sequence[str] | None = None) -> int:
         progress_callback=lambda percent, message: print(f"[{percent:3d}%] {message}"),
     )
     result = pipeline.run()
+    print("Controls require reviewed visibility; TC/ABS remain unavailable. Coaching gate pending.")
 
     visualizer = InteractiveTelemetryVisualizer(output_dir=str(args.output))
     dataframe = visualizer.create_dataframe(result.records)

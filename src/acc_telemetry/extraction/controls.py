@@ -6,6 +6,9 @@ import cv2
 import numpy as np
 from typing import Dict, Tuple
 
+from acc_telemetry.domain.observations import FieldObservation, visible_at
+from acc_telemetry.domain.telemetry import QualityFlag
+
 
 class TelemetryExtractor:
     """Extracts telemetry values from ROI images using computer vision."""
@@ -159,6 +162,12 @@ class TelemetryExtractor:
     
     @staticmethod
     def extract_steering_position(roi_image: np.ndarray) -> float:
+        """Historical wrapper retaining zero when the indicator is unavailable."""
+        value = TelemetryExtractor._observe_steering_position(roi_image)
+        return 0.0 if value is None else value
+
+    @staticmethod
+    def _observe_steering_position(roi_image: np.ndarray) -> float | None:
         """
         Extract steering position from the steering indicator.
         Detects white dot position on horizontal scale.
@@ -170,7 +179,7 @@ class TelemetryExtractor:
             Normalized steering position (-1.0 = full left, 0.0 = center, +1.0 = full right)
         """
         if roi_image is None or roi_image.size == 0:
-            return 0.0
+            return None
             
         # Convert to grayscale
         gray = cv2.cvtColor(roi_image, cv2.COLOR_BGR2GRAY)
@@ -183,7 +192,7 @@ class TelemetryExtractor:
         contours, _ = cv2.findContours(thresh, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
         
         if not contours:
-            return 0.0
+            return None
         
         # Filter contours to find the steering dot
         # The steering dot should be:
@@ -231,8 +240,8 @@ class TelemetryExtractor:
             })
         
         if not dot_candidates:
-            # Fallback: if no good candidates, return center position
-            return 0.0
+            # No usable dot is not evidence of centered steering
+            return None
         
         # Select the best candidate (largest area among filtered candidates)
         best_dot = max(dot_candidates, key=lambda d: d['area'])
@@ -321,6 +330,34 @@ class TelemetryExtractor:
         
         return 1 if orange_pixel_count >= min_pixels_threshold else 0
     
+    def observe_frame_telemetry(self, rois, *, time_s, visibility):
+        """Decode only reviewed visible controls; preserve absence as missing."""
+        def missing(reason):
+            return FieldObservation(None, QualityFlag.MISSING, None, (reason,))
+
+        observations = {}
+        for field in ("throttle", "brake", "steering"):
+            if not visible_at(visibility, field, time_s):
+                observations[field] = missing("hud_visibility_unverified")
+                continue
+            roi = rois.get(field)
+            if roi is None or roi.size == 0 or not np.any(roi):
+                observations[field] = missing("control_roi_unavailable")
+                continue
+            if field == "steering":
+                value = self._observe_steering_position(roi)
+            else:
+                value = self.extract_bar_percentage(
+                    roi, "green" if field == "throttle" else "red", "horizontal")
+            observations[field] = (
+                missing("steering_candidate_missing") if value is None else
+                FieldObservation(value, QualityFlag.OBSERVED, value,
+                                 last_observed_time_s=time_s)
+            )
+        for field in ("tc_active", "abs_active"):
+            observations[field] = missing("indicator_semantics_unverified")
+        return observations
+
     def extract_frame_telemetry(self, roi_dict: Dict[str, np.ndarray]) -> Dict[str, float]:
         """
         Extract all telemetry values from a frame's ROI images.

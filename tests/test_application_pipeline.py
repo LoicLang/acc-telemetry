@@ -38,6 +38,10 @@ class FakeVideo:
 
 
 class FakeControls:
+    def observe_frame_telemetry(self, rois, *, time_s, visibility):
+        return {k: FieldObservation(v, QualityFlag.OBSERVED, v)
+                for k, v in self.extract_frame_telemetry(rois).items()}
+
     def extract_frame_telemetry(self, roi_dict):
         return {
             "throttle": 50.0,

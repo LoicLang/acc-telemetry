@@ -744,6 +744,10 @@ class InteractiveTelemetryVisualizer:
         Returns:
             Dictionary with summary statistics including per-lap data if available
         """
+        df = df.copy()
+        for field in ("throttle", "brake", "steering", "tc_active", "abs_active"):
+            if field in df:
+                df[field] = pd.to_numeric(df[field], errors="raise")
         summary = {
             'duration': df['time'].iloc[-1] - df['time'].iloc[0],
             'total_frames': len(df),
@@ -770,23 +774,13 @@ class InteractiveTelemetryVisualizer:
             summary['avg_speed'] = 0.0
             summary['max_speed'] = 0.0
         
-        # Add TC and ABS statistics if columns exist
-        if 'tc_active' in df.columns:
-            tc_frames = df['tc_active'].sum()
-            summary['tc_active_frames'] = int(tc_frames)
-            summary['tc_active_percentage'] = (tc_frames / len(df)) * 100 if len(df) > 0 else 0.0
-        else:
-            summary['tc_active_frames'] = 0
-            summary['tc_active_percentage'] = 0.0
-        
-        if 'abs_active' in df.columns:
-            abs_frames = df['abs_active'].sum()
-            summary['abs_active_frames'] = int(abs_frames)
-            summary['abs_active_percentage'] = (abs_frames / len(df)) * 100 if len(df) > 0 else 0.0
-        else:
-            summary['abs_active_frames'] = 0
-            summary['abs_active_percentage'] = 0.0
-        
+        # An unsupported/missing indicator cannot imply zero interventions.
+        for field in ("tc_active", "abs_active"):
+            observed = df[field].dropna() if field in df else pd.Series(dtype=float)
+            summary[f"{field}_frames"] = None if observed.empty else int(observed.sum())
+            summary[f"{field}_percentage"] = (
+                None if observed.empty else float(observed.mean() * 100))
+
         # Add track position statistics if column exists
         if 'track_position' in df.columns:
             valid_positions = df[df['track_position'].notna()]
@@ -841,6 +835,14 @@ class InteractiveTelemetryVisualizer:
             summary['total_laps'] = 0
             summary['laps'] = []
         
+        # Pydantic/JSON consumers need null, not NaN for unavailable aggregates.
+        for record in [summary, *summary.get("laps", [])]:
+            for key, value in record.items():
+                if isinstance(value, np.generic):
+                    value = value.item()
+                    record[key] = value
+                if isinstance(value, float) and not np.isfinite(value):
+                    record[key] = None
         return summary
     
     def plot_lap_comparison(self, df: pd.DataFrame, lap_numbers: List[int],

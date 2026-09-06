@@ -14,13 +14,13 @@ Last verified: 2026-09-05
 The September 5 technical audit narrows the meaning of earlier validation claims:
 representative internal-consistency metrics pass, but independent spatial accuracy
 has not been established. A1 now supplies fresh strict lap observations to the confirmer;
-A2 preserves speed/gear/lap provenance through CSV normalization. Controls and
-comparison/API provenance still need correction before closing the remaining gates. See
+A2 preserves speed/gear/lap provenance through CSV normalization; A3 requires reviewed
+control visibility. Comparison/API provenance and independent validation remain pending. See
 `technical-audit-2026-09-05.md` for reproduced evidence and proposed next steps;
 the audit's broad ML roadmap is not an approved implementation decision. The user
 subsequently requested detailed implementation planning for a reference-based visual
 corner dossier; see `coaching-implementation-roadmap.md` and its specification/plans.
-A0–A2 are implemented and synthetically verified; no reliability gate is passed.
+A0–A3 are implemented and synthetically verified; no reliability gate is passed.
 
 - capture_status: native_1080p60_validated
 - controls_speed_gears_status: usable
@@ -30,7 +30,7 @@ A0–A2 are implemented and synthetically verified; no reliability gate is passe
 - s_latest_validation_status: isolated_missing_boundary_dot_anchor_gap_resolved
 - s_repair_design_status: generic_fusion_implemented
 - long_capture_lap_transition_status: fresh_observations_tested_historical_replay_pending
-- quality_propagation_status: speed_gear_lap_csv_verified_controls_and_comparison_pending
+- quality_propagation_status: field_csv_provenance_verified_comparison_and_independent_validation_pending
 - downstream_coaching_status: blocked
 
 The repository provides a solid ACC PS5 video-extraction foundation, but it does not
@@ -251,7 +251,8 @@ Exit criteria:
 
 Status: A2 preserves speed/gear/confirmed-lap provenance through records and CSV
 normalization. The typed comparison API still strips modern progress fields.
-Control visibility, versioned artifacts and analysis consumers remain incomplete.
+A3 control visibility is implemented; reviewed real inputs, versioned artifacts and
+analysis consumers remain incomplete.
 
 Required work:
 

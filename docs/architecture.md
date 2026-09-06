@@ -65,6 +65,12 @@ pandas-inferred NaN. The comparison API still omits modern progress provenance. 
 not yet the universal application/consumer boundary. See
 `technical-audit-2026-09-05.md` before relying on field quality for analysis.
 
+A3 adds reviewed `VisibilitySpan` inputs (see `control-visibility.md`). Generic
+control decoding requires a reviewed span and a nonempty/nonblack ROI; missing
+steering candidates remain unavailable. Quality and reasons reach CSV normalization.
+TC/ABS remain unsupported. CLI and web metadata/report consumers handle null controls;
+the explicit legacy extraction path retains its historical values.
+
 ## Generic position estimation
 
 The implemented estimator is generic across circuits using the static full-map HUD.
