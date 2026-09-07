@@ -435,8 +435,10 @@ The user feedback does not check off the full A6 corpus gate.
 - [x] Obtain user review of batch 2: 24 displayed readings/visibility and the L3
   marker, archived in `run-003/reports/approval.json`. Preserve the user's automatic
   downshift-blip explanation for B6. This is not holdout or corpus acceptance.
-- [ ] Consolidate only the explicitly accepted fields/events from both approval files;
-  complete the remaining corpus inputs without relabeling every native frame as reviewed.
+- [x] Consolidate only the explicitly accepted fields/events from both approval files:
+  `run-004/processed/accepted-corpus/`, 40 unique readings per target field and two
+  reviewed pedal windows. Unknown metadata remains null under explicit scoped review.
+- [ ] Complete the remaining corpus inputs without relabeling every native frame as reviewed.
 
 ### A7 — Rejouer l'historique et mesurer le gate A
 

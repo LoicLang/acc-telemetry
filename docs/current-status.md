@@ -97,6 +97,22 @@ reference explanation. Multi-week training and metric lateral ML remain later wo
 
 ## Recently completed
 
+- User review convention: when responding to a presented review batch, the user
+  considers uncorrected displayed values accepted. Apply their explicit corrections
+  and do not ask for repeated confirmation. Unseen frames and an unanswered batch
+  do not become reviewed by elapsed time or silence alone.
+- The user identified a new capture, `/Users/loiclang/Movies/2026-09-04 22-30-22.mov`,
+  for holdout, with a settings-menu interval after a crash. The file exists. Reserve
+  it for independent annotation/final evaluation, not extractor threshold tuning.
+- A6 approved values are now consolidated through the tested `consolidate` command.
+  The ignored `run-004/processed/accepted-corpus/index.json` references per-source
+  labels and reports: 40 unique readable frames per speed/brake/throttle, two reviewed
+  pedal-event windows (four event markers), no reviewed degraded frames, and no holdout.
+  Approvals and image hashes are checked; duplicates cannot inflate counts.
+- Explicit `provided_fields_only` review scope retains unknown steering visibility
+  and degradation as null. It never permits a numeric label with unknown visibility.
+  User-reported lap starts remain temporal markers, not independently reviewed physical
+  landmarks. N1 stationarity and B6 automatic-blip context remain preserved separately.
 - The user approved batch 2: 24 displayed numerical readings/tolerances and listed
   field visibility, plus the precise L3 lap-start marker. The ignored snapshot
   `run-003/reports/approval.json` records this approval and the reviewed source hashes.
@@ -607,9 +623,10 @@ The first user feedback is now recorded. Use the updated portal
 `data/lab/coaching-reliability/run-002/reports/START_HERE.html` and its
 `user-feedback.json` before asking for any repeat review. Preserve user-confirmed
 throttle releases, reported lap starts and N1 stationarity with their exact scope.
-Both displayed batches are now accepted. Read `run-002/reports/approval.json` and
-`run-003/reports/approval.json`; do not repeat their review. Next consolidate the 40
-accepted readings and scoped event markers, then prepare the remaining corpus inputs.
+Both displayed batches are now consolidated under `run-004/processed/accepted-corpus/`.
+Read the index and prior approval snapshots; do not repeat their review. Next prepare
+the newly supplied September 4 holdout capture, preserving its settings-menu interval
+as possible real missing-HUD evidence, and the remaining corpus inputs.
 Preserve throttle release versus brake onset, physical-start/timer-reset/counter-update
 distinctions, and the user's automatic-downshift-blip context for B6. The latter must
 qualify future coaching event interpretation without erasing the measured HUD signal.

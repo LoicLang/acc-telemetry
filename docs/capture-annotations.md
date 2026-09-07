@@ -208,3 +208,22 @@ The user also explained B6's downshift throttle spikes as automatic blips. Keep 
 HUD measurements intact, but distinguish displayed throttle from intentional driver
 pedal action when designing coaching events. This user-reported context must not be
 generalized to every overlap without evidence, or used to label it a driving mistake.
+
+## Consolidated scoped approvals
+
+`scripts/annotate_capture.py consolidate --approval APPROVAL_1.json APPROVAL_2.json
+--output NEW_DIRECTORY` verifies approved image hashes and source metadata, deduplicates
+identical readings, refuses conflicts and publishes per-source labels/reports atomically.
+Original approval snapshots are unchanged. The current result is ignored under
+`run-004/processed/accepted-corpus/`.
+
+Consolidated rows use explicit `review_scope: provided_fields_only`: unreviewed metadata
+such as steering visibility or degradation may stay null. Defined numeric/text values
+still require reviewed visibility; null does not count as degraded or invisible.
+The original default fully-reviewed-row validation remains strict.
+
+Lift and brake markers in one reviewed clip share `event_window_id` and count as one
+window. Reported lap starts with `physical_landmark_reviewed: false` remain available
+as temporal evidence but do not satisfy the physical-passage requirement. The current
+corpus has 40 unique readable frames per target field and two reviewed pedal windows;
+remaining minima, recording lineage and holdout are explicitly pending.

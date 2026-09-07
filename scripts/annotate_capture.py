@@ -6,6 +6,7 @@ from pathlib import Path
 
 from acc_telemetry.application.capture_annotations import prepare_annotations, validate_annotation_file
 from acc_telemetry.application.validation_config import load_validation_settings
+from acc_telemetry.application.annotation_reviews import consolidate_approvals
 
 
 def main(argv=None):
@@ -21,14 +22,19 @@ def main(argv=None):
     prepare.add_argument('--probe-evidence',type=Path,help='reuse source-hashed FFprobe failure evidence; revalidate packets')
     validate=commands.add_parser('validate')
     validate.add_argument('--annotations',type=Path,required=True)
+    consolidate=commands.add_parser('consolidate')
+    consolidate.add_argument('--approval',type=Path,nargs='+',required=True)
+    consolidate.add_argument('--output',type=Path,required=True)
     args=parser.parse_args(argv)
     if args.command=='prepare':
         output=prepare_annotations(args.video,args.profile,args.output,
             settings=load_validation_settings(args.config),selection=args.selection,role=args.role,
             progress=lambda message:print(message,flush=True),probe_evidence=args.probe_evidence)
         print(output)
-    else:
+    elif args.command=='validate':
         print(json.dumps(validate_annotation_file(args.annotations),allow_nan=False,indent=2))
+    else:
+        print(consolidate_approvals(args.approval,args.output))
     return 0
 
 

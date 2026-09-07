@@ -37,11 +37,12 @@ def validate_annotations(labels, capture, *, source_sha256):
         seen.add(frame)
         if not _finite(row['time_s'],0,capture['duration']) or abs(row['time_s']-capture['timestamps'][frame])>1e-6:
             raise ValueError('annotation frame/time mismatch')
-        if type(row['degraded']) is not bool:
+        partial = row.get('review_scope') == 'provided_fields_only'
+        if type(row['degraded']) is not bool and not (partial and row['degraded'] is None):
             raise ValueError('degradation must be reviewed')
-        degraded+=row['degraded']
+        degraded+=row['degraded'] is True
         visibility=row['visibility']
-        if set(visibility)!=set(('speed','gear','lap_number','throttle','brake','steering')) or any(type(v) is not bool for v in visibility.values()):
+        if set(visibility)!=set(('speed','gear','lap_number','throttle','brake','steering')) or any(type(v) is not bool and not (partial and v is None) for v in visibility.values()):
             raise ValueError('frame visibility must be reviewed per field')
         for key in ('speed_text','gear_text','lap_text'):
             value=row[key]
@@ -65,7 +66,7 @@ def validate_annotations(labels, capture, *, source_sha256):
                     raise ValueError('pedal label needs finite tolerance')
                 readable[field]+=1
     identifiers=set()
-    event_windows=0
+    event_windows=set()
     for passage in labels['passages']:
         validate_windows([passage],count)
         if (passage.get('reviewed') is not True or not isinstance(passage.get('id'),str)
@@ -76,7 +77,7 @@ def validate_annotations(labels, capture, *, source_sha256):
         if passage['kind']=='pedal_event':
             if passage.get('field') not in ('throttle','brake'):
                 raise ValueError('pedal event needs field')
-            event_windows+=1
+            event_windows.add(passage.get('event_window_id', passage['id']))
     spans=[]
     for row in labels['visibility']:
         if row.get('reviewed') is not True:
@@ -89,8 +90,8 @@ def validate_annotations(labels, capture, *, source_sha256):
                 raise ValueError('visibility span contradicts reviewed frame occlusion')
     has_truth=bool(labels['frames'] or labels['passages'] or labels['visibility'])
     return dict(status='pass' if has_truth else 'not_evaluated', error=None,
-        readable_frames=dict(readable),degraded_frames=degraded,event_windows=event_windows,
-        passages=sum(p['kind'] in ('landmark','lap_boundary') for p in labels['passages']),visibility=[dict(field=s.field,start_s=s.start_s,
+        readable_frames=dict(readable),degraded_frames=degraded,event_windows=len(event_windows),
+        passages=sum(p['kind'] in ('landmark','lap_boundary') and p.get('physical_landmark_reviewed', True) for p in labels['passages']),visibility=[dict(field=s.field,start_s=s.start_s,
             end_s=s.end_s,reviewer=s.reviewer) for s in spans])
 
 
