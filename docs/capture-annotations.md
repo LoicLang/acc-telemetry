@@ -198,3 +198,13 @@ complete the 100-per-field requirement nor establish the event/degraded/holdout 
 Native dimensions, image hashes and all static links were checked. The browser tool
 could identify the tab but could not inspect this file URL under its URL policy;
 interactive browser validation is not claimed.
+
+The user subsequently approved the 24 displayed batch-2 readings and supplied an
+exact L3 marker. `run-003/reports/approval.json` retains this scoped approval. Together
+with batch 1 there are 40 accepted image readings; unexamined native frames and
+corpus/holdout acceptance remain pending.
+
+The user also explained B6's downshift throttle spikes as automatic blips. Keep the
+HUD measurements intact, but distinguish displayed throttle from intentional driver
+pedal action when designing coaching events. This user-reported context must not be
+generalized to every overlap without evidence, or used to label it a driving mistake.

@@ -432,8 +432,11 @@ The user feedback does not check off the full A6 corpus gate.
 - [x] Prepare batch 2 (2026-09-07): `run-003/reports/START_HERE.html`, eight cards,
   24 unreviewed manual readings, fifteen intermediate pedal calculations and 1,472
   native frames. Static image/hash/link checks pass; the first approval is preserved.
-- [ ] Obtain user review of batch 2 and consolidate only the explicitly accepted
-  fields/events. This is additional development material, not holdout or corpus acceptance.
+- [x] Obtain user review of batch 2: 24 displayed readings/visibility and the L3
+  marker, archived in `run-003/reports/approval.json`. Preserve the user's automatic
+  downshift-blip explanation for B6. This is not holdout or corpus acceptance.
+- [ ] Consolidate only the explicitly accepted fields/events from both approval files;
+  complete the remaining corpus inputs without relabeling every native frame as reviewed.
 
 ### A7 — Rejouer l'historique et mesurer le gate A
 
