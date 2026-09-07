@@ -90,13 +90,15 @@ def consolidate_approvals(paths, destination, *, settings=None):
             if source not in groups:
                 raise ValueError('event has no associated approved source')
             kind = claim.get('kind')
-            if kind not in ('reported_lap_start','throttle_release'):
+            pedal_fields = {'throttle_release': 'throttle', 'throttle_reapplication': 'throttle',
+                            'brake_onset': 'brake', 'brake_release': 'brake'}
+            if kind != 'reported_lap_start' and kind not in pedal_fields:
                 groups[source]['context'].append(claim)
                 continue
             frame = claim['frame']
             event = dict(id=f'{claim["window_id"]}-{kind}', frame_lo=max(0,frame-1), frame_hi=frame,
                 kind='lap_boundary' if kind=='reported_lap_start' else 'pedal_event',
-                event_type=kind, field='throttle' if kind=='throttle_release' else None,
+                event_type=kind, field=pedal_fields.get(kind),
                 physical_landmark_reviewed=False, event_window_id=claim['window_id'],
                 reviewed=True, approval_source=str(path), evidence_definition=claim.get('scope',kind))
             groups[source]['events'][event['id']] = event

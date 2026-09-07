@@ -266,3 +266,12 @@ complete the readable/degraded frame minima with the existing 40 readings. Event
 physical-landmark and lineage requirements still need their own evidence; merely
 preparing 20 candidate windows does not satisfy the event gate. Static link/image/hash
 checks are recorded in `run-004/reports/final-review-checks.json`.
+
+The user's subsequent review accepted uncorrected H/M values under their standing
+review convention and supplied 21 precise markers across 17 E windows. Approval is
+stored in `run-004/reports/approval.json`; the consolidated corpus is now
+`run-004/processed/accepted-corpus-v2/`. It contains 100 readable labels per target
+field, 20 real degraded/menu cases, and 19 timed event windows including the earlier
+two. E01/E12/E16 remain descriptive, without fabricated timestamps. The user's E17
+steering explanation remains a hypothesis. Lineage for development recordings and
+reviewed physical landmarks remain outstanding alongside the twentieth timed window.

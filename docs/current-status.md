@@ -97,6 +97,17 @@ reference explanation. Multi-week training and metric lateral ML remain later wo
 
 ## Recently completed
 
+- Final H/M review and user-supplied E markers are recorded in ignored
+  `run-004/reports/approval.json`. Consolidated truth is now
+  `run-004/processed/accepted-corpus-v2/index.json`: 120 unique frames, including
+  100 readable speed/brake/throttle labels each and 20 degraded/menu cases; development
+  plus reserved holdout roles are retained. The user supplied 21 precise pedal markers
+  in 17 new windows, giving 19 reviewed event windows with the two earlier ones.
+- E01/E12 describe corner sequences and E16 describes exit acceleration without a
+  precise marker. No timing was invented. E17's possible excessive steering is retained
+  as the user's hypothesis. Remaining A6 checks: one more timed event window, original
+  recording lineage for development inputs, and independently reviewed physical markers.
+  The approval importer now preserves brake onset/release and throttle reapplication.
 - A6 remaining-review package is ready at ignored
   `run-004/reports/START_HERE.html`: 60 new readable-frame proposals (H01–H60),
   20 real menu/HUD-absence proposals (M01–M20), and 20 candidate event windows
@@ -631,27 +642,19 @@ gates pass on controlled Spa evidence.
 
 ## Current next action
 
-Complete the A6 reviewed corpus before claiming real A7 validation. Open
-`data/lab/coaching-reliability/run-001/annotations-bmw/selection.html`, select useful
-frame windows in its `selection.json`, and export native frames with the documented
-second prepare command. Have the user review labels/visibility/physical passages,
-repeat across captures, and obtain an untouched holdout recording. Corpus minima,
-lineage, holdout and reviewed counts are still unmet; see `capture-annotations.md`.
-A6 implementation tests are complete, but A6 human corpus acceptance is unchecked.
-The first user feedback is now recorded. Use the updated portal
-`data/lab/coaching-reliability/run-002/reports/START_HERE.html` and its
-`user-feedback.json` before asking for any repeat review. Preserve user-confirmed
-throttle releases, reported lap starts and N1 stationarity with their exact scope.
-Both displayed batches are consolidated under `run-004/processed/accepted-corpus/`.
-Read the index and prior approval snapshots; do not repeat their review. The next action
-is user review of `run-004/reports/START_HERE.html`: corrections to H01–H60/M01–M20,
-plus explicit event types/frame markers or absence for E01–E20. Empty event timestamps
-remain unknown even when numerical readings are accepted. Then consolidate accepted
-new fields with their holdout lineage and recompute corpus readiness.
+Read `data/lab/coaching-reliability/run-004/processed/accepted-corpus-v2/index.json`
+and its per-source labels/reports. Resolve the three remaining A6 checks: 19/20 timed
+event windows, development recording lineage, and reviewed physical landmarks.
+Use local provenance to resolve lineage before asking the user anything. For missing
+annotations, prepare only the exact outstanding evidence; do not repeat H/M or prior
+batch reviews. E01/E12/E16 have descriptions but no precise user-supplied timestamps.
+Once A6 is genuinely ready, execute A7 from the active plan with independent metrics.
 Preserve throttle release versus brake onset, physical-start/timer-reset/counter-update
 distinctions, and the user's automatic-downshift-blip context for B6. The latter must
 qualify future coaching event interpretation without erasing the measured HUD signal.
-Full corpus counts, recording lineage and untouched holdout remain pending.
-Continue on `codex/coaching-reliability`; A5 is `a4c021b`, use Git history for A6.
-A5 evidence paths were rechecked. Gate A remains unvalidated, B blocked and C inactive.
+The holdout is reserved and its lossless-prefix proof is verified. Do not tune extraction
+on its labels or replay all media unnecessarily. The user's latest instruction is to
+finish this handoff quickly and keep verification proportionate. Relevant approvals
+and consolidated paths have been checked. Gate A remains unvalidated; B blocked, C inactive.
+Continue on `codex/coaching-reliability`; use recent Git history for the last checkpoint.
 Push to origin is authorized; no merge to main requested.

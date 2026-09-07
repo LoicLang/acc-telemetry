@@ -10,6 +10,17 @@ from acc_telemetry.analysis.validation import validate_annotations
 
 
 class TestAnnotationReviewConsolidation(unittest.TestCase):
+    def test_explicit_brake_and_throttle_markers_are_retained(self):
+        path = self.approval([self.row])
+        document = json.loads(path.read_text())
+        document['approved_event_claims'] = [dict(window_id=f'E{i}', source_sha256='a'*64,
+            kind=kind, frame=1) for i,kind in enumerate(('brake_onset','brake_release','throttle_reapplication'))]
+        path.write_text(json.dumps(document))
+        output = self.consolidate([path])
+        labels = json.loads((output / ('a'*64) / 'labels.json').read_text())
+        self.assertEqual([p['field'] for p in labels['passages']], ['brake','brake','throttle'])
+        self.assertEqual(len(labels['passages']), 3)
+
     def setUp(self):
         self.temp = tempfile.TemporaryDirectory()
         self.addCleanup(self.temp.cleanup)

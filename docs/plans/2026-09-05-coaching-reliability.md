@@ -450,6 +450,13 @@ The user feedback does not check off the full A6 corpus gate.
 - [ ] Receive scoped H/M review and event timestamps/types (or event absence), then
   reconsolidate and verify every remaining corpus criterion before real A7 validation.
 
+- [x] Record the final user response and consolidate as `run-004/processed/accepted-corpus-v2/`:
+  100 readable labels per target field, 20 degraded cases, 21 new temporal markers in
+  17 windows. With the earlier two, 19 timed windows are available. E01/E12/E16 remain
+  descriptions only; E17's steering comment remains a hypothesis.
+- [ ] Resolve the twentieth timed window, development recording lineage and independently
+  reviewed physical landmarks. Do not repeat accepted numerical/visibility reviews.
+
 ### A7 — Rejouer l'historique et mesurer le gate A
 
 **Créer :** `scripts/validate_capture.py`, `tests/test_capture_validation.py`.
