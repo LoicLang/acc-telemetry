@@ -440,6 +440,16 @@ The user feedback does not check off the full A6 corpus gate.
   reviewed pedal windows. Unknown metadata remains null under explicit scoped review.
 - [ ] Complete the remaining corpus inputs without relabeling every native frame as reviewed.
 
+- [x] Reserve the user-supplied September 4 holdout before inspection. Record the
+  isolated tail PTS failure and failed byte-copy attempt. The lossless 895-second
+  prefix passes preflight, with all 53,700 retained decoded frames/timestamps verified
+  identical; measurement code/settings remain frozen from `92e4223`.
+- [x] Prepare remaining review at `run-004/reports/START_HERE.html`: 60 readable
+  proposals, 20 actual menu-absence proposals and 20 candidate event windows. All new
+  proposals remain unreviewed; the 20 windows do not yet count as validated events.
+- [ ] Receive scoped H/M review and event timestamps/types (or event absence), then
+  reconsolidate and verify every remaining corpus criterion before real A7 validation.
+
 ### A7 — Rejouer l'historique et mesurer le gate A
 
 **Créer :** `scripts/validate_capture.py`, `tests/test_capture_validation.py`.

@@ -95,6 +95,10 @@ the independent reliability gate passes.
 sheets and native frame windows; human labels and an independent holdout are still
 required before validating measurement accuracy.
 
+Use `scripts/annotate_capture.py consolidate --approval APPROVAL.json ... --output NEW_DIR`
+to collect scoped approved readings without inventing unreviewed fields or duplicating
+frame counts. Holdout roles and explicitly reviewed HUD absence remain intact.
+
 ## Reference documents
 
 - [Current status](docs/current-status.md)

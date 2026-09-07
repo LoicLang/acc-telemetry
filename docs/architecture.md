@@ -143,6 +143,11 @@ paths use only `ProgressSessionEstimator` for longitudinal progress.
 
 ## Testing
 
+Scoped annotation approvals can be consolidated into per-source labels with explicit
+unknown metadata. Reviewed absence stays absent, duplicate approvals cannot inflate
+counts, and source roles/lineage are retained. This is annotation preparation, not
+measurement-model tuning or gate approval.
+
 Unit tests cover sampling, position direction and smoothing, OCR recovery, web profile propagation, configuration validation, pipeline closure, and normalization. The representative CSV fixture is synthetic and safe for Git. Full-video checks use ignored local session data.
 
 ## Planned coaching extension (not implemented)

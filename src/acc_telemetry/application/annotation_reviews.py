@@ -37,7 +37,20 @@ def consolidate_approvals(paths, destination, *, settings=None):
             source = reading['source_sha256']
             if source != capture['source']['sha256']:
                 raise ValueError('approval source mismatch')
-            group = groups.setdefault(source, dict(capture=capture, frames={}, events={}, context=[]))
+            metadata = approval.get('sources', {})
+            matches = [entry for key,entry in metadata.items()
+                       if key == source or entry.get('identity', {}).get('sha256') == source]
+            if metadata and len(matches) != 1:
+                raise ValueError('ambiguous or missing approved source metadata')
+            source_meta = matches[0] if matches else {}
+            role = source_meta.get('role', 'development')
+            if role not in ('development', 'holdout'):
+                raise ValueError('invalid approved source role')
+            recording_id = source_meta.get('recording_id')
+            group = groups.setdefault(source, dict(capture=capture, frames={}, events={}, context=[],
+                                                    role=role, recording_id=recording_id))
+            if group['role'] != role or group['recording_id'] != recording_id:
+                raise ValueError('conflicting approved source role or lineage')
             if group['capture']['capture'] != capture['capture']:
                 raise ValueError('inconsistent capture metadata')
             values = reading['proposed']
@@ -54,9 +67,12 @@ def consolidate_approvals(paths, destination, *, settings=None):
             tolerance = values.get('pedal_tolerance_pct')
             if reading.get('tolerance_points'):
                 tolerance = max(reading['tolerance_points'].values())
+            degraded = reading.get('proposed_degraded')
+            if degraded is not None and type(degraded) is not bool:
+                raise ValueError('degradation review must be explicit boolean or unknown')
             row = dict(frame=reading['frame'], time_s=reading['time_s'],
                 **{k: values.get(k) for k in ('speed_text','gear_text','lap_text','throttle_pct','brake_pct')},
-                pedal_tolerance_pct=tolerance, visibility=visibility, degraded=None,
+                pedal_tolerance_pct=tolerance, visibility=visibility, degraded=degraded,
                 review_scope='provided_fields_only', reviewed=True,
                 approval_sources=[str(path)], image_sha256=reading['image_sha256'])
             previous = group['frames'].get(row['frame'])
@@ -103,7 +119,7 @@ def consolidate_approvals(paths, destination, *, settings=None):
     documents = []
     for source, group in sorted(groups.items()):
         document = dict(schema_version='capture-annotations-v1', source_sha256=source,
-            role='development', recording_id=None, annotator='user', reviewed=True,
+            role=group['role'], recording_id=group['recording_id'], annotator='user', reviewed=True,
             review_scope='provided_fields_only', frames=[group['frames'][f] for f in sorted(group['frames'])],
             windows=[], passages=list(group['events'].values()), visibility=[], context=group['context'])
         report = validate_annotations(document, group['capture']['capture'], source_sha256=source)

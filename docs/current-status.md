@@ -97,6 +97,25 @@ reference explanation. Multi-week training and metric lateral ML remain later wo
 
 ## Recently completed
 
+- A6 remaining-review package is ready at ignored
+  `run-004/reports/START_HERE.html`: 60 new readable-frame proposals (H01–H60),
+  20 real menu/HUD-absence proposals (M01–M20), and 20 candidate event windows
+  (E01–E20) with native-frame navigation. The latter have no accepted timestamps yet.
+  This does not mark the full corpus gate complete.
+- The September 4 original has an isolated final two-frame PTS interval. The original
+  and an attempted byte-copy prefix failed temporal preflight. A lossless 895-second
+  derivative was produced instead: all 53,700 decoded frame hashes, timestamps and
+  durations match the retained original prefix. Its preflight passes. The original
+  SHA-256 is unchanged; the exclusion/transform are recorded in
+  `run-004/reports/holdout-lossless-transform.json`. Do not use the failed byte-copy prefix.
+- Holdout was reserved before inspection at measurement code `92e4223`; all 20 checked
+  measurement modules and resolved measurement settings still match that reservation.
+  Later changes concern approval consolidation only, including explicit reviewed absence
+  and holdout role/lineage preservation. No extraction threshold was fitted to the holdout.
+- Verification: 262 tests pass. The final review contains 80 unique source-hashed images,
+  204 verified static links/assets, and 4,820 native event-window images. No new human
+  annotations have been accepted yet. The lossless working video is about 19 GiB and
+  remains ignored with all other personal/derived evidence.
 - User review convention: when responding to a presented review batch, the user
   considers uncorrected displayed values accepted. Apply their explicit corrections
   and do not ask for repeated confirmation. Unseen frames and an unanswered batch
@@ -623,10 +642,12 @@ The first user feedback is now recorded. Use the updated portal
 `data/lab/coaching-reliability/run-002/reports/START_HERE.html` and its
 `user-feedback.json` before asking for any repeat review. Preserve user-confirmed
 throttle releases, reported lap starts and N1 stationarity with their exact scope.
-Both displayed batches are now consolidated under `run-004/processed/accepted-corpus/`.
-Read the index and prior approval snapshots; do not repeat their review. Next prepare
-the newly supplied September 4 holdout capture, preserving its settings-menu interval
-as possible real missing-HUD evidence, and the remaining corpus inputs.
+Both displayed batches are consolidated under `run-004/processed/accepted-corpus/`.
+Read the index and prior approval snapshots; do not repeat their review. The next action
+is user review of `run-004/reports/START_HERE.html`: corrections to H01–H60/M01–M20,
+plus explicit event types/frame markers or absence for E01–E20. Empty event timestamps
+remain unknown even when numerical readings are accepted. Then consolidate accepted
+new fields with their holdout lineage and recompute corpus readiness.
 Preserve throttle release versus brake onset, physical-start/timer-reset/counter-update
 distinctions, and the user's automatic-downshift-blip context for B6. The latter must
 qualify future coaching event interpretation without erasing the measured HUD signal.

@@ -227,3 +227,42 @@ window. Reported lap starts with `physical_landmark_reviewed: false` remain avai
 as temporal evidence but do not satisfy the physical-passage requirement. The current
 corpus has 40 unique readable frames per target field and two reviewed pedal windows;
 remaining minima, recording lineage and holdout are explicitly pending.
+
+Source role/lineage declared in a scoped approval are now preserved by consolidation.
+An explicitly approved degradation boolean is retained; unknown degradation remains
+null. This supports real absent-HUD annotations without silently turning them into
+development data or readable zeros. Synthetic regressions cover those boundaries.
+
+## September 4 holdout and remaining review (2026-09-07)
+
+The user supplied `/Users/loiclang/Movies/2026-09-04 22-30-22.mov` as a new source,
+including a settings-menu interval after a crash. Its identity and measurement code
+were reserved before inspection in `run-004/reports/holdout-reservation.json`.
+
+Its only irregular PTS interval is at the very end. A byte-copy cut also left an
+irregular dependency tail, so neither original nor byte-copy prefix was admitted as
+a fully supported CFR capture. The retained first 895 seconds were losslessly encoded
+to `run-004/interim/holdout-lossless-prefix.mp4` (approximately 19 GiB). Complete
+framemd5 comparisons verify all 53,700 decoded images, timestamps and durations equal
+the original prefix; preflight of the derivative passes. No interpolation or capture
+repair is claimed, and the original file is unchanged. The exclusion and lineage are
+explicit in `run-004/reports/holdout-lossless-transform.json`.
+
+The holdout is scoped to this regular prefix. Measurement modules and settings remain
+unchanged from the pre-inspection reservation; this source was not used to fit the
+extractor. Its annotations are still proposals, not accepted truth or accuracy results.
+
+`run-004/reports/START_HERE.html` presents:
+
+- H01–H60: 60 manually read speed/gear/lap/pedal proposals, with visual pedal estimates
+  rounded to five points and a proposed ±5-point annotation tolerance;
+- M01–M20: native menu images at 541–560 s, proposing absent racing HUD values as null,
+  with false visibility and explicit degradation. Menu control widgets are not racing HUD;
+- E01–E20: 20 visually selected candidate windows, 4,820 native frames total, with
+  unknown event presence/timestamp until the user identifies a frame/type or says none.
+
+The existing two accepted batches remain untouched. If H/M are accepted, they can
+complete the readable/degraded frame minima with the existing 40 readings. Event,
+physical-landmark and lineage requirements still need their own evidence; merely
+preparing 20 candidate windows does not satisfy the event gate. Static link/image/hash
+checks are recorded in `run-004/reports/final-review-checks.json`.

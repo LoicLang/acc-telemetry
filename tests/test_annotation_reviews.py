@@ -94,3 +94,21 @@ class TestAnnotationReviewConsolidation(unittest.TestCase):
                 brake_pct=None, pedal_tolerance_pct=None)])
         with self.assertRaises(ValueError):
             validate_annotations(document, self.capture, source_sha256='a'*64)
+
+    def test_explicitly_reviewed_absence_and_holdout_role_are_preserved(self):
+        row = dict(self.row,
+            proposed={k:None for k in self.row['proposed']},
+            proposed_visibility={k:False for k in ('speed','gear','lap_number','throttle','brake','steering')},
+            proposed_degraded=True)
+        path = self.approval([row])
+        document = json.loads(path.read_text())
+        document['sources'] = {'a'*64: dict(role='holdout', recording_id='original-recording')}
+        path.write_text(json.dumps(document))
+        output = self.consolidate([path])
+        labels = json.loads((output / ('a'*64) / 'labels.json').read_text())
+        report = json.loads((output / ('a'*64) / 'review-report.json').read_text())
+        self.assertEqual(labels['role'], 'holdout')
+        self.assertEqual(labels['recording_id'], 'original-recording')
+        self.assertTrue(labels['frames'][0]['degraded'])
+        self.assertEqual(report['degraded_frames'], 1)
+        self.assertEqual(report['readable_frames']['speed'], 0)
