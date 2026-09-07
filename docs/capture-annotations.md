@@ -275,3 +275,16 @@ field, 20 real degraded/menu cases, and 19 timed event windows including the ear
 two. E01/E12/E16 remain descriptive, without fabricated timestamps. The user's E17
 steering explanation remains a hypothesis. Lineage for development recordings and
 reviewed physical landmarks remain outstanding alongside the twentieth timed window.
+
+
+## Current lineage completion and remaining review
+
+The authoritative corpus is now `run-005/processed/accepted-corpus-v3/`. It is a
+copy of v2 with only the two development recording IDs resolved from local file
+and packet hashes. `run-005/reports/development-lineage.json` proves all 29,416
+incident-clip video packets match a contiguous sequence of the September 2 22:40:01
+original with constant +515 s PTS offset; the BMW original hash also matches.
+No accepted human label, event or role changed, and v2/approvals are untouched.
+Readiness now fails only events (19/20) and physical passages (0 reviewed per source;
+two per source required). A7 has not begun. Follow `coaching-reliability-resume.md`
+for the focused review still to prepare and subsequent A7 work.

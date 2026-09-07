@@ -413,7 +413,7 @@ Contract and evidence paths: `docs/capture-annotations.md`.
   untouched holdout. Prepared images do not satisfy this human review requirement;
   `a6-corpus-readiness.json` is `not_evaluated`. Do not claim gate A or real A7 validation.
 
-- [ ] **Review package prepared (2026-09-06):** ignored portal
+- [x] **Review package prepared (2026-09-06):** ignored portal
   `data/lab/coaching-reliability/run-002/reports/START_HERE.html` contains six
   windows/501 native frames and 16 assistant proposals (B1/B2 braking, L1/L2 lap
   timing, N1 neutral, R1 reverse). `proposals.json` keeps all proposals unreviewed;
@@ -447,15 +447,21 @@ The user feedback does not check off the full A6 corpus gate.
 - [x] Prepare remaining review at `run-004/reports/START_HERE.html`: 60 readable
   proposals, 20 actual menu-absence proposals and 20 candidate event windows. All new
   proposals remain unreviewed; the 20 windows do not yet count as validated events.
-- [ ] Receive scoped H/M review and event timestamps/types (or event absence), then
-  reconsolidate and verify every remaining corpus criterion before real A7 validation.
+- [x] Receive scoped H/M review and the supplied event timestamps/types; consolidate
+  accepted evidence (remaining corpus criteria are tracked separately below).
 
 - [x] Record the final user response and consolidate as `run-004/processed/accepted-corpus-v2/`:
   100 readable labels per target field, 20 degraded cases, 21 new temporal markers in
   17 windows. With the earlier two, 19 timed windows are available. E01/E12/E16 remain
   descriptions only; E17's steering comment remains a hypothesis.
-- [ ] Resolve the twentieth timed window, development recording lineage and independently
-  reviewed physical landmarks. Do not repeat accepted numerical/visibility reviews.
+- [x] Resolve development recording lineage from local evidence: all 29,416 incident
+  video packets match the original recording with +515 s PTS offset; original BMW
+  SHA-256 verified. `run-005/processed/accepted-corpus-v3/` retains all approved labels
+  and passes the recording-lineage check. Proof: `run-005/reports/development-lineage.json`.
+- [ ] Obtain the twentieth timed window and six reviewed physical-passage intervals
+  (two per source). Do not repeat accepted numerical/visibility reviews.
+  Exact continuation: `docs/coaching-reliability-resume.md`. The focused review is
+  not prepared yet; A7 remains unstarted under the user's low-quota handoff request.
 
 ### A7 — Rejouer l'historique et mesurer le gate A
 

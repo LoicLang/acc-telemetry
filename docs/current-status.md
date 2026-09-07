@@ -1,5 +1,5 @@
 ---
-summary: single source of truth for current project state, active work, blockers, and exact next action
+summary: authoritative handoff for A6 corpus completion, verified lineage, remaining human review and blocked A7
 read_when:
   - starting any task
   - resuming work after another agent
@@ -8,653 +8,96 @@ read_when:
 
 # Current status
 
-Last verified: 2026-09-07
-
-This document is the mandatory living handoff for the repository. Update it from
-verified evidence whenever active work, blockers, stage gates, or the next action
-change. Use `git log` for authoritative commit hashes and dates.
-
-## Current objective
-
-Implementation planning is complete for a first reference-based corner coaching
-dossier. The user explicitly requires a relevant reference and visibility into the
-driver's trajectory, not just comparisons of pedal traces. Reliability implementation is active; A0–A5 are complete.
-
-Start with `docs/coaching-implementation-roadmap.md`. Execute reliability plan A
-before dossier plan B; optional replay plan C remains separate and inactive.
-The first intended result is a post-session debrief with one priority, an exercise,
-and a measurable success criterion, supported by paired cockpit images and a sourced
-reference explanation. Multi-week training and metric lateral ML remain later work.
-
-### Audit findings superseding earlier reliability claims
-
-- A1 corrects the audited raw-lap integration defect: production now uses strict,
-  fresh `observe_lap_number()`. The legacy wrapper still smooths/holds intentionally.
-  Real detector -> pipeline -> confirmer synthetic regressions verify missing reads,
-  rejected jumps, isolated errors and one boundary after five fresh increments.
-  This does not establish the false-boundary rate on real video.
-- A2 fixes speed provenance loss through production records and CSV normalization.
-  Speed raw text, held/missing quality and filter/rejection reasons are retained.
-  Gear uses fresh symbols; absent/unsupported labels remain missing. Confirmed-lap
-  quality and reasons come from the confirmer. This is software provenance evidence,
-  not independent OCR accuracy validation.
-- A3 refuses missing/unreviewed control ROIs instead of publishing observed zero.
-  Only reviewed visibility permits pedal/steering decoding; TC/ABS remain unsupported.
-  A5 now bounds comparison to admitted temporal runs and common coverage; typed API
-  responses retain modern provenance/nulls. These are verified software corrections,
-  not measurements of error rates in real video.
-- Existing replay metrics remain valid internal-consistency results; their odometric
-  checkpoints and completion tests are not independent spatial ground truth. Metric
-  accuracy and confidence calibration remain unverified.
-- Local evidence: `data/lab/2026-09-05-technical-audit/`, containing integration and
-  metric counterexamples plus test logs. All 186 existing tests pass under Python
-  3.13.2; documentation discovery and diff checks pass. No production code changed.
-- Planning delivered: common specification, detailed reliability/dossier tasks,
-  separate replay feasibility experiment, source-admission rules, seven metric
-  definitions, target CLI/artifact formats and human review gates. A0–A5 are complete; later tasks remain unchecked. The suggested Spa/Bruxelles case and reference source
-  must be verified on real inputs; no reference has been acquired.
-- Planning verification: documentation discovery succeeds; all 186 existing tests
-  pass, including the four focused documentation-index tests. Local plan links and
-  frontmatter were checked. No executable source/configuration files were changed.
-
-- Active milestone: A6 tooling and initial sheets ready; reviewed corpus pending
-- Previous milestone status: generic boundary visual-anchor robustness implementation
-  and representative validation complete at `4a101a8`; the new BMW and both controls
-  pass their replay gates with zero unconfirmed resets, nonlocal jumps, or premature
-  completions
-- Earlier milestone status: generic fusion implementation and representative validation complete;
-  merged locally into `main` at `f7888ae`
-- Current validation status: the isolated missing-boundary-dot gap is resolved and the
-  first complete BMW lap now contains fused visual progress
-- Active specification: `docs/specs/2026-09-05-reference-corner-coach-design.md`
-  (planning specification; no production gates newly passed)
-- Last completed specification: `docs/specs/2026-09-05-generic-boundary-visual-anchor-design.md`
-- Generic fusion design reference: `docs/specs/2026-09-03-generic-s-fusion-design.md`
-- Active plan: `docs/plans/2026-09-05-coaching-reliability.md`
-- Downstream plan: `docs/plans/2026-09-05-reference-corner-dossier.md`
-  (blocked until gate A passes)
-- Optional research plan: `docs/plans/2026-09-05-replay-spatial-feasibility.md`
-  (inactive; not a prerequisite for the visual-reference dossier)
-- Last completed implementation plan: `docs/plans/2026-09-05-generic-boundary-visual-anchor.md`
-- Prior completed implementation plan: `docs/plans/2026-09-04-temporal-centerline-selection.md`
-- Prior milestone handoff record — Last completed implementation plan: `docs/plans/2026-09-04-temporal-centerline-selection.md`
-- Earlier completed implementation plan: `docs/plans/2026-09-03-generic-s-fusion.md`
-- Last completed technical plan: `docs/plans/2026-09-02-native-1080-and-s-diagnostics.md`
-- Last completed plan: `docs/plans/2026-09-02-agent-handoff-documentation.md`
-- Technical ACC implementation: Tasks 1-10 complete
-- Documentation milestone: verified complete
-
-## Resume here
-
-1. Run `./scripts/docs-list`.
-2. Read this document.
-3. Read any active specification named above; otherwise read the last completed
-   specification only when the current work touches its decisions. If an active plan
-   is named, read it too.
-4. Inspect `git status --short --branch` and `git log --oneline -10`.
-5. If an active plan is named, continue from its first unchecked step; otherwise
-   follow `Current next action` below.
-
-## Recently completed
-
-- Final H/M review and user-supplied E markers are recorded in ignored
-  `run-004/reports/approval.json`. Consolidated truth is now
-  `run-004/processed/accepted-corpus-v2/index.json`: 120 unique frames, including
-  100 readable speed/brake/throttle labels each and 20 degraded/menu cases; development
-  plus reserved holdout roles are retained. The user supplied 21 precise pedal markers
-  in 17 new windows, giving 19 reviewed event windows with the two earlier ones.
-- E01/E12 describe corner sequences and E16 describes exit acceleration without a
-  precise marker. No timing was invented. E17's possible excessive steering is retained
-  as the user's hypothesis. Remaining A6 checks: one more timed event window, original
-  recording lineage for development inputs, and independently reviewed physical markers.
-  The approval importer now preserves brake onset/release and throttle reapplication.
-- A6 remaining-review package is ready at ignored
-  `run-004/reports/START_HERE.html`: 60 new readable-frame proposals (H01–H60),
-  20 real menu/HUD-absence proposals (M01–M20), and 20 candidate event windows
-  (E01–E20) with native-frame navigation. The latter have no accepted timestamps yet.
-  This does not mark the full corpus gate complete.
-- The September 4 original has an isolated final two-frame PTS interval. The original
-  and an attempted byte-copy prefix failed temporal preflight. A lossless 895-second
-  derivative was produced instead: all 53,700 decoded frame hashes, timestamps and
-  durations match the retained original prefix. Its preflight passes. The original
-  SHA-256 is unchanged; the exclusion/transform are recorded in
-  `run-004/reports/holdout-lossless-transform.json`. Do not use the failed byte-copy prefix.
-- Holdout was reserved before inspection at measurement code `92e4223`; all 20 checked
-  measurement modules and resolved measurement settings still match that reservation.
-  Later changes concern approval consolidation only, including explicit reviewed absence
-  and holdout role/lineage preservation. No extraction threshold was fitted to the holdout.
-- Verification: 262 tests pass. The final review contains 80 unique source-hashed images,
-  204 verified static links/assets, and 4,820 native event-window images. No new human
-  annotations have been accepted yet. The lossless working video is about 19 GiB and
-  remains ignored with all other personal/derived evidence.
-- User review convention: when responding to a presented review batch, the user
-  considers uncorrected displayed values accepted. Apply their explicit corrections
-  and do not ask for repeated confirmation. Unseen frames and an unanswered batch
-  do not become reviewed by elapsed time or silence alone.
-- The user identified a new capture, `/Users/loiclang/Movies/2026-09-04 22-30-22.mov`,
-  for holdout, with a settings-menu interval after a crash. The file exists. Reserve
-  it for independent annotation/final evaluation, not extractor threshold tuning.
-- A6 approved values are now consolidated through the tested `consolidate` command.
-  The ignored `run-004/processed/accepted-corpus/index.json` references per-source
-  labels and reports: 40 unique readable frames per speed/brake/throttle, two reviewed
-  pedal-event windows (four event markers), no reviewed degraded frames, and no holdout.
-  Approvals and image hashes are checked; duplicates cannot inflate counts.
-- Explicit `provided_fields_only` review scope retains unknown steering visibility
-  and degradation as null. It never permits a numeric label with unknown visibility.
-  User-reported lap starts remain temporal markers, not independently reviewed physical
-  landmarks. N1 stationarity and B6 automatic-blip context remain preserved separately.
-- The user approved batch 2: 24 displayed numerical readings/tolerances and listed
-  field visibility, plus the precise L3 lap-start marker. The ignored snapshot
-  `run-003/reports/approval.json` records this approval and the reviewed source hashes.
-  Batch 1 plus batch 2 now contain 40 accepted image readings, not a complete corpus.
-- The user explained the B6 throttle spikes during downshifts as automatic blips.
-  Preserve the displayed throttle measurements, but do not interpret those blips as
-  deliberate throttle reapplication or a driver mistake. This is user-provided context
-  for the reviewed case, not a universal classifier for every pedal overlap.
-- A6 review batch 2 is prepared in ignored `run-003/reports/START_HERE.html`: eight
-  new cards (B3/B4/G1/B5/G2/B6/L3/D1), 24 manual reading proposals and 1,472 native
-  frames from the same two development sources. Fifteen intermediate pedal values
-  have manual endpoint calculations against the prior reference scale; none uses
-  production OCR/control outputs. Visibility is explicitly proposed for review.
-- The first batch approval is preserved. Batch 2 is entirely unreviewed and does not
-  satisfy corpus minima/holdout by itself. Its displayed readings have since received
-  scoped user approval as recorded above. Native images, manual rulers and all static
-  page links were checked. Browser automation saw the new tab but its file-URL policy
-  blocked further UI inspection; no interactive-browser verification is claimed.
-- The user has now accepted the displayed first review batch ("okay tout est bon ce
-  coup la"). The immutable ignored `run-002/reports/approval.json` snapshots 16
-  accepted readings, five intermediate bar estimates with tolerance, and the scoped
-  event clarifications. The portal displays that acceptance. Do not ask the user to
-  repeat this review or extend it to all 501 frames, unexamined fields or corpus gates.
-- The user reviewed the first A6 window batch. Their throttle-release markers,
-  reported lap starts and N1 stationary interval are retained in ignored
-  `data/lab/coaching-reliability/run-002/reports/user-feedback.json` with per-claim
-  scope/source identity. These confirmations do not approve every field or frame.
-- Intermediate pedal proposals are now quantified from manually located native-pixel
-  bar edges and apparently full reference bars, independently of the production
-  extractor. The updated portal exposes rulers/calculations; percentages and their
-  proposed tolerance have now been accepted as annotation estimates. Do not replace
-  confirmed throttle release with first brake pressure: they are different events.
-- L2 needs separate event definitions: the user's new-lap marker coincides with the
-  visible timer reset, while the numeric lap counter updates four frames later.
-  Keep that display delay explicit when comparing A7 lap events. The feedback and
-  updated proposals have not been promoted to fully reviewed annotation files.
-
-- A6 tooling prepares source-hashed FFprobe manifests, 10-second selection sheets and
-  native frame windows in new child directories. Labels start null/unreviewed; the
-  validator refuses unreviewed, invalid or contradictory inputs and exports reviewed
-  A3 visibility. Validation targets and corpus minima are configured separately.
-- Presentation preflight rejects wrong resolution, incompatible CFR/PTS and missing
-  expected frames. Real MOV evidence exposed coded `nb_frames` including discard
-  packets, not missing display frames: 1 BMW, 92 clean-clip and 14 crash-clip packets.
-  A RED regression preceded matching non-discard packet PTS to decoded frames.
-  Early EOF remains rejected; pipeline metadata now retains decode status.
-- Initial local sheets are prepared: BMW 80 images, clean clip 32, crash clip 50.
-  Three native BMW frames are exported as a second-pass preview without changing
-  initial labels. All remain unreviewed/development; no independent labels or holdout
-  have been approved. See `capture-annotations.md` for paths and the review contract.
-- Verification: all 255 tests pass, including 15 focused annotation/video tests,
-  synthetic two-pass export, invalid-label rejection and visibility export. Docs,
-  compilation and diff checks pass. Logs are ignored as `data/lab/coaching-reliability/
-  run-001/a6-*`; corpus readiness is explicitly `not_evaluated`. No raw video changed.
-
-
-- A5 moves bounded interpolation into pure analysis. Partial laps are not extended,
-  missing/held/anomalous evidence breaks runs, duplicates and overlapping passages
-  remain ambiguous. Configured position/time gaps are validated. Plotly inserts null
-  separators and time deltas require unique confirmed lap origins and common coverage.
-- Comparison API models retain progress/raw/quality/reasons and nullable controls;
-  CSV import preserves literal OCR strings. The summary endpoint import is corrected.
-  See `comparison-reliability.md` for diagnostic-versus-coaching admission rules.
-- Verification: 15 focused A5 tests and all 243 tests pass; RED logs preceded fixes.
-  Actual local Uvicorn/curl POST compare and GET summary returned HTTP 200 with nulls
-  and provenance intact. Logs are ignored under `data/lab/coaching-reliability/run-001/a5-*`.
-  Docs discovery, compilation and diff checks pass. Current Plotly traces are tested;
-  the frontend named in the historical web guide is absent, so external UI support
-  remains unverified. No private video was modified or replayed for independent error.
-
-
-- A4 adds atomic `telemetry-v2` export/reload: observations JSONL, normalized samples
-  JSONL, compatible CSV and manifest. Source hashes before/after extraction, resolved
-  configuration/visibility, code hashes, profile, clip origin and payload hashes make
-  evidence inspectable. NaN/inf, changed sources, divergent records, unknown versions
-  and inconsistent envelopes are refused. See `session-artifacts.md`.
-- CLI `--artifact-dir` and optional parent clip origin are wired; the web Python service
-  also accepts artifact output. Web OCR thresholds now match its recorded settings,
-  covered by a RED regression before correction. Existing records remain available.
-- Verification: 14 A4 tests and all 228 repository tests pass, including actual
-  FFprobe on temporary synthetic CFR video, CLI/web export, typed reload, interrupted
-  writes, source access-time handling and concurrent no-replace publication.
-  Ignored logs: `data/lab/coaching-reliability/run-001/a4-*.log`, including RED runs.
-  Docs discovery, compilation and diff checks pass. No private capture was modified
-  or independently validated. CFR/PTS status is separate from decode coverage and
-  accuracy; gate A and coaching eligibility remain unvalidated/false.
-
-
-- A3 implements strict reviewed control visibility and `--visibility-json`, with
-  structural and video-duration validation. Empty/black ROIs and absent steering dots
-  remain missing. TC/ABS are unverified, regardless of visibility. Legacy wrappers
-  retain their behavior. See `control-visibility.md` for the JSON contract and limits.
-- A3 also fixes the consumer failure reproduced with all-missing controls: summary
-  aggregation no longer crashes on None steering or exports NaN/false zero indicator
-  counts. CLI reports and web metadata accept null controls. No HTTP annotation upload
-  is added; web extraction defaults safely to missing controls.
-- Verification: 11 A3 tests cover extraction, reviewed/overlay boundaries, validation,
-  CSV normalization, actual CLI and web service execution, and report/metadata output.
-  All 214 tests pass; docs discovery, compilation and diff checks pass. Ignored logs
-  are `data/lab/coaching-reliability/run-001/a3-*.log`, including pre-correction RED.
-  No real HUD annotations or independent accuracy claims were produced.
-
-
-- A2 adds `observe_speed`/`observe_gear`, CSV-compatible quality hints and JSON
-  `field_reasons`, propagated to immutable normalized field reasons. Numeric speed
-  filtering remains unchanged; median/recovery outputs retain their filter reasons.
-  Modern normalization rejects nonfinite numeric evidence. Gear has no historical
-  smoothing in production; the legacy wrapper retains it. N/R are unsupported.
-- A2 verification: OCR and roundtrip RED logs precede implementation; all 203 tests
-  pass, including the actual detector -> pipeline -> DataFrame -> CSV -> normalization
-  sequence. Evidence is ignored under `data/lab/coaching-reliability/run-001/a2-*.log`.
-  This validates software behavior only. A6/A7 independent annotations/validation remain pending.
-- User authorized ongoing pushes on 2026-09-05. A0/A1 were pushed to
-  `origin/codex/coaching-reliability`; A2 was pushed as `9869385`. Ongoing verified
-  atomic commits may be pushed to origin.
-
-
-- A1 adds immutable `FieldObservation`, strict lap parsing, and fresh OCR in the
-  generic pipeline. Crop/preprocessing and legacy smoothing remain compatible.
-  Missing evidence restarts the candidate; transition exports retain first candidate,
-  confirmation, and last fresh previous-lap times. Anchoring remains at confirmation.
-- Verified: RED integration/timing logs preceded changes; 15 focused tests and all
-  192 tests pass. Logs: `data/lab/coaching-reliability/run-001/a1-*.log`.
-  Sustained plausible OCR errors can still pass consensus; no independent video
-  validation was performed, and the consensus score is not an accuracy probability.
-
-
-- Removed the repository's dependency on the former external workflow package.
-  All dated working material now lives under neutral `docs/plans/` and `docs/specs/`
-  paths, every active and historical link was updated, and mandatory skill headers
-  were removed from the plans. `AGENTS.md` now defines plans as ordinary repository
-  checklists governed only by the local testing, documentation, and commit rules.
-- Documentation discovery excludes `docs/plans/` and `docs/specs/` in both default
-  and `--all` modes. Focused tests cover this behavior and prevent the legacy workflow
-  directory or instruction markers from returning to repository guidance.
-- The corresponding global package under `.codex` and its discovery symlink under
-  `.agents/skills` were moved to the macOS Trash. This is recoverable and affects
-  future skill discovery; an already running Codex session may retain its initial
-  in-memory catalog until restarted.
-- Verification after the migration: all changed Markdown links resolve, documentation
-  discovery and `git diff --check` pass, Python compilation succeeds, and all 187
-  repository tests pass. No production telemetry behavior changed.
-
-- The generic boundary visual-anchor correction was validated on all three required
-  captures. The new BMW replay retains four exact boundary anchors and three accepted
-  calibration laps at an effective 6962.810185 m. Sources are 29,704 fused, 228
-  predicted, 17,653 missing, and 4 boundary-observed frames; no lap is rejected. The
-  opening partial lap accounts for 17,182 unanchored rows, but the first complete lap
-  after 286.366667 seconds is recovered with 8,515 fused rows, beginning at
-  286.833333 seconds. Unavailable duration falls from 436.616667 to 294.216667 seconds.
-  Maximum checkpoint spread changes from 0.003187 to 0.005740; no BMW spread threshold
-  was specified for this gate, so retain this increase as comparison evidence.
-- The clean control retains three exact boundary anchors, two accepted laps, effective
-  length 6965.332176 m, maximum checkpoint spread 0.001547, and 13.166667 seconds
-  unavailable. Sources are 17,907 fused, 202 predicted, 790 missing, and 3
-  boundary-observed frames; no lap is rejected.
-- The crash-heavy control retains four exact boundary anchors. Lap 6 remains rejected
-  with `duration_outlier` and `calibration_lap_rejected`; two regular laps calibrate to
-  6960.709491 m. Sources are 26,402 fused, 389 predicted, 8 interpolated, 2,599
-  missing, and 4 boundary-observed frames. Its 0.017384 checkpoint spread and
-  43.316667 unavailable seconds keep degradation explicit.
-- All three replays record zero unconfirmed resets, zero nonlocal visual jumps, and
-  zero premature completion entries. Their ignored traces and summaries are under
-  `data/lab/2026-09-05-boundary-visual-anchor/`; no source video was modified.
-- Final branch verification lists all active documentation, compiles `src`, `scripts`,
-  `tests`, and both launchers, and passes all 186 tests. Diff checks are clean and a
-  word-bounded search finds no circuit name or measured coordinate in production,
-  tests, or configuration.
-
-- The previously unanalysed `/Users/loiclang/Movies/2026-09-03 22-42-08.mov`
-  BMW session was replayed with `ps5_full_map_1080p`. All 47,589 processed frames
-  preserve a clean raw/confirmed sequence from lap 0 through lap 4. Boundaries at
-  286.367, 431.433, 577.417, and 722.617 seconds calibrate three complete laps to an
-  effective 6962.810 m. There are zero unconfirmed resets and zero premature
-  completion entries.
-- That replay does not validate fused progress: stable-map preparation rejects the
-  visual topology as `multiple_cycles`. The result contains 47,469 missing, 116
-  predicted, and 4 boundary-observed frames, with 791.133 seconds unavailable. This
-  is a safe failure rather than a fabricated coordinate, but it reopens centerline
-  robustness for the current recording format. Ignored evidence is under
-  `data/lab/2026-09-04-new-1080-bmw/replay/`.
-- The `multiple_cycles` root cause is confirmed. The broad 1080p map ROI contains
-  stable white cockpit evidence below the minimap. On the failing BMW recording, the
-  left mirror/sky component occupies 3,093 stable-mask pixels at ROI box
-  `(x=36, y=363, width=101, height=45)`, while the actual closed map component is
-  second at 2,763 pixels. The former `_single_component()` area-dominance rule
-  therefore rejects the frame set before it evaluates the map topology. On the
-  passing control, the map was only narrowly dominant at 2,825 pixels versus 2,796
-  pixels across all remaining components. The failure is a generic component-selection
-  defect exposed by car/cockpit imagery, not a malformed Spa map.
-- Temporal centerline selection was fast-forward merged into local `main` at
-  `7d332e5`; its feature branch was deleted after merged-result verification. The
-  stable-white threshold is 0.60 and each disconnected component is evaluated
-  independently; exactly one ROI-relative long closed cycle is accepted. No circuit
-  shape, Spa coordinate, or car-specific crop is used.
-- The corrected new BMW replay extracts the centerline and retains the same four
-  confirmed boundaries, three calibration laps, and 6962.810 m effective length. It
-  records zero unconfirmed resets, nonlocal jumps, or premature completions. Sources
-  are 20,098 fused, 1,280 predicted, 10 interpolated, 4 boundary-observed, and 26,197
-  missing frames; maximum checkpoint spread is 0.003187.
-- The 436.617-second unavailable total is now explained. The 286.267-second opening
-  partial lap is intentionally unanchored. At the first confirmed boundary, the red
-  dot is missing on the exact confirmation frame, so no visual anchor is retained and
-  the whole following 144.567-second lap remains unavailable. Later boundaries have
-  a dot and their laps contain only about 1.8-2.0 unavailable seconds. This is a
-  separate generic visual-anchor gap, not a centerline regression.
-- The clean control still passes its 0.002 spread target at 0.001547, with 17,633
-  fused frames and 13.167 unavailable seconds. The crash control still rejects lap 6
-  for `duration_outlier`, calibrates to 6960.709 m from two accepted laps, records
-  zero resets/jumps/premature completions, and exposes 43.300 unavailable seconds.
-
-- `feature/generic-s-fusion` was fast-forward merged into local `main` on 2026-09-04.
-  The merged result passes all 158 tests and Python compilation. The feature branch is
-  safe to delete after this handoff update; `main` has not been pushed after the merge.
-- The generic fused `s` design was decomposed into a ten-commit TDD execution plan
-  covering independent odometry, all plausible red candidates, a validated unique
-  centerline, odometry-guided projection, confirmed lap anchors, fused uncertainty,
-  domain propagation, and clean/crash-heavy local replay gates.
-
-- Repository foundations and package boundaries were completed on 2026-08-31.
-- The quality-aware `TelemetrySample` domain contract was added.
-- CLI and web processing share `TelemetryPipeline`.
-- The agent-handoff and telemetry-reliability design was recorded in commit
-  `e870506`.
-- Dynamic documentation discovery was added to that design in commit `67167a3`.
-- The current documentation implementation plan was recorded in commit `720c3fd`.
-- The tested documentation index was implemented in commit `595a6cf`.
-- The mandatory handoff protocol and living status were added in commit `a581c19`.
-- The ACC PS5 plan was corrected from the 2026-09-01 evidence in commit `457a1e1`.
-
-## Active milestone progress
-
-- Boundary visual-anchor recovery now retains compact irregular candidates and can
-  recover only around an already confirmed lap boundary. Real-capture validation on
-  the new BMW and both representative controls passes the planned boundary,
-  calibration, safety, and clean-spread gates. Every real boundary in these captures
-  used `boundary_anchor_exact`; the recovery paths remain covered synthetically.
-
-- Generic progress contracts and validated circuit-independent settings are implemented
-  on `feature/generic-s-fusion`. The Task 1 RED tests failed on the missing contracts
-  and settings; focused tests and the full 83-test suite then passed GREEN.
-- Independent speed odometry now integrates observed speed with trapezoidal `v * dt`,
-  interpolates only bounded internal gaps, preserves missing/anomalous evidence, and
-  calibrates effective lap length from robust boundary-to-boundary medians. Task 2
-  focused tests and the full 93-test suite pass.
-- Red-map extraction now retains every independently plausible contour, rejects large
-  backgrounds and low-circularity artifacts individually, supports both red HSV ranges,
-  and returns stable candidate ordering. Task 3 focused tests and the full 98-test
-  suite pass; the legacy single-largest-contour behavior remains characterized only.
-- Generic centerline extraction now selects a dominant stable-map component, thins it,
-  prunes local branches/marker cycles, rejects unresolved topology, orders one closed
-  cycle, and resamples it by arc length. The original 1080p map ROI truncated the HUD
-  cycle; the profile now covers the full left-side map region. On 59 sampled frames
-  from the immutable clean BMW capture, the generic extractor returns 861 points and
-  a 1490.639 px cycle. All 109 tests pass.
-- Visual geometry now returns every compatible point-to-segment projection, including
-  wraparound and nearby branches. Pure temporal selection scores normalized odometric
-  error, centerline distance, and image displacement; it accepts only a clear winner
-  and preserves missing, out-of-gate, and ambiguous reasons. All 121 tests pass.
-- Raw lap observations now feed a pure confirmation state machine. Initialization and
-  each sequential `+1` transition require five consecutive observations; missing,
-  isolated, decreasing, and jumping values remain inspectable without emitting a
-  boundary. Production fusion anchors only on the resulting confirmed boundary. All
-  127 tests passed at that implementation slice.
-- The fused estimator now stays unavailable before a confirmed boundary, anchors only
-  on that boundary, predicts from odometric distance, applies wrapped visual correction
-  without implicit lap resets, and exposes interpolation, prediction, ambiguity, and
-  uncertainty-limit reasons. Offline replay learns only from accepted complete laps;
-  a synthetic crash-distance outlier cannot recalibrate the median. All 136 tests pass.
-- CLI and web processing now construct the same generic session estimator. The shared
-  pipeline collects raw frame evidence, then performs offline calibration/fusion and
-  emits legacy `track_position` only as `s_fused * 100`. Modern output preserves
-  component signals, uncertainty, source, and reasons. Speed OCR now distinguishes a
-  fresh observation from held, missing, or anomalous evidence. A global OpenCV mock
-  that made test results order-dependent was removed. All 146 tests pass.
-- Clean-session validation first replayed all 139,561 extracted frames. That run exposed
-  session-global odometry uncertainty leaking across lap boundaries and two biased
-  diagnostic metrics; each defect received a synthetic RED regression before correction.
-- Per the user's 2026-09-04 direction, subsequent video checks use small representative
-  derived clips. The clean clip covers source time 275-590 seconds, three confirmed
-  boundaries, two complete calibration laps, and 18,902 extracted frames. It learns an
-  effective distance of 6965.332 m, records zero unconfirmed resets, zero nonlocal jumps,
-  zero premature completion-band entries, and a maximum interpolated checkpoint spread
-  of 0.001522 across 99 checkpoints, passing the 0.002 target. Source counts are 17,673
-  fused, 474 predicted, 3 interpolated, 749 missing, and 3 boundary-observed frames.
-  The derived video, trace, and JSON summary remain ignored under `data/lab/`.
-- The representative crash-heavy clip covers four confirmed boundaries and three
-  complete laps. Two regular laps calibrate `effective_lap_length_m` at 6960.709 m;
-  the 177.85-second degraded lap is rejected with `duration_outlier` and cannot alter
-  calibration. The trace records zero unconfirmed resets, zero nonlocal jumps, and zero
-  premature completion-band entries. It deliberately exposes degradation: checkpoint
-  spread rises to 0.016398 and 43.1 seconds become unavailable instead of being held as
-  observed. Source counts are 26,124 fused, 680 predicted, 8 interpolated, 2,586
-  missing, and 4 boundary-observed frames.
-- The final robustness fixes infer centerline direction only after one orientation wins
-  against odometry by a configured margin, reject duration outliers as well as distance
-  outliers, and keep the legacy tracker outside production CLI/web construction. The
-  complete repository suite contains 158 passing tests.
-
-- OCR runtime prerequisite: verified. `LapDetector` now discovers
-  `data/shared/tessdata/eng.traineddata`, and the real tesserocr backend initializes
-  successfully without a separate system Tesseract installation.
-- Native 1080p profile: validated as `ps5_full_map_1080p` on ten manually
-  annotated checkpoints from the clean BMW session.
-- Native-versus-downscaled OCR comparison: complete. Native 1080p scored 10/10
-  exact matches for lap number, last-lap time, speed, and gear. The identical
-  Lanczos-downscaled 720p frames scored 9/10 for lap number, 0/10 for last-lap
-  time, and 10/10 for speed and gear.
-- Capture baseline decision: use native 1920x1080/60 FPS for future ACC sessions.
-- OCR calibration finding: a tighter last-lap-time crop and thresholded 3x
-  lap-number preprocessing were required; resolution alone was not sufficient.
-- Position diagnostic contract: implemented and unit-tested. It exposes dot,
-  closest index, anchor source, direction, raw position, forced completion,
-  validated position, and decision without changing legacy numeric output.
-- Position trace CLI: implemented and tested as `scripts/diagnose_position.py`; it
-  writes ignored diagnostic CSV data without changing legacy telemetry records.
-- Full clean-session position trace: collected over 139,561 rows and 2,326 seconds.
-
-### Confirmed `s` root causes
-
-The first invalid state exists before smoothing:
-
-- geometric start anchor: pixel `(359, 0)`, path index `1141`;
-- actual confirmed crossing: approximately `(70, 155)`, mapping variably to path
-  indexes `1873`, `1904`, or `372`;
-- first detected raw position: 21.7602% at 8.0167 seconds, immediately clamped from
-  zero because it is relative to the wrong geometric anchor;
-- first forced completion: 52.25 seconds;
-- first `s >= 99.9%`: 52.3167 seconds;
-- first plateau at or above 99.9%: 229.75 seconds, until the real transition.
-
-The extracted map path is the outline of a thick white line rather than a unique
-centerline. Adjacent red-dot pixels can therefore select physically adjacent but
-topologically distant path indexes. One measured jump changed index `1905` to `370`
-and raw position from about 1.51% to 34.68%.
-
-Red-dot detection also selects the largest red contour before checking its size.
-Transparent-map backgrounds frequently contain a red cockpit or car region above
-4,000 px² plus a valid car dot around 160–195 px². The large contour is rejected and
-the valid smaller dot is ignored.
-
-Trace decision totals:
-
-- `missing_held`: 63,282 frames;
-- `backward_held`: 40,254 frames;
-- `forced_completion`: 18,323 frames;
-- `smoothed`: 16,460 frames;
-- `jump_clamped`: 1,196 frames;
-- directly `observed`: 32 frames;
-- `lap_reset`: 14 frames.
-
-The monotonic validator and forced-completion rule amplify and conceal the upstream
-anchor, topology, and red-dot selection failures. They are not the first cause.
-
-### Approved production direction
-
-The replacement is generic across circuits and validated on Spa first:
-
-1. `s_odometry` integrates `speed / 3.6 * delta_time` and is normalized by measured
-   complete-lap distance;
-2. `s_visual` projects plausible red-dot candidates onto a unique map centerline;
-3. `s_fused` uses odometry as a temporal prediction and visual position as an absolute
-   correction;
-4. every output retains source, uncertainty, and reasons;
-5. only a confirmed lap boundary anchors or resets progress.
-
-Official circuit length is optional sanity evidence. It is not the primary distance
-denominator. No Spa-specific coordinates or templates are allowed in the first
-implementation.
-
-Milestone commits:
-
-- `e944f81`: discover repository-local OCR data;
-- `d485cf2`: add the explicit native 1080p profile;
-- `d7a6005`: calibrate 1080p OCR regions and lap-number preprocessing;
-- `6b76631`: adopt native 1080p60 as the capture baseline;
-- `54ac52f`: expose extraction-level position decisions;
-- `b12bfe9`: add the shared-pipeline diagnostic trace;
-- `0548b61`: record and characterize the confirmed position root causes.
-
-Milestone verification: 77 tests pass, the diagnostic CLI processed all 139,561
-frames, documentation discovery passes, and legacy telemetry output remains unchanged.
-
-Verification for the documentation milestone:
-
-- documentation index exits successfully and lists four active documents;
-- all 64 repository tests pass;
-- Python compilation succeeds for `src`, `scripts`, `tests`, and launchers;
-- no telemetry production behavior was changed in this milestone.
-
-Verification for the active generic fused `s` implementation plan:
-
-- every local evidence path named by this document exists, including both immutable
-  external captures;
-- documentation discovery and `git diff --check` exit successfully;
-- Python compilation succeeds for `src`, `scripts`, `tests`, and launchers;
-- all 78 repository tests pass;
-- no telemetry production behavior or raw video was changed while writing the plan.
-
-## Verified working baseline
-
-- Native ACC PS5 capture at 1920x1080 and constant 60 FPS is validated; historical
-  1280x720 recordings remain supported.
-- The static full-map HUD path is extracted.
-- Controls, speed, and gears produce useful observations.
-- Real lap transitions can be detected on the controlled short capture.
-- Raw session videos remain immutable and ignored by Git.
-
-## Confirmed blockers
-
-### Longitudinal coordinate `s`
-
-Status: the generic replacement and isolated boundary-anchor correction pass the new
-BMW plus clean and crash-heavy representative gates. The first complete BMW lap is
-now fused, all eleven replayed boundaries anchor exactly, and all three captures retain
-zero unconfirmed resets, nonlocal jumps, and premature completions. The historical
-legacy failure below remains evidence for why the old tracker is not safe.
-
-Evidence from the controlled Spa capture on 2026-09-01:
-
-- `s` first reaches at least 99.9% at 88.033333 seconds in a 180-second capture;
-- `s` remains at or above 99.9% for 50.027742% of frames;
-- the real lap transition occurs around 178.2 seconds;
-- after that confirmed transition, the reset produces plausible progress near zero.
-
-The longer Spa session reproduces `initial_s_anchor: fail_reproduced`.
-
-### Lap transitions on long captures
-
-Status: confirmation state machine implemented and validated on the full 139,561-frame
-clean replay plus both representative clips. The earlier 2026-09-01 false-transition
-capture has not been replayed end to end with the new confirmer and remains a separate
-verification item.
-
-The longer 2026-09-01 session records
-`long_capture_lap_number_ocr: fail_false_transitions`. A false confirmed transition
-can reset the position anchor, so this is a prerequisite for trustworthy `s` across
-multiple laps.
-
-### Quality propagation
-
-Status: A5 preserves progress provenance in records and typed comparison responses.
-A2 preserves speed/gear/confirmed-lap provenance through records and CSV
-normalization. A3 adds control visibility/provenance; versioned artifacts and bounded
-comparison are implemented; independent measurement validation remains pending.
-See the active plan for remaining gates.
-
-`TelemetrySample` supports field-level observed, missing, held, interpolated,
-predicted, fused, and anomalous states. The available contract does not imply every
-extractor and consumer uses it correctly.
-
-## Local evidence
-
-The following evidence is intentionally ignored by Git and may be absent on another
-machine:
-
-- `data/sessions/2026/2026-09-01_spa_ps5_capture-test/session.yaml`
-- `data/sessions/2026/2026-09-01_spa_ps5_capture-test/processed/telemetry_20260901_182913.csv`
-- `data/sessions/2026/2026-09-01_spa_ps5_braking-baseline-aborted/session.yaml`
-
-New immutable external captures for the active milestone:
-
-- `/Users/loiclang/Movies/2026-09-02 21-55-05.mov`: primary clean BMW session,
-  1920x1080/60 FPS, 2326.033333 seconds, at least 12 visible laps;
-- `/Users/loiclang/Movies/2026-09-02 22-40-01.mov`: secondary robustness session,
-  1920x1080/60 FPS, 1137.016667 seconds, recent car change and crashes.
-- `/Users/loiclang/Movies/2026-09-03 22-42-08.mov`: new BMW validation session,
-  1920x1080/60 FPS, 793.166667 seconds, four confirmed boundaries.
-
-Ignored local A/B evidence:
-
-- `data/lab/2026-09-02_native-1080-ocr/reports/ground-truth.csv`
-- `data/lab/2026-09-02_native-1080-ocr/reports/ocr-results.csv`
-
-Ignored local position evidence:
-
-- `data/lab/2026-09-02_native-1080-position/trace.csv`
-- `data/lab/2026-09-04-new-1080-bmw/replay-after-fix/`
-- `data/lab/2026-09-04-temporal-centerline-selection/`
-- `data/lab/2026-09-05-boundary-visual-anchor/`
-
-Verify these paths exist before using them. Their summarized findings above are the
-durable repository record; personal videos and full telemetry exports must not be
-committed.
-
-## Priority order
-
-1. Complete A6 human review and corpus selection, then A7 historical/recent validation.
-2. Only when A passes, execute plan B: acquire/admit a reference, review physical
-   landmarks and trajectory images, compute seven metrics and export a ChatGPT dossier.
-3. Review a real coaching response and measure the exercise at a subsequent session.
-4. Consider optional plan C separately; no dataset/ML implementation is active.
-
-Corner segmentation, driving-event extraction, reference comparison, coaching
-rules, dashboards, and generative feedback remain blocked until the reliability
-gates pass on controlled Spa evidence.
-
-## Current next action
-
-Read `data/lab/coaching-reliability/run-004/processed/accepted-corpus-v2/index.json`
-and its per-source labels/reports. Resolve the three remaining A6 checks: 19/20 timed
-event windows, development recording lineage, and reviewed physical landmarks.
-Use local provenance to resolve lineage before asking the user anything. For missing
-annotations, prepare only the exact outstanding evidence; do not repeat H/M or prior
-batch reviews. E01/E12/E16 have descriptions but no precise user-supplied timestamps.
-Once A6 is genuinely ready, execute A7 from the active plan with independent metrics.
-Preserve throttle release versus brake onset, physical-start/timer-reset/counter-update
-distinctions, and the user's automatic-downshift-blip context for B6. The latter must
-qualify future coaching event interpretation without erasing the measured HUD signal.
-The holdout is reserved and its lossless-prefix proof is verified. Do not tune extraction
-on its labels or replay all media unnecessarily. The user's latest instruction is to
-finish this handoff quickly and keep verification proportionate. Relevant approvals
-and consolidated paths have been checked. Gate A remains unvalidated; B blocked, C inactive.
-Continue on `codex/coaching-reliability`; use recent Git history for the last checkpoint.
-Push to origin is authorized; no merge to main requested.
+Last verified: 2026-09-07. This is the single living handoff. Recent Git history is
+canonical for commit IDs. Earlier detailed status is preserved in
+`archive/2026-09-07-status-before-a6-lineage.md`; do not load it for routine resumption.
+
+## Objective and branch
+
+Build reliable ACC PS5 video telemetry before a reference-based corner coaching
+dossier. A0–A5 and A6 software are complete. **A6 corpus acceptance is pending;
+A7 has not started. Gate A is unvalidated, B blocked, C separate and inactive.**
+
+- Branch: `codex/coaching-reliability`, tracking the same branch on origin.
+- Starting checkpoint for this handoff: `d2581e8`, already pushed.
+- Latest user direction: prioritize a clean, concise, executable repository handoff
+  for a less powerful agent because token quota is low; defer further implementation.
+- Push authorized. No merge to main requested. Raw media must remain immutable.
+- Active specification: `specs/2026-09-05-reference-corner-coach-design.md`.
+- Active plan: `plans/2026-09-05-coaching-reliability.md`.
+- **Read next:** `coaching-reliability-resume.md`, the concrete remaining-work guide.
+- Downstream: `plans/2026-09-05-reference-corner-dossier.md` (blocked);
+  `plans/2026-09-05-replay-spatial-feasibility.md` (inactive).
+
+## Stable implementation baseline
+
+Generic progress and boundary visual-anchor implementation and representative validation complete.
+Technical ACC Tasks 1-10 complete. These software/replay results do not validate the
+independent coaching gate. Design reference: `docs/specs/2026-09-03-generic-s-fusion-design.md`.
+Latest completed implementation plan: `docs/plans/2026-09-05-generic-boundary-visual-anchor.md`.
+Earlier milestone record — Last completed implementation plan: `docs/plans/2026-09-04-temporal-centerline-selection.md`.
+
+## Authoritative local corpus
+
+Latest: `data/lab/coaching-reliability/run-005/processed/accepted-corpus-v3/index.json`.
+Its source labels/review reports were validated with the current annotation validator.
+It derives from `run-004/processed/accepted-corpus-v2/`, changing **only development
+recording IDs** in labels. Frames, values, visibility, events, context and roles are
+unchanged. All original approval snapshots and v2 remain untouched.
+
+| A6 criterion | Verified result |
+| --- | --- |
+| Readable speed / brake / throttle | 100 each, accepted; do not re-review |
+| Degraded/menu cases | 20, accepted; do not re-review |
+| Timed pedal-event windows | 19 / 20; one more required |
+| Development lineage | Resolved locally; readiness check passes |
+| Physical passages | 0 reviewed per source; two per source required by current config |
+| Distinct recordings / roles | Three recordings: two development, one reserved holdout |
+| Overall readiness | `not_evaluated`; only `events` and `repeated_passages` false |
+
+### Provenance resolved in this handoff
+
+`run-005/reports/development-lineage.json` contains freshly computed file identities:
+
+- BMW is the original `/Users/loiclang/Movies/2026-09-03 22-42-08.mov`;
+  SHA-256 `76859897055ddbac6bb52f6299dc7b86a6daf36bb3182b8d64d3da6c9aae378d`.
+- Incident clip `data/lab/2026-09-03-generic-s-fusion/crash-representative.mov`
+  derives from `/Users/loiclang/Movies/2026-09-02 22-40-01.mov`, original SHA-256
+  `ee3d83027a72b0c546cd4a773179a070e25b9c1d6002fa43bebd30f812705678`.
+  All 29,416 compressed video packet SHA-256 hashes match a contiguous original
+  sequence; PTS offset is exactly +515 seconds with zero offset spread.
+- Holdout retains original recording ID
+  `a29ae2705f89d13f6c2247ef31c919b8f3516a6a016a6aaffa700ac378bf1aed`.
+  Its 895-second lossless prefix and tail exclusion are documented in
+  `capture-annotations.md` and `run-004/reports/holdout-lossless-transform.json`.
+
+Local scripts `run-005/resolve_lineage.py` and `run-005/apply_lineage.py` preserve the
+verification/migration method. Outputs and personal evidence are ignored by Git.
+No extraction code, thresholds or production configuration changed.
+
+## Human evidence constraints
+
+- Accepted approvals: `run-002/reports/approval.json`, `run-003/reports/approval.json`,
+  `run-004/reports/approval.json`, under `data/lab/coaching-reliability/`.
+- E01/E12/E16 contain descriptions without precise timestamps. Do not invent times.
+- E17 “too much steering” is the pilot's hypothesis, not an established cause.
+- User-reported downshift throttle spikes are automatic. Preserve HUD readings;
+  do not interpret these as voluntary throttle reapplication or a driving mistake.
+- Throttle release, brake onset, timer reset, numeric lap-counter update and physical
+  crossing are distinct. Existing L1/L2/L3 markers do not approve physical landmarks.
+- Review convention: uncorrected **displayed** proposals are accepted when the user
+  responds to that batch. Silence, unseen frames and prepared images are not approval.
+- Holdout was reserved before inspection at `92e4223`. Do not tune extraction on it.
+
+## Verification and exact next action
+
+263 full-suite tests pass; focused annotation/consolidation tests and docs discovery
+pass. See `run-005/reports/` for logs. v3 preserves every label except the two
+recording IDs and passes structural validation; source roles and counts are unchanged.
+No raw media was changed. Documentation is the only tracked change in this handoff.
+
+**Next action:** follow `coaching-reliability-resume.md` step 1 to prepare one small
+human review containing a twentieth timed pedal event and six physical-passage
+intervals (two per source). That focused package has **not** been created yet.
+The existing full review portal remains `run-004/reports/START_HERE.html`.
+Obtain scoped human review before completing A6 or executing A7. Do not repeat H/M.
