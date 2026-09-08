@@ -8,7 +8,7 @@ read_when:
 
 # Current status
 
-Last verified: 2026-09-07. This is the single living handoff. Recent Git history is
+Last verified: 2026-09-08. This is the single living handoff. Recent Git history is
 canonical for commit IDs. Earlier detailed status is preserved in
 `archive/2026-09-07-status-before-a6-lineage.md`; do not load it for routine resumption.
 
@@ -19,9 +19,9 @@ dossier. A0–A5 and A6 software are complete. **A6 corpus acceptance is pending
 A7 has not started. Gate A is unvalidated, B blocked, C separate and inactive.**
 
 - Branch: `codex/coaching-reliability`, tracking the same branch on origin.
-- Starting checkpoint for this handoff: `d2581e8`, already pushed.
-- Latest user direction: prioritize a clean, concise, executable repository handoff
-  for a less powerful agent because token quota is low; defer further implementation.
+- Starting checkpoint for this handoff: `1d89034`, already pushed.
+- Latest work: prepare the remaining focused A6 review from existing native evidence;
+  obtain the actual human response before corpus acceptance or A7.
 - Push authorized. No merge to main requested. Raw media must remain immutable.
 - Active specification: `specs/2026-09-05-reference-corner-coach-design.md`.
 - Active plan: `plans/2026-09-05-coaching-reliability.md`.
@@ -91,13 +91,30 @@ No extraction code, thresholds or production configuration changed.
 
 ## Verification and exact next action
 
-263 full-suite tests pass; focused annotation/consolidation tests and docs discovery
-pass. See `run-005/reports/` for logs. v3 preserves every label except the two
+263 full-suite tests and 17 focused annotation/consolidation tests pass; docs
+discovery passes. Current logs: `run-006/reports/full-tests.log`,
+`focused-tests.log` and `docs-list.log`. v3 preserves every label except the two
 recording IDs and passes structural validation; source roles and counts are unchanged.
 No raw media was changed. Documentation is the only tracked change in this handoff.
 
-**Next action:** follow `coaching-reliability-resume.md` step 1 to prepare one small
-human review containing a twentieth timed pedal event and six physical-passage
-intervals (two per source). That focused package has **not** been created yet.
-The existing full review portal remains `run-004/reports/START_HERE.html`.
-Obtain scoped human review before completing A6 or executing A7. Do not repeat H/M.
+Focused package prepared (2026-09-08):
+`data/lab/coaching-reliability/run-006/reports/START_HERE.html` contains seven cards
+and 847 native images: six physical-passage proposals plus E16 frames 30360–30600.
+Each passage identifies the near/lower edge of the transverse checker stripe at
+x=960, y=580 (BMW) or y=600 (McLaren), with native before/after images and navigation.
+Grid boxes, timer reset and lap counter are distinct from this scene feature.
+`proposals.json` preserves source hashes, original recording IDs, roles and every
+image hash; all proposals remain `reviewed: false`, and E16 type/time remain null.
+No approvals, labels, extraction code or production settings changed. Fresh corpus
+validation is unchanged; the holdout remains reserved and was not used for tuning.
+`run-006/reports/focused-verification.json` verifies all image paths/hashes/dimensions,
+source lineage and prior approval hashes, including 12 endpoint crops with guide
+overlays kept separate from native evidence. `browser-verification.json` records
+the rendered endpoint and E16 frame-navigation/HUD checks. The portal is available
+as a local file or via a temporary localhost server; file access remains usable
+after that server stops.
+
+**Next action:** open `run-006/reports/START_HERE.html` and obtain the user's scoped
+confirmation/corrections for its six passage intervals and E16 event type plus frame
+or interval. Do not repeat H/M. Save that actual response before publishing a new
+corpus that preserves v3 lineage; A6 acceptance and A7 remain blocked on review.

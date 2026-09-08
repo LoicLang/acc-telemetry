@@ -36,8 +36,12 @@ so blindly reconsolidating those files would lose the independently resolved lin
 
 ## 2. Prepare only the missing human review
 
-No new focused portal has been prepared in run-005. Build a small ignored review
-package in a fresh run, using the existing native frames where possible:
+The focused portal is now prepared at `run-006/reports/START_HERE.html`: seven cards,
+847 native images, six unreviewed passage intervals and E16 with no invented marker.
+Open it and obtain the actual scoped human response. `run-006/reports/proposals.json`
+contains source/frame/image identities and all proposed intervals; verification is
+in `run-006/reports/focused-verification.json`. Prior approvals and v3 are unchanged.
+The following describes the package scope and constraints for any corrections:
 
 1. **One additional pedal-event window:** E16 (506–510 s, holdout frames 30360–30600)
    is an existing candidate described by the user as exit acceleration. It has no

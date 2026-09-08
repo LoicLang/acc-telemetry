@@ -460,8 +460,13 @@ The user feedback does not check off the full A6 corpus gate.
   and passes the recording-lineage check. Proof: `run-005/reports/development-lineage.json`.
 - [ ] Obtain the twentieth timed window and six reviewed physical-passage intervals
   (two per source). Do not repeat accepted numerical/visibility reviews.
-  Exact continuation: `docs/coaching-reliability-resume.md`. The focused review is
-  not prepared yet; A7 remains unstarted under the user's low-quota handoff request.
+  Exact continuation: `docs/coaching-reliability-resume.md`. A7 remains unstarted.
+- [x] Prepare the final focused review (2026-09-08):
+  `run-006/reports/START_HERE.html`, seven cards / 847 native images, six assistant-only
+  passage intervals with explicit scene/reference definitions and E16 frame navigation.
+  All proposals remain unreviewed; E16 type/time remain null. Prior approvals and v3
+  lineage are preserved. Image/hash/link checks pass in `focused-verification.json`.
+  Human review and A6 corpus acceptance remain unchecked.
 
 ### A7 — Rejouer l'historique et mesurer le gate A
 
