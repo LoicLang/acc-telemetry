@@ -14,6 +14,14 @@ from scripts.diagnose_progress import (
 
 
 class TestProgressDiagnosticCLI(unittest.TestCase):
+    def test_identically_biased_curves_are_not_spatial_accuracy(self):
+        rows = [dict(confirmed_lap_number=lap, s_odometry=x, s_fused=x*x)
+                for lap in (1, 2) for x in (0, .5, 1)]
+        report = summarize_trace(rows)
+        self.assertEqual(report['max_checkpoint_spread'], 0)
+        self.assertEqual(report['spatial_accuracy'], 'not_evaluated')
+        self.assertEqual(report['metric_scope'], 'internal_consistency_only')
+
     def test_places_boundary_anchor_source_after_boundary_confirmation(self):
         boundary_index = TRACE_FIELDS.index("boundary_confirmed")
 

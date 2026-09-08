@@ -20,6 +20,9 @@ class ValidationSettings:
     min_event_windows: int
     min_sources: int
     min_passages_per_source: int
+    event_matching_window_s: float
+    fresh_crossing_max_gap_s: float
+    pedal_crossing_pct: float
     resolutions: Mapping[str, tuple[int, int]]
 
 
@@ -35,7 +38,7 @@ def load_validation_settings(path=None):
             raise ValueError(f'invalid validation setting {key}')
         if key.startswith('min_') and key != 'min_coverage' and not isinstance(value,int):
             raise ValueError(f'expected integer for {key}')
-    if raw['min_coverage'] > 1 or raw['pedal_mae_pct'] > 100 or raw['speed_mae_kmh'] > raw['speed_p95_kmh']:
+    if raw['pedal_crossing_pct'] >= 100 or raw['min_coverage'] > 1 or raw['pedal_mae_pct'] > 100 or raw['speed_mae_kmh'] > raw['speed_p95_kmh']:
         raise ValueError('invalid validation limits')
     resolutions = raw['resolutions']
     if not isinstance(resolutions,dict) or not resolutions:

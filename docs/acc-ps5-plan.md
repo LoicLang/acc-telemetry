@@ -22,8 +22,9 @@ subsequently requested detailed implementation planning for a reference-based vi
 corner dossier; see `coaching-implementation-roadmap.md` and its specification/plans.
 A0–A5 are implemented and synthetically verified. A6 annotation tooling and corpus
 acceptance are complete: 100 readable frames per field, 20 degraded frames, 20 typed event windows and six reviewed physical passages
-with preserved lineage/holdout. A7 accuracy and coverage evaluation remains pending;
-no reliability gate is passed. E16 is a full-throttle marker, excluded from the
+with preserved lineage/holdout. A7 independent measurement code is implemented;
+initial speed results and five missed approved historical transitions fail Gate A.
+Reviewed-visibility replays are completing the pedal measurements; no gate is passed. E16 is a full-throttle marker, excluded from the
 5% crossing latency metric. See `current-status.md` for accepted evidence.
 
 - capture_status: native_1080p60_validated
@@ -33,8 +34,8 @@ no reliability gate is passed. E16 is a full-throttle marker, excluded from the
 - s_status: representative_clean_and_crash_gates_pass
 - s_latest_validation_status: isolated_missing_boundary_dot_anchor_gap_resolved
 - s_repair_design_status: generic_fusion_implemented
-- long_capture_lap_transition_status: fresh_observations_tested_historical_replay_pending
-- quality_propagation_status: field_csv_api_provenance_verified_independent_validation_pending
+- long_capture_lap_transition_status: independent_historical_replay_fails_five_missed_transitions
+- quality_propagation_status: provenance_verified_independent_accuracy_gate_fails
 - downstream_coaching_status: blocked
 
 The repository provides a solid ACC PS5 video-extraction foundation, but it does not

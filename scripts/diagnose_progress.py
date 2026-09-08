@@ -162,6 +162,8 @@ def summarize_trace(rows: Iterable[Mapping[str, Any]]) -> dict[str, Any]:
                 unavailable_duration += max(0.0, current_time - previous_time)
 
     return {
+        "metric_scope": "internal_consistency_only",
+        "spatial_accuracy": "not_evaluated",
         "frame_count": len(materialized),
         "confirmed_boundary_count": confirmed_boundary_count,
         "premature_completion_count": premature_completion_count,

@@ -481,11 +481,11 @@ The user feedback does not check off the full A6 corpus gate.
 **Modifier :** `scripts/diagnose_progress.py`, `analysis/validation.py`,
 `docs/acc-ps5-plan.md`, `docs/current-status.md`.
 
-- [ ] RED : courbes identiquement biaisées ne peuvent plus être qualifiées de
+- [x] RED : courbes identiquement biaisées ne peuvent plus être qualifiées de
   spatialement exactes ; zéro annotation donne `not_evaluated`. Frontières doublées,
   manquantes et non appariées comptées séparément.
-- [ ] Lancer `test_capture_validation.py` et `test_progress_diagnostic_cli.py`.
-- [ ] Implémenter calculs indépendants : MAE/P95 et couverture par champ ; appariement
+- [x] Lancer `test_capture_validation.py` et `test_progress_diagnostic_cli.py`.
+- [x] Implémenter calculs indépendants : MAE/P95 et couverture par champ ; appariement
   un-à-un des événements avec annotations temporelles (fenêtre maximale configurée,
   rapport séparé des événements hors fenêtre). Mesurer erreur comme distance au
   **milieu annoté** et publier aussi demi-largeur de l'intervalle, pas zéro pour une

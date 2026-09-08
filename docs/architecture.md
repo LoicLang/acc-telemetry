@@ -89,7 +89,14 @@ prepares unreviewed media and source manifests; pure `analysis/validation.py` va
 human labels/corpus readiness. `validation_config.py` owns independent thresholds.
 Video preflight compares presentation packet PTS with decoded frames and profile
 resolution; runtime decode status remains visible. See `capture-annotations.md` for
-MOV discard-packet handling and the human-review gate that is still pending.
+MOV discard-packet handling and accepted A6 inputs.
+
+A7 adds pure field/event/landmark metrics and the application orchestrator
+`capture_validation.py`. Its CLI consumes integrity-checked telemetry-v2 artifacts
+without OCR, keeps missing evidence explicit, and reports all six gate checks with
+component/configuration fingerprints. See `capture-validation.md`; independent
+measurements currently fail Gate A. Review provenance distinguishes original user
+labels from separately authorized agent visibility/exhaustiveness reviews.
 
 ## Generic position estimation
 

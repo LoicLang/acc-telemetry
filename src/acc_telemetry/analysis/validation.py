@@ -82,7 +82,7 @@ def validate_annotations(labels, capture, *, source_sha256):
     for row in labels['visibility']:
         if row.get('reviewed') is not True:
             raise ValueError('unreviewed visibility interval')
-        spans.append(VisibilitySpan(row['field'],row['start_s'],row['end_s'],labels['annotator']))
+        spans.append(VisibilitySpan(row['field'],row['start_s'],row['end_s'],row.get('reviewer',labels['annotator'])))
     validate_visibility(spans,duration_s=capture['duration'])
     for span in spans:
         for row in labels['frames']:
@@ -120,3 +120,115 @@ def corpus_readiness(entries, settings):
         reviewed=bool(reports) and all(r.get('status')=='pass' for r in reports))
     return dict(status='pass' if all(checks.values()) else 'not_evaluated',checks=checks,
                 readable_frames=readable,degraded_frames=degraded,event_windows=events)
+
+
+def percentile(values, fraction=.95):
+    """Linear quantile, including its interpolation convention in callers' reports."""
+    if not values:
+        return None
+    ordered = sorted(values)
+    index = (len(ordered) - 1) * fraction
+    lo = int(index)
+    return ordered[lo] + (ordered[min(lo + 1, len(ordered)-1)] - ordered[lo]) * (index-lo)
+
+
+def field_errors(truth, predictions):
+    """Raw absolute errors, without subtracting annotation tolerance or abstentions."""
+    if len(truth) != len(predictions):
+        raise ValueError('unpaired field evidence')
+    if any(not _finite(v, -math.inf, math.inf) for v in truth):
+        raise ValueError('nonfinite truth')
+    if any(v is not None and not _finite(v, -math.inf, math.inf) for v in predictions):
+        raise ValueError('nonfinite prediction')
+    errors = [abs(a-b) for a,b in zip(truth, predictions) if b is not None]
+    return dict(status='available' if errors else 'not_evaluated', denominator=len(truth),
+                measured_count=len(errors), abstentions=len(truth)-len(errors),
+                coverage=len(errors)/len(truth) if truth else None,
+                mae=sum(errors)/len(errors) if errors else None, p95=percentile(errors),
+                quantile_method='linear', absolute_errors=errors)
+
+
+def match_events(truth, predictions, *, max_window_s):
+    """Maximum-cardinality monotone matching, then minimum total midpoint distance.
+
+    Caller supplies one source and one event subtype. Matching tolerance is not the
+    acceptance error threshold. Unmatched predictions near truth are duplicates;
+    those without a candidate in the matching window are reported separately.
+    """
+    if not _finite(max_window_s, 0, math.inf) or max_window_s == 0:
+        raise ValueError('invalid matching window')
+    for rows in (truth, predictions):
+        if len({r['id'] for r in rows}) != len(rows):
+            raise ValueError('duplicate event identity')
+    for row in truth:
+        if not (_finite(row['lo_s'], 0, math.inf) and _finite(row['hi_s'], row['lo_s'], math.inf)):
+            raise ValueError('invalid truth interval')
+    for row in predictions:
+        if not _finite(row['time_s'], 0, math.inf):
+            raise ValueError('invalid event time')
+        if row.get('confirmed_at_s') is not None and not _finite(row['confirmed_at_s'], row['time_s'], math.inf):
+            raise ValueError('invalid confirmation time')
+    t = sorted(truth, key=lambda r: (r['lo_s']+r['hi_s'])/2)
+    p = sorted(predictions, key=lambda r: r['time_s'])
+    mid = [(r['lo_s']+r['hi_s'])/2 for r in t]
+    # Scores use negative cardinality so ordinary tuple ordering expresses policy.
+    scores = [[(0, 0.0) for _ in range(len(p)+1)] for _ in range(len(t)+1)]
+    back = {}
+    for i in range(1,len(t)+1):
+        for j in range(1,len(p)+1):
+            choices = [(scores[i-1][j], 'truth'), (scores[i][j-1], 'prediction')]
+            distance = abs(mid[i-1]-p[j-1]['time_s'])
+            if distance <= max_window_s:
+                n,cost = scores[i-1][j-1]
+                choices.append(((n-1, cost+distance), 'match'))
+            scores[i][j], back[i,j] = min(choices, key=lambda x:x[0])
+    i,j = len(t),len(p)
+    pairs = []
+    while i and j:
+        action=back[i,j]
+        if action=='match':
+            pairs.append((i-1,j-1)); i-=1; j-=1
+        elif action=='truth':
+            i-=1
+        else:
+            j-=1
+    pairs.reverse()
+    matched_t={i for i,j in pairs}; matched_p={j for i,j in pairs}
+    matches=[]
+    for i,j in pairs:
+        signed=p[j]['time_s']-mid[i]
+        matches.append(dict(truth_id=t[i]['id'], prediction_id=p[j]['id'],
+            signed_error_s=signed, absolute_error_s=abs(signed), annotation_midpoint_s=mid[i],
+            annotation_half_width_s=(t[i]['hi_s']-t[i]['lo_s'])/2,
+            time_uncertainty_s=t[i].get('time_uncertainty_s'),
+            confirmation_delay_s=(p[j]['confirmed_at_s']-p[j]['time_s'])
+                if p[j].get('confirmed_at_s') is not None else None))
+    unmatched=[j for j in range(len(p)) if j not in matched_p]
+    duplicate=[j for j in unmatched if any(abs(p[j]['time_s']-m)<=max_window_s for m in mid)]
+    errors=[r['absolute_error_s'] for r in matches]
+    return dict(status='available' if truth else 'not_evaluated', truth_count=len(t),
+        prediction_count=len(p), matched_count=len(matches), matches=matches,
+        missed_ids=[r['id'] for i,r in enumerate(t) if i not in matched_t],
+        duplicate_ids=[p[j]['id'] for j in duplicate],
+        outside_window_ids=[p[j]['id'] for j in unmatched if j not in duplicate],
+        unmatched_prediction_count=len(unmatched),
+        precision=len(matches)/len(p) if p and truth else None,
+        recall=len(matches)/len(t) if t else None,
+        median_error_s=percentile(errors,.5), p95_error_s=percentile(errors),
+        max_matching_window_s=max_window_s, quantile_method='linear')
+
+
+def landmark_dispersion(passages):
+    """Circular range of normalized progress; never an absolute spatial error."""
+    values=[r['s'] for r in passages if r.get('s') is not None]
+    if any(not _finite(v,0,1) for v in values):
+        raise ValueError('invalid normalized progress')
+    ordered=sorted(v%1 for v in values)
+    gaps=[b-a for a,b in zip(ordered,ordered[1:])]
+    if ordered:
+        gaps.append(ordered[0]+1-ordered[-1])
+    return dict(status='available' if len(values)>=2 else 'not_evaluated',
+        denominator=len(passages), measured_count=len(values),
+        range_s=1-max(gaps) if len(values)>=2 else None,
+        range_definition='shortest circular covering arc in normalized s',
+        metric_accuracy='not_evaluated', passages=passages)

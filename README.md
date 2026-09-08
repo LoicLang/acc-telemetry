@@ -82,7 +82,7 @@ Compatibility modules under `src/` keep older imports working during the migrati
 - A1/A2 preserve fresh lap evidence, confirmation timing and speed/gear/lap quality
   through CSV normalization. A3 requires [reviewed control visibility](docs/control-visibility.md)
   (`--visibility-json`); otherwise controls remain missing. A5 bounds comparisons and preserves API provenance/nulls. Independent video
-  validation remains pending. Current replay checks establish internal consistency, not independent
+  validation is implemented in A7; initial measurements fail Gate A. Diagnostic replay checks establish internal consistency, not independent
   spatial accuracy; see the technical audit before using comparisons for coaching.
 
 Optional [versioned session artifacts](docs/session-artifacts.md) are available with
@@ -98,6 +98,11 @@ required before validating measurement accuracy.
 Use `scripts/annotate_capture.py consolidate --approval APPROVAL.json ... --output NEW_DIR`
 to collect scoped approved readings without inventing unreviewed fields or duplicating
 frame counts. Holdout roles and explicitly reviewed HUD absence remain intact.
+
+[A7 capture validation](docs/capture-validation.md) reads those labels and existing
+`telemetry-v2` sessions without rerunning OCR: `scripts/validate_capture.py
+--artifacts SESSION --annotations LABELS_JSON --output NEW_REPORT_JSON`. Missing
+evidence stays `not_evaluated`; failed measurements keep coaching blocked.
 
 ## Reference documents
 

@@ -1,90 +1,65 @@
 ---
-summary: concrete resumption guide for accepted A6 inputs and remaining independent A7 evidence
+summary: accepted A6 authority and A7 resumption constraints after independent failures and autonomous visual reviews
 read_when:
-  - resuming coaching reliability after A6 corpus acceptance
-  - consuming the accepted annotation corpus
-  - implementing or evaluating A7
+  - resuming coaching reliability validation
+  - consuming accepted labels, holdout evidence or new agent reviews
 ---
 
-# Resume after A6 acceptance
+# Reliability resumption
 
-Read AGENTS.md, run `./scripts/docs-list`, read `current-status.md` and the active
-specification/plan, then inspect Git. All run paths below are under ignored
-`data/lab/coaching-reliability/`. The user requested finishing A6 then discussing
-the working method; A7 has not started. Do not repeat any accepted review.
+Read AGENTS.md, run `./scripts/docs-list`, then read `current-status.md` and its active
+specification/plan. Current status owns the latest run and exact next action. Work
+directly without subagents. User requests autonomous verification of reliable visual
+evidence; do not request redundant reviews. Keep uncertain claims unavailable.
 
-## 1. Verify the accepted inputs
+## A6 remains accepted
 
-Use `run-007/processed/accepted-corpus-v4/index.json`, its three labels/capture/review
-reports and `run-007/reports/a6-acceptance.json`. All configured A6 checks pass:
-100 readable frames per target field, 20 degraded frames, 20 timed pedal windows,
-six physical passages and three recordings with preserved development/holdout roles.
-Missing local evidence must be reported rather than reconstructed from summaries.
+Base: `data/lab/coaching-reliability/run-007/processed/accepted-corpus-v4/index.json`.
+Proof: `run-007/reports/a6-acceptance.json`. A6 is closed at `f060637`; do not reopen
+its 100 readable frames per field, 20 degraded frames, 20 generic timed windows,
+six physical passages or original recording lineage. `run-008/reports/input-integrity.json`
+rehashes the source bytes and prior files. All original acceptance targets remain
+unchanged. The new A7 association/gap/crossing definitions are separate additions.
 
-`run-007/reports/approval.json` preserves the exact final user response and image
-identities. Earlier approvals and v3 remain immutable. Do not blindly use the generic
-`consolidate` command over mixed approval formats: it would lose the independently
-resolved lineage and does not consume the final scoped review format. The one-time
-migration is preserved as `run-007/accept_review.py`; publish fresh outputs for changes.
+Do not rerun the one-time A6 migration or generic consolidation over mixed approvals.
+New reviews are separate files and derived copies; the accepted v4 tree is immutable.
+User-approved annotations and agent visual reviews retain their respective reviewer
+and source/image identities. Point approvals never become continuous visibility by
+implication; A7's new visibility review has its own all-frame image evidence and
+qualitative limitations. See `capture-validation.md` for the measurement contract.
 
-Development lineage is finished. `run-005/reports/development-lineage.json` verifies
-all incident video packets against the original with +515 s PTS offset and the BMW
-original SHA-256. Holdout reservation and lossless-prefix proof remain unchanged.
-Never ask for those approvals or provenance again; never tune extraction on holdout.
+## Semantics that must survive
 
-## 2. Preserve the exact event and passage semantics
+- E16: reaches full throttle at **30397 / 506.616667 s**. Initial roughly 60% is
+  approximate context, without a quantitative tolerance. Excluded from 5% latency;
+  never relabel as an onset. Single-frame resolution is not zero timing uncertainty.
+- E01/E12 remain untimed context. Other events retain original types. The two
+  `first_visible_brake` markers lack explicit threshold semantics and are excluded
+  from the applicable 5% denominator. Publish subtypes and exclusions.
+- Physical passages track the checker-stripe near edge at fixed image coordinates,
+  not axle crossings or metric position. Repeated normalized `s` dispersion cannot
+  establish meter accuracy. Missing progress cannot be manufactured at a landmark.
+- Downshift blips are displayed throttle, not inferred intentional input; E17's
+  steering explanation remains a user hypothesis.
+- Incident development clip packet lineage has +515 s original offset. BMW original
+  and holdout lossless prefix retain verified identities. Holdout was reserved before
+  inspection; do not tune the extractor on observed holdout failures.
 
-Six physical intervals were explicitly accepted from the run-006 viewer. Each defines
-the near/lower transverse checker-stripe edge crossing fixed x=960, y=580 (BMW) or
-600 (McLaren); original definitions, endpoints and image hashes are in v4.
-They support normalized-progress dispersion, not meters or wheel-crossing timestamps.
+## A7 execution
 
-E16 begins with roughly 60% throttle according to the user and reaches 100% at frame
-30397 (506.616667 s). It is `throttle_reaches_full`, not a 5% onset. The rough initial
-percentage is context only, without invented tolerance or extra accuracy label.
-The frame is a discrete annotation with unknown timing uncertainty, not proof of
-zero error. E16 counts toward the generic A6 timed-window minimum but is excluded
-from A7's first-fresh-5%-crossing latency denominator. Report subtypes/exclusions and
-obtain additional applicable events if needed. E01/E12 remain untimed descriptions.
+The validator now exists and consumes telemetry-v2 without OCR. RED and integration
+regressions cover missing truth, shared bias, event association, confirmation delay,
+field provenance, integrity rejection and incompatible fingerprints. Initial real
+speed measurements fail the unchanged targets. The full historical replay detects
+none of the five user-approved counter transitions. B remains blocked regardless
+of subsequent visibility approvals.
 
-Original point labels and continuous visibility spans are unchanged. Never extend
-point approvals to entire windows. Automatic blips and the E17 causal hypothesis
-retain the restrictions in `current-status.md`.
+Historical H01–H05 approval is scoped separately from the agent's exhaustive counter
+review. Raw video remains immutable; the definition is a visible counter increment,
+not the opening lap's clock reset or physical axle crossing. Relevant evidence and
+current derived label versions are listed by `current-status.md`.
 
-## 3. Execute A7 when work resumes
-
-Follow every unchecked A7 step in `plans/2026-09-05-coaching-reliability.md`.
-`scripts/validate_capture.py` and `tests/test_capture_validation.py` do not exist yet;
-implement the plan, do not report an existing benchmark as independent validation.
-
-- Test empty truth, identical bias, duplicate/missed/unmatched event cases first.
-- Read telemetry-v2 artifacts without rerunning OCR in the validator. Measure field
-  errors and coverage per source; publish denominators, exclusions and tolerances.
-- Match events one-to-one; report annotation midpoint error, interval half-width,
-  unmatched events and confirmation delay separately. Pedal latency concerns the
-  first fresh 5% crossing, not the future B4 sustained coaching detector.
-- Reviewed physical landmarks support repeated-passage dispersion of normalized `s`;
-  they do not establish metric spatial error. Keep old replay counters diagnostic.
-- Historical September 1 false-lap validation also needs independent annotation of
-  **every real and suspect transition on the full capture**. Those annotations are
-  not supplied by the recent A6 corpus. Prepare and obtain them if absent; do not
-  substitute a clean clip or the detector's own output as truth.
-- Recent clean/crash/BMW and reserved holdout evaluation must use the planned
-  definitions. Existing approvals cover individual visibility readings; consolidated
-  `visibility` spans are empty. Do not extend point approvals to entire clips.
-  Obtain needed continuous-span review before claiming continuous control coverage.
-- Preserve holdout reservation/fingerprint compatibility. Never fit extraction on it.
-- Publish the six required `gate-a.json` checks and measurement fingerprint with
-  evidence paths. Missing evidence is `not_evaluated`, not pass. All must pass for B.
-
-Use the existing `.venv/bin/python`, FFmpeg and FFprobe. No new package/workflow is
-required. Tests and small relevant media checks suffice while developing; do not
-repeat expensive full replays without a changed component or unresolved failure.
-
-## 4. Commit and hand off
-
-Before each coherent commit: focused tests, full suite, `./scripts/docs-list`,
-`git diff --check`. Keep the active plan checkboxes and current status synchronized.
-Update `acc-ps5-plan.md` only if a stage gate or product direction changes. Commit
-only code/tests/docs/config as appropriate; personal evidence stays ignored. Push
-`codex/coaching-reliability` to origin; no merge to main is authorized by this task.
+Finish any active artifact jobs before starting duplicate replays. Use the existing
+`.venv`, FFmpeg and FFprobe. Run focused tests, the full suite, docs discovery and
+`git diff --check` before each coherent commit. Update plan/handoff; push is authorized
+on `codex/coaching-reliability`, no merge to main.
