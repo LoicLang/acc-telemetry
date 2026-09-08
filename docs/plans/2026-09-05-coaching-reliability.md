@@ -408,10 +408,10 @@ MOV coded counts to decoded output was corrected after a RED discard-packet test
 non-discard presentation PTS are matched instead; genuine missing output still fails.
 Contract and evidence paths: `docs/capture-annotations.md`.
 
-- [ ] **A6 corpus acceptance remains pending:** user-reviewed labels/visibility and
-  physical passages, minimum readable/degraded/event counts, recording lineage and
-  untouched holdout. Prepared images do not satisfy this human review requirement;
-  `a6-corpus-readiness.json` is `not_evaluated`. Do not claim gate A or real A7 validation.
+- [x] **A6 corpus accepted (2026-09-08):** v4 passes all unchanged configured
+  readiness checks with reviewed physical passages, readable/degraded/event minima,
+  verified lineage and reserved holdout. `run-007/reports/a6-acceptance.json` records
+  evidence. This does not pass Gate A or constitute A7 measurement validation.
 
 - [x] **Review package prepared (2026-09-06):** ignored portal
   `data/lab/coaching-reliability/run-002/reports/START_HERE.html` contains six
@@ -438,7 +438,7 @@ The user feedback does not check off the full A6 corpus gate.
 - [x] Consolidate only the explicitly accepted fields/events from both approval files:
   `run-004/processed/accepted-corpus/`, 40 unique readings per target field and two
   reviewed pedal windows. Unknown metadata remains null under explicit scoped review.
-- [ ] Complete the remaining corpus inputs without relabeling every native frame as reviewed.
+- [x] Complete the remaining corpus inputs without relabeling every native frame as reviewed.
 
 - [x] Reserve the user-supplied September 4 holdout before inspection. Record the
   isolated tail PTS failure and failed byte-copy attempt. The lossless 895-second
@@ -458,7 +458,7 @@ The user feedback does not check off the full A6 corpus gate.
   video packets match the original recording with +515 s PTS offset; original BMW
   SHA-256 verified. `run-005/processed/accepted-corpus-v3/` retains all approved labels
   and passes the recording-lineage check. Proof: `run-005/reports/development-lineage.json`.
-- [ ] Obtain the twentieth timed window and six reviewed physical-passage intervals
+- [x] Obtain the twentieth timed window and six reviewed physical-passage intervals
   (two per source). Do not repeat accepted numerical/visibility reviews.
   Exact continuation: `docs/coaching-reliability-resume.md`. A7 remains unstarted.
 - [x] Prepare the final focused review (2026-09-08):
@@ -466,7 +466,14 @@ The user feedback does not check off the full A6 corpus gate.
   passage intervals with explicit scene/reference definitions and E16 frame navigation.
   All proposals remain unreviewed; E16 type/time remain null. Prior approvals and v3
   lineage are preserved. Image/hash/link checks pass in `focused-verification.json`.
-  Human review and A6 corpus acceptance remain unchecked.
+  This proposal snapshot stays immutable; final acceptance is recorded below.
+
+- [x] Accept the final user review and publish `run-007/processed/accepted-corpus-v4/`:
+  six physical intervals and E16 reaching full throttle at frame30397. All readiness
+  checks pass; prior labels, lineage and roles are unchanged. Approximate initial
+  60% throttle remains context only. E16 is a full-throttle event, excluded from A7's
+  5% crossing latency denominator; report subtype counts and missing applicable truth.
+  A7 is not started; user requested discussing the working method after A6.
 
 ### A7 — Rejouer l'historique et mesurer le gate A
 

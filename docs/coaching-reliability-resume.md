@@ -1,91 +1,57 @@
 ---
-summary: concrete low-context execution guide for the remaining A6 human evidence and subsequent A7 gate
+summary: concrete resumption guide for accepted A6 inputs and remaining independent A7 evidence
 read_when:
-  - resuming coaching reliability after the September 7 lineage handoff
-  - preparing the final small annotation review
-  - deciding whether A7 can start
+  - resuming coaching reliability after A6 corpus acceptance
+  - consuming the accepted annotation corpus
+  - implementing or evaluating A7
 ---
 
-# Resume A6, then A7
+# Resume after A6 acceptance
 
-Read AGENTS.md, run `./scripts/docs-list`, read `current-status.md`, the active
-specification and plan it names, then inspect Git. Do not load archived status by
-default. The plan is authoritative; this guide identifies its exact remaining inputs.
-All `run-*` paths below are under ignored `data/lab/coaching-reliability/`.
+Read AGENTS.md, run `./scripts/docs-list`, read `current-status.md` and the active
+specification/plan, then inspect Git. All run paths below are under ignored
+`data/lab/coaching-reliability/`. The user requested finishing A6 then discussing
+the working method; A7 has not started. Do not repeat any accepted review.
 
-## 1. Verify existing evidence; do not repeat accepted work
+## 1. Verify the accepted inputs
 
-Open `run-005/processed/accepted-corpus-v3/index.json` and its three source labels
-and review reports. Confirm only `events` and `repeated_passages` fail readiness.
-Verify referenced files exist. If local files are absent, report that limitation;
-do not fabricate their contents from these summaries.
+Use `run-007/processed/accepted-corpus-v4/index.json`, its three labels/capture/review
+reports and `run-007/reports/a6-acceptance.json`. All configured A6 checks pass:
+100 readable frames per target field, 20 degraded frames, 20 timed pedal windows,
+six physical passages and three recordings with preserved development/holdout roles.
+Missing local evidence must be reported rather than reconstructed from summaries.
 
-Development lineage is **finished**. The evidence is
-`run-005/reports/development-lineage.json`. `resolve_lineage.py` computed file hashes
-and compared every compressed video packet against the original using FFprobe
-`-show_packets -show_data_hash sha256`. The clip is a contiguous original sequence
-with +515 s PTS offset. `apply_lineage.py` copied v2 to v3 and asserted equality of
-all annotation fields except `recording_id`, then revalidated reports/readiness.
-Do not rerun these scripts over their existing outputs; use a new run if needed.
-Do not ask the user for recording provenance again.
+`run-007/reports/approval.json` preserves the exact final user response and image
+identities. Earlier approvals and v3 remain immutable. Do not blindly use the generic
+`consolidate` command over mixed approval formats: it would lose the independently
+resolved lineage and does not consume the final scoped review format. The one-time
+migration is preserved as `run-007/accept_review.py`; publish fresh outputs for changes.
 
-Approved readings and events originate in the three approval files listed by the
-v3 index. Keep these snapshots immutable. A later corpus must retain v3 recording IDs
-and holdout role; the existing `consolidate` command reads the old approval metadata,
-so blindly reconsolidating those files would lose the independently resolved lineage.
+Development lineage is finished. `run-005/reports/development-lineage.json` verifies
+all incident video packets against the original with +515 s PTS offset and the BMW
+original SHA-256. Holdout reservation and lossless-prefix proof remain unchanged.
+Never ask for those approvals or provenance again; never tune extraction on holdout.
 
-## 2. Prepare only the missing human review
+## 2. Preserve the exact event and passage semantics
 
-The focused portal is now prepared at `run-006/reports/START_HERE.html`: seven cards,
-847 native images, six unreviewed passage intervals and E16 with no invented marker.
-Open it and obtain the actual scoped human response. `run-006/reports/proposals.json`
-contains source/frame/image identities and all proposed intervals; verification is
-in `run-006/reports/focused-verification.json`. Prior approvals and v3 are unchanged.
-The following describes the package scope and constraints for any corrections:
+Six physical intervals were explicitly accepted from the run-006 viewer. Each defines
+the near/lower transverse checker-stripe edge crossing fixed x=960, y=580 (BMW) or
+600 (McLaren); original definitions, endpoints and image hashes are in v4.
+They support normalized-progress dispersion, not meters or wheel-crossing timestamps.
 
-1. **One additional pedal-event window:** E16 (506–510 s, holdout frames 30360–30600)
-   is an existing candidate described by the user as exit acceleration. It has no
-   accepted event timestamp. Images are in
-   `run-004/processed/holdout-event-windows/frames/`; candidate ranges are in
-   `candidates.json`. Present frame navigation and ask for the actual event type and
-   frame/interval. Do not pre-approve an inferred timestamp. E01/E12 are also only
-   descriptive; do not count them as timed events. If E16 has no measurable crossing,
-   select a different short window instead of forcing it to count.
-2. **Physical passages:** current labels contain zero reviewed physical landmarks.
-   Current config requires two passages per source, so prepare six intervals total
-   across BMW, incident clip, and holdout. Use a clearly identifiable **scene** feature
-   repeated within each recording (e.g. the same transverse painted line). Define
-   precisely which visible edge crosses which camera reference, and let the user
-   confirm/correct the plausible frame interval. Do not infer this from `s_fused`,
-   odometry, speed minima, timer reset or lap-counter changes.
+E16 begins with roughly 60% throttle according to the user and reaches 100% at frame
+30397 (506.616667 s). It is `throttle_reaches_full`, not a 5% onset. The rough initial
+percentage is context only, without invented tolerance or extra accuracy label.
+The frame is a discrete annotation with unknown timing uncertainty, not proof of
+zero error. E16 counts toward the generic A6 timed-window minimum but is excluded
+from A7's first-fresh-5%-crossing latency denominator. Report subtypes/exclusions and
+obtain additional applicable events if needed. E01/E12 remain untimed descriptions.
 
-Existing coarse sheets: `run-001/annotations-bmw/selection.html`,
-`run-001/annotations-crash-clip/selection.html`,
-`run-004/processed/holdout-lossless-selection/selection.html`.
-Existing reported BMW lap markers L1 (431.2 s) and L3 (722.383333 s) can help locate
-scene images; they are **not** reviewed physical crossings. Inspect before proposing.
-Use native frames to review interval endpoints, not the coarse thumbnails.
-Keep undecidable landmarks unknown. Never stamp `reviewed: true` on agent proposals.
+Original point labels and continuous visibility spans are unchanged. Never extend
+point approvals to entire windows. Automatic blips and the E17 causal hypothesis
+retain the restrictions in `current-status.md`.
 
-Do not show H/M or the earlier accepted readings again. The user only needs to give
-one event marker/type and review the six physical intervals, with corrections as
-needed. Explain the limited scope in plain French. A6 explicitly requires human
-review; elapsed time cannot satisfy it.
-
-## 3. Consolidate actual review and close A6
-
-Snapshot the user's response with source/frame/image identity and exact review scope.
-Publish a new corpus rather than overwriting v3 or approval files. Preserve existing
-labels, lineage and semantic context. Use `validate_annotations()` and
-`corpus_readiness()` with the unchanged `config/validation.yaml`; do not lower minima.
-Physical entries need kind `landmark`, unique ID, frame bounds, reviewed flag and a
-stable definition identifying repeated passages. Keep event type and uncertainty.
-
-All readiness checks must pass before checking off A6. If review is missing, update
-handoff with the exact outstanding evidence and wait; **do not start A7 or B**.
-Any reusable importer change needs focused RED tests, full suite and an atomic commit.
-
-## 4. Execute A7 only after A6 acceptance
+## 3. Execute A7 when work resumes
 
 Follow every unchecked A7 step in `plans/2026-09-05-coaching-reliability.md`.
 `scripts/validate_capture.py` and `tests/test_capture_validation.py` do not exist yet;
@@ -115,7 +81,7 @@ Use the existing `.venv/bin/python`, FFmpeg and FFprobe. No new package/workflow
 required. Tests and small relevant media checks suffice while developing; do not
 repeat expensive full replays without a changed component or unresolved failure.
 
-## 5. Commit and hand off
+## 4. Commit and hand off
 
 Before each coherent commit: focused tests, full suite, `./scripts/docs-list`,
 `git diff --check`. Keep the active plan checkboxes and current status synchronized.

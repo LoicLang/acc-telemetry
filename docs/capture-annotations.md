@@ -1,5 +1,5 @@
 ---
-summary: A6 independent annotation workflow, presentation-frame preflight, corpus requirements and pending human review
+summary: A6 independent annotation workflow, accepted corpus and remaining A7 measurement limitations
 read_when:
   - preparing or reviewing capture annotations
   - validating visibility files for telemetry extraction
@@ -8,9 +8,9 @@ read_when:
 
 # Independent capture annotations
 
-A6 tooling is implemented. The prepared material contains **no inferred truth**;
-review and corpus requirements remain pending. The CLI does not call OCR or use
-`s_fused` to choose independent labels or physical landmarks.
+A6 tooling and corpus acceptance are complete. Prepared proposals are distinct
+from the scoped human approvals in the accepted v4 corpus. The CLI does not call
+OCR or use `s_fused` to choose independent labels or physical landmarks.
 
 ## Two-pass preparation
 
@@ -277,14 +277,30 @@ steering explanation remains a hypothesis. Lineage for development recordings an
 reviewed physical landmarks remain outstanding alongside the twentieth timed window.
 
 
-## Current lineage completion and remaining review
+## Lineage checkpoint before final review (2026-09-07)
 
-The authoritative corpus is now `run-005/processed/accepted-corpus-v3/`. It is a
+The lineage checkpoint was `run-005/processed/accepted-corpus-v3/`. It is a
 copy of v2 with only the two development recording IDs resolved from local file
 and packet hashes. `run-005/reports/development-lineage.json` proves all 29,416
 incident-clip video packets match a contiguous sequence of the September 2 22:40:01
 original with constant +515 s PTS offset; the BMW original hash also matches.
 No accepted human label, event or role changed, and v2/approvals are untouched.
-Readiness now fails only events (19/20) and physical passages (0 reviewed per source;
-two per source required). A7 has not begun. Follow `coaching-reliability-resume.md`
-for the focused review still to prepare and subsequent A7 work.
+At that checkpoint only events (19/20) and physical passages (0 reviewed per source;
+two required) remained incomplete. The final scoped review below closes those inputs.
+Follow `coaching-reliability-resume.md` for the accepted corpus and subsequent A7 work.
+
+## A6 corpus accepted (2026-09-08)
+
+The authoritative corpus is `run-007/processed/accepted-corpus-v4/`. The user accepted
+all six run-006 physical intervals and identified E16 reaching full throttle at frame
+30397 (506.616667 s), with roughly 60% throttle already present at the window start.
+The rough percentage remains context only. This is a full-throttle marker, not a
+5% onset; A7 must exclude it from that latency denominator and report event subtypes.
+A discrete frame marker does not imply zero timing uncertainty.
+
+The exact scoped response and endpoint/image identities are in
+`run-007/reports/approval.json`. Existing labels, roles, lineage, visibility spans and
+approval snapshots are unchanged. All configured corpus checks pass (100 per readable
+field, 20 degraded, 20 timed windows, two physical passages per each of three sources).
+Proof: `run-007/reports/a6-acceptance.json`. Gate A still requires A7 measurement
+validation, historical transition truth and applicable continuous visibility evidence.

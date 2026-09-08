@@ -7,7 +7,7 @@ read_when:
 
 # ACC PS5 telemetry plan
 
-Last verified: 2026-09-05
+Last verified: 2026-09-08
 
 ## Current state
 
@@ -20,9 +20,11 @@ control visibility. A5 fixes comparison/API provenance; independent validation r
 the audit's broad ML roadmap is not an approved implementation decision. The user
 subsequently requested detailed implementation planning for a reference-based visual
 corner dossier; see `coaching-implementation-roadmap.md` and its specification/plans.
-A0–A5 are implemented and synthetically verified. A6 annotation tooling and initial
-selection sheets are ready; human review/corpus acceptance remain pending. No
-reliability gate is passed.
+A0–A5 are implemented and synthetically verified. A6 annotation tooling and corpus
+acceptance are complete: 100 readable frames per field, 20 degraded frames, 20 typed event windows and six reviewed physical passages
+with preserved lineage/holdout. A7 accuracy and coverage evaluation remains pending;
+no reliability gate is passed. E16 is a full-throttle marker, excluded from the
+5% crossing latency metric. See `current-status.md` for accepted evidence.
 
 - capture_status: native_1080p60_validated
 - controls_speed_gears_status: usable
