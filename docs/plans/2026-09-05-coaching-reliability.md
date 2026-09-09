@@ -528,7 +528,7 @@ PYTHONPATH=src .venv/bin/python main.py \
   `labels.json`. Le fichier doit être créé avant cette commande. Le script de
   diagnostic historique reste utile sans spans pour les seules frontières, mais
   n'est alors pas une preuve d'exactitude des commandes.
-- [ ] Livrer `gate-a.json` avec champs `software_regressions`, `lap_events`,
+- [x] Livrer `gate-a.json` avec champs `software_regressions`, `lap_events`,
   `field_accuracy`, `field_coverage`, `timebase`, `holdout`, chacun pass/fail/not_evaluated
   et chemin de preuve. Réussite exige tous pass ; champs unsupported sont déclarés
   absents et exclus des capacités de coaching, pas comptés comme mesures validées.
@@ -539,16 +539,29 @@ PYTHONPATH=src .venv/bin/python main.py \
   et seuils de validation. Un nouveau commit de documentation ou du dossier B ne
   périme pas cette preuve ; un changement de ces composants la périme. Le hash Git
   global reste enregistré pour traçabilité mais n'est pas le seul test de compatibilité.
-- [ ] Revoir visuellement les différences et les faux succès ; en cas d'échec, rester
+- [x] Revoir visuellement les différences et les faux succès ; en cas d'échec, rester
   sur A et écrire le test de correction, sans commencer B. Suite complète, docs,
   commit `docs: record independent coaching reliability gate` avec les seuls résumés
   non personnels. Mettre B1 comme prochaine action uniquement si A passe.
 
+A7 execution (2026-09-09): validator implemented after RED tests, five full captures
+replayed, historical truth and explicit visibility reviewed, final independent gate
+published. 24 focused capture / 9 diagnostic / 288 full-suite tests pass. Gate A
+**fails** on historical laps, speed accuracy and holdout; target-segment coverage and
+timebase pass. Seven release-start markers cannot establish falling 5% truth, and
+unannotated extra crossings are not automatically false positives; RED regressions
+correct both false interpretations. Full denominators, exclusions, provenance and
+uncertainties: `docs/capture-validation-results.md`. No extractor/threshold tuning
+on holdout and no B work. A7 evaluation completion is not Gate A acceptance.
+
 ## Sortie du plan A
 
-- [ ] Les cinq reproductions ont leur test de non-régression vert et versionné.
+- [x] Les cinq reproductions ont leur test de non-régression vert et versionné.
 - [ ] Le passage de tours historique est validé contre annotations, pas contre lui-même.
-- [ ] Vitesse/frein/gaz du corpus sélectionné satisfont les seuils, ou le gate reste en échec.
-- [ ] Provenance CSV/JSON/API reste intacte et les absences ne sont jamais recréées.
-- [ ] `gate-a.json`, code/config/source hashes et annotations existent localement.
-- [ ] Handoff, roadmap et cases synchronisés ; push seulement autorisé, aucune modification de raw.
+- [x] Vitesse/frein/gaz du corpus sélectionné satisfont les seuils, ou le gate reste en échec.
+- [x] Provenance CSV/JSON/API reste intacte et les absences ne sont jamais recréées.
+- [x] `gate-a.json`, code/config/source hashes et annotations existent localement.
+- [x] Handoff, roadmap et cases synchronisés ; push seulement autorisé, aucune modification de raw.
+
+Historical acceptance remains unchecked: measured recall is 0/5, not a passed gate.
+Next work stays on A with development-only OCR/speed correction regressions.

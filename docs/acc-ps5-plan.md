@@ -23,8 +23,9 @@ corner dossier; see `coaching-implementation-roadmap.md` and its specification/p
 A0–A5 are implemented and synthetically verified. A6 annotation tooling and corpus
 acceptance are complete: 100 readable frames per field, 20 degraded frames, 20 typed event windows and six reviewed physical passages
 with preserved lineage/holdout. A7 independent measurement code is implemented;
-initial speed results and five missed approved historical transitions fail Gate A.
-Reviewed-visibility replays are completing the pedal measurements; no gate is passed. E16 is a full-throttle marker, excluded from the
+final speed results and five missed approved historical transitions fail Gate A.
+Pedal MAEs and scoped availability pass; no overall gate is passed. See
+`capture-validation-results.md` for authoritative results and exclusions. E16 is a full-throttle marker, excluded from the
 5% crossing latency metric. See `current-status.md` for accepted evidence.
 
 - capture_status: native_1080p60_validated

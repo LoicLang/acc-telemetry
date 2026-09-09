@@ -204,3 +204,21 @@ class LapGateTests(unittest.TestCase):
         self.assertEqual(lap_status(result,complete_review=False,max_error_s=.1),'fail')
         result=match_events([],[],max_window_s=1)
         self.assertEqual(lap_status(result,complete_review=True,max_error_s=.1),'not_evaluated')
+
+class PedalSemanticScopeTests(unittest.TestCase):
+    def test_release_start_is_not_a_falling_five_percent_crossing(self):
+        from acc_telemetry.application.capture_validation import pedal_truth
+        row=dict(id='release-start',kind='pedal_event',event_type='brake_release',
+                 field='brake',frame_lo=0,frame_hi=1)
+        included,excluded=pedal_truth([row],[0,.02])
+        self.assertEqual(included,[])
+        self.assertEqual(excluded[0]['reason'],'release_marker_does_not_establish_falling_threshold')
+        included,_=pedal_truth([dict(row,threshold_crossing_reviewed=True,threshold_pct=5)],[0,.02])
+        self.assertEqual(len(included),1)
+
+    def test_unannotated_crossings_near_sparse_truth_are_not_false_positives(self):
+        from acc_telemetry.application.capture_validation import latency_status
+        report=match_events([dict(id='t',lo_s=1,hi_s=1)],
+            [dict(id='p',time_s=1),dict(id='another',time_s=1.01)],max_window_s=1)
+        self.assertEqual(len(report['duplicate_ids']),1)
+        self.assertEqual(latency_status(report,observable_truth_count=1,max_error_s=.1),'pass')

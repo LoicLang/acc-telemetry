@@ -34,8 +34,10 @@ qualitative limitations. See `capture-validation.md` for the measurement contrac
   approximate context, without a quantitative tolerance. Excluded from 5% latency;
   never relabel as an onset. Single-frame resolution is not zero timing uncertainty.
 - E01/E12 remain untimed context. Other events retain original types. The two
-  `first_visible_brake` markers lack explicit threshold semantics and are excluded
-  from the applicable 5% denominator. Publish subtypes and exclusions.
+  `first_visible_brake` markers and seven generic release starts do not establish
+  applicable 5% crossings. Preserve their original types and publish exclusions;
+  release latency stays not evaluated. Final onset/reapplication truth: 16 events
+  in 15 windows.
 - Physical passages track the checker-stripe near edge at fixed image coordinates,
   not axle crossings or metric position. Repeated normalized `s` dispersion cannot
   establish meter accuracy. Missing progress cannot be manufactured at a landmark.
@@ -49,8 +51,9 @@ qualitative limitations. See `capture-validation.md` for the measurement contrac
 
 The validator now exists and consumes telemetry-v2 without OCR. RED and integration
 regressions cover missing truth, shared bias, event association, confirmation delay,
-field provenance, integrity rejection and incompatible fingerprints. Initial real
-speed measurements fail the unchanged targets. The full historical replay detects
+field provenance, integrity rejection and incompatible fingerprints. Final real
+speed measurements fail the unchanged targets. Pedal MAEs and scoped availability
+pass; `capture-validation-results.md` records all denominators and uncertainties. The full historical replay detects
 none of the five user-approved counter transitions. B remains blocked regardless
 of subsequent visibility approvals.
 

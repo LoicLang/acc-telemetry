@@ -72,7 +72,7 @@ def measurement_fingerprint(manifest, settings):
                 extraction_git=manifest.get('code',{}).get('git_commit'))
 
 
-def pedal_truth(passages, timestamps):
+def pedal_truth(passages, timestamps, *, threshold=5):
     included=[]; excluded=[]
     for row in passages:
         if row['kind'] != 'pedal_event':
@@ -83,6 +83,11 @@ def pedal_truth(passages, timestamps):
                 reason=row.get('exclusion_reason','no_reviewed_applicable_crossing_semantics')))
             continue
         field,direction=PEDAL_TYPES[event_type]
+        if direction=='release' and not (row.get('threshold_crossing_reviewed') is True
+                                         and row.get('threshold_pct')==threshold):
+            excluded.append(dict(id=row['id'],event_type=event_type,
+                reason='release_marker_does_not_establish_falling_threshold'))
+            continue
         included.append(dict(row, field=field, direction=direction,
             lo_s=timestamps[row['frame_lo']], hi_s=timestamps[row['frame_hi']]))
     return included,excluded
@@ -130,7 +135,8 @@ def latency_status(report, *, observable_truth_count, max_error_s):
         return 'fail'
     if not report['truth_count'] or observable_truth_count < report['truth_count']:
         return 'not_evaluated'
-    return 'fail' if report['missed_ids'] or report['unmatched_prediction_count'] else 'pass'
+    # Sparse truth cannot label other nearby, possibly genuine crossings as false.
+    return 'fail' if report['missed_ids'] else 'pass'
 
 
 def evaluate_session(artifacts, annotations, capture_path, *, settings=None):
@@ -192,7 +198,7 @@ def evaluate_session(artifacts, annotations, capture_path, *, settings=None):
             reviewed_spans=spans, evaluation_segments=target_segments,
             scope='fresh output availability on explicit target segments, or reviewed spans only; no inferred visibility')
         fields[name]=report
-    truth,excluded=pedal_truth(labels['passages'],timestamps)
+    truth,excluded=pedal_truth(labels['passages'],timestamps,threshold=settings.pedal_crossing_pct)
     pedal_results={}
     for event_type,(name,direction) in PEDAL_TYPES.items():
         subtype=[r for r in truth if r['event_type']==event_type]
@@ -202,6 +208,7 @@ def evaluate_session(artifacts, annotations, capture_path, *, settings=None):
         inside=[r for r in candidates if r['direction']==direction and any(
             abs(r['time_s']-(t['lo_s']+t['hi_s'])/2)<=settings.event_matching_window_s for t in subtype)]
         report=match_events(subtype,inside,max_window_s=settings.event_matching_window_s)
+        report['unmatched_scope']='unannotated nearby crossings, not proven false positives'
         report['outside_review_scope_count']=sum(r['direction']==direction for r in candidates)-len(inside)
         observable=0
         for event in subtype:

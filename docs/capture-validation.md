@@ -51,7 +51,9 @@ stay in ignored `data/lab/`. The application owns orchestration in
   inter-frame gap of 0.10 s. Missing/held observations break the sequence. Matching
   occurs separately by source and subtype. Detections beyond sparse review scope are
   counted separately, not called false positives. Fully observable windows with no
-  crossing fail; absent visibility evidence remains `not_evaluated`. This is not the
+  crossing fail; unannotated nearby crossings are not automatically false positives.
+  A generic release start is excluded unless a falling threshold crossing is explicitly
+  reviewed. Absent visibility evidence remains `not_evaluated`. This is not the
   future B4 sustained coaching-event detector.
 - **Annotation uncertainty:** midpoint error and interval half-width are distinct.
   Unknown human timing uncertainty stays null, including a single-frame marker.
@@ -64,6 +66,8 @@ stay in ignored `data/lab/`. The application owns orchestration in
 A6 E16 remains `throttle_reaches_full`, frame 30397, excluded from the 5% metric.
 Its approximate initial 60% remains context, without an invented numeric tolerance.
 The two `first_visible_brake` markers also lack reviewed 5% semantics and are excluded.
+Seven generic release starts show filled bars and do not establish falling 5% truth;
+those annotations remain intact while release latency stays `not_evaluated`.
 No old marker, approval, lineage or holdout role is relabelled by validation.
 
 All original `config/validation.yaml` targets remain unchanged. A7 adds explicit
@@ -98,5 +102,5 @@ metric spatial accuracy remain excluded from coaching capabilities.
 `scripts/diagnose_progress.py` preserves old counters with
 `metric_scope: internal_consistency_only` and `spatial_accuracy: not_evaluated`.
 Identically biased curves can have zero checkpoint spread; this is a regression test,
-not independent spatial evidence. Current real-capture results live in
-`current-status.md` and the local report paths it names.
+not independent spatial evidence. Final run-008 results and limitations are in `capture-validation-results.md`;
+`current-status.md` owns the live next action.
