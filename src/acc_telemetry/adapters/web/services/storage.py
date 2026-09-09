@@ -149,7 +149,8 @@ class StorageService:
         # Preserve literal OCR text (including leading zeros and N/A symbols).
         evidence = ('speed_raw', 'gear_raw', 'quality_hint', 'field_reasons', 's_reasons', 's_source')
         columns = pd.read_csv(csv_path, nrows=0).columns
-        return pd.read_csv(csv_path, keep_default_na=False,
+        # Retain the serialized binary float, especially frame timestamps.
+        return pd.read_csv(csv_path, keep_default_na=False, float_precision='round_trip',
             dtype={name: str for name in evidence if name in columns},
             na_values={name: [''] for name in columns if name not in evidence})
 

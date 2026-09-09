@@ -7,7 +7,7 @@ read_when:
 
 # A8 — Mesures fraîches et respect des transitions
 
-**Statut : S1/S2 implémentées ; S3–S5 en finalisation.** A8 poursuit la fiabilité A
+**Statut : S1–S3 implémentées ; S4/S5 en finalisation.** A8 poursuit la fiabilité A
 après son échec mesuré, sans démarrer B. Preuves : `docs/fresh-measurement-results.md`.
 Spécification active : `docs/signal-treatment.md`. Référence produit :
 `docs/specs/2026-09-05-reference-corner-coach-design.md`.
@@ -86,19 +86,22 @@ si un défaut de propagation est révélé. Tests : `test_quality_roundtrip.py`,
 `test_session_artifacts.py`, `test_control_observations.py`,
 `test_comparison_api_quality.py`, `test_odometry.py` et `test_progress_fusion.py`.
 
-- [ ] Pipeline -> record -> normalisation -> artefact -> relecture -> API : mêmes
+- [x] Pipeline -> record -> normalisation -> artefact -> relecture -> API : mêmes
   valeur fraîche, frame/temps, qualité, raisons et brut. Tester aussi les nulls et
   les anciens HELD sans les reclasser. Corriger seulement les consommateurs fautifs.
-- [ ] Protéger les transitions synthétiques frein/gaz 0→100 et 100→0, freinage maximal
+- [x] Protéger les transitions synthétiques frein/gaz 0→100 et 100→0, freinage maximal
   puis dégressif, interruption brève, blip et absence HUD. Exiger les valeurs et temps
   d'origine après roundtrip, sans rampe fabriquée ni suppression des pics lisibles.
-- [ ] Aucun nouveau filtre de pédales, champ lissé public, moyenne de secours dans
+- [x] Aucun nouveau filtre de pédales, champ lissé public, moyenne de secours dans
   l'API, ou interpolation à travers une absence. Les calculs B4 restent hors périmètre.
-- [ ] Vérifier ce que reçoit l'odométrie : mesure fraîche admise ou absence explicite.
+- [x] Vérifier ce que reçoit l'odométrie : mesure fraîche admise ou absence explicite.
   Toute prédiction interne de progression conserve sa propre provenance et ne revient
   pas dans `speed_kmh`. Tester l'effet d'un outlier et d'un trou sur l'intégration.
-- [ ] Exécuter les tests ciblés et complets ; commit séparé si cette étape révèle
+- [x] Exécuter les tests ciblés et complets ; commit séparé si cette étape révèle
   une correction distincte de S2, sinon inclure les régressions avec S2.
+
+S3 : correction distincte de précision flottante lors de la relecture CSV/API.
+Preuves RED/GREEN, 91 tests ciblés et suite complète dans `run-010/reports/s3-*`.
 
 ## S4 — Revalider le développement et maintenir les blocages A
 

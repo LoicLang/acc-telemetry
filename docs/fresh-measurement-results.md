@@ -9,7 +9,7 @@ read_when:
 
 Gate A remains blocked. New evidence lives under ignored
 `data/lab/coaching-reliability/run-010/`; run-008 and run-009 remain frozen.
-S1/S2 are implemented. S3 and S4/S5 publication are being finalized.
+S1–S3 are implemented. S4/S5 publication is being finalized.
 
 ## Fresh speed and legacy compatibility
 
@@ -27,6 +27,25 @@ are anomalous with no numeric value. Original text and reasons survive.
 There is no trailing median, history recovery or new temporal rejection threshold.
 The explicit `extract_speed` legacy wrapper retains median/holding/recovery.
 Old HELD artifacts keep their provenance. Numeric validity alone is not HUD validity.
+
+## Propagation, pedal dynamics and odometry
+
+`reports/s3-api-time-red.log` records two failures: default CSV float parsing changed
+1/60 s to a neighboring float in the web API. The storage reader now uses round-trip
+float parsing. `s3-green.log` records four passing end-to-end regressions;
+`s3-focused.log` records 91 passing focused tests. Real pedal pixels/decoder and real
+speed observations pass through pipeline, normalization, telemetry-v2, reloading and
+the typed API with original values, frame/time, raw evidence, reasons and quality.
+Old HELD observations retain their last fresh time and are not relabelled OBSERVED.
+
+Synthetic 0→100/100→0, maximal then degressive braking, brief interruption, blip and
+black-HUD absence survive exactly. There is no pedal filtering or fabricated ramp.
+Odometry receives fresh speed or explicit missing/anomalous values. Existing internal
+short-gap interpolation retains `speed_gap_interpolated` provenance; a tested 0.2 s
+gap integrates 2 m at 36 km/h, whereas a 0.4 s gap exceeds the unchanged 0.25 s bound
+and contributes no interval distance. The source speed remains absent in both cases.
+This synthetic integration check is not a spatial accuracy claim. Calibration and
+normalized `s` require the separate full-development replay evidence below.
 
 ## Separate speed HUD contract, still failing
 

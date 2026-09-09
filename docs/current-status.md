@@ -19,7 +19,7 @@ separate/inactive.** A8 changes modern speed extraction; acceptance targets rema
 unchanged. Full BMW/crash development replays finished; measurement publication remains.
 
 Active correction specification: `signal-treatment.md`.
-Active plan: `plans/2026-09-09-fresh-measurements.md` (**S1/S2 implemented; S3–S5 being finalized**).
+Active plan: `plans/2026-09-09-fresh-measurements.md` (**S1–S3 implemented; S4/S5 being finalized**).
 Parent product specification: `specs/2026-09-05-reference-corner-coach-design.md`.
 Completed A7 execution: `plans/2026-09-05-coaching-reliability.md`; Gate A still fails.
 Contract: `capture-validation.md`. Full results: `capture-validation-results.md`.
@@ -31,7 +31,9 @@ Real extraction/pipeline RED tests reproduced 246→255, 179→188 and held inva
 Modern speed now publishes strict fresh OCR values or explicit absence, retaining
 raw text and reasons. Legacy median/holding stays isolated in `extract_speed`.
 No temporal speed heuristic, pedal smoothing or regression R was added. S3 found
-a separate CSV/API timestamp precision defect, being committed separately.
+a separate CSV/API timestamp precision defect, fixed with round-trip float parsing.
+Real decoder/artifact/API tests protect pedal dynamics, nulls, old HELD and odometry
+provenance; no consumer substitutes an estimated speed for the measured field.
 New evidence: `fresh-measurement-results.md`, ignored run-010. HUD validity and
 historical OCR remain separate A blockers; B and R must not start.
 
@@ -122,5 +124,5 @@ Run-010 preserves S1 RED (5 tests, 6 functional failures), S2 GREEN (5 tests),
 before edits. The old gate/reservation and A6 authorship remain unchanged.
 Known holdout run-008 cannot become independent again or receive a rewritten reservation.
 
-**Next action:** finish the separate S3 consumer commit, then publish S4/S5 metrics
+**Next action:** publish S4/S5 metrics
 and the six-check gate from existing run-010 development artifacts without rerunning OCR.
