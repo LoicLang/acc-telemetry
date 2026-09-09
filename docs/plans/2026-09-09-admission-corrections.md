@@ -23,7 +23,7 @@ No holdout inspection/tuning, acceptance target change, pedal smoothing, R or B.
 - [x] Preserve source/reviewer evidence through CLI, web service, config and artifacts;
   reject a review bound to another source when processing, exporting or reloading.
 - [x] Complete focused/full tests, documentation and atomic commit (303 tests).
-- [ ] Produce new development replay evidence using independently reviewed speed
+- [x] Produce new development replay evidence using independently reviewed speed
   spans; do not silently turn old pedal spans into speed visibility truth.
 
 ## C2 — Numerical speed admission
@@ -37,7 +37,7 @@ No holdout inspection/tuning, acceptance target change, pedal smoothing, R or B.
   use real delta-t and explicit resets on gaps/context changes.
   Predeclared 100 m/s² / 0.25 s policy; cached 86-frame check gives 83 exact,
   three abstentions, no admitted errors. Full source validation remains below.
-- [ ] Verify ramps, minima, invalids, gaps, recovery, odometry/calibration/s; publish
+- [x] Verify ramps, minima, invalids, gaps, recovery, odometry/calibration/s; publish
   all denominators and new fingerprints. Commit separately from C1 and C3.
 
 ## C3 — Historical lap OCR
@@ -50,17 +50,33 @@ No holdout inspection/tuning, acceptance target change, pedal smoothing, R or B.
 - [x] Add RED regressions before the selected correction; keep multi-digit support,
   modern freshness and explicit legacy behavior. Restore shared OCR settings.
   Four focused tests and real 5/10→10/10 endpoint RED/GREEN; 307 full-suite pass.
-- [ ] Re-evaluate historical transitions on the full development source; preserve
+- [x] Re-evaluate historical transitions on the full development source; preserve
   approved events, rejected suspects and author attribution. Commit separately.
 
 ## Publication
 
-- [ ] Freeze final extraction/settings before new replays. Preserve all prior runs.
-- [ ] Publish six scoped checks with compatible fingerprints; unavailable independent
+- [x] Freeze final extraction/settings before new replays. Preserve all prior runs.
+- [x] Publish six scoped checks with compatible fingerprints; unavailable independent
   holdout and missing latency truth stay `not_evaluated`. Gate A must not pass early.
-- [ ] Rehash original inputs; synchronize handoff/results, run focused/full tests,
+- [x] Rehash original inputs; synchronize handoff/results, run focused/full tests,
   `./scripts/docs-list` and `git diff --check` before each commit; push authorized
   branch only. No merge to main.
+
+Final evidence: `run-011/reports/gate-a-final.json`, per-source `*-evaluation-v2.json`
+and `development-results-v2.json`. All 133,237 frames replayed; historical 5/5,
+BMW 2/2, crash 1/1 approved event matches. A global crop regression on BMW was found,
+preserved and fixed by scoping it to 720p. Actual speed outcomes are 83 exact/3 absent
+of 86 reviewed cells; 314 tests pass. Gate A still fails coverage and lacks complete
+field/independent evidence; calibration and `s` are unavailable under sparse review.
+
+## Remaining evidence work
+
+- [ ] Review the prepared 32-segment / 1,247-frame speed visibility dossier with
+  explicit reviewer identity and uncertainty, preserving all previous approvals.
+- [ ] Review complete calibration-lap speed visibility and replay admission/progress;
+  do not infer whole-lap readability from short target segments.
+- [ ] Reserve and evaluate a distinct independent recording before any inspection,
+  after development choices are frozen. Keep missing latency truth not_evaluated.
 
 New independent recording reservation follows the completed development corrections,
 before inspecting the new recording. The known run-008 holdout stays historical.

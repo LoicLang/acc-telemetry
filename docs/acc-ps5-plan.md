@@ -42,14 +42,14 @@ extras (P95 0.0083335 s). Current speed visibility is sparse; continuous coverag
 calibration and independent acceptance remain open. See `admission-correction-results.md`.
 
 - capture_status: native_1080p60_validated
-- controls_speed_gears_status: usable
+- controls_speed_gears_status: reviewed_measurements_only_coaching_blocked
 - track_path_extraction_status: usable
 - centerline_component_selection_status: temporal_persistence_and_unique_long_cycle_validated
 - s_status: representative_clean_and_crash_gates_pass
-- s_latest_validation_status: isolated_missing_boundary_dot_anchor_gap_resolved
+- s_latest_validation_status: unavailable_under_sparse_reviewed_speed
 - s_repair_design_status: generic_fusion_implemented
 - long_capture_lap_transition_status: development_replay_pass_five_reviewed_events
-- quality_propagation_status: provenance_verified_independent_accuracy_gate_fails
+- quality_propagation_status: provenance_verified_independent_gate_blocked
 - downstream_coaching_status: blocked
 
 The repository provides a solid ACC PS5 video-extraction foundation, but it does not

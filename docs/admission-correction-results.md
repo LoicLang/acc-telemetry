@@ -66,7 +66,7 @@ The first full replay exposed a 1080p regression from enabling the crop globally
 BMW missed one of two approved events (the 1→2 confirmation was delayed).
 That failed replay is preserved in `bmw-evaluation.json`. A subsequent RED verifies
 that unconfigured profiles keep the original full ROI. The correction is now scoped
-to the historical 720p profile and all sources are being replayed into new `-v2`
+to the historical 720p profile and all sources were replayed into new `-v2`
 outputs. Earlier gates are diagnostic snapshots, not current acceptance proof.
 
 ## C2: rejected segmentation candidates and explicit rate admission
@@ -120,10 +120,74 @@ independent acceptance. It also documents the derivation of source-bound visibil
 for these 86 frame cells only, preserving user and agent reviewers. No old pedal
 span or unreviewed frame is expanded into speed truth. 312 full-suite tests pass.
 
-## Remaining verification
+## Final full-source replay and gate
 
-Freeze final correction code/config before full development replays. Speed review
-must be independently justified at its exact frame scope; old control spans do not
-approve speed. Sparse speed visibility may leave calibration and `s` unavailable.
-Publish that loss with denominators, not fabricated continuity. Full historical
-event recall and fresh independent holdout acceptance remain separate checks.
+Authoritative artifacts are `processed/{bmw,crash,historical}-session-v2/`, with
+`reports/{source}-freeze-v2.json`, `-progress-v2.json` and `-evaluation-v2.json`.
+All **133,237 frames** were re-extracted under frozen code/config and their exact
+frame/timestamp alignment passes. `development-results-v2.json` contains the full
+quality counts, selected frame errors, calibration outcomes and source evidence.
+The 86 selected frames give **83 fresh exact values, three abstentions, zero admitted
+errors** in this actual replay, agreeing with the cached-read check. Both known
+digit dropouts are ANOMALOUS/null; no replacement or pedal filter was introduced.
+
+| Source | Approved speed points | MAE / P95 km/h | Speed on fixed segments | Approved lap events matched |
+| --- | ---: | ---: | ---: | ---: |
+| BMW | 19/19 | 0 / 0 | 39/564 | 2/2 |
+| Crash | 21/21 | 0 / 0 | 40/683 | 1/1 |
+| Historical | not_evaluated | not_evaluated | not_evaluated | 5/5 |
+
+The BMW regression is resolved. BMW/crash event truth is sparse: unannotated
+predictions remain unclassified. Only historical has exhaustive reviewed truth;
+its five predictions all match and P95 is 0.0083335 s. These are counter events,
+not physical crossing accuracy. Historical raw speed is retained but never admitted
+because no speed visibility was reviewed for that source.
+
+Pedals retain full availability on their original 564/564 and 683/683 segment frames
+and unchanged point MAEs. Speed visibility deliberately covers just 86 unique frame
+cells. Hence coverage fails the unchanged 95% target: 39/564 (6.91%) and 40/683
+(5.86%). Other frames are **unknown**, not asserted absent. No annotation was expanded
+to improve coverage. Calibration accepts zero laps: BMW/crash reject three each,
+historical four. Effective length and `s` are unavailable on these new artifacts
+(0 available `s` frames; 0/4 development landmark passages). Old A8 calibration and
+landmark dispersion are not transferred or converted to meter accuracy.
+
+`reports/gate-a-final.json` is **fail**, coaching ineligible:
+
+| Check | Result |
+| --- | --- |
+| software_regressions | pass: 103 focused, 314 full-suite tests |
+| lap_events | pass: historical exhaustive check and no known development miss |
+| field_accuracy | not_evaluated overall: missing independent HUD-absence/latency truth |
+| field_coverage | fail: sparse reviewed speed cells |
+| timebase | pass on all three full sources |
+| holdout | not_evaluated: no new independently reserved recording |
+
+The first run's `gate-a.json` is superseded: it checked only historical lap status
+and omitted the known BMW miss. The final gate checks for known misses in every
+development source. First-run reports remain intact, including that failure.
+
+Final gate fingerprint:
+`44b5226547fce8a99659fb8b55c5539933aa8ed4cc76b4478d5575a1e60adac7`.
+Gate SHA-256:
+`362b51c08fbdf45d4f12369d5f4bb0979d3333ceb0138dd7c4c1bc36c89f34d5`.
+Per-source measurement fingerprints:
+
+- BMW: `08867e8d59c6ee2a9e0081a73959fdfe2205db3fb6385dcefa5795adb5bc0a30`.
+- Crash: `4c77c6f2ba5327f3ee91fcde9e5e5b19456ca6a126c78e660b93fded5e17eac8`.
+- Historical: `58ae95c20c9903280575a286ecfef0452ded71910bce0a493d1e2b9c16388955`.
+
+`reports/preserved-final-v2.json` rechecks all 207 prior evidence files/source hashes.
+No old reservation, annotation, approval, reviewer identity or acceptance target
+changed. Unannotated release latency and E16 exclusions remain unchanged; no R or B.
+
+## Exact next evidence task
+
+`reports/speed-continuous-review-dossier.json` prepares **all 1,247 images in the 32
+frozen development target segments**, sequential crop sheets plus native scene
+context and hashes under `processed/speed-continuous-review/`. Every proposed frame
+is still unknown/unreviewed. Review those pixels, assign visible/absent/unknown with
+the actual reviewer, then create a new source-bound review without changing old
+approvals. This can improve segment evidence but does not by itself supply complete
+calibration-lap visibility. That review and final independent recording reservation
+remain subsequent steps. Do not re-use known run-008 as an unseen holdout.

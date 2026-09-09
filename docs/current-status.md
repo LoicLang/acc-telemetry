@@ -1,5 +1,5 @@
 ---
-summary: living A8 handoff for fresh speed correction, development revalidation and remaining Gate A blockers
+summary: living A9 handoff for delivered admission corrections, final development replay and remaining coverage evidence
 read_when:
   - starting any task
   - resuming reliability corrections or changing stage-gate status
@@ -19,7 +19,7 @@ separate/inactive.** A8 changes modern speed extraction; acceptance targets rema
 unchanged. Full BMW/crash development replays and scoped measurements are published.
 
 Active correction specification: `signal-treatment.md`.
-Active plan: `plans/2026-09-09-admission-corrections.md` (**C1/C2/C3 implemented; final replay publication in progress**).
+Active plan: `plans/2026-09-09-admission-corrections.md` (**C1/C2/C3 delivered and replayed; continuous visibility and independent acceptance remain open**).
 Previous A8: `plans/2026-09-09-fresh-measurements.md` (completed within available evidence).
 Parent product specification: `specs/2026-09-05-reference-corner-coach-design.md`.
 Completed A7 execution: `plans/2026-09-05-coaching-reliability.md`; Gate A still fails.
@@ -39,13 +39,23 @@ events without extras (P95 0.0083335 s). C2 rejects a
 global word-mode speed switch: on 86 unique reviewed frames it introduces errors.
 C2 now uses predeclared causal rate admission: 100 m/s², at most 0.25 s within a
 reviewed context, explicit null on rejection and fresh recovery. Cached development
-evaluation has 83 exact/3 abstained/0 admitted wrong out of 86; full-suite count 312.
-Full new-code replay is pending; sparse speed review does not establish whole-lap
-coverage or calibration. High-impact rates above the policy can abstain.
+evaluation has 83 exact/3 abstained/0 admitted wrong out of 86. Final actual replay
+confirms those results on 133,237 total source frames; 314 full-suite tests pass.
+Sparse speed review does not establish whole-lap coverage or calibration.
+High-impact rates above the policy can abstain.
 The first full replay exposed a BMW lap regression from global foreground cropping.
 Cropping is now enabled only on the historical 720p profile; 1080p retains its
-previous ROI. New `-v2` replays will supersede the preserved first attempt.
+previous ROI. Final `-v2` replays restore BMW 2/2 and crash 1/1 approved event matches,
+and preserve historical 5/5 without extras. Earlier attempts remain diagnostic.
 Current A9 evidence and limitations: `admission-correction-results.md`.
+
+**Current gate:** `run-011/reports/gate-a-final.json` FAIL. Software, lap-event and
+timebase checks pass; speed coverage fails (39/564 BMW, 40/683 crash). Overall field
+accuracy and independent holdout remain `not_evaluated`. No calibration lap is
+admitted and `s` is unavailable (0/4 development landmark estimates). Exact approved
+speed points remain 40/40; continuous speed visibility is still unreviewed elsewhere.
+Fingerprint: `44b5226547fce8a99659fb8b55c5539933aa8ed4cc76b4478d5575a1e60adac7`.
+No artifact job remains active.
 
 Real extraction/pipeline RED tests reproduced 246→255, 179→188 and held invalids.
 Modern speed now publishes strict fresh OCR values or explicit absence, retaining
@@ -164,10 +174,11 @@ authorship remain unchanged. Final 24 capture/298 full tests are in
 `reports/final-focused.txt` and `final-full.txt`.
 Known holdout run-008 cannot become independent again or receive a rewritten reservation.
 
-**Next action:** freeze the retained C1/C2/C3 code and replay historical/BMW/crash
-sources, preserving sparse reviewed speed scope and publishing coverage losses.
-Keep the additional 162→4/177→7 admission regressions as separate development evidence,
-without restoring holds or tuning thresholds to the selected examples.
-Historical OCR fixtures are ready for their separate correction. No new human
-approval is needed for those readable development images; independent recording
-reservation follows only after the remaining corrections are frozen.
+Final run-011 logs: `reports/final-focused-v2.txt` (103 tests), `final-full-v2.txt`
+(314 tests), and `preserved-final-v2.json` (207 unchanged prior evidence files).
+
+**Next action:** review every sequential sheet and scene context in
+`run-011/reports/speed-continuous-review-dossier.json` (32 frozen segments, 1,247
+frames), then publish separately attributed source-bound visibility into a new
+output. All proposed frames are unknown/unreviewed. Complete calibration-lap
+visibility and a distinct pre-reserved independent recording follow; B remains blocked.
