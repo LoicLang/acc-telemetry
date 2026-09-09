@@ -34,7 +34,10 @@ readable and retain their original quality, including HELD. Their absence of rev
 must never be retroactively interpreted as a new approval.
 
 This is reviewed admission, not an automatic HUD detector or a numerical accuracy
-guarantee. A visible HUD can still be misread. New development visibility must be
+guarantee. A visible HUD can still be misread. A9 numerical admission also checks
+the configured rate envelope within the same reviewed interval, with gaps and new
+intervals resetting temporal support; see `admission-correction-results.md`.
+New development visibility must be
 reviewed from pixels with its author recorded; model outputs cannot supply truth.
 Missing whole-source review can reduce speed/odometry/calibration availability and
 must remain explicit. Gate A still requires independent compatible measurements.

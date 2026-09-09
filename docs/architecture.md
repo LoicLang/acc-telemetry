@@ -110,8 +110,10 @@ labels from separately authorized agent visibility/exhaustiveness reviews.
 `LapDetector.observe_speed` reads the shared raw OCR primitive once and admits only
 complete decimal text within the existing speed range. It preserves original text,
 reasons and explicit absence; it neither reads nor mutates legacy speed history.
-`extract_speed` retains historical median/recovery behavior. No temporal admission
-heuristic or pedal smoothing is added. A9 C1 adds source-bound reviewed speed HUD
+`extract_speed` retains historical median/recovery behavior. A9 C2 adds configured
+causal rate admission in `application/speed_admission.py` before records and odometry:
+reject to explicit absence, never replace the speed. Gaps, invalid reads and reviewed
+context changes reset support. No pedal smoothing is added. A9 C1 adds source-bound reviewed speed HUD
 visibility in `application/speed_visibility.py`; the pipeline verifies source SHA/size
 and supplies visible/absent/unknown context to the extractor. Unknown/absent and black
 ROI abstain. CLI and web service supply this same contract; artifacts preserve and

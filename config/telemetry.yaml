@@ -6,6 +6,8 @@ ocr:
   max_speed_delta_kmh: 20
   recovery_tolerance_kmh: 3
   lap_foreground_margin_px: 1
+  max_speed_acceleration_m_s2: 100.0
+  max_speed_admission_gap_s: 0.25
 
 normalization:
   speed_min_kmh: 0

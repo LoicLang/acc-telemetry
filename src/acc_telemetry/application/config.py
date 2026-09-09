@@ -24,6 +24,8 @@ class OCRSettings:
     max_speed_delta_kmh: int
     recovery_tolerance_kmh: int
     lap_foreground_margin_px: int = 1
+    max_speed_acceleration_m_s2: float = 100.0
+    max_speed_admission_gap_s: float = 0.25
 
 
 @dataclass(frozen=True)
@@ -215,6 +217,9 @@ def load_settings(root: Path | str | None = None) -> TelemetrySettings:
     lap_margin = ocr_raw.get('lap_foreground_margin_px', 1)
     if type(lap_margin) is not int or lap_margin < 0:
         raise ConfigurationError('ocr.lap_foreground_margin_px must be a nonnegative integer')
+    admission = {'max_speed_acceleration_m_s2': 100.0, 'max_speed_admission_gap_s': 0.25, **ocr_raw}
+    max_acceleration = _positive(admission, 'max_speed_acceleration_m_s2', 'ocr')
+    max_admission_gap = _positive(admission, 'max_speed_admission_gap_s', 'ocr')
 
     normalization_raw = _mapping(telemetry.get("normalization"), "normalization")
     speed_min = _number(normalization_raw, "speed_min_kmh", "normalization")
@@ -468,7 +473,8 @@ def load_settings(root: Path | str | None = None) -> TelemetrySettings:
     comparison_raw = _mapping(telemetry.get("comparison"), "comparison")
     return TelemetrySettings(
         position=PositionSettings(frequency_threshold, max_jump),
-        ocr=OCRSettings(int(max_speed_delta), int(recovery_tolerance), lap_margin),
+        ocr=OCRSettings(int(max_speed_delta), int(recovery_tolerance), lap_margin,
+                        max_acceleration, max_admission_gap),
         normalization=NormalizationSettings(speed_min, speed_max, pedal_min, pedal_max),
         comparison=ComparisonSettings(
             _fraction(comparison_raw, "max_position_gap_s", "comparison"),

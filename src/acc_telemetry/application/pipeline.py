@@ -10,7 +10,8 @@ import cv2
 from acc_telemetry.domain.observations import FrameObservation, VisibilitySpan, validate_visibility
 from acc_telemetry.domain.telemetry import TelemetrySample, QualityFlag
 from acc_telemetry.normalization.samples import normalize_row
-from .config import TelemetrySettings
+from .config import TelemetrySettings, load_settings
+from .speed_admission import SpeedAdmission
 from .speed_visibility import SpeedVisibilityReview
 from acc_telemetry.extraction.video import evenly_spaced_frame_indices
 
@@ -182,6 +183,10 @@ class TelemetryPipeline:
             records: list[dict[str, Any]] = []
             observations = []
             last_observed = {}
+            ocr_settings = (self.settings or load_settings()).ocr
+            speed_admission = SpeedAdmission(
+                max_acceleration_m_s2=ocr_settings.max_speed_acceleration_m_s2,
+                max_gap_s=ocr_settings.max_speed_admission_gap_s)
             previous_lap = None
             transitions: list[dict[str, Any]] = []
             completed_lap_times: dict[int, str] = {}
@@ -202,6 +207,9 @@ class TelemetryPipeline:
                     speed_observation = self.laps.observe_speed(self.video.current_frame,
                         hud_state=(self.speed_visibility.state_at(timestamp)
                                    if self.speed_visibility is not None else 'unknown'))
+                    speed_observation = speed_admission.observe(speed_observation, time_s=timestamp,
+                        context=(self.speed_visibility.span_at(timestamp)
+                                 if self.speed_visibility is not None else None))
                     gear_observation = self.laps.observe_gear(self.video.current_frame)
                     speed = speed_observation.value
                     speed_quality = speed_observation.quality

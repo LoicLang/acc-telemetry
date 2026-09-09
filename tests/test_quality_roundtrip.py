@@ -140,6 +140,11 @@ class TestQualityRoundtrip(unittest.TestCase):
         for value in (float('nan'), float('inf'), -float('inf')):
             with self.subTest(value=value):
                 rows = self.run_records(FieldObservation(value, Q.OBSERVED, 'bad'))
+                sample = normalize_row(rows[0], load_settings().normalization)
+                self.assertIsNone(sample.speed_kmh)
+                self.assertEqual(sample.source_values['speed_raw'], 'bad')
+                self.assertIn('speed_value_invalid', sample.field_reasons['speed_kmh'])
+                rows[0]['speed'] = value
                 with self.assertRaisesRegex(ValueError, 'non-finite'):
                     normalize_row(rows[0], load_settings().normalization)
                 # CSV empty is null; literal nonfinite strings must be refused.

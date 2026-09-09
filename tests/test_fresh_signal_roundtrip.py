@@ -112,8 +112,10 @@ class TestFreshSignalRoundtrip(unittest.TestCase):
             return loaded, rows
 
     def test_fresh_speed_null_raw_quality_reasons_and_times_reach_artifact_and_api(self):
-        texts = ['255'] * 15 + ['246', '', '682', '179']
-        expected = [255] * 15 + [246, None, None, 179]
+        # A 3 km/h step at 60 fps is within the explicit admission envelope.
+        # The 255→246 case at 30 fps remains in the real freshness pipeline test.
+        texts = ['249'] * 15 + ['246', '', '682', '179']
+        expected = [249] * 15 + [246, None, None, 179]
         result, odometry_input = self.pipeline(texts)
         self.assertEqual([row['speed'] for row in result.records], expected)
         loaded, rows = self.artifact_and_api(result)

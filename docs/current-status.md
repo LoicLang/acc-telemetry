@@ -36,19 +36,26 @@ Focused RED/GREEN and source binding tests pass; 303 full-suite tests pass for C
 C3 foreground-bound modern lap OCR now passes all ten approved endpoints (old 5/10),
 with 307 full-suite tests. Full historical event recall awaits replay. C2 rejects a
 global word-mode speed switch: on 86 unique reviewed frames it introduces errors.
+C2 now uses predeclared causal rate admission: 100 m/s², at most 0.25 s within a
+reviewed context, explicit null on rejection and fresh recovery. Cached development
+evaluation has 83 exact/3 abstained/0 admitted wrong out of 86; full-suite count 312.
+Full new-code replay is pending; sparse speed review does not establish whole-lap
+coverage or calibration. High-impact rates above the policy can abstain.
 Current A9 evidence and limitations: `admission-correction-results.md`.
 
 Real extraction/pipeline RED tests reproduced 246→255, 179→188 and held invalids.
 Modern speed now publishes strict fresh OCR values or explicit absence, retaining
 raw text and reasons. Legacy median/holding stays isolated in `extract_speed`.
-No temporal speed heuristic, pedal smoothing or regression R was added. S3 found
+A8 added no temporal speed heuristic; A9 C2 adds admission only. No pedal smoothing
+or regression R was added. S3 found
 a separate CSV/API timestamp precision defect, fixed with round-trip float parsing.
 Real decoder/artifact/API tests protect pedal dynamics, nulls, old HELD and odometry
 provenance; no consumer substitutes an estimated speed for the measured field.
 New evidence: `fresh-measurement-results.md`, ignored run-010. HUD validity and
 historical OCR remain separate A blockers; B and R must not start.
-An additional review of six output-selected development frames confirms two wrong
-OBSERVED speeds (162→4, 177→7); numerical admission also remains an A blocker.
+An A8 review of six output-selected development frames confirmed two wrong
+OBSERVED speeds (162→4, 177→7). C2 now rejects these; broader numerical admission
+still needs compatible full-source and independent validation.
 
 New full replays cover 47,589 BMW + 29,402 crash frames. Speed is exact on 40/40
 approved development points (MAE/P95 0/0); fixed-segment speed availability is
@@ -152,9 +159,9 @@ authorship remain unchanged. Final 24 capture/298 full tests are in
 `reports/final-focused.txt` and `final-full.txt`.
 Known holdout run-008 cannot become independent again or receive a rewritten reservation.
 
-**Next action:** finish the bounded C2 alternative check, freeze the retained code
-and replay the full historical source to measure event recall under C3.
-Keep the additional 162→4/177→7 admission failures as a separate development RED,
+**Next action:** freeze the retained C1/C2/C3 code and replay historical/BMW/crash
+sources, preserving sparse reviewed speed scope and publishing coverage losses.
+Keep the additional 162→4/177→7 admission regressions as separate development evidence,
 without restoring holds or tuning thresholds to the selected examples.
 Historical OCR fixtures are ready for their separate correction. No new human
 approval is needed for those readable development images; independent recording

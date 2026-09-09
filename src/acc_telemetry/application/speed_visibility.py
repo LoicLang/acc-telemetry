@@ -51,8 +51,12 @@ class SpeedVisibilityReview:
             raise ValueError('speed visibility does not match source video')
 
     def state_at(self, time_s: float) -> str:
-        return next((span.state for span in self.spans
-                     if span.start_s <= time_s < span.end_s), 'unknown')
+        span = self.span_at(time_s)
+        return span.state if span is not None else 'unknown'
+
+    def span_at(self, time_s: float) -> SpeedVisibilitySpan | None:
+        return next((span for span in self.spans
+                     if span.start_s <= time_s < span.end_s), None)
 
 
 def load_speed_visibility(path: Path | str | None) -> SpeedVisibilityReview | None:

@@ -54,7 +54,7 @@ def measurement_fingerprint(manifest, settings):
     prefixes=('src/acc_telemetry/extraction/', 'src/acc_telemetry/normalization/',
               'src/acc_telemetry/domain/')
     application=('pipeline','progress','lap_state','odometry','session_artifacts','components','config',
-                 'speed_visibility')
+                 'speed_visibility','speed_admission')
     names=[str(p.relative_to(root)) for p in (root/'src/acc_telemetry').rglob('*.py')
            if str(p.relative_to(root)).startswith(prefixes)
            or p in [root/f'src/acc_telemetry/application/{name}.py' for name in application]]

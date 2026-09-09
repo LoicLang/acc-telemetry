@@ -50,7 +50,7 @@ Synthetic multi-digit composites preserve all components, but OCR reads construc
 ≥10 and population accuracy remain unvalidated. No one-digit assumption or output
 mapping was added. Full new-code historical event recall remains pending replay.
 
-## C2: rejected global word-mode speed candidate
+## C2: rejected segmentation candidates and explicit rate admission
 
 Word mode fixes both known truncations on the six output-selected frames, but fails
 the expanded fixed development comparison. Accounting: 40 approved points + 44 agent
@@ -66,7 +66,40 @@ It also introduces 39→139 twice and 1→7 in the extra reviewed windows. It is
 speed mode stays unchanged. `reports/speed-word-development-check.json` retains raw
 text, range admission, all disagreements, scope/review attribution and source hashes.
 No second OCR pass, temporal smoothing or tuned rejection threshold is introduced.
-The single-line 162→4/177→7 defects remain open on reviewed visible frames.
+Without the admission below, single-line 162→4/177→7 defects remain on visible frames.
+
+RAW_LINE was also rejected after the same fixed 86-frame check: its results match
+word mode (78 exact, five abstentions, three admitted errors). No further mode sweep
+was performed. Proof: `reports/speed-raw-line-development-check.json`.
+
+The retained correction keeps single-line OCR and adds causal admission in the
+application layer before records, observations and odometry. Its predeclared policy
+is in `reports/speed-admission-policy.json`: a broad 100 m/s² absolute acceleration
+envelope (approximately ten g), applied only across at most 0.25 s in the same
+reviewed context. This is an admission policy, not an empirically validated vehicle
+model. Real high-impact changes exceeding it may abstain. No acceptance target was
+changed, and the envelope was not fitted to the holdout or adjusted after evaluation.
+
+An excessive change becomes ANOMALOUS/null with `speed_rate_exceeded` and the original
+raw text. A rejection clears temporal support, so the next fresh observation starts
+a new baseline. Missing/anomalous/held reads, context changes, invalid timestamps
+and long gaps also reset support. Sustained plausible wrong readings can still survive.
+No median, interpolation or held number replaces the rejected measurement. Internal
+odometry interpolation retains its separate provenance. Pedals remain unchanged.
+
+RED on the real pipeline reproduces both admitted digit dropouts; GREEN returns
+162/null/163 and 177/null/175, with one OCR read per frame. Five rate tests cover
+exact boundaries, valid abrupt changes, invalid settings, gaps/context resets and
+recovery. The 30 fps 255→246 freshness regression remains exact. The CSV/API test
+uses an in-envelope 249→246 step at 60 fps while retaining exact 1/60 timestamps.
+
+`reports/speed-admission-development.json` replays the cached single-line reads for
+the same 86 unique reviewed frames: **83 exact, three abstentions, zero admitted
+errors**. The two newly rejected errors preserve raw 4/7; the previous 638 rejection
+remains. This is cached-read development evaluation, not new full-video OCR or
+independent acceptance. It also documents the derivation of source-bound visibility
+for these 86 frame cells only, preserving user and agent reviewers. No old pedal
+span or unreviewed frame is expanded into speed truth. 312 full-suite tests pass.
 
 ## Remaining verification
 

@@ -28,13 +28,15 @@ No holdout inspection/tuning, acceptance target change, pedal smoothing, R or B.
 
 ## C2 — Numerical speed admission
 
-- [ ] RED real reads for known 162→4/177→7 errors and other development support.
+- [x] RED real reads for known 162→4/177→7 errors and other development support.
 - [x] Inspect segmentation/admission alternatives without a threshold search for a
   green gate. Preserve fresh values, valid dynamics, raw text and one OCR read.
   Global single-word mode is rejected after 86-frame expanded development comparison.
-- [ ] Implement only an evidenced correction; uncertain or rejected readings remain
+- [x] Implement only an evidenced correction; uncertain or rejected readings remain
   absent, never median/held/reconstructed OBSERVED values. Any temporal rule must
   use real delta-t and explicit resets on gaps/context changes.
+  Predeclared 100 m/s² / 0.25 s policy; cached 86-frame check gives 83 exact,
+  three abstentions, no admitted errors. Full source validation remains below.
 - [ ] Verify ramps, minima, invalids, gaps, recovery, odometry/calibration/s; publish
   all denominators and new fingerprints. Commit separately from C1 and C3.
 
