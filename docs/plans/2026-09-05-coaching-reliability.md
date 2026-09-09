@@ -565,3 +565,8 @@ on holdout and no B work. A7 evaluation completion is not Gate A acceptance.
 
 Historical acceptance remains unchecked: measured recall is 0/5, not a passed gate.
 Next work stays on A with development-only OCR/speed correction regressions.
+
+Follow-up planning (2026-09-09): the active correction specification is
+`docs/signal-treatment.md`, with `docs/plans/2026-09-09-fresh-measurements.md`.
+It prioritizes fresh-speed RED regressions and preserves pedal dynamics. This
+planning-only update does not change A7 results or mark Gate A passed.

@@ -98,6 +98,18 @@ component/configuration fingerprints. See `capture-validation.md`; independent
 measurements currently fail Gate A. Review provenance distinguishes original user
 labels from separately authorized agent visibility/exhaustiveness reviews.
 
+## Planned signal correction (not implemented)
+
+The September 9 decision in `signal-treatment.md` makes modern fresh speed
+observations independent of the legacy median/recovery wrapper. Pedal transitions
+remain unsmoothed; invalid/unavailable measurements keep their raw evidence and
+explicit absence. An optional local speed regression would live in pure analysis
+as a distinct estimate, disabled/deferred until its prerequisites and usefulness
+are established. It must not silently feed measurements, events or odometry.
+The current code still applies the legacy speed filter; the implementation checklist
+is `plans/2026-09-09-fresh-measurements.md`. Changing speed requires new progress and
+gate evidence because odometry consumes it.
+
 ## Generic position estimation
 
 The implemented estimator is generic across circuits using the static full-map HUD.

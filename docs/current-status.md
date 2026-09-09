@@ -1,5 +1,5 @@
 ---
-summary: authoritative handoff after completed A7 evaluation, failed Gate A and preserved independent evidence
+summary: living handoff for planned A8 fresh measurements, frozen failed A7 gate and preserved independent evidence
 read_when:
   - starting any task
   - resuming reliability corrections or changing stage-gate status
@@ -17,10 +17,28 @@ preserved; do not ask them to repeat accepted or reliably agent-verifiable revie
 separate/inactive.** No artifact job remains active. No extraction module, extraction
 setting or original validation target was changed to improve the benchmark.
 
-Active specification: `specs/2026-09-05-reference-corner-coach-design.md`.
-Active plan: `plans/2026-09-05-coaching-reliability.md`.
+Active correction specification: `signal-treatment.md`.
+Active plan: `plans/2026-09-09-fresh-measurements.md` (**A8 planned, not implemented**).
+Parent product specification: `specs/2026-09-05-reference-corner-coach-design.md`.
+Completed A7 execution: `plans/2026-09-05-coaching-reliability.md`; Gate A still fails.
 Contract: `capture-validation.md`. Full results: `capture-validation-results.md`.
 Preserved semantic constraints: `coaching-reliability-resume.md`.
+
+## Current decision: documentation and plan only
+
+The user requests a plan for fresh speed measurements and preservation of pedal
+transitions. No speed/pedal extraction code or configuration changed in this task.
+A8 prioritizes the modern speed freshness regression before the separate historical
+OCR correction. Brake/throttle smoothing is excluded. A possible robust local speed
+regression remains a separate, disabled/deferred estimate, not a replacement for
+measurements or a prerequisite to correct them. Gate A still blocks B and this
+optional downstream experiment.
+
+New confirmed development evidence: **40/40 raw OCR speed readings are exact** on
+the selected 19 BMW + 21 crash labels. Subsequent median-filtered outputs include
+246→255 and 179→188. Scope is these points only, not all frames. Read-only proof with
+input hashes: `data/lab/coaching-reliability/run-009/reports/speed-raw-vs-output.json`.
+The benefit of a regression curve remains a hypothesis; no model was tested or added.
 
 ## Stable implementation baseline
 
@@ -96,7 +114,11 @@ under `run-008/`. Private/generated evidence is ignored. The final validator rea
 telemetry-v2 without OCR. The final correction also prevents generic release starts
 and sparse extra crossings from being misreported as latency errors/false positives.
 
-**Next action:** write development-only RED extraction regressions using the approved
-historical counter frames (0 read as 7, later 2/3 as 20/30), then correct that OCR path
-and re-evaluate with a new fingerprint. Keep speed failures explicit, do not fit any
-correction on holdout, and do not start B while Gate A fails.
+Documentation planning verified with the focused repository-layout tests, full suite,
+docs discovery and diff check; logs are under `run-009/reports/`. A7 evidence and
+its fingerprint are unaffected by this documentation-only task.
+
+**Next action:** execute S1 of `plans/2026-09-09-fresh-measurements.md`: write and run
+RED tests through the real `LapDetector.observe_speed` and pipeline proving that a
+fresh descending-speed reading is replaced by a trailing median. Do not implement
+optional regression, smooth pedals, tune on holdout or start B.

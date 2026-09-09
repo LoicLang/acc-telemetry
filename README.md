@@ -104,6 +104,11 @@ frame counts. Holdout roles and explicitly reviewed HUD absence remain intact.
 --artifacts SESSION --annotations LABELS_JSON --output NEW_REPORT_JSON`. Missing
 evidence stays `not_evaluated`; failed measurements keep coaching blocked.
 
+The [planned signal correction](docs/signal-treatment.md) preserves fresh speed
+readings and abrupt pedal inputs. Speed regression remains an optional separate
+estimate; it is not implemented. The current speed path still uses its legacy filter.
+See the [implementation plan](docs/plans/2026-09-09-fresh-measurements.md).
+
 ## Reference documents
 
 - [Current status](docs/current-status.md)

@@ -7,7 +7,7 @@ read_when:
 
 # ACC PS5 telemetry plan
 
-Last verified: 2026-09-08
+Last verified: 2026-09-09
 
 ## Current state
 
@@ -27,6 +27,12 @@ final speed results and five missed approved historical transitions fail Gate A.
 Pedal MAEs and scoped availability pass; no overall gate is passed. See
 `capture-validation-results.md` for authoritative results and exclusions. E16 is a full-throttle marker, excluded from the
 5% crossing latency metric. See `current-status.md` for accepted evidence.
+
+The approved September 9 follow-up prioritizes fresh speed measurements and preserves
+abrupt brake/throttle transitions without smoothing. Optional speed regression is
+separate and deferred; no estimator or signal correction is implemented by that
+planning decision. See `signal-treatment.md` and
+`plans/2026-09-09-fresh-measurements.md`. Existing Gate A targets and blockers remain.
 
 - capture_status: native_1080p60_validated
 - controls_speed_gears_status: usable

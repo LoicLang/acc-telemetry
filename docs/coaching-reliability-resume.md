@@ -66,3 +66,13 @@ Finish any active artifact jobs before starting duplicate replays. Use the exist
 `.venv`, FFmpeg and FFprobe. Run focused tests, the full suite, docs discovery and
 `git diff --check` before each coherent commit. Update plan/handoff; push is authorized
 on `codex/coaching-reliability`, no merge to main.
+
+## Next correction plan
+
+Follow `signal-treatment.md` and `plans/2026-09-09-fresh-measurements.md` for A8.
+The new read-only development check finds 40/40 exact raw speed OCR labels before
+the existing median filter; evidence is in run-009. Start with S1 fresh-speed RED
+regressions. Historical OCR and HUD validity remain separate A blockers. Do not
+smooth the pedals or introduce an optional regression curve as part of that fix.
+The known run-008 holdout stays frozen and is not a newly independent test of a
+changed extractor; reserve new independent evidence before inspection when needed.
