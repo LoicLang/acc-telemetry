@@ -7,6 +7,16 @@ read_when:
 
 # A9 — Admission and historical OCR corrections
 
+## Latest source-scope decision
+
+- [x] Restrict all new video extraction/preparation to native 1920×1080 at exactly
+  60 fps CFR; metadata/cadence refusal before frame extraction or OCR.
+- [x] Set active CLI/web defaults to 1080p and preserve old artifacts read-only.
+- [x] Retire further 720p work. Historical 5/5 remains archival evidence and does
+  not replace an exhaustive 1080p event review. Gate A remains blocked.
+
+The completed historical tasks below predate this decision and must not be rerun.
+
 Authorized after A8 on 2026-09-09. Specification: `docs/signal-treatment.md`.
 Baseline: `b5eb04c`; evidence remains frozen under run-010. New outputs: run-011.
 Only explicitly selected models below GPT-6 Astra may receive delegated work.

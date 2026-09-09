@@ -20,7 +20,7 @@ def _parser() -> argparse.ArgumentParser:
     parser.add_argument("video", type=Path, help="immutable source video")
     parser.add_argument(
         "--profile",
-        default="ps5_full_map_720p",
+        default="ps5_full_map_1080p",
         help="ROI profile from config/roi_config.yaml",
     )
     parser.add_argument(

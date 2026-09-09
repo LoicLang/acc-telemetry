@@ -1,6 +1,6 @@
 # ACC Telemetry
 
-Extract driving telemetry from Assetto Corsa Competizione PS5 recordings when native telemetry is unavailable. The validated capture baseline is native 1920x1080 at 60 FPS with the ACC static full-map HUD and the `ps5_full_map_1080p` profile. Historical 720p recordings remain supported.
+Extract driving telemetry from Assetto Corsa Competizione PS5 recordings when native telemetry is unavailable. Only native 1920x1080 at exactly 60 FPS with constant cadence is accepted, using the ACC static full-map HUD and the `ps5_full_map_1080p` profile. Other formats are refused before frame extraction/OCR; historical artifacts remain readable.
 
 This repository is the telemetry foundation for the future Road to Verstappen product. It deliberately separates video extraction, normalization, domain concepts, analysis, and presentation.
 

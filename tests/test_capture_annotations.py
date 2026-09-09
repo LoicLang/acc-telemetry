@@ -101,13 +101,13 @@ class TestSyntheticAnnotationPreparation(unittest.TestCase):
         with tempfile.TemporaryDirectory() as directory:
             root=Path(directory)
             video=root/'synthetic.avi'
-            writer=cv2.VideoWriter(str(video),cv2.VideoWriter_fourcc(*'MJPG'),10.,(32,32))
+            writer=cv2.VideoWriter(str(video),cv2.VideoWriter_fourcc(*'MJPG'),60.,(1920,1080))
             for i in range(6):
-                writer.write(np.full((32,32,3),i*20,np.uint8))
+                writer.write(np.full((1080,1920,3),i*20,np.uint8))
             writer.release()
             from acc_telemetry.application.validation_config import load_validation_settings
             from dataclasses import replace
-            settings=replace(load_validation_settings(), resolutions={'synthetic':(32,32)})
+            settings=replace(load_validation_settings(), resolutions={'synthetic':(1920,1080)})
             output=root/'processed'/'annotations'
             module.prepare_annotations(video,'synthetic',output,settings=settings)
             label_path=output/'labels.json'
@@ -125,8 +125,8 @@ class TestSyntheticAnnotationPreparation(unittest.TestCase):
             reviewed.update(reviewed=True,annotator='reviewer')
             for row in reviewed['frames']:
                 row.update(reviewed=True,degraded=True,
-                    visibility={k:(k=='throttle' and row['time_s']<.3) for k in row['visibility']})
-            reviewed['visibility']=[dict(field='throttle',start_s=.1,end_s=.3,reviewed=True)]
+                    visibility={k:(k=='throttle' and row['time_s']<3/60) for k in row['visibility']})
+            reviewed['visibility']=[dict(field='throttle',start_s=1/60,end_s=3/60,reviewed=True)]
             (result/'labels.json').write_text(json.dumps(reviewed))
             report=module.validate_annotation_file(result/'labels.json')
             self.assertEqual(report['status'],'pass')

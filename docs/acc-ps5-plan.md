@@ -11,6 +11,12 @@ Last verified: 2026-09-09
 
 ## Current state
 
+**Latest owner decision: process only native 1920×1080 at exactly 60 fps CFR.**
+Other input formats are refused before extraction. Historical 720p work is retired;
+its preserved 5/5 result does not qualify the active 1080p gate. An exhaustive
+1080p lap-event review remains necessary. This narrows source scope; it does not
+relax numerical acceptance targets or pass Gate A.
+
 The September 5 technical audit narrows the meaning of earlier validation claims:
 representative internal-consistency metrics pass, but independent spatial accuracy
 has not been established. A1 now supplies fresh strict lap observations to the confirmer;
@@ -48,7 +54,7 @@ calibration and independent acceptance remain open. See `admission-correction-re
 - s_status: representative_clean_and_crash_gates_pass
 - s_latest_validation_status: unavailable_under_sparse_reviewed_speed
 - s_repair_design_status: generic_fusion_implemented
-- long_capture_lap_transition_status: development_replay_pass_five_reviewed_events
+- long_capture_lap_transition_status: exhaustive_1080p_review_pending_720p_retired
 - quality_propagation_status: provenance_verified_independent_gate_blocked
 - downstream_coaching_status: blocked
 
@@ -68,7 +74,8 @@ On ten manually annotated frames from the clean 2026-09-02 BMW session, native 1
 produced 10/10 exact matches for lap number, last-lap time, speed, and gear. The same
 frames downscaled to 720p produced 9/10 lap-number matches, 0/10 last-lap-time matches,
 and 10/10 speed and gear matches. Native 1080p60 is therefore the capture baseline for
-future sessions. The 720p profile remains supported for historical recordings.
+future sessions. The latest owner decision now excludes 720p from all new processing;
+old profiles and artifacts are retained only for historical compatibility.
 
 The result required calibrated regions and thresholded 3x lap-number preprocessing;
 file resolution alone did not fix OCR.

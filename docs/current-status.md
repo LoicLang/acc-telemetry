@@ -28,6 +28,13 @@ Preserved semantic constraints: `coaching-reliability-resume.md`.
 
 ## Current implementation
 
+**Latest owner constraint: native 1920×1080, exactly 60 fps CFR only.** Other videos
+are rejected from metadata/cadence checks before frames/OCR, including 720p and
+59.94 fps. CLI and web default to the 1080p profile. No more 720p extraction or
+investigation; preserved historical results do not qualify the active 1080p gate.
+An exhaustive 1080p event review is still needed. Format RED/GREEN evidence is in
+run-012/reports; 317 tests pass. This code change invalidates previous extraction fingerprints.
+
 A9 C1 now requires source-bound speed visibility in the modern pipeline; unknown
 or absent HUD abstains while raw OCR survives. See `speed-visibility.md`.
 New outputs are under run-011; 207 prior evidence files verified before editing.
@@ -49,7 +56,7 @@ previous ROI. Final `-v2` replays restore BMW 2/2 and crash 1/1 approved event m
 and preserve historical 5/5 without extras. Earlier attempts remain diagnostic.
 Current A9 evidence and limitations: `admission-correction-results.md`.
 
-**Current gate:** `run-011/reports/gate-a-final.json` FAIL. Software, lap-event and
+**Frozen A9 gate, before the 1080p-only decision:** `run-011/reports/gate-a-final.json` FAIL. Software, lap-event and
 timebase checks pass; speed coverage fails (39/564 BMW, 40/683 crash). Overall field
 accuracy and independent holdout remain `not_evaluated`. No calibration lap is
 admitted and `s` is unavailable (0/4 development landmark estimates). Exact approved

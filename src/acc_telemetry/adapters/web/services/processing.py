@@ -99,12 +99,10 @@ class VideoProcessingService:
         # Load configuration
         full_config = self.load_roi_config()
         profile_name = self.validate_profile_name(profile_name, full_config=full_config)
-        active_profile_name = profile_name or (
-            'go_setups_720p' if has_overlay else 'twitch_720p'
-        )
+        active_profile_name = profile_name or 'ps5_full_map_1080p'
         roi_config = self._select_roi_profile(
             full_config,
-            profile_name=profile_name,
+            profile_name=active_profile_name,
             has_overlay=has_overlay,
         )
 

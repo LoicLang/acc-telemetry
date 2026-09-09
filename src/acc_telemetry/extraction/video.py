@@ -12,6 +12,42 @@ import cv2
 import numpy as np
 from typing import Generator, Dict, Tuple
 
+# Fixed product input contract, not configurable accuracy/tuning thresholds.
+SUPPORTED_CAPTURE_RESOLUTION = (1920, 1080)
+SUPPORTED_CAPTURE_FPS = 60.0
+PROBE_ROUNDING_S = 10 ** -6
+
+
+def require_supported_format(width, height, fps):
+    if (width, height) != SUPPORTED_CAPTURE_RESOLUTION or fps != SUPPORTED_CAPTURE_FPS:
+        raise ValueError(f'Unsupported capture: required 1920x1080 at exactly 60 fps; received {width}x{height} at {fps} fps')
+
+
+def probe_supported_capture(path):
+    """Read metadata/packet timestamps only; refuse unsupported input before frames/OCR."""
+    try:
+        result = subprocess.run(['ffprobe', '-v', 'error', '-select_streams', 'v:0',
+            '-show_entries', 'stream=width,height,avg_frame_rate,time_base', '-of', 'json', str(path)],
+            capture_output=True, text=True, check=True)
+        if result.stderr.strip():
+            raise ValueError('format metadata contains probe errors')
+        stream = json.loads(result.stdout)['streams'][0]
+        fps = Fraction(stream['avg_frame_rate'])
+        require_supported_format(stream['width'], stream['height'], fps)
+        tick = float(Fraction(stream['time_base']))
+        if not math.isfinite(tick) or not 0 < tick <= 1 / SUPPORTED_CAPTURE_FPS:
+            raise ValueError('unsupported timebase')
+        packets = presentation_packets(path)
+        times = np.asarray(sorted(float(p['pts_time']) for p in packets if 'D' not in p['flags']))
+        if (len(times) < 2 or not np.isfinite(times).all() or not np.all(np.diff(times) > 0)
+                or np.any(np.abs((times - times[0]) - np.arange(len(times)) / SUPPORTED_CAPTURE_FPS)
+                          > tick + PROBE_ROUNDING_S)):
+            raise ValueError('unsupported variable or incomplete 60 fps timebase')
+        return dict(status='pass', width=stream['width'], height=stream['height'],
+                    fps=float(fps), presentation_frames=len(times))
+    except (OSError, subprocess.SubprocessError, KeyError, IndexError, TypeError, ZeroDivisionError) as error:
+        raise ValueError('Cannot verify required 1920x1080 at exactly 60 fps') from error
+
 
 def evenly_spaced_frame_indices(frame_count: int, sample_count: int) -> list[int]:
     """Return evenly spaced frame indices spanning the available video."""
@@ -35,7 +71,7 @@ def validate_capture_probe(raw, *, expected_resolution):
         if len(times)<2 or not np.isfinite(times).all() or not math.isfinite(fps) or fps<=0 or tick<=0:
             raise ValueError('unsupported_timebase')
         # FFprobe emits seconds rounded to six decimals, independently of stream ticks.
-        rounding_s = 10 ** -6
+        rounding_s = PROBE_ROUNDING_S
         if (not np.all(np.diff(times)>0)
                 or np.any(np.abs(np.diff(times)-1/fps)>tick+rounding_s)
                 or np.max(np.abs((times-times[0])-np.arange(len(times))/fps))>1/fps):
@@ -67,6 +103,7 @@ def presentation_packets(path):
 
 
 def preflight_capture(path, *, expected_resolution):
+    probe_supported_capture(path)
     command=['ffprobe','-v','error','-select_streams','v:0','-show_frames',
         '-show_entries','stream=width,height,avg_frame_rate,time_base,nb_frames:frame=best_effort_timestamp_time',
         '-of','json',str(path)]
@@ -113,8 +150,16 @@ class VideoProcessor:
         if not self.cap.isOpened():
             return False
             
-        self.fps = self.cap.get(cv2.CAP_PROP_FPS)
-        self.frame_count = int(self.cap.get(cv2.CAP_PROP_FRAME_COUNT))
+        try:
+            self.fps = self.cap.get(cv2.CAP_PROP_FPS)
+            require_supported_format(self.cap.get(cv2.CAP_PROP_FRAME_WIDTH),
+                                     self.cap.get(cv2.CAP_PROP_FRAME_HEIGHT), self.fps)
+            self.format_check = probe_supported_capture(self.video_path)
+            self.frame_count = int(self.cap.get(cv2.CAP_PROP_FRAME_COUNT))
+        except Exception:
+            self.cap.release()
+            self.cap = None
+            raise
         
         return True
     
@@ -199,5 +244,6 @@ class VideoProcessor:
             'frame_count': self.frame_count,
             'duration': self.frame_count / self.fps if self.fps else 0,
             'width': int(self.cap.get(cv2.CAP_PROP_FRAME_WIDTH)) if self.cap else 0,
-            'height': int(self.cap.get(cv2.CAP_PROP_FRAME_HEIGHT)) if self.cap else 0
+            'height': int(self.cap.get(cv2.CAP_PROP_FRAME_HEIGHT)) if self.cap else 0,
+            'capture_format': getattr(self, 'format_check', {'status': 'not_evaluated'})
         }

@@ -34,6 +34,13 @@ Root `main.py` and modules such as `src/video_processor.py` are compatibility en
 
 ## Configuration
 
+The product input contract is fixed to native 1920×1080 at exactly 60 fps CFR.
+`VideoProcessor.open_video` refuses incompatible metadata before reading frames;
+FFprobe packet timestamps verify cadence without OCR or image extraction. Annotation
+preflight applies the same rule. Unknown format, 59.94 fps and VFR are rejected;
+there is no automatic resizing or resampling. CLI/web defaults select 1080p.
+Generic helpers and old artifact readers remain usable for historical evidence.
+
 `config/roi_config.yaml` owns HUD geometry and profile-specific map detection. `config/telemetry.yaml` owns shared position, OCR recovery, and normalization thresholds. `load_settings()` validates both before the packaged CLI builds components.
 
 ## Telemetry contract

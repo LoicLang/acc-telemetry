@@ -35,6 +35,11 @@ current, and follow the repository's own testing, documentation, and commit rule
 
 Keep the repository focused on ACC PS5 video telemetry. Do not add product features during cleanup or refactoring work.
 
+Only native **1920×1080 at exactly 60 fps, constant cadence**, is in scope for new
+video processing. Check metadata first; reject all other formats, including 720p,
+30 fps and 59.94 fps. Do not upscale or resample to bypass this rule. Stop historical
+720p investigations; preserve existing artifacts and approvals as read-only history.
+
 ## Architecture
 
 Follow this dependency flow:
