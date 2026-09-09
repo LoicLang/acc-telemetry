@@ -29,8 +29,9 @@ No holdout inspection/tuning, acceptance target change, pedal smoothing, R or B.
 ## C2 — Numerical speed admission
 
 - [ ] RED real reads for known 162→4/177→7 errors and other development support.
-- [ ] Inspect segmentation/admission alternatives without a threshold search for a
+- [x] Inspect segmentation/admission alternatives without a threshold search for a
   green gate. Preserve fresh values, valid dynamics, raw text and one OCR read.
+  Global single-word mode is rejected after 86-frame expanded development comparison.
 - [ ] Implement only an evidenced correction; uncertain or rejected readings remain
   absent, never median/held/reconstructed OBSERVED values. Any temporal rule must
   use real delta-t and explicit resets on gaps/context changes.
@@ -44,8 +45,9 @@ No holdout inspection/tuning, acceptance target change, pedal smoothing, R or B.
   Foreground-bound thresholded ink with a one-pixel margin gives 10/10 versus 5/10;
   retain word mode and all digit components. Constructed multi-digit 12 still fails,
   so this is not unrestricted counter accuracy evidence.
-- [ ] Add RED regressions before the selected correction; keep multi-digit support,
+- [x] Add RED regressions before the selected correction; keep multi-digit support,
   modern freshness and explicit legacy behavior. Restore shared OCR settings.
+  Four focused tests and real 5/10→10/10 endpoint RED/GREEN; 307 full-suite pass.
 - [ ] Re-evaluate historical transitions on the full development source; preserve
   approved events, rejected suspects and author attribution. Commit separately.
 

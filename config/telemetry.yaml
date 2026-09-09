@@ -5,6 +5,7 @@ position:
 ocr:
   max_speed_delta_kmh: 20
   recovery_tolerance_kmh: 3
+  lap_foreground_margin_px: 1
 
 normalization:
   speed_min_kmh: 0

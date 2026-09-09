@@ -23,6 +23,7 @@ class PositionSettings:
 class OCRSettings:
     max_speed_delta_kmh: int
     recovery_tolerance_kmh: int
+    lap_foreground_margin_px: int = 1
 
 
 @dataclass(frozen=True)
@@ -211,6 +212,9 @@ def load_settings(root: Path | str | None = None) -> TelemetrySettings:
     recovery_tolerance = _number(ocr_raw, "recovery_tolerance_kmh", "ocr")
     if max_speed_delta <= 0 or recovery_tolerance < 0:
         raise ConfigurationError("OCR speed thresholds are invalid")
+    lap_margin = ocr_raw.get('lap_foreground_margin_px', 1)
+    if type(lap_margin) is not int or lap_margin < 0:
+        raise ConfigurationError('ocr.lap_foreground_margin_px must be a nonnegative integer')
 
     normalization_raw = _mapping(telemetry.get("normalization"), "normalization")
     speed_min = _number(normalization_raw, "speed_min_kmh", "normalization")
@@ -464,7 +468,7 @@ def load_settings(root: Path | str | None = None) -> TelemetrySettings:
     comparison_raw = _mapping(telemetry.get("comparison"), "comparison")
     return TelemetrySettings(
         position=PositionSettings(frequency_threshold, max_jump),
-        ocr=OCRSettings(int(max_speed_delta), int(recovery_tolerance)),
+        ocr=OCRSettings(int(max_speed_delta), int(recovery_tolerance), lap_margin),
         normalization=NormalizationSettings(speed_min, speed_max, pedal_min, pedal_max),
         comparison=ComparisonSettings(
             _fraction(comparison_raw, "max_position_gap_s", "comparison"),

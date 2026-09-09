@@ -1,6 +1,8 @@
 """Fresh OCR evidence through the real detector, pipeline and confirmer."""
 import unittest
-from unittest.mock import Mock
+from unittest.mock import Mock, patch
+from types import SimpleNamespace
+from PIL import Image
 
 import numpy as np
 
@@ -18,6 +20,8 @@ class TextBackend:
     def __init__(self, texts):
         self.GetUTF8Text = Mock(side_effect=texts)
     def SetImage(self, image):
+        pass
+    def SetPageSegMode(self, mode):
         pass
     def End(self):
         pass
@@ -38,6 +42,13 @@ def detector_with_texts(texts):
 
 
 class TestLapObservations(unittest.TestCase):
+    def setUp(self):
+        for name, value in (('tesserocr', SimpleNamespace(PSM=SimpleNamespace(SINGLE_WORD=8))),
+                            ('Image', Image)):
+            patcher = patch.object(lap_module, name, value, create=True)
+            patcher.start()
+            self.addCleanup(patcher.stop)
+
     def test_strict_parser(self):
         for text, expected in [(' 12\n', 12), ('0', 0), ('999', 999),
                                ('1000', None), ('12x3', None), ('', None),
@@ -77,7 +88,7 @@ class TestLapObservations(unittest.TestCase):
                 detector.finalize_lap_detection = Mock(return_value=None)
                 class Video(FakeVideo):
                     def process_frames(self):
-                        self.current_frame = np.zeros((10, 10, 3), np.uint8)
+                        self.current_frame = np.full((10, 10, 3), 255, np.uint8)
                         for i in range(len(texts)):
                             yield i, i / 60, {}
                 confirmer = LapTransitionConfirmer(consecutive_observations=5)

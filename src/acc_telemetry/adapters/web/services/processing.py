@@ -119,6 +119,7 @@ class VideoProcessingService:
         lap_detector = LapDetector(lap_roi_config, enable_performance_stats=False)
         lap_detector._max_speed_ocr_delta_kmh = telemetry_settings.ocr.max_speed_delta_kmh
         lap_detector._speed_ocr_recovery_tolerance_kmh = telemetry_settings.ocr.recovery_tolerance_kmh
+        lap_detector._lap_foreground_margin_px = telemetry_settings.ocr.lap_foreground_margin_px
         position_config = roi_config.get('position_tracking', {})
         progress_estimator = self._build_progress_estimator(active_profile_name)
 

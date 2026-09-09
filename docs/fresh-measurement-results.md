@@ -7,6 +7,10 @@ read_when:
 
 # A8 fresh measurements — 2026-09-09
 
+This page preserves A8 results and its fingerprint. Later corrections are recorded
+in `admission-correction-results.md`; these old measurements are not transferred
+to the changed code.
+
 Gate A remains blocked. New evidence lives under ignored
 `data/lab/coaching-reliability/run-010/`; run-008 and run-009 remain frozen.
 S1–S3 are implemented. S4/S5 have been executed within available development

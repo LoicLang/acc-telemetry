@@ -65,6 +65,13 @@ pandas-inferred NaN. The comparison API now retains modern progress provenance a
 now an application result, but not yet the universal consumer boundary. See
 `technical-audit-2026-09-05.md` before relying on field quality for analysis.
 
+A9 C3 bounds the thresholded foreground for modern lap OCR while retaining every
+digit component and the existing word segmentation. Its one-pixel margin is validated
+configuration. The explicit legacy lap wrapper keeps its full ROI. Blank modern ROI
+abstains and shared word mode is restored after reads. See
+`admission-correction-results.md`; ten correct endpoints do not establish full event
+recall or arbitrary multi-digit accuracy.
+
 A3 adds reviewed `VisibilitySpan` inputs (see `control-visibility.md`). Generic
 control decoding requires a reviewed span and a nonempty/nonblack ROI; missing
 steering candidates remain unavailable. Quality and reasons reach CSV normalization.

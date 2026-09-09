@@ -33,7 +33,10 @@ or absent HUD abstains while raw OCR survives. See `speed-visibility.md`.
 New outputs are under run-011; 207 prior evidence files verified before editing.
 New code invalidates run-010 acceptance compatibility; its measurements stay frozen.
 Focused RED/GREEN and source binding tests pass; 303 full-suite tests pass for C1.
-C2/C3 compare justified OCR/admission alternatives on development only.
+C3 foreground-bound modern lap OCR now passes all ten approved endpoints (old 5/10),
+with 307 full-suite tests. Full historical event recall awaits replay. C2 rejects a
+global word-mode speed switch: on 86 unique reviewed frames it introduces errors.
+Current A9 evidence and limitations: `admission-correction-results.md`.
 
 Real extraction/pipeline RED tests reproduced 246→255, 179→188 and held invalids.
 Modern speed now publishes strict fresh OCR values or explicit absence, retaining
@@ -149,9 +152,8 @@ authorship remain unchanged. Final 24 capture/298 full tests are in
 `reports/final-focused.txt` and `final-full.txt`.
 Known holdout run-008 cannot become independent again or receive a rewritten reservation.
 
-**Next action:** implement the separately evidenced C3 foreground-bound lap OCR
-correction with RED regressions; C2 single-word speed segmentation is being checked
-on all development labels before adoption.
+**Next action:** finish the bounded C2 alternative check, freeze the retained code
+and replay the full historical source to measure event recall under C3.
 Keep the additional 162→4/177→7 admission failures as a separate development RED,
 without restoring holds or tuning thresholds to the selected examples.
 Historical OCR fixtures are ready for their separate correction. No new human

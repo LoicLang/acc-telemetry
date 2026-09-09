@@ -157,8 +157,8 @@ class LapDetector:
         else:
             print("ℹ️  Using pytesseract (~50ms per frame). Install tesserocr for 25x speedup!")
     
-    def _read_lap_text(self, frame: np.ndarray) -> str:
-        """Read one OCR text using the historical crop and preprocessing."""
+    def _read_lap_text(self, frame: np.ndarray, *, modern: bool = False) -> str:
+        """Read once; modern segmentation bounds all foreground, legacy keeps its ROI."""
         if frame is None or frame.size == 0:
             return ""
         
@@ -174,6 +174,14 @@ class LapDetector:
         
         gray = cv2.cvtColor(roi, cv2.COLOR_BGR2GRAY)
         _, thresholded = cv2.threshold(gray, 200, 255, cv2.THRESH_BINARY)
+        if modern:
+            ys, xs = np.nonzero(thresholded)
+            if not len(xs):
+                return ''
+            margin = getattr(self, '_lap_foreground_margin_px', 1)
+            thresholded = thresholded[
+                max(0, int(ys.min()) - margin):min(thresholded.shape[0], int(ys.max()) + margin + 1),
+                max(0, int(xs.min()) - margin):min(thresholded.shape[1], int(xs.max()) + margin + 1)]
         resized = cv2.resize(
             thresholded,
             (thresholded.shape[1] * 3, thresholded.shape[0] * 3),
@@ -186,10 +194,16 @@ class LapDetector:
             
             if self._tesserocr_api:
                 # Fast path: tesserocr (1-2ms)
-                roi_rgb = cv2.cvtColor(resized, cv2.COLOR_GRAY2RGB)
-                pil_image = Image.fromarray(roi_rgb)
-                self._tesserocr_api.SetImage(pil_image)
-                text = self._tesserocr_api.GetUTF8Text()
+                if modern:
+                    self._tesserocr_api.SetPageSegMode(tesserocr.PSM.SINGLE_WORD)
+                try:
+                    roi_rgb = cv2.cvtColor(resized, cv2.COLOR_GRAY2RGB)
+                    pil_image = Image.fromarray(roi_rgb)
+                    self._tesserocr_api.SetImage(pil_image)
+                    text = self._tesserocr_api.GetUTF8Text()
+                finally:
+                    if modern:
+                        self._tesserocr_api.SetPageSegMode(tesserocr.PSM.SINGLE_WORD)
             else:
                 # Slow path: pytesseract (50ms)
                 import pytesseract
@@ -211,7 +225,7 @@ class LapDetector:
 
     def observe_lap_number(self, frame: np.ndarray) -> FieldObservation[int]:
         """Return fresh evidence without reading or updating legacy history."""
-        text = self._read_lap_text(frame)
+        text = self._read_lap_text(frame, modern=True)
         value = parse_lap_text(text)
         return FieldObservation(
             value, QualityFlag.OBSERVED if value is not None else QualityFlag.MISSING,
