@@ -7,8 +7,8 @@ read_when:
 
 # A8 — Mesures fraîches et respect des transitions
 
-**Statut : plan préparé, implémentation non commencée.** Demande actuelle : documenter
-et planifier. A8 poursuit la fiabilité A après son échec mesuré, sans démarrer B.
+**Statut : S1/S2 implémentées ; S3–S5 en finalisation.** A8 poursuit la fiabilité A
+après son échec mesuré, sans démarrer B. Preuves : `docs/fresh-measurement-results.md`.
 Spécification active : `docs/signal-treatment.md`. Référence produit :
 `docs/specs/2026-09-05-reference-corner-coach-design.md`.
 Résultats gelés : `docs/capture-validation-results.md`.
@@ -24,8 +24,9 @@ Résultats gelés : `docs/capture-validation-results.md`.
   régression de vitesse distincte, optionnelle et différée.
 
 Ne modifier ni sources raw, ni corpus accepté, ni anciens rapports. Réutiliser la
-branche `codex/coaching-reliability`, sans sous-agents. Les sorties d'implémentation
-iront dans un **nouveau run libre**, pas par écrasement de run-008/run-009.
+branche `codex/coaching-reliability`. La dernière consigne autorise les sous-agents
+uniquement avec modèle explicitement choisi sous GPT-6 Astra selon la complexité.
+Les sorties d'implémentation sont dans **run-010**, sans écraser run-008/run-009.
 
 ## S1 — Reproduire le retard sur le vrai chemin moderne (RED)
 
@@ -34,16 +35,16 @@ Fichiers : créer `tests/test_fresh_speed_observations.py` ; étendre si nécess
 Lire `extraction/laps.py`, `tests/test_speed_ocr_mode.py` et ses faux backends avant
 modification. Les chemins de package ci-dessous sont sous `src/acc_telemetry/`.
 
-- [ ] Faire lire une séquence descendante au **vrai** `LapDetector.observe_speed`
+- [x] Faire lire une séquence descendante au **vrai** `LapDetector.observe_speed`
   avec backend texte contrôlé, puis au vrai pipeline. Préconditionner assez de lectures
   pour remplir l'historique ; vérifier qu'une nouvelle lecture « 246 » donne 246 à
   sa frame, jamais une médiane 255 marquée OBSERVED. Ajouter le cas ascendant.
-- [ ] Vérifier un seul appel OCR par image/champ. Ne pas remplacer `observe_speed`
+- [x] Vérifier un seul appel OCR par image/champ. Ne pas remplacer `observe_speed`
   par un mock retournant déjà le bon objet : cela masquerait le défaut.
-- [ ] Cas trou OCR après valeur valide, texte mixte, non fini, ROI inexploitable,
+- [x] Cas trou OCR après valeur valide, texte mixte, non fini, ROI inexploitable,
   valeur hors limites, reprise après trou : brut/raison conservés, aucune mesure
   moderne fraîche provenant du passé. Garder les tests d'import des anciens HELD.
-- [ ] Exécuter le fichier ciblé, conserver le RED et son motif. Distinguer dépendance
+- [x] Exécuter le fichier ciblé, conserver le RED et son motif. Distinguer dépendance
   OCR indisponible et échec fonctionnel ; les tests avec faux backend doivent tourner.
 
 ```bash
@@ -55,22 +56,27 @@ PYTHONPATH=src .venv/bin/python -m unittest discover -s tests -p 'test_fresh_spe
 Fichiers : `extraction/laps.py`, éventuellement `application/config.py` et
 `config/telemetry.yaml` si une nouvelle règle d'admission est réellement nécessaire.
 
-- [ ] Extraire une lecture OCR vitesse commune, sans changement gratuit du crop,
+- [x] Extraire une lecture OCR vitesse commune, sans changement gratuit du crop,
   prétraitement ou backend ; restaurer le mode OCR partagé après succès et exception.
-- [ ] Faire utiliser au chemin moderne la valeur de cette image, le texte brut et
+- [x] Faire utiliser au chemin moderne la valeur de cette image, le texte brut et
   une validation explicite. Ne pas appeler un wrapper qui applique médiane/maintien
   avant de créer `FieldObservation`. Garder `extract_speed` legacy identifiable.
-- [ ] Séparer l'admission/rejet de la reconstruction : un outlier rejeté devient
+- [x] Séparer l'admission/rejet de la reconstruction : un outlier rejeté devient
   absent/anomalous avec brut et raison, jamais remplacé par une valeur calculée
   OBSERVED. Préserver les accélérations/décélérations valides ; tout contrôle temporel
   tient compte de delta-t et redémarre proprement après absence/contexte changé.
-- [ ] Ne pas rendre chaque nombre plausible admissible sans garde HUD : S4 garde ce
+- [x] Ne pas rendre chaque nombre plausible admissible sans garde HUD : S4 garde ce
   problème explicitement ouvert. Les 40 points exacts ne justifient pas un succès
   sur toutes les frames. Aucun réglage de seuil sur les résultats holdout.
-- [ ] Vérifier tests S1, modes OCR, récupération legacy et régressions existantes.
+- [x] Vérifier tests S1, modes OCR, récupération legacy et régressions existantes.
   Le format telemetry-v2 peut garder ses champs actuels si leur sens reste compatible ;
   documenter la nouvelle empreinte et refuser une réinterprétation des anciens exports.
-- [ ] Suite complète, docs et commit atomique de la correction avec son handoff.
+- [x] Suite complète, docs et commit atomique de la correction avec son handoff.
+
+S2 : pas de nouvelle règle temporelle. Le garde HUD n'est pas implémenté ; son
+échec reste explicite, et les nombres modernes ne sont pas admis au coaching.
+RED/GREEN et modes OCR : `run-010/reports/s1-red.txt`, `s2-green.txt`,
+`s2-speed-ocr-portable.txt`. Les nouvelles empreintes sont publiées avec S4/S5.
 
 ## S3 — Vérifier la propagation et protéger les pédales
 
@@ -171,5 +177,6 @@ git status --short --branch
 
 Enregistrer les logs dans le nouveau run ignoré. Committer uniquement les fichiers
 cohérents de code/tests/config/docs, jamais les vidéos, assets OCR ou rapports générés.
-La préparation de ce plan reçoit un commit **documentation uniquement** ; toutes
-les cases d'implémentation restent ouvertes jusqu'à leur exécution réelle.
+La préparation a reçu son commit documentation `541e854`. Les cases d'exécution
+ne sont cochées qu'avec une preuve ; les blocages restant ouverts sont détaillés
+dans le handoff et les résultats A8.

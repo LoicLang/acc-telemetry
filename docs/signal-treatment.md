@@ -8,9 +8,10 @@ read_when:
 # Traitement des signaux après A7
 
 **Décision du 9 septembre 2026, issue de la discussion avec le propriétaire.**
-Ce document spécifie la correction à réaliser ; il ne décrit pas une correction
-livrée. Le code conserve actuellement la médiane/reprise historique dans
-`LapDetector.observe_speed()`. Gate A reste en échec. Plan d'exécution :
+La correction A8 S1–S3 sépare désormais la lecture fraîche moderne de la
+médiane/reprise explicitement legacy. La validation de présence du HUD reste un
+chantier A distinct non résolu ; une chaîne numérique seule ne la prouve pas.
+Gate A reste bloqué. Plan d'exécution :
 [2026-09-09-fresh-measurements.md](plans/2026-09-09-fresh-measurements.md).
 La spécification générale de coaching du 5 septembre reste la référence produit.
 
@@ -122,4 +123,4 @@ il peut servir de régression historique après gel d'une correction, jamais de 
 de réglage ni être présenté comme un nouveau test vierge. Une nouvelle preuve
 indépendante exige une réservation avant inspection, compatible avec le nouveau code.
 Tous les contrôles nécessaires doivent passer avant B ; une preuve absente reste
-`not_evaluated`. Ce plan de documentation ne rouvre aucune validation humaine acquise.
+`not_evaluated`. Cette correction ne rouvre aucune validation humaine acquise.

@@ -449,73 +449,46 @@ class LapDetector:
         except (KeyError, IndexError):
             return None
     
-    def extract_speed(self, frame: np.ndarray) -> Optional[int]:
-        """
-        Extract current speed (km/h) from the HUD speed display.
-        
-        Uses direct OCR on raw ROI (no preprocessing overhead).
-        The speed appears as white digits on a dark background in the bottom-right corner.
-        
-        Args:
-            frame: Full video frame (BGR format)
-            
-        Returns:
-            Speed in km/h as integer, or None if extraction fails
-        """
-        self._last_speed_raw = None
-        self._last_speed_reasons = ("speed_ocr_missing",)
+    def _read_speed_text(self, frame: np.ndarray) -> tuple[Optional[str], tuple[str, ...]]:
+        """Read once with the shared speed crop/backend, without interpreting history."""
         if frame is None or frame.size == 0:
-            self._last_speed_quality = (
-                QualityFlag.HELD
-                if self._last_valid_speed is not None
-                else QualityFlag.MISSING
-            )
-            return self._last_valid_speed
-        
-        # Extract ROI
+            return None, ("speed_frame_unavailable",)
         roi = self._extract_roi(frame, self.speed_roi)
         if roi is None or roi.size == 0:
-            self._last_speed_quality = (
-                QualityFlag.HELD
-                if self._last_valid_speed is not None
-                else QualityFlag.MISSING
-            )
-            return self._last_valid_speed
-        
-        # Run OCR directly on raw BGR ROI
-        # No preprocessing needed - Tesseract handles it well
+            return None, ("speed_roi_unavailable",)
         try:
             if self._tesserocr_api:
-                # Fast path: tesserocr (1-2ms)
                 self._tesserocr_api.SetPageSegMode(tesserocr.PSM.SINGLE_LINE)
                 try:
                     roi_rgb = cv2.cvtColor(roi, cv2.COLOR_BGR2RGB)
-                    pil_image = Image.fromarray(roi_rgb)
-                    self._tesserocr_api.SetImage(pil_image)
+                    self._tesserocr_api.SetImage(Image.fromarray(roi_rgb))
                     text = self._tesserocr_api.GetUTF8Text()
                 finally:
                     self._tesserocr_api.SetPageSegMode(tesserocr.PSM.SINGLE_WORD)
             else:
-                # Slow path: pytesseract (50ms)
                 import pytesseract
-                text = pytesseract.image_to_string(
-                    roi, config=self.tesseract_config_speed
-                )
-            
-            self._last_speed_raw = text
-            text = text.strip()
-            
-            # Parse speed (should be 1-3 digits)
-            if text.isdigit():
-                speed = int(text)
-            else:
-                # Try to extract digits from text (in case of noise)
-                digits_only = ''.join(filter(str.isdigit, text))
-                if digits_only:
-                    speed = int(digits_only)
-                else:
-                    speed = None
-        except Exception as e:
+                text = pytesseract.image_to_string(roi, config=self.tesseract_config_speed)
+        except Exception:
+            return None, ("speed_ocr_failed",)
+        return text, ()
+
+    def extract_speed(self, frame: np.ndarray) -> Optional[int]:
+        """Legacy speed extraction: digit salvage, trailing median and explicit holds.
+
+        Modern callers use observe_speed, which never reads this legacy history.
+        """
+        self._last_speed_raw, read_reasons = self._read_speed_text(frame)
+        self._last_speed_reasons = ("speed_ocr_missing",)
+        if read_reasons in (("speed_frame_unavailable",), ("speed_roi_unavailable",)):
+            self._last_speed_quality = (
+                QualityFlag.HELD if self._last_valid_speed is not None else QualityFlag.MISSING
+            )
+            return self._last_valid_speed
+        try:
+            text = self._last_speed_raw.strip()
+            digits_only = ''.join(filter(str.isdigit, text))
+            speed = int(digits_only) if digits_only else None
+        except (AttributeError, ValueError):
             speed = None
 
         # Validate: speed should be reasonable (0-400 km/h for ACC)
@@ -593,14 +566,38 @@ class LapDetector:
         return self._last_valid_speed
 
     def observe_speed(self, frame: np.ndarray) -> FieldObservation[int]:
-        """Retain the existing speed filter, together with this read's evidence."""
-        value = self.extract_speed(frame)
-        return FieldObservation(
-            value,
-            QualityFlag.MISSING if value is None else self.get_last_speed_quality(),
-            self._last_speed_raw,
-            self._last_speed_reasons,
-        )
+        """Publish this frame's validated number, never a median or held value.
+
+        Numeric admission is not HUD-presence evidence. The separate HUD validity
+        gate remains required; no temporal rule is inferred from the legacy filter.
+        """
+        raw, reasons = self._read_speed_text(frame)
+        value = None
+        quality = QualityFlag.MISSING
+        if not reasons:
+            text = raw.strip() if isinstance(raw, str) else ""
+            if not text:
+                reasons = ("speed_ocr_missing",)
+            elif not text.isascii() or not text.isdigit():
+                quality = QualityFlag.ANOMALOUS
+                reasons = ("speed_ocr_invalid",)
+            else:
+                try:
+                    value = int(text)
+                except ValueError:
+                    reasons = ("speed_ocr_invalid",)
+                    quality = QualityFlag.ANOMALOUS
+                else:
+                    if not 0 <= value <= 400:
+                        value = None
+                        quality = QualityFlag.ANOMALOUS
+                        reasons = ("speed_out_of_range",)
+                    else:
+                        quality = QualityFlag.OBSERVED
+        self._last_speed_raw = raw
+        self._last_speed_reasons = reasons
+        self._last_speed_quality = quality
+        return FieldObservation(value, quality, raw, reasons)
 
     def get_last_speed_quality(self) -> QualityFlag:
         """Return the provenance of the most recent speed output."""

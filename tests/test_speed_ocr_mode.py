@@ -311,25 +311,46 @@ class TestFieldOCRObservations(unittest.TestCase):
         detector.tesseract_config_speed = '--psm 7'
         return detector
 
-    def test_speed_raw_rejection_missing_and_existing_filter_are_preserved(self):
+    def test_modern_speed_restores_shared_mode_after_success_and_exception(self):
+        from types import SimpleNamespace
+        from PIL import Image
+        modes = SimpleNamespace(SINGLE_LINE=7, SINGLE_WORD=8)
+        for api in (FakeTesseractAPI(), FailingTesseractAPI()):
+            with self.subTest(api=type(api).__name__):
+                detector = self.make_detector()
+                detector._tesserocr_api = api
+                with (
+                    patch.object(lap_detector, 'tesserocr', SimpleNamespace(PSM=modes), create=True),
+                    patch.object(lap_detector, 'Image', Image, create=True),
+                ):
+                    observation = detector.observe_speed(np.zeros((10, 10, 3), np.uint8))
+                self.assertEqual(api.page_seg_modes, [7, 8])
+                if isinstance(api, FailingTesseractAPI):
+                    self.assertIsNone(observation.value)
+                    self.assertEqual(observation.reasons, ('speed_ocr_failed',))
+                else:
+                    self.assertEqual(observation.value, 171)
+                    self.assertEqual(observation.raw_value, '171')
+
+    def test_speed_raw_rejection_missing_and_fresh_value_are_preserved(self):
         detector = self.make_detector()
         texts = ['100', '', '682', '120']
         with patch('pytesseract.image_to_string', side_effect=texts) as backend:
             observations = [detector.observe_speed(np.zeros((10, 10, 3), np.uint8)) for _ in texts]
         self.assertEqual(backend.call_count, 4)
         self.assertEqual([o.raw_value for o in observations], texts)
-        self.assertEqual([o.value for o in observations], [100, 100, 100, 110])
+        self.assertEqual([o.value for o in observations], [100, None, None, 120])
         self.assertEqual([o.quality for o in observations], [QualityFlag.OBSERVED,
-            QualityFlag.HELD, QualityFlag.HELD, QualityFlag.OBSERVED])
+            QualityFlag.MISSING, QualityFlag.ANOMALOUS, QualityFlag.OBSERVED])
         self.assertIn('speed_out_of_range', observations[2].reasons)
-        self.assertIn('speed_median_filtered', observations[3].reasons)
+        self.assertEqual(observations[3].reasons, ())
 
     def test_speed_unavailable_has_no_value_even_when_raw_is_out_of_range(self):
         detector = self.make_detector()
         with patch('pytesseract.image_to_string', return_value='682'):
             observation = detector.observe_speed(np.zeros((10, 10, 3), np.uint8))
         self.assertIsNone(observation.value)
-        self.assertEqual(observation.quality, QualityFlag.MISSING)
+        self.assertEqual(observation.quality, QualityFlag.ANOMALOUS)
         self.assertEqual(observation.raw_value, '682')
         self.assertIn('speed_out_of_range', observation.reasons)
 

@@ -1,5 +1,5 @@
 ---
-summary: living handoff for planned A8 fresh measurements, frozen failed A7 gate and preserved independent evidence
+summary: living A8 handoff for fresh speed correction, development revalidation and remaining Gate A blockers
 read_when:
   - starting any task
   - resuming reliability corrections or changing stage-gate status
@@ -9,30 +9,31 @@ read_when:
 
 Last verified: **2026-09-09**. Branch `codex/coaching-reliability`; A6 checkpoint
 `f060637`, A7 validator introduced by `006629f`. Recent Git history owns later IDs.
-Work directly without subagents. Push is authorized; no merge to main. The user
+Delegate only with an explicitly selected model below GPT-6 Astra, proportionate
+to complexity. Push is authorized; no merge to main. The user
 explicitly requests autonomous visual verification wherever reliable, with uncertainty
 preserved; do not ask them to repeat accepted or reliably agent-verifiable reviews.
 
 **A0–A7 implementation/evaluation complete. Gate A FAILS; B blocked. C remains
-separate/inactive.** No artifact job remains active. No extraction module, extraction
-setting or original validation target was changed to improve the benchmark.
+separate/inactive.** A8 changes modern speed extraction; acceptance targets remain
+unchanged. Full BMW/crash development replays finished; measurement publication remains.
 
 Active correction specification: `signal-treatment.md`.
-Active plan: `plans/2026-09-09-fresh-measurements.md` (**A8 planned, not implemented**).
+Active plan: `plans/2026-09-09-fresh-measurements.md` (**S1/S2 implemented; S3–S5 being finalized**).
 Parent product specification: `specs/2026-09-05-reference-corner-coach-design.md`.
 Completed A7 execution: `plans/2026-09-05-coaching-reliability.md`; Gate A still fails.
 Contract: `capture-validation.md`. Full results: `capture-validation-results.md`.
 Preserved semantic constraints: `coaching-reliability-resume.md`.
 
-## Current decision: documentation and plan only
+## Current implementation
 
-The user requests a plan for fresh speed measurements and preservation of pedal
-transitions. No speed/pedal extraction code or configuration changed in this task.
-A8 prioritizes the modern speed freshness regression before the separate historical
-OCR correction. Brake/throttle smoothing is excluded. A possible robust local speed
-regression remains a separate, disabled/deferred estimate, not a replacement for
-measurements or a prerequisite to correct them. Gate A still blocks B and this
-optional downstream experiment.
+Real extraction/pipeline RED tests reproduced 246→255, 179→188 and held invalids.
+Modern speed now publishes strict fresh OCR values or explicit absence, retaining
+raw text and reasons. Legacy median/holding stays isolated in `extract_speed`.
+No temporal speed heuristic, pedal smoothing or regression R was added. S3 found
+a separate CSV/API timestamp precision defect, being committed separately.
+New evidence: `fresh-measurement-results.md`, ignored run-010. HUD validity and
+historical OCR remain separate A blockers; B and R must not start.
 
 New confirmed development evidence: **40/40 raw OCR speed readings are exact** on
 the selected 19 BMW + 21 crash labels. Subsequent median-filtered outputs include
@@ -48,14 +49,15 @@ independent Gate A. Design: `docs/specs/2026-09-03-generic-s-fusion-design.md`.
 Boundary-anchor plan: `docs/plans/2026-09-05-generic-boundary-visual-anchor.md`.
 Earlier milestone record — Last completed implementation plan: `docs/plans/2026-09-04-temporal-centerline-selection.md`.
 
-## Authoritative evidence
+## Frozen A7 authority (old fingerprint only)
 
 All run paths below are relative to ignored `data/lab/coaching-reliability/`.
 A6 remains accepted and unchanged: `run-007/processed/accepted-corpus-v4/index.json`,
 proof `run-007/reports/a6-acceptance.json`. Original labels, approvals, six physical
 intervals, recording IDs, roles and holdout reservation remain intact.
 
-**Final gate:** `run-008/reports/evaluation-final-v2/gate-a.json`.
+**Frozen final A7 gate:** `run-008/reports/evaluation-final-v2/gate-a.json`.
+These results are not transferred to the changed A8 extraction fingerprint.
 Human-readable report: `run-008/reports/RESULTS_A7.html`.
 Earlier `run-008/reports/gate-a.json`, `evaluation-v2/` and `evaluation-final/`
 are superseded diagnostic snapshots. Do not use their old pending statuses or
@@ -114,11 +116,11 @@ under `run-008/`. Private/generated evidence is ignored. The final validator rea
 telemetry-v2 without OCR. The final correction also prevents generic release starts
 and sparse extra crossings from being misreported as latency errors/false positives.
 
-Documentation planning verified with the focused repository-layout tests, full suite,
-docs discovery and diff check; logs are under `run-009/reports/`. A7 evidence and
-its fingerprint are unaffected by this documentation-only task.
+Run-010 preserves S1 RED (5 tests, 6 functional failures), S2 GREEN (5 tests),
+16 OCR/legacy tests, 91 S3 focused tests and a 298-test passing full suite.
+`reports/preservation-before.json` verified 128 prior files and source sizes/hashes
+before edits. The old gate/reservation and A6 authorship remain unchanged.
+Known holdout run-008 cannot become independent again or receive a rewritten reservation.
 
-**Next action:** execute S1 of `plans/2026-09-09-fresh-measurements.md`: write and run
-RED tests through the real `LapDetector.observe_speed` and pipeline proving that a
-fresh descending-speed reading is replaced by a trailing median. Do not implement
-optional regression, smooth pedals, tune on holdout or start B.
+**Next action:** finish the separate S3 consumer commit, then publish S4/S5 metrics
+and the six-check gate from existing run-010 development artifacts without rerunning OCR.

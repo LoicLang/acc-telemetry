@@ -77,6 +77,9 @@ Compatibility modules under `src/` keep older imports working during the migrati
   crash-heavy representative validation gates pass.
 - Legacy map-only position remains importable for compatibility; production CLI and
   web processing use `s_odometry`, `s_visual`, and `s_fused`.
+- Modern speed is the fresh validated OCR number, with raw text and explicit gaps;
+  legacy median/holding remains isolated. Speed HUD validity is still a Gate A blocker.
+  Pedal transitions remain unsmoothed. See [A8 evidence](docs/fresh-measurement-results.md).
 - Lateral distance `d` remains future work.
 - OCR and map observations can be missing or anomalous and must not be treated as unquestioned truth.
 - A1/A2 preserve fresh lap evidence, confirmation timing and speed/gear/lap quality

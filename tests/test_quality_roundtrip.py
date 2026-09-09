@@ -100,9 +100,9 @@ class TestQualityRoundtrip(unittest.TestCase):
         self.assertEqual(backend.call_count, 6)
         samples = self.roundtrip(rows)
         self.assertEqual([s.gear for s in samples], [4, None, None])
-        self.assertEqual([s.speed_kmh for s in samples], [100, 100, 100])
+        self.assertEqual([s.speed_kmh for s in samples], [100, None, None])
         self.assertEqual([s.field_quality['speed_kmh'] for s in samples],
-                         [Q.OBSERVED, Q.HELD, Q.HELD])
+                         [Q.OBSERVED, Q.MISSING, Q.ANOMALOUS])
         self.assertEqual(samples[-1].source_values['speed_raw'], '682')
         self.assertEqual(samples[-1].field_reasons['speed_kmh'], ('speed_out_of_range',))
 

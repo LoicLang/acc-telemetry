@@ -57,8 +57,8 @@ first-candidate, confirmation and last fresh previous-lap times; anchors remain 
 confirmation. Sustained plausible OCR errors remain a limitation, and consensus is
 not a calibrated probability. A2 preserves speed/gear/confirmed-lap quality in
 `quality_hint` and reasons in CSV JSON `field_reasons`; normalization retains both.
-`speed_raw`, `gear_raw` and `raw_lap_number` retain extraction evidence. Speed filtering
-is unchanged, with median/recovery reasons exposed; production gear uses fresh
+`speed_raw`, `gear_raw` and `raw_lap_number` retain extraction evidence. A8 publishes strict fresh speed readings without median/recovery on the modern path;
+the explicit legacy wrapper retains its filter and old HELD artifacts retain their quality; production gear uses fresh
 symbols and marks N/R unsupported. Modern numeric normalization rejects NaN/inf;
 CSV nulls must be imported as empty strings or None (the CSV loader does this), not
 pandas-inferred NaN. The comparison API now retains modern progress provenance and nullable controls. `TelemetrySample` is an available contract,
@@ -98,17 +98,21 @@ component/configuration fingerprints. See `capture-validation.md`; independent
 measurements currently fail Gate A. Review provenance distinguishes original user
 labels from separately authorized agent visibility/exhaustiveness reviews.
 
-## Planned signal correction (not implemented)
+## Fresh signal correction (A8)
 
-The September 9 decision in `signal-treatment.md` makes modern fresh speed
-observations independent of the legacy median/recovery wrapper. Pedal transitions
-remain unsmoothed; invalid/unavailable measurements keep their raw evidence and
-explicit absence. An optional local speed regression would live in pure analysis
-as a distinct estimate, disabled/deferred until its prerequisites and usefulness
-are established. It must not silently feed measurements, events or odometry.
-The current code still applies the legacy speed filter; the implementation checklist
-is `plans/2026-09-09-fresh-measurements.md`. Changing speed requires new progress and
-gate evidence because odometry consumes it.
+`LapDetector.observe_speed` reads the shared raw OCR primitive once and admits only
+complete decimal text within the existing speed range. It preserves original text,
+reasons and explicit absence; it neither reads nor mutates legacy speed history.
+`extract_speed` retains historical median/recovery behavior. No temporal admission
+heuristic or pedal smoothing is added. HUD visibility for speed is still unverified:
+syntactically valid digits alone are not coaching admission. This remains a separate
+Gate A blocker, with its development contract in `fresh-measurement-results.md`.
+
+Pipeline, normalization, CSV, telemetry-v2 and typed API preserve measurement evidence.
+Odometry receives fresh speed or absence; its existing bounded internal interpolation
+retains distinct provenance and never replaces the measured speed. Changing speed
+requires new calibration/progress evidence. Optional regression R remains deferred.
+The implementation checklist is `plans/2026-09-09-fresh-measurements.md`.
 
 ## Generic position estimation
 
