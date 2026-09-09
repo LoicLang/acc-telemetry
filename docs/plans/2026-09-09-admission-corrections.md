@@ -81,6 +81,10 @@ field/independent evidence; calibration and `s` are unavailable under sparse rev
 
 ## Remaining evidence work
 
+- [x] Record the approved product order: A → useful B with mandatory visual
+  trajectory review and exercise follow-up; metric `d` deferred until an evidenced
+  limitation justifies separate research. No B/C execution started by this decision.
+
 - [ ] Review the prepared 32-segment / 1,247-frame speed visibility dossier with
   explicit reviewer identity and uncertainty, preserving all previous approvals.
 - [ ] Review complete calibration-lap speed visibility and replay admission/progress;

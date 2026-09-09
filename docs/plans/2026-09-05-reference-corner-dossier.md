@@ -7,6 +7,13 @@ read_when:
 
 # B — Virage, référence et dossier ChatGPT : Implementation Plan
 
+**Priorité confirmée le 9 septembre 2026 :** livrer le premier exercice étayé puis
+vérifier son effet à B10. La comparaison visuelle de trajectoire est obligatoire,
+en complément des sept métriques ; `d` métrique reste hors B et ne le bloque pas.
+Documenter les limites visuelles rencontrées pour décider ensuite si le plan C de
+recherche est utile. Ne pas assimiler le suivi B10 au plan C.
+Pilote et référence : 1920×1080, exactement 60 fps CFR, uniquement.
+
 
 **Goal:** Livrer un dossier réel où ChatGPT dispose de tes mesures, d'une référence
 expliquée et d'images permettant d'examiner la trajectoire des deux passages.
@@ -23,6 +30,8 @@ Matplotlib pour PNG, Plotly pour HTML, FFmpeg pour médias. Bibliothèques déj�
 
 Ne commencer **aucune implémentation B** tant que le gate A n'est pas passé et
 consigné dans `docs/current-status.md`. Lire le plan A et la spécification commune.
+Le choix/préparation des sources et du virage peut avancer pendant A ; cela ne
+constitue ni une implémentation B ni une autorisation de publier des deltas non validés.
 Le plan B utilise des vidéos autorisées fournies localement : il n'achète rien,
 ne contacte personne et n'extrait pas derrière un accès privé.
 
@@ -528,6 +537,9 @@ N'invente aucun nombre, diagnostic physique, trajectoire idéale ou score de con
 - [ ] Dossier complet ou limité correctement classé, aucune prétention de `d` métrique.
 - [ ] Réponse ChatGPT réelle revue ; un exercice mesurable retenu ou abstention justifiée.
 - [ ] Suivi humain effectué ou explicitement en attente, sans revendication d'efficacité.
+- [ ] Consigner si le pilote comprend l'exercice et peut l'appliquer, puis son effet
+  observé au suivi. Lister les limites de placement visuel avant toute proposition
+  de recherche `d`; aucun succès n'est déduit de la seule génération du dossier.
 - [ ] `docs/current-status.md` donne un chemin de dossier et une seule prochaine action.
 
 Si la référence reste introuvable : livrer le logiciel testé, le dossier `draft` et

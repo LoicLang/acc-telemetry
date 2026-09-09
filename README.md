@@ -4,6 +4,11 @@ Extract driving telemetry from Assetto Corsa Competizione PS5 recordings when na
 
 This repository is the telemetry foundation for the future Road to Verstappen product. It deliberately separates video extraction, normalization, domain concepts, analysis, and presentation.
 
+The first coaching target is one Spa corner: reliable measurements, an explained
+reference, paired trajectory images, one exercise and a follow-up check. Metric
+lateral distance `d` is deferred pending evidence that it would improve those
+debriefs. See the [delivery roadmap](docs/coaching-implementation-roadmap.md).
+
 ## Quick start
 
 Prerequisites: Python 3.10 or newer and Tesseract OCR. On macOS, install Tesseract with `brew install tesseract`.

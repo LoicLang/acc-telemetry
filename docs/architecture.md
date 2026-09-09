@@ -196,6 +196,11 @@ Unit tests cover sampling, position direction and smoothing, OCR recovery, web p
 
 ## Planned coaching extension (not implemented)
 
+Approved priority: B combines the seven qualified metrics with mandatory reviewed
+paired trajectory images, then an exercise and follow-up. It introduces no metric
+`d` or lateral model. Separate replay research is reconsidered only from limitations
+observed in those first debriefs; A remains the implementation prerequisite.
+
 `coaching-implementation-roadmap.md` links a reliability plan and a downstream
 reference-corner dossier plan. The planned flow retains these package boundaries:
 versioned observations -> normalized samples -> pure event/metric/comparison code ->

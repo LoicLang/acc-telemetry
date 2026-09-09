@@ -14,6 +14,13 @@ L’exécution du plan A est désormais demandée ; son avancement fait autorit�
 
 ## Besoin et critère de réussite
 
+Décision confirmée le 9 septembre : A fiabilise les données 1080p60 ; B livre le
+premier dossier avec placement visuel revu, un exercice et un suivi de son effet.
+`d` métrique est hors B. L'éventuelle recherche replays sera décidée à partir des
+limites constatées dans les premiers débriefs, sans retarder B pour construire `d`.
+Le choix du cas et la préparation des sources peuvent avancer pendant A ; les
+implémentations et conclusions chiffrées B restent bloquées par Gate A.
+
 L'utilisateur veut progresser sur ACC PS5 avec un coach ChatGPT. Le coach doit
 disposer d'une référence de conduite contextualisée **et** voir la trajectoire du
 pilote. Une comparaison de pédales seule ne répond pas à ce besoin.
@@ -112,6 +119,10 @@ des fichiers attendus et attend leur fourniture pour la validation réelle. Ne p
 acheter, contacter un tiers, contourner un accès ou affirmer un benchmark terminé.
 
 ## Gates
+
+Ces gates désignent des contrôles de validation. Le « gate C : coaching » ci-dessous
+ne désigne pas le **plan C de recherche replays** ; l'exercice et son suivi sont
+déjà inclus dans les tâches B9/B10 du plan de dossier.
 
 - **A : logiciel et preuve.** Cinq défauts de l'audit corrigés et testés sur les vrais
   chemins ; historique de tours replayé contre annotations ; corpus court récent

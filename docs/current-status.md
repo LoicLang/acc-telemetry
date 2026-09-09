@@ -64,6 +64,28 @@ speed points remain 40/40; continuous speed visibility is still unreviewed elsew
 Fingerprint: `44b5226547fce8a99659fb8b55c5539933aa8ed4cc76b4478d5575a1e60adac7`.
 No artifact job remains active.
 
+## Approved delivery priority and session handoff
+
+The owner approved this order on 2026-09-09: finish A in native 1080p60, then deliver
+one useful B dossier on a Spa corner with an explained compatible reference,
+mandatory paired trajectory images, one exercise and follow-up (B9/B10). Metric
+`d` is outside B and must not become its prerequisite. Reconsider the separate
+replay research plan C only if limitations of the first visual debriefs justify it.
+The specification's coaching validation « gate C » is not that research plan.
+
+Case/reference preparation may run alongside A; implementation B stays blocked.
+The user can prepare a 1080p60 reference and a separate fresh validation recording,
+kept uninspected until reservation under frozen code. Existing pilot captures remain
+the starting point; a second circuit follows the first useful case. See
+`coaching-implementation-roadmap.md` for roles and required sources.
+
+This session ends after this documentation-only decision. No B/C implementation,
+new extraction, acquisition or review is requested today. Brainstorming questions
+should receive explanations without triggering implementation. No job remains active.
+At resumption, retain the exact A visibility-review next action at the end of this file.
+Decision verification: repository-layout tests, 317 full-suite tests, docs discovery
+and diff check pass; logs under `run-013/reports/`. No code or evidence input changed.
+
 Real extraction/pipeline RED tests reproduced 246→255, 179→188 and held invalids.
 Modern speed now publishes strict fresh OCR values or explicit absence, retaining
 raw text and reasons. Legacy median/holding stays isolated in `extract_speed`.

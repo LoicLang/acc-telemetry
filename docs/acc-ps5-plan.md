@@ -11,6 +11,13 @@ Last verified: 2026-09-09
 
 ## Current state
 
+**Approved delivery priority (September 9):** finish A, then deliver one useful B
+corner dossier with qualified metrics, an explained reference, mandatory paired
+trajectory images, one exercise and follow-up evidence. Metric `d` is outside B;
+optional replay research follows only if limitations observed in the first debriefs
+justify it. Preparing the case/reference during A is allowed; implementing B still
+requires Gate A. Start with Spa, then consider a second circuit after the first case.
+
 **Latest owner decision: process only native 1920×1080 at exactly 60 fps CFR.**
 Other input formats are refused before extraction. Historical 720p work is retired;
 its preserved 5/5 result does not qualify the active 1080p gate. An exhaustive
@@ -326,6 +333,8 @@ not a complete catalogue of the circuit.
 today because the video minimap does not yet provide validated track width or lateral
 projection. Future work must define reference geometry, sign, unit, confidence, and
 evaluation on known corners.
+It is not a prerequisite for B. Its priority will be reassessed from concrete limits
+of reviewed visual placement in the first debriefs, before any replay/ML investment.
 
 ## Next planning gate
 

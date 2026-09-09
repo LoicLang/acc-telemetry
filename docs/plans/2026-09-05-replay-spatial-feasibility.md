@@ -25,6 +25,12 @@ n'autorise ni achat de logiciel/données, ni prise de contact, ni changement de 
 du coach. Aucun lecteur compatible n'est supposé déjà disponible. Les liens dans
 l'audit sont des pistes vérifiées au 5 septembre, pas des dépendances installées.
 
+**Priorisation approuvée le 9 septembre :** livrer d'abord les premiers débriefs B
+avec placement visuel revu. Ouvrir ce plan seulement si leurs limites récurrentes
+justifient une mesure latérale et qu'une décision explicite le confirme. `d` n'est
+pas un prérequis de B. Ce plan produit une preuve de faisabilité, pas directement
+un modèle prêt à coacher. Les vidéos rendues/analysées devront être en 1080p60 natif.
+
 Périmètre fixe : un replay Spa, un passage de 30–60 secondes pour une première
 voiture, puis le même intervalle pour une deuxième voiture si disponible. Deux rendus
 de la même première caméra pour vérifier reproductibilité/synchronisation. On ne

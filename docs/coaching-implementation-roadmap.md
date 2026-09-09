@@ -8,6 +8,32 @@ read_when:
 
 # Du repo actuel au premier débrief utilisable
 
+## Priorité approuvée le 9 septembre 2026
+
+Le premier résultat produit est un **exercice utile sur un virage**, étayé par une
+référence expliquée, les commandes et une vraie comparaison visuelle de placement.
+La boucle est : passages personnels → dossier B revu → un exercice → nouveaux
+passages comparables → vérification de son effet. Un export de courbes seul ne suffit
+pas. Tant que le suivi n'a pas eu lieu, l'utilité reste `utility_not_yet_tested`.
+
+Ordre retenu : terminer A en **1920×1080, exactement 60 fps CFR**, puis livrer B sur
+un cas de Spa avec la même voiture. Cas proposé : Bruxelles, à confirmer dans les
+images. Un deuxième circuit vient après ce premier cas pour éprouver la généralisation.
+Les critères A restent obligatoires ; cette priorité ne les abaisse pas.
+
+La mesure latérale métrique `d` n'est **ni un livrable ni un prérequis de B**.
+B exige des images appariées aux repères physiques et une revue explicite des
+constats de placement, avec abstention si caméra/FOV ou visibilité empêchent de
+conclure. Après les premiers débriefs, consigner leurs limites récurrentes : si elles
+justifient une mesure latérale, décider explicitement d'un petit test de faisabilité
+du plan C. Un go n'autorise pas encore un modèle : géométrie, labels synchronisés,
+erreur/couverture et validation PS5 indépendante doivent être établis.
+
+Pendant A, préparer le choix du virage, le contexte et les sources de B est permis.
+L'implémentation et le débrief comparatif chiffré B attendent le passage de Gate A.
+Les échanges de brainstorming n'autorisent pas à lancer du code ou une extraction ;
+terminer uniquement le travail explicitement demandé avant de reprendre la discussion.
+
 ## Résultat concret à livrer
 
 Un dossier local pour **un virage de Spa**, avec tes passages et un passage de
@@ -50,13 +76,16 @@ joints si l'interface utilisée les accepte ; aucune capacité vidéo n'est supp
 | --- | --- | --- | --- |
 | 1 | [A — fiabilité](plans/2026-09-05-coaching-reliability.md) | Observations fiables, exports sans perte et benchmark indépendant | Rapport de gate A validé, défauts audit couverts par tests |
 | 2 | [B — virage + référence](plans/2026-09-05-reference-corner-dossier.md) | Dossier réel vérifié et premier exercice | Référence et images présentes, nombres traçables, revue humaine |
-| Séparé | [C — faisabilité replays](plans/2026-09-05-replay-spatial-feasibility.md) | Décision go/no-go sur `.rpy -> vidéo + labels` | Labels et synchronisation démontrés avant tout dataset ML |
+| Après retour sur B, si besoin démontré | [Plan C — recherche replays](plans/2026-09-05-replay-spatial-feasibility.md) | Décision go/no-go sur `.rpy -> vidéo + labels` pour envisager `d/heading` | Décision explicite, puis labels et synchronisation démontrés avant tout modèle |
 
 La [spécification commune](specs/2026-09-05-reference-corner-coach-design.md)
 fixe les contrats et limites. Le plan A est le premier travail d'implémentation ; B
 ne commence pas tant que son gate échoue. C est de la recherche séparée, non un
-prérequis au débrief visuel. L’exécution A0/A1 est maintenant autorisée ; `current-status.md` et les cases
-du plan A portent l’avancement vérifié.
+prérequis au débrief visuel. `current-status.md` et le plan actif portent l'avancement
+vérifié ; ne pas recommencer les étapes A déjà livrées.
+
+Le **plan C de recherche** est distinct du « gate C » de revue du coaching nommé
+dans la spécification. Le suivi de l'exercice fait déjà partie de B9/B10.
 
 ## Qui fait quoi
 
@@ -75,6 +104,24 @@ pas les tests synthétiques du logiciel après le gate A. Ne jamais la remplacer
 un tour inventé ou présenter le meilleur passage personnel comme une trajectoire idéale.
 
 ## Choix de départ explicites
+
+Toutes les nouvelles vidéos, pilote comme référence, doivent respecter le format
+1080p60 natif. Les anciennes preuves 720p restent historiques et ne sont plus traitées.
+
+Trois rôles de source restent distincts :
+
+- **Pilote pour B** : les captures 1080p existantes peuvent suffire ; trois passages
+  complets minimum, cinq si disponibles, avec voiture et conditions documentées.
+- **Référence pédagogique pour B** : même circuit/virage et voiture compatible,
+  vidéo autorisée, auteur/lien conservés, HUD et pédales lisibles pour les deltas,
+  explication technique sourcée ou revue compétente. Elle peut être préparée dès maintenant.
+- **Validation indépendante pour A** : nouvel enregistrement distinct, gardé en
+  réserve ; identité et code/config figés avant inspection. Il ne sert ni de terrain
+  de réglage ni de référence pédagogique pendant les corrections.
+
+L'agent prend en charge la revue des images existantes lorsqu'elle est fiable et
+consigne son auteur séparément des approbations utilisateur. Les ambiguïtés donnent
+lieu à une demande ciblée ; l'utilisateur n'a pas à annoter toutes les images d'emblée.
 
 - Cas proposé : Spa / Bruxelles, voiture identique à la capture pilote. Confirmer
   visuellement le virage et le modèle avant de figer le cas. Le logiciel reste générique.
@@ -111,6 +158,7 @@ largeur physique, angle de dérive ou « turn-in 7 m trop tôt » n'est produit.
 ## Première action pour le futur agent
 
 Lire `AGENTS.md`, lancer `./scripts/docs-list`, lire `docs/current-status.md`, la
-spécification commune puis le plan A. Exécuter **A0**, puis **A1** (OCR brut).
+spécification commune et le plan actif indiqué par le handoff. Reprendre exactement
+la prochaine action vérifiée, actuellement la revue de visibilité continue 1080p.
 Conserver les gates en échec tant que leurs preuves manquent. Les cases ne sont
 cochées qu'après vérification et commit de leur tâche.
