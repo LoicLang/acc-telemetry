@@ -35,6 +35,12 @@ CSV/API timestamps; development-only results do not close Gate A. See
 `fresh-measurement-results.md`, `signal-treatment.md` and
 `plans/2026-09-09-fresh-measurements.md`. Existing Gate A targets and blockers remain.
 
+A9 now requires source-bound speed visibility, rejects implausible speed rates
+without reconstruction, and corrects modern historical lap OCR foreground cropping.
+The full historical development replay detects 5/5 approved increments with no
+extras (P95 0.0083335 s). Current speed visibility is sparse; continuous coverage,
+calibration and independent acceptance remain open. See `admission-correction-results.md`.
+
 - capture_status: native_1080p60_validated
 - controls_speed_gears_status: usable
 - track_path_extraction_status: usable
@@ -42,7 +48,7 @@ CSV/API timestamps; development-only results do not close Gate A. See
 - s_status: representative_clean_and_crash_gates_pass
 - s_latest_validation_status: isolated_missing_boundary_dot_anchor_gap_resolved
 - s_repair_design_status: generic_fusion_implemented
-- long_capture_lap_transition_status: independent_historical_replay_fails_five_missed_transitions
+- long_capture_lap_transition_status: development_replay_pass_five_reviewed_events
 - quality_propagation_status: provenance_verified_independent_accuracy_gate_fails
 - downstream_coaching_status: blocked
 

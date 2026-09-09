@@ -62,6 +62,7 @@ def build_components(
     laps._max_speed_ocr_delta_kmh = active_settings.ocr.max_speed_delta_kmh
     laps._speed_ocr_recovery_tolerance_kmh = active_settings.ocr.recovery_tolerance_kmh
     laps._lap_foreground_margin_px = active_settings.ocr.lap_foreground_margin_px
+    laps._lap_foreground_bounds = profile.lap_foreground_bounds
     position = (
         PositionTrackerV2(
             fps=fps,

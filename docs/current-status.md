@@ -19,7 +19,7 @@ separate/inactive.** A8 changes modern speed extraction; acceptance targets rema
 unchanged. Full BMW/crash development replays and scoped measurements are published.
 
 Active correction specification: `signal-treatment.md`.
-Active plan: `plans/2026-09-09-admission-corrections.md` (**A9 C1 implementing; C2/C3 development diagnosis**).
+Active plan: `plans/2026-09-09-admission-corrections.md` (**C1/C2/C3 implemented; final replay publication in progress**).
 Previous A8: `plans/2026-09-09-fresh-measurements.md` (completed within available evidence).
 Parent product specification: `specs/2026-09-05-reference-corner-coach-design.md`.
 Completed A7 execution: `plans/2026-09-05-coaching-reliability.md`; Gate A still fails.
@@ -34,13 +34,17 @@ New outputs are under run-011; 207 prior evidence files verified before editing.
 New code invalidates run-010 acceptance compatibility; its measurements stay frozen.
 Focused RED/GREEN and source binding tests pass; 303 full-suite tests pass for C1.
 C3 foreground-bound modern lap OCR now passes all ten approved endpoints (old 5/10),
-with 307 full-suite tests. Full historical event recall awaits replay. C2 rejects a
+with 307 full-suite tests. Full historical replay now detects all five approved
+events without extras (P95 0.0083335 s). C2 rejects a
 global word-mode speed switch: on 86 unique reviewed frames it introduces errors.
 C2 now uses predeclared causal rate admission: 100 m/s², at most 0.25 s within a
 reviewed context, explicit null on rejection and fresh recovery. Cached development
 evaluation has 83 exact/3 abstained/0 admitted wrong out of 86; full-suite count 312.
 Full new-code replay is pending; sparse speed review does not establish whole-lap
 coverage or calibration. High-impact rates above the policy can abstain.
+The first full replay exposed a BMW lap regression from global foreground cropping.
+Cropping is now enabled only on the historical 720p profile; 1080p retains its
+previous ROI. New `-v2` replays will supersede the preserved first attempt.
 Current A9 evidence and limitations: `admission-correction-results.md`.
 
 Real extraction/pipeline RED tests reproduced 246→255, 179→188 and held invalids.
@@ -51,13 +55,14 @@ or regression R was added. S3 found
 a separate CSV/API timestamp precision defect, fixed with round-trip float parsing.
 Real decoder/artifact/API tests protect pedal dynamics, nulls, old HELD and odometry
 provenance; no consumer substitutes an estimated speed for the measured field.
-New evidence: `fresh-measurement-results.md`, ignored run-010. HUD validity and
-historical OCR remain separate A blockers; B and R must not start.
+Frozen A8 evidence: `fresh-measurement-results.md`, ignored run-010. A9 replaces
+the unguarded HUD contract and fixes the reviewed historical event failure;
+coverage and independent acceptance still block B and R.
 An A8 review of six output-selected development frames confirmed two wrong
 OBSERVED speeds (162→4, 177→7). C2 now rejects these; broader numerical admission
 still needs compatible full-source and independent validation.
 
-New full replays cover 47,589 BMW + 29,402 crash frames. Speed is exact on 40/40
+A8 run-010 full replays cover 47,589 BMW + 29,402 crash frames. Speed is exact on 40/40
 approved development points (MAE/P95 0/0); fixed-segment speed availability is
 564/564 and 681/683. Raw OCR and pedal observations are unchanged on all frames.
 Separate 44-frame agent image review has 43 exact fresh readings and one explicit

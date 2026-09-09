@@ -13,6 +13,9 @@ from test_configuration import _write_configuration, _telemetry_with_progress
 
 class TestLapPreprocessing(unittest.TestCase):
     def test_foreground_margin_is_validated_configuration(self):
+        settings = load_settings()
+        self.assertTrue(settings.profile('ps5_full_map_720p').lap_foreground_bounds)
+        self.assertFalse(settings.profile('ps5_full_map_1080p').lap_foreground_bounds)
         for value in (-1, True, 1.5, float('nan'), '1'):
             with self.subTest(value=value), tempfile.TemporaryDirectory() as directory:
                 config = _telemetry_with_progress()
@@ -30,6 +33,7 @@ class TestLapPreprocessing(unittest.TestCase):
         detector._last_valid_lap_number = None
         detector._lap_number_history = []
         detector._history_size = 15
+        detector._lap_foreground_bounds = True
         return detector
 
     def frame(self):
@@ -55,6 +59,13 @@ class TestLapPreprocessing(unittest.TestCase):
             observation = self.detector().observe_lap_number(np.zeros((30, 40, 3), np.uint8))
         backend.assert_not_called()
         self.assertIsNone(observation.value)
+
+    def test_unconfigured_profile_keeps_full_modern_roi(self):
+        detector = self.detector()
+        detector._lap_foreground_bounds = False
+        with patch('pytesseract.image_to_string', return_value='120') as backend:
+            self.assertEqual(detector.observe_lap_number(self.frame()).value, 120)
+        self.assertEqual(backend.call_args.args[0].shape, (90, 120))
 
     def test_modern_shared_mode_restores_after_backend_exception(self):
         modes = []

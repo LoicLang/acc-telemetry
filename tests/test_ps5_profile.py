@@ -12,11 +12,12 @@ class TestPS5Profile(unittest.TestCase):
 
         twitch_profile = config["twitch_720p"]
         ps5_profile = config["ps5_full_map_720p"]
+        self.assertIs(ps5_profile['lap_foreground_bounds'], True)
         self.assertEqual(
             {
                 key: value
                 for key, value in ps5_profile.items()
-                if key != "position_tracking"
+                if key not in ("position_tracking", "lap_foreground_bounds")
             },
             twitch_profile,
         )

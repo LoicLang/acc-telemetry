@@ -73,7 +73,7 @@ Compatibility modules under `src/` keep older imports working during the migrati
 - ROI profiles are resolution and HUD dependent.
 - The full static minimap is supported; the scrolling minimap is not.
 - The generic fused progress pipeline is implemented but remains blocked from coaching
-  use until the remaining long-capture lap and field-quality gates pass. Its clean and
+  use until the remaining coverage and field-quality gates pass. Its clean and
   crash-heavy representative validation gates pass.
 - Legacy map-only position remains importable for compatibility; production CLI and
   web processing use `s_odometry`, `s_visual`, and `s_fused`.

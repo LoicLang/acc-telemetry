@@ -158,7 +158,7 @@ class LapDetector:
             print("ℹ️  Using pytesseract (~50ms per frame). Install tesserocr for 25x speedup!")
     
     def _read_lap_text(self, frame: np.ndarray, *, modern: bool = False) -> str:
-        """Read once; modern segmentation bounds all foreground, legacy keeps its ROI."""
+        """Read once; selected modern profiles bound foreground, legacy keeps its ROI."""
         if frame is None or frame.size == 0:
             return ""
         
@@ -178,10 +178,11 @@ class LapDetector:
             ys, xs = np.nonzero(thresholded)
             if not len(xs):
                 return ''
-            margin = getattr(self, '_lap_foreground_margin_px', 1)
-            thresholded = thresholded[
-                max(0, int(ys.min()) - margin):min(thresholded.shape[0], int(ys.max()) + margin + 1),
-                max(0, int(xs.min()) - margin):min(thresholded.shape[1], int(xs.max()) + margin + 1)]
+            if getattr(self, '_lap_foreground_bounds', False):
+                margin = getattr(self, '_lap_foreground_margin_px', 1)
+                thresholded = thresholded[
+                    max(0, int(ys.min()) - margin):min(thresholded.shape[0], int(ys.max()) + margin + 1),
+                    max(0, int(xs.min()) - margin):min(thresholded.shape[1], int(xs.max()) + margin + 1)]
         resized = cv2.resize(
             thresholded,
             (thresholded.shape[1] * 3, thresholded.shape[0] * 3),

@@ -65,8 +65,10 @@ pandas-inferred NaN. The comparison API now retains modern progress provenance a
 now an application result, but not yet the universal consumer boundary. See
 `technical-audit-2026-09-05.md` before relying on field quality for analysis.
 
-A9 C3 bounds the thresholded foreground for modern lap OCR while retaining every
-digit component and the existing word segmentation. Its one-pixel margin is validated
+A9 C3 bounds the thresholded foreground for modern lap OCR only on the explicitly
+configured historical 720p profile, retaining every digit component and word segmentation.
+1080p retains its full ROI after the first replay exposed a regression from global
+cropping. Its one-pixel margin is validated
 configuration. The explicit legacy lap wrapper keeps its full ROI. Blank modern ROI
 abstains and shared word mode is restored after reads. See
 `admission-correction-results.md`; ten correct endpoints do not establish full event

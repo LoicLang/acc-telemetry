@@ -34,7 +34,9 @@ exploration disclosure and limitations. The chosen operation keeps all surviving
 foreground pixels plus a configured one-native-pixel margin; threshold 200, cubic
 3x enlargement, LSTM engine and word mode remain unchanged.
 
-Modern `observe_lap_number` uses the bounded input, preserves the parsed raw text
+Modern `observe_lap_number` uses the bounded input only when the validated profile
+flag `lap_foreground_bounds` is true; it is enabled for `ps5_full_map_720p` only.
+Other profiles retain their full ROI. It preserves the parsed raw text
 and restores shared OCR word mode on success/failure. Blank thresholded ROI abstains.
 Explicit legacy extraction retains its original full ROI. The margin is validated
 as a nonnegative integer under `ocr.lap_foreground_margin_px`.
@@ -48,7 +50,22 @@ checksum-verified; portable unit tests use synthetic pixels and controlled text.
 Synthetic multi-digit composites preserve all components, but OCR reads constructed
 12 as 1. These composites are not genuine ACC multi-digit layout truth; true counters
 ≥10 and population accuracy remain unvalidated. No one-digit assumption or output
-mapping was added. Full new-code historical event recall remains pending replay.
+mapping was added. Full new-code historical event results follow below.
+
+The full historical replay now passes the reviewed event check: **5/5 matches,
+five predictions, no misses, duplicates or unmatched predictions** across 56,246
+frames. P95 midpoint error is 0.0083335 s; confirmation delay is 0.066667 s.
+The existing exhaustive H01–H05 review remains unchanged. This is current-code
+development evidence about counter increments, not physical line-crossing accuracy
+or a new independent recording. `reports/historical-evaluation.json` contains
+every match, uncertainty and source/configuration fingerprint.
+
+The first full replay exposed a 1080p regression from enabling the crop globally:
+BMW missed one of two approved events (the 1→2 confirmation was delayed).
+That failed replay is preserved in `bmw-evaluation.json`. A subsequent RED verifies
+that unconfigured profiles keep the original full ROI. The correction is now scoped
+to the historical 720p profile and all sources are being replayed into new `-v2`
+outputs. Earlier gates are diagnostic snapshots, not current acceptance proof.
 
 ## C2: rejected segmentation candidates and explicit rate admission
 

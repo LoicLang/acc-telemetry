@@ -118,6 +118,7 @@ class ProfileSettings:
     white_lower: tuple[int, int, int]
     white_upper: tuple[int, int, int]
     sample_count: int
+    lap_foreground_bounds: bool = False
 
 
 @dataclass(frozen=True)
@@ -431,6 +432,9 @@ def load_settings(root: Path | str | None = None) -> TelemetrySettings:
     profiles: dict[str, ProfileSettings] = {}
     for name, raw_value in roi_profiles.items():
         raw = _mapping(raw_value, f"profiles.{name}")
+        lap_bounds = raw.get('lap_foreground_bounds', False)
+        if type(lap_bounds) is not bool:
+            raise ConfigurationError(f'profiles.{name}.lap_foreground_bounds must be boolean')
         rois: dict[str, Mapping[str, int]] = {}
         required_rois = ("throttle", "brake", "steering")
         for roi_name in required_rois:
@@ -468,6 +472,7 @@ def load_settings(root: Path | str | None = None) -> TelemetrySettings:
             white_lower=lower,
             white_upper=upper,
             sample_count=sample_count,
+            lap_foreground_bounds=lap_bounds,
         )
 
     comparison_raw = _mapping(telemetry.get("comparison"), "comparison")

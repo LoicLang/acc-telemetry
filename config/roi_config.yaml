@@ -74,6 +74,7 @@ twitch_720p: &twitch_720p
 
 ps5_full_map_720p:
   <<: *twitch_720p
+  lap_foreground_bounds: true
   position_tracking:
     white_lower: [0, 0, 150]
     white_upper: [180, 100, 255]
