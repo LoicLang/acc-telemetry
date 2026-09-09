@@ -1,6 +1,8 @@
 """Fresh-speed regressions exercise real extraction with only OCR text controlled."""
 import unittest
 from dataclasses import replace
+import hashlib
+import tempfile
 from unittest.mock import patch
 
 import numpy as np
@@ -8,6 +10,7 @@ import numpy as np
 from acc_telemetry.extraction.laps import LapDetector
 from acc_telemetry.domain.telemetry import QualityFlag
 from acc_telemetry.application.pipeline import TelemetryPipeline
+from acc_telemetry.application.speed_visibility import SpeedVisibilityReview, SpeedVisibilitySpan
 from test_application_pipeline import FakeVideo, FakeControls, FakePosition, FakeGenericProgress
 
 
@@ -25,14 +28,14 @@ def make_detector():
 
 
 class TestFreshSpeedObservations(unittest.TestCase):
-    frame = np.zeros((10, 10, 3), dtype=np.uint8)
+    frame = np.full((10, 10, 3), 255, dtype=np.uint8)
 
     def test_descending_and_ascending_are_current_readings_after_full_history(self):
         for readings in ([255] * 15 + [246, 237, 228], [179] * 15 + [188, 197, 206]):
             with self.subTest(readings=readings):
                 detector = make_detector()
                 with patch('pytesseract.image_to_string', side_effect=list(map(str, readings))) as backend:
-                    observations = [detector.observe_speed(self.frame) for _ in readings]
+                    observations = [detector.observe_speed(self.frame, hud_state='visible') for _ in readings]
                 self.assertEqual(backend.call_count, len(readings))
                 self.assertEqual([o.value for o in observations], readings)
                 self.assertTrue(all(o.quality == QualityFlag.OBSERVED for o in observations))
@@ -42,7 +45,7 @@ class TestFreshSpeedObservations(unittest.TestCase):
         texts = ['100', '', '12x3', 'NaN', 'inf', '-1', '401', ' 246\n', '0']
         detector = make_detector()
         with patch('pytesseract.image_to_string', side_effect=texts) as backend:
-            observations = [detector.observe_speed(self.frame) for _ in texts]
+            observations = [detector.observe_speed(self.frame, hud_state='visible') for _ in texts]
         self.assertEqual(backend.call_count, len(texts))
         self.assertEqual([o.raw_value for o in observations], texts)
         self.assertEqual([o.value for o in observations], [100] + [None] * 6 + [246, 0])
@@ -54,12 +57,13 @@ class TestFreshSpeedObservations(unittest.TestCase):
     def test_bad_frame_roi_and_ocr_exception_never_hold_previous_value(self):
         detector = make_detector()
         with patch('pytesseract.image_to_string', return_value='100'):
-            detector.observe_speed(self.frame)
+            detector.observe_speed(self.frame, hud_state='visible')
         with patch('pytesseract.image_to_string') as backend:
-            observations = [detector.observe_speed(frame) for frame in (None, np.zeros((0, 0, 3)), np.zeros((2, 2, 3)))]
+            observations = [detector.observe_speed(frame, hud_state='visible')
+                            for frame in (None, np.zeros((0, 0, 3)), np.zeros((2, 2, 3)))]
         backend.assert_not_called()
         with patch('pytesseract.image_to_string', side_effect=RuntimeError('backend failed')) as backend:
-            observations.append(detector.observe_speed(self.frame))
+            observations.append(detector.observe_speed(self.frame, hud_state='visible'))
         backend.assert_called_once()
         for observation in observations:
             self.assertIsNone(observation.value)
@@ -72,7 +76,7 @@ class TestFreshSpeedObservations(unittest.TestCase):
         detector._speed_history = [188] * 15
         detector._last_valid_speed = 188
         with patch('pytesseract.image_to_string', return_value='179'):
-            observation = detector.observe_speed(self.frame)
+            observation = detector.observe_speed(self.frame, hud_state='visible')
         self.assertEqual(observation.value, 179)
         self.assertEqual(detector._speed_history, [188] * 15)
         self.assertEqual(detector._last_valid_speed, 188)
@@ -86,7 +90,7 @@ class TestFreshSpeedObservations(unittest.TestCase):
 
             def process_frames(self):
                 for i in range(len(texts)):
-                    self.current_frame = np.zeros((10, 10, 3), dtype=np.uint8)
+                    self.current_frame = np.full((10, 10, 3), 255, dtype=np.uint8)
                     yield i, i / 30, {}
 
         class Progress(FakeGenericProgress):
@@ -95,9 +99,20 @@ class TestFreshSpeedObservations(unittest.TestCase):
                 return replace(result, frames=tuple(replace(result.frames[0], frame=i) for i in range(len(texts))))
 
         progress = Progress()
-        with patch('pytesseract.image_to_string', side_effect=texts) as backend:
-            result = TelemetryPipeline(video=Video(), controls=FakeControls(), laps=make_detector(),
-                position=FakePosition(), progress=progress, has_track_map=False).run()
+        with tempfile.TemporaryDirectory() as directory:
+            source = __import__('pathlib').Path(directory) / 'source.mov'
+            source.write_bytes(b'synthetic source bound to the visibility review')
+            video = Video()
+            video.video_path = source
+            review = SpeedVisibilityReview(
+                source_sha256=hashlib.sha256(source.read_bytes()).hexdigest(),
+                source_size_bytes=source.stat().st_size,
+                spans=(SpeedVisibilitySpan(0.0, len(texts) / 30, 'visible', 'test'),),
+            )
+            with patch('pytesseract.image_to_string', side_effect=texts) as backend:
+                result = TelemetryPipeline(video=video, controls=FakeControls(), laps=make_detector(),
+                    position=FakePosition(), progress=progress, has_track_map=False,
+                    speed_visibility=review).run()
         self.assertEqual(backend.call_count, len(texts))
         expected = [255] * 15 + [246, None, 179]
         self.assertEqual([r['speed'] for r in result.records], expected)

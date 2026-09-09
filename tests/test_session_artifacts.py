@@ -1,5 +1,6 @@
 """Versioned evidence export, strict reloading and no-clobber publication."""
 import importlib
+import hashlib
 import json
 import tempfile
 import unittest
@@ -8,6 +9,7 @@ from unittest.mock import Mock, patch
 
 from acc_telemetry.application.config import load_settings
 from acc_telemetry.application.pipeline import TelemetryPipeline
+from acc_telemetry.application.speed_visibility import SpeedVisibilityReview, SpeedVisibilitySpan
 from acc_telemetry.domain.observations import FieldObservation
 from acc_telemetry.domain.telemetry import QualityFlag as Q
 from test_application_pipeline import FakeVideo, FakeLaps, FakeControls, FakeGenericProgress
@@ -22,14 +24,21 @@ class TestSessionArtifacts(unittest.TestCase):
         self.source = self.root / 'source.mov'
         self.source.write_bytes(b'synthetic input, OCR and video mocked')
         self.before = self.artifacts.source_identity(self.source)
+        self.speed_review = SpeedVisibilityReview(
+            source_sha256=hashlib.sha256(self.source.read_bytes()).hexdigest(),
+            source_size_bytes=self.source.stat().st_size,
+            spans=(SpeedVisibilitySpan(0.0, 1 / 30, 'visible', 'test'),),
+        )
+        self.video = FakeVideo()
+        self.video.video_path = self.source
         laps = FakeLaps()
         laps.observe_speed = Mock(return_value=FieldObservation(100, Q.HELD, '682',
             ('speed_out_of_range',), 0.0))
         laps.observe_gear = Mock(return_value=FieldObservation(None, Q.MISSING, 'R',
             ('unsupported_gear_symbol',)))
-        self.result = TelemetryPipeline(video=FakeVideo(), controls=FakeControls(),
+        self.result = TelemetryPipeline(video=self.video, controls=FakeControls(),
             laps=laps, progress=FakeGenericProgress(), has_track_map=False,
-            settings=load_settings()).run()
+            settings=load_settings(), speed_visibility=self.speed_review).run()
 
     def write(self, destination=None):
         with patch.object(self.artifacts, 'probe_timebase', return_value={'status': 'not_evaluated'}):
@@ -185,14 +194,25 @@ class TestArtifactAdapters(unittest.TestCase):
             source = root / 'input.mov'
             source.write_bytes(b'fake video')
             destination = root / 'processed' / 'session'
-            with (patch('acc_telemetry.application.components.VideoProcessor', return_value=FakeVideo()),
+            review = root / 'speed-visibility.json'
+            review.write_text(json.dumps({
+                'schema_version': 'speed-visibility-v1',
+                'source_sha256': hashlib.sha256(source.read_bytes()).hexdigest(),
+                'source_size_bytes': source.stat().st_size,
+                'spans': [{'start_s': 0.0, 'end_s': 1 / 30,
+                           'state': 'visible', 'reviewer': 'test'}],
+            }))
+            fake_video = FakeVideo()
+            fake_video.video_path = source
+            with (patch('acc_telemetry.application.components.VideoProcessor', return_value=fake_video),
                   patch('acc_telemetry.application.components.LapDetector', return_value=FakeLaps()),
                   patch('acc_telemetry.application.components.TelemetryExtractor', return_value=FakeControls()),
                   patch('acc_telemetry.application.components.ProgressSessionEstimator', return_value=FakeGenericProgress()),
                   patch('acc_telemetry.application.pipeline.TelemetryPipeline._extract_track_path'),
                   patch('acc_telemetry.application.session_artifacts.probe_timebase', return_value={'status':'fail'})):
                 self.assertEqual(main([str(source), '--output', str(root / 'reports'),
-                                       '--artifact-dir', str(destination)]), 0)
+                                       '--artifact-dir', str(destination),
+                                       '--speed-visibility-json', str(review)]), 0)
             result = read_session_artifacts(destination)
             self.assertEqual(result.samples[0].speed_kmh, 171)
             self.assertFalse(result.coaching_eligible)

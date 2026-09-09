@@ -1,6 +1,9 @@
 """Tests for shared telemetry orchestration."""
 
 import unittest
+import hashlib
+import tempfile
+from pathlib import Path
 
 from acc_telemetry.application.pipeline import TelemetryPipeline
 from acc_telemetry.application.progress import (
@@ -12,6 +15,7 @@ from acc_telemetry.domain.progress import ProgressEstimate, ProgressSource
 from acc_telemetry.domain.telemetry import QualityFlag
 from acc_telemetry.domain.observations import FieldObservation
 from acc_telemetry.extraction.position import PositionDecision, PositionDiagnostic
+from acc_telemetry.application.speed_visibility import SpeedVisibilityReview, SpeedVisibilitySpan
 
 
 class FakeVideo:
@@ -53,7 +57,11 @@ class FakeControls:
 
 
 class FakeLaps:
-    def observe_speed(self, frame):
+    def observe_speed(self, frame, *, hud_state="unknown"):
+        if hud_state != "visible":
+            return FieldObservation(
+                None, QualityFlag.MISSING, None, ("speed_hud_unverified",)
+            )
         return FieldObservation(171, QualityFlag.OBSERVED, "171")
 
     def observe_gear(self, frame):
@@ -149,17 +157,33 @@ class FakeGenericProgress:
 
 
 class TestTelemetryPipeline(unittest.TestCase):
+    def setUp(self):
+        self.temp = tempfile.TemporaryDirectory()
+        self.addCleanup(self.temp.cleanup)
+        source = Path(self.temp.name) / "source.mov"
+        source.write_bytes(b"synthetic source bound to the visibility review")
+        self.speed_review = SpeedVisibilityReview(
+            hashlib.sha256(source.read_bytes()).hexdigest(), source.stat().st_size,
+            (SpeedVisibilitySpan(0.0, 1 / 30, "visible", "test"),))
+        self.source = source
+
+    def visible(self, video):
+        video.video_path = self.source
+        return {"speed_visibility": self.speed_review}
+
     def test_applies_generic_progress_only_after_collecting_frame_observations(self):
         generic_progress = FakeGenericProgress()
+        video = FakeVideo()
         diagnostics = []
         pipeline = TelemetryPipeline(
-            video=FakeVideo(),
+            video=video,
             controls=FakeControls(),
             laps=FakeLaps(),
             position=FakePosition(),
             progress=generic_progress,
             has_track_map=False,
             position_diagnostic_callback=diagnostics.append,
+            **self.visible(video),
         )
 
         result = pipeline.run()
@@ -198,6 +222,7 @@ class TestTelemetryPipeline(unittest.TestCase):
             position=FakePosition(),
             has_track_map=False,
             progress_callback=lambda percent, message: progress.append((percent, message)),
+            **self.visible(video),
         )
 
         result = pipeline.run()
@@ -234,6 +259,7 @@ class TestTelemetryPipeline(unittest.TestCase):
             laps=FakeLaps(),
             position=FakePosition(),
             has_track_map=False,
+            **self.visible(video),
         )
 
         with self.assertRaisesRegex(RuntimeError, "bad frame"):
@@ -243,12 +269,13 @@ class TestTelemetryPipeline(unittest.TestCase):
     def test_reports_position_diagnostic_without_changing_legacy_record(self):
         diagnostics = []
         pipeline = TelemetryPipeline(
-            video=FakeVideo(),
+            video=(video := FakeVideo()),
             controls=FakeControls(),
             laps=FakeLaps(),
             position=ReadyPosition(),
             has_track_map=False,
             position_diagnostic_callback=diagnostics.append,
+            **self.visible(video),
         )
 
         result = pipeline.run()

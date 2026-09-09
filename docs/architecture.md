@@ -104,9 +104,12 @@ labels from separately authorized agent visibility/exhaustiveness reviews.
 complete decimal text within the existing speed range. It preserves original text,
 reasons and explicit absence; it neither reads nor mutates legacy speed history.
 `extract_speed` retains historical median/recovery behavior. No temporal admission
-heuristic or pedal smoothing is added. HUD visibility for speed is still unverified:
-syntactically valid digits alone are not coaching admission. This remains a separate
-Gate A blocker, with its development contract in `fresh-measurement-results.md`.
+heuristic or pedal smoothing is added. A9 C1 adds source-bound reviewed speed HUD
+visibility in `application/speed_visibility.py`; the pipeline verifies source SHA/size
+and supplies visible/absent/unknown context to the extractor. Unknown/absent and black
+ROI abstain. CLI and web service supply this same contract; artifacts preserve and
+verify its source binding. This is not an automatic detector or proof of numeric
+accuracy; see `speed-visibility.md` and the frozen `fresh-measurement-results.md`.
 
 Pipeline, normalization, CSV, telemetry-v2 and typed API preserve measurement evidence.
 Odometry receives fresh speed or absence; its existing bounded internal interpolation

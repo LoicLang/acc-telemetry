@@ -4,6 +4,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from acc_telemetry.domain.observations import VisibilitySpan
 from .visibility import load_visibility
+from .speed_visibility import SpeedVisibilityReview, load_speed_visibility
 
 from acc_telemetry.extraction.controls import TelemetryExtractor
 from acc_telemetry.extraction.laps import LapDetector
@@ -27,6 +28,7 @@ class ProcessingComponents:
     sample_count: int
     frequency_threshold: float
     visibility: tuple[VisibilitySpan, ...] = ()
+    speed_visibility: SpeedVisibilityReview | None = None
 
 
 def build_components(
@@ -38,9 +40,11 @@ def build_components(
     settings: TelemetrySettings | None = None,
     legacy_position: bool = False,
     visibility_json: Path | str | None = None,
+    speed_visibility_json: Path | str | None = None,
 ) -> ProcessingComponents:
     """Build every extraction component from one validated settings object."""
     visibility = load_visibility(visibility_json)
+    speed_visibility = load_speed_visibility(speed_visibility_json)
     active_settings = settings or load_settings()
     profile = active_settings.profile(profile_name)
     roi_config = {name: dict(coordinates) for name, coordinates in profile.rois.items()}
@@ -81,6 +85,7 @@ def build_components(
 
     return ProcessingComponents(
         visibility=visibility,
+        speed_visibility=speed_visibility,
         video=video,
         controls=controls,
         laps=laps,

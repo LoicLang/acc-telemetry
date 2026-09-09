@@ -9,10 +9,11 @@ read_when:
 
 **Décision du 9 septembre 2026, issue de la discussion avec le propriétaire.**
 La correction A8 S1–S3 sépare désormais la lecture fraîche moderne de la
-médiane/reprise explicitement legacy. La validation de présence du HUD reste un
-chantier A distinct non résolu ; une chaîne numérique seule ne la prouve pas.
+médiane/reprise explicitement legacy. A9 C1 exige désormais une visibilité revue
+liée à la source ; absent/inconnu reste manquant. Ce garde n'est pas un détecteur
+automatique évalué, et une chaîne numérique seule ne prouve pas la présence du HUD.
 Gate A reste bloqué. Plan d'exécution :
-[2026-09-09-fresh-measurements.md](plans/2026-09-09-fresh-measurements.md).
+[2026-09-09-admission-corrections.md](plans/2026-09-09-admission-corrections.md).
 La spécification générale de coaching du 5 septembre reste la référence produit.
 
 ## Pourquoi changer

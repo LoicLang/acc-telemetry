@@ -323,7 +323,8 @@ class TestFieldOCRObservations(unittest.TestCase):
                     patch.object(lap_detector, 'tesserocr', SimpleNamespace(PSM=modes), create=True),
                     patch.object(lap_detector, 'Image', Image, create=True),
                 ):
-                    observation = detector.observe_speed(np.zeros((10, 10, 3), np.uint8))
+                    observation = detector.observe_speed(
+                        np.full((10, 10, 3), 255, np.uint8), hud_state='visible')
                 self.assertEqual(api.page_seg_modes, [7, 8])
                 if isinstance(api, FailingTesseractAPI):
                     self.assertIsNone(observation.value)
@@ -336,7 +337,8 @@ class TestFieldOCRObservations(unittest.TestCase):
         detector = self.make_detector()
         texts = ['100', '', '682', '120']
         with patch('pytesseract.image_to_string', side_effect=texts) as backend:
-            observations = [detector.observe_speed(np.zeros((10, 10, 3), np.uint8)) for _ in texts]
+            observations = [detector.observe_speed(
+                np.full((10, 10, 3), 255, np.uint8), hud_state='visible') for _ in texts]
         self.assertEqual(backend.call_count, 4)
         self.assertEqual([o.raw_value for o in observations], texts)
         self.assertEqual([o.value for o in observations], [100, None, None, 120])
@@ -348,7 +350,8 @@ class TestFieldOCRObservations(unittest.TestCase):
     def test_speed_unavailable_has_no_value_even_when_raw_is_out_of_range(self):
         detector = self.make_detector()
         with patch('pytesseract.image_to_string', return_value='682'):
-            observation = detector.observe_speed(np.zeros((10, 10, 3), np.uint8))
+            observation = detector.observe_speed(
+                np.full((10, 10, 3), 255, np.uint8), hud_state='visible')
         self.assertIsNone(observation.value)
         self.assertEqual(observation.quality, QualityFlag.ANOMALOUS)
         self.assertEqual(observation.raw_value, '682')

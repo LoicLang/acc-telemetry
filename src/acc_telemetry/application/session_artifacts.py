@@ -71,6 +71,15 @@ def source_identity(path):
     return {'path': str(path), 'size_bytes': before.st_size, 'sha256': digest}
 
 
+def _check_speed_review_source(config, source):
+    # Missing review is valid for older artifacts; never retroactively grant it.
+    review = config.get('speed_visibility')
+    if review is not None and (not isinstance(review, dict)
+            or review.get('source_sha256') != source['sha256']
+            or review.get('source_size_bytes') != source['size_bytes']):
+        raise ValueError('speed visibility does not match artifact source')
+
+
 def probe_timebase(path):
     """Check every decoded PTS against nominal CFR within one stream tick.
 
@@ -159,6 +168,7 @@ def write_session_artifacts(result, destination, *, source_path, source_before,
             or len(result.observations) != len(result.records) or result.resolved_config is None):
         raise ValueError('modern artifacts require aligned observations and explicit normalized settings')
     config = _plain(result.resolved_config)
+    _check_speed_review_source(config, source)
     if profile not in config['settings']['profiles']:
         raise ValueError('profile absent from resolved settings')
     origin = clip_origin or {'source_id': source['sha256'], 'start_s': 0.0}
@@ -244,6 +254,7 @@ def read_session_artifacts(path, *, limits=None):
     manifest = _read_json((path / 'manifest.json').read_text(encoding='utf-8'))
     if manifest.get('schema_version') != SCHEMA:
         raise ValueError('unsupported telemetry schema')
+    _check_speed_review_source(manifest['config'], manifest['source'])
     if hashlib.sha256(_json(manifest['config']).encode()).hexdigest() != manifest['config_sha256']:
         raise ValueError('configuration integrity mismatch')
     rows = {}

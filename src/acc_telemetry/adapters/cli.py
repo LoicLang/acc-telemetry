@@ -30,6 +30,7 @@ def _parser() -> argparse.ArgumentParser:
         help="directory for generated CSV and HTML files",
     )
     parser.add_argument("--visibility-json", type=Path, help="reviewed control visibility spans")
+    parser.add_argument("--speed-visibility-json", type=Path, help="source-bound reviewed speed HUD visibility")
     parser.add_argument("--artifact-dir", type=Path, help="new telemetry-v2 session directory")
     parser.add_argument("--clip-source-id", help="parent source identifier for a derived clip")
     parser.add_argument("--clip-start-s", type=float, default=0.0, help="clip start in parent seconds")
@@ -56,6 +57,7 @@ def main(argv: Sequence[str] | None = None) -> int:
             args.profile,
             settings=settings,
             visibility_json=args.visibility_json,
+            speed_visibility_json=args.speed_visibility_json,
             enable_performance_stats=True,
         )
     except (ConfigurationError, ValueError, OSError) as error:
@@ -65,6 +67,7 @@ def main(argv: Sequence[str] | None = None) -> int:
     pipeline = TelemetryPipeline(
         settings=settings,
         visibility=components.visibility,
+        speed_visibility=components.speed_visibility,
         video=components.video,
         controls=components.controls,
         laps=components.laps,
@@ -81,7 +84,7 @@ def main(argv: Sequence[str] | None = None) -> int:
             clip_origin=({"source_id": args.clip_source_id, "start_s": args.clip_start_s}
                          if args.clip_source_id else None))
         print(f"Session artifacts: {output}")
-    print("Controls require reviewed visibility; TC/ABS remain unavailable. Coaching gate pending.")
+    print("Speed and controls require reviewed visibility; TC/ABS remain unavailable. Coaching gate pending.")
 
     visualizer = InteractiveTelemetryVisualizer(output_dir=str(args.output))
     dataframe = visualizer.create_dataframe(result.records)

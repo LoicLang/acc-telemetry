@@ -1,5 +1,6 @@
 """Regression evidence across actual pipeline, DataFrame, CSV and normalization."""
 import csv
+import hashlib
 import tempfile
 import unittest
 from pathlib import Path
@@ -11,6 +12,7 @@ import pandas as pd
 
 from acc_telemetry.application.config import load_settings
 from acc_telemetry.application.pipeline import TelemetryPipeline
+from acc_telemetry.application.speed_visibility import SpeedVisibilityReview, SpeedVisibilitySpan
 from acc_telemetry.application.progress import ProgressSessionEstimator
 from acc_telemetry.application.lap_state import LapTransitionConfirmer
 from acc_telemetry.domain.observations import FieldObservation
@@ -29,14 +31,28 @@ class TestQualityRoundtrip(unittest.TestCase):
         detector.observe_lap_number = Mock(side_effect=[
             FieldObservation(v, Q.OBSERVED if v is not None else Q.MISSING, v) for v in laps])
         class Video(FakeVideo):
+            def get_video_info(self):
+                return {"fps": 60.0, "frame_count": len(laps), "duration": len(laps) / 60}
+
             def process_frames(self):
                 for i in range(len(laps)):
                     yield i, i / 60, {}
         estimator = ProgressSessionEstimator(settings=load_settings().progress,
             lap_confirmer=LapTransitionConfirmer(consecutive_observations=5),
             white_lower=(0, 0, 200), white_upper=(180, 50, 255))
-        return TelemetryPipeline(video=Video(), controls=FakeControls(), laps=detector,
-            progress=estimator, has_track_map=False).run().records
+        with tempfile.TemporaryDirectory() as directory:
+            source = Path(directory) / 'source.mov'
+            source.write_bytes(b'synthetic source bound to the visibility review')
+            video = Video()
+            video.video_path = source
+            review = SpeedVisibilityReview(
+                source_sha256=hashlib.sha256(source.read_bytes()).hexdigest(),
+                source_size_bytes=source.stat().st_size,
+                spans=(SpeedVisibilitySpan(0.0, len(laps) / 60, 'visible', 'test'),),
+            )
+            return TelemetryPipeline(video=video, controls=FakeControls(), laps=detector,
+                progress=estimator, has_track_map=False,
+                speed_visibility=review).run().records
 
     def roundtrip(self, records):
         with tempfile.TemporaryDirectory() as directory:
@@ -86,17 +102,31 @@ class TestQualityRoundtrip(unittest.TestCase):
         detector = TestFieldOCRObservations().make_detector()
         detector.observe_lap_number = Mock(return_value=FieldObservation(1, Q.OBSERVED, '1'))
         class Video(FakeVideo):
+            def get_video_info(self):
+                return {"fps": 60.0, "frame_count": 3, "duration": 3 / 60}
+
             def process_frames(self):
-                self.current_frame = np.zeros((10, 10, 3), np.uint8)
+                self.current_frame = np.full((10, 10, 3), 40, np.uint8)
                 for i in range(3):
                     yield i, i / 60, {}
         estimator = ProgressSessionEstimator(settings=load_settings().progress,
             lap_confirmer=LapTransitionConfirmer(consecutive_observations=5),
             white_lower=(0, 0, 200), white_upper=(180, 50, 255))
-        with patch('pytesseract.image_to_string',
-                   side_effect=['100', '4', '', '', '682', 'R']) as backend:
-            rows = TelemetryPipeline(video=Video(), controls=FakeControls(), laps=detector,
-                progress=estimator, has_track_map=False).run().records
+        with tempfile.TemporaryDirectory() as directory:
+            source = Path(directory) / 'source.mov'
+            source.write_bytes(b'synthetic source bound to the visibility review')
+            video = Video()
+            video.video_path = source
+            review = SpeedVisibilityReview(
+                source_sha256=hashlib.sha256(source.read_bytes()).hexdigest(),
+                source_size_bytes=source.stat().st_size,
+                spans=(SpeedVisibilitySpan(0.0, 3 / 60, 'visible', 'test'),),
+            )
+            with patch('pytesseract.image_to_string',
+                       side_effect=['100', '4', '', '', '682', 'R']) as backend:
+                rows = TelemetryPipeline(video=video, controls=FakeControls(), laps=detector,
+                    progress=estimator, has_track_map=False,
+                    speed_visibility=review).run().records
         self.assertEqual(backend.call_count, 6)
         samples = self.roundtrip(rows)
         self.assertEqual([s.gear for s in samples], [4, None, None])

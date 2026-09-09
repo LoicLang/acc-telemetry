@@ -77,8 +77,9 @@ Compatibility modules under `src/` keep older imports working during the migrati
   crash-heavy representative validation gates pass.
 - Legacy map-only position remains importable for compatibility; production CLI and
   web processing use `s_odometry`, `s_visual`, and `s_fused`.
-- Modern speed is the fresh validated OCR number, with raw text and explicit gaps;
-  legacy median/holding remains isolated. Speed HUD validity is still a Gate A blocker.
+- Modern speed requires [source-bound reviewed HUD visibility](docs/speed-visibility.md)
+  (`--speed-visibility-json`); without it speed is missing. Admitted speed retains
+  fresh OCR text and explicit gaps; legacy median/holding remains isolated.
   Pedal transitions remain unsmoothed. See [A8 evidence](docs/fresh-measurement-results.md).
 - Lateral distance `d` remains future work.
 - OCR and map observations can be missing or anomalous and must not be treated as unquestioned truth.

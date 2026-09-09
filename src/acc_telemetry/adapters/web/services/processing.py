@@ -14,6 +14,7 @@ from acc_telemetry.application.session_artifacts import (
     check_destination, source_identity, write_session_artifacts,
 )
 from acc_telemetry.application.visibility import load_visibility
+from acc_telemetry.application.speed_visibility import load_speed_visibility
 from acc_telemetry.application.config import load_settings
 from acc_telemetry.application.lap_state import LapTransitionConfirmer
 from acc_telemetry.application.progress import ProgressSessionEstimator
@@ -62,6 +63,7 @@ class VideoProcessingService:
         progress_callback: Optional[Callable[[int, str], None]] = None,
         profile_name: Optional[str] = None,
         visibility_json: Optional[str] = None,
+        speed_visibility_json: Optional[str] = None,
         artifact_dir: Optional[str] = None,
         clip_origin: Optional[dict] = None,
     ) -> VideoMetadata:
@@ -123,6 +125,7 @@ class VideoProcessingService:
         pipeline = TelemetryPipeline(
             settings=telemetry_settings,
             visibility=load_visibility(visibility_json),
+            speed_visibility=load_speed_visibility(speed_visibility_json),
             video=processor,
             controls=extractor,
             laps=lap_detector,

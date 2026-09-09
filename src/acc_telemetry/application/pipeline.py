@@ -11,6 +11,7 @@ from acc_telemetry.domain.observations import FrameObservation, VisibilitySpan, 
 from acc_telemetry.domain.telemetry import TelemetrySample, QualityFlag
 from acc_telemetry.normalization.samples import normalize_row
 from .config import TelemetrySettings
+from .speed_visibility import SpeedVisibilityReview
 from acc_telemetry.extraction.video import evenly_spaced_frame_indices
 
 
@@ -42,6 +43,7 @@ class TelemetryPipeline:
         progress: Any | None = None,
         has_track_map: bool,
         visibility: tuple[VisibilitySpan, ...] = (),
+        speed_visibility: SpeedVisibilityReview | None = None,
         settings: TelemetrySettings | None = None,
         sample_count: int = 11,
         frequency_threshold: float | None = None,
@@ -50,6 +52,7 @@ class TelemetryPipeline:
     ):
         self.settings = settings
         self.visibility = tuple(visibility)
+        self.speed_visibility = speed_visibility
         self.video = video
         self.controls = controls
         self.laps = laps
@@ -167,6 +170,9 @@ class TelemetryPipeline:
                 raise ValueError("Could not open video file")
             video_info = self.video.get_video_info()
             validate_visibility(self.visibility, duration_s=video_info["duration"])
+            if self.speed_visibility is not None:
+                self.speed_visibility.verify_source(getattr(self.video, 'video_path', None),
+                                                    duration_s=video_info['duration'])
             self._progress(5, "Video opened successfully")
 
             if self.has_track_map:
@@ -193,7 +199,9 @@ class TelemetryPipeline:
                 if self.progress is not None:
                     lap_observation = self.laps.observe_lap_number(self.video.current_frame)
                     lap_number = lap_observation.value
-                    speed_observation = self.laps.observe_speed(self.video.current_frame)
+                    speed_observation = self.laps.observe_speed(self.video.current_frame,
+                        hud_state=(self.speed_visibility.state_at(timestamp)
+                                   if self.speed_visibility is not None else 'unknown'))
                     gear_observation = self.laps.observe_gear(self.video.current_frame)
                     speed = speed_observation.value
                     speed_quality = speed_observation.quality
@@ -376,7 +384,8 @@ class TelemetryPipeline:
                 samples=tuple(normalize_row(row, self.settings.normalization) for row in records)
                     if self.settings is not None else (),
                 observations=tuple(observations),
-                resolved_config={"settings": self.settings, "visibility": self.visibility}
+                resolved_config={"settings": self.settings, "visibility": self.visibility,
+                                 "speed_visibility": self.speed_visibility}
                     if self.settings is not None else None,
             )
         finally:

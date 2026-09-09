@@ -19,13 +19,21 @@ separate/inactive.** A8 changes modern speed extraction; acceptance targets rema
 unchanged. Full BMW/crash development replays and scoped measurements are published.
 
 Active correction specification: `signal-treatment.md`.
-Active plan: `plans/2026-09-09-fresh-measurements.md` (**S1–S3 delivered; S4/S5 completed within available evidence; independent acceptance open**).
+Active plan: `plans/2026-09-09-admission-corrections.md` (**A9 C1 implementing; C2/C3 development diagnosis**).
+Previous A8: `plans/2026-09-09-fresh-measurements.md` (completed within available evidence).
 Parent product specification: `specs/2026-09-05-reference-corner-coach-design.md`.
 Completed A7 execution: `plans/2026-09-05-coaching-reliability.md`; Gate A still fails.
 Contract: `capture-validation.md`. Full results: `capture-validation-results.md`.
 Preserved semantic constraints: `coaching-reliability-resume.md`.
 
 ## Current implementation
+
+A9 C1 now requires source-bound speed visibility in the modern pipeline; unknown
+or absent HUD abstains while raw OCR survives. See `speed-visibility.md`.
+New outputs are under run-011; 207 prior evidence files verified before editing.
+New code invalidates run-010 acceptance compatibility; its measurements stay frozen.
+Focused RED/GREEN and source binding tests pass; 303 full-suite tests pass for C1.
+C2/C3 compare justified OCR/admission alternatives on development only.
 
 Real extraction/pipeline RED tests reproduced 246→255, 179→188 and held invalids.
 Modern speed now publishes strict fresh OCR values or explicit absence, retaining
@@ -141,9 +149,9 @@ authorship remain unchanged. Final 24 capture/298 full tests are in
 `reports/final-focused.txt` and `final-full.txt`.
 Known holdout run-008 cannot become independent again or receive a rewritten reservation.
 
-**Next action:** write the isolated real-pipeline RED for source-bound speed HUD
-visibility (visible/absent/unknown, menu, black ROI, non-HUD digits, return), using
-the contract and targeted evidence paths in `fresh-measurement-results.md`.
+**Next action:** implement the separately evidenced C3 foreground-bound lap OCR
+correction with RED regressions; C2 single-word speed segmentation is being checked
+on all development labels before adoption.
 Keep the additional 162→4/177→7 admission failures as a separate development RED,
 without restoring holds or tuning thresholds to the selected examples.
 Historical OCR fixtures are ready for their separate correction. No new human

@@ -4,6 +4,7 @@ Images and text backends are synthetic; these are software regressions, not
 independent capture-accuracy or HUD-presence evidence.
 """
 import asyncio
+import hashlib
 import json
 import tempfile
 import unittest
@@ -19,6 +20,7 @@ from acc_telemetry.application.config import load_settings
 from acc_telemetry.application.lap_state import LapTransitionConfirmer
 from acc_telemetry.application.odometry import integrate_speed
 from acc_telemetry.application.pipeline import TelemetryPipeline
+from acc_telemetry.application.speed_visibility import SpeedVisibilityReview, SpeedVisibilitySpan
 from acc_telemetry.application.progress import ProgressSessionEstimator
 from acc_telemetry.application.session_artifacts import (
     read_session_artifacts, source_identity, write_session_artifacts,
@@ -63,12 +65,23 @@ class TestFreshSignalRoundtrip(unittest.TestCase):
             white_lower=(0, 0, 200), white_upper=(180, 50, 255))
         backend_texts = ['3' for _ in texts] if legacy is not None else [
             text for speed in texts for text in (speed, '3')]
-        with (patch('pytesseract.image_to_string', side_effect=backend_texts) as backend,
-              patch('acc_telemetry.application.progress.integrate_speed', wraps=integrate_speed) as integrate):
-            result = TelemetryPipeline(video=Video(), controls=TelemetryExtractor(),
-                laps=detector, progress=progress, has_track_map=False, settings=settings,
-                visibility=tuple(VisibilitySpan(field, 0, times[-1] + 1 / 60, 'synthetic-test')
-                                 for field in ('throttle', 'brake'))).run()
+        with tempfile.TemporaryDirectory() as directory:
+            source = Path(directory) / 'source.mov'
+            source.write_bytes(b'synthetic source bound to the visibility review')
+            video = Video()
+            video.video_path = source
+            speed_review = SpeedVisibilityReview(
+                source_sha256=hashlib.sha256(source.read_bytes()).hexdigest(),
+                source_size_bytes=source.stat().st_size,
+                spans=(SpeedVisibilitySpan(0.0, times[-1] + 1 / 60, 'visible', 'test'),),
+            )
+            with (patch('pytesseract.image_to_string', side_effect=backend_texts) as backend,
+                  patch('acc_telemetry.application.progress.integrate_speed', wraps=integrate_speed) as integrate):
+                result = TelemetryPipeline(video=video, controls=TelemetryExtractor(),
+                    laps=detector, progress=progress, has_track_map=False, settings=settings,
+                    visibility=tuple(VisibilitySpan(field, 0, times[-1] + 1 / 60, 'synthetic-test')
+                                     for field in ('throttle', 'brake')),
+                    speed_visibility=speed_review).run()
         self.assertEqual(backend.call_count, len(backend_texts))
         return result, integrate.call_args.args[0]
 
@@ -76,7 +89,7 @@ class TestFreshSignalRoundtrip(unittest.TestCase):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
             source = root / 'source.mov'
-            source.write_bytes(b'synthetic frame source; no capture accuracy claim')
+            source.write_bytes(b'synthetic source bound to the visibility review')
             output = root / 'session'
             with patch('acc_telemetry.application.session_artifacts.probe_timebase',
                        return_value={'status': 'not_evaluated'}):
