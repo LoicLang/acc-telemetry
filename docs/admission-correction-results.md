@@ -23,6 +23,8 @@ Export/reload reject a speed review belonging to another source. Legacy behavior
 and old artifacts retain their original quality. Five focused and 303 full-suite
 tests pass; logs are `c1-focused-final.txt` and `c1-full-final.txt` in `reports/`.
 This does not create an automatic detector or whole-video visibility truth.
+The new service argument is appended after existing artifact/origin arguments;
+their positional calling contract is protected by a separate RED/GREEN regression.
 
 ## C3: foreground-bound historical lap OCR
 

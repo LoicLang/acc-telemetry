@@ -63,9 +63,9 @@ class VideoProcessingService:
         progress_callback: Optional[Callable[[int, str], None]] = None,
         profile_name: Optional[str] = None,
         visibility_json: Optional[str] = None,
-        speed_visibility_json: Optional[str] = None,
         artifact_dir: Optional[str] = None,
         clip_origin: Optional[dict] = None,
+        speed_visibility_json: Optional[str] = None,
     ) -> VideoMetadata:
         """
         Process a video and extract telemetry data.
