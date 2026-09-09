@@ -7,7 +7,9 @@ read_when:
 
 # A8 — Mesures fraîches et respect des transitions
 
-**Statut : S1–S3 implémentées ; S4/S5 en finalisation.** A8 poursuit la fiabilité A
+**Statut : S1–S3 livrées ; S4/S5 exécutées dans le périmètre disponible.** La
+nouvelle acceptation indépendante reste ouverte après corrections HUD/compteur.
+A8 poursuit la fiabilité A
 après son échec mesuré, sans démarrer B. Preuves : `docs/fresh-measurement-results.md`.
 Spécification active : `docs/signal-treatment.md`. Référence produit :
 `docs/specs/2026-09-05-reference-corner-coach-design.md`.
@@ -107,46 +109,59 @@ Preuves RED/GREEN, 91 tests ciblés et suite complète dans `run-010/reports/s3-
 
 Fichiers : scripts/analyses A7 existants, tests de capture, documentation des résultats.
 
-- [ ] Avant replay, geler code/config et choix de développement. Produire de nouveaux
+- [x] Avant replay, geler code/config et choix de développement. Produire de nouveaux
   artefacts BMW/incidents avec les revues existantes, puis les mesurer sans OCR via
   `scripts/validate_capture.py`. Publier erreurs brutes et sorties modernes séparées,
   abstentions, qualité, dénominateurs, exclusions et hashes ; conserver l'ancien gate.
-- [ ] Examiner les séquences autour des annotations, pas seulement les 40 points :
+- [x] Examiner les séquences autour des annotations, pas seulement les 40 points :
   rampes, grandes erreurs, trous, minima. Si des vérités supplémentaires sont utiles,
   préparer une revue indépendante et l'attribuer correctement, sans labels issus de
   la sortie du modèle. Ne pas chercher des annotations qui feraient passer le gate.
-- [ ] Rejouer progression/calibration/repères car l'entrée vitesse a changé. Aucun
+- [x] Rejouer progression/calibration/repères car l'entrée vitesse a changé. Aucun
   recalage des seuils de `s` pour masquer une régression ; pas de conversion en mètres.
-- [ ] Documenter séparément la validité HUD/vitesse. Définir sur développement un
+- [x] Documenter séparément la validité HUD/vitesse. Définir sur développement un
   contrat visible/absent/inconnu et une preuve de validité (revue indépendante ou
   détecteur évalué). Tester avant implémentation : menu, ROI noire, texte numérique
   hors HUD, retour au HUD. Absent/inconnu ne doit pas être une mesure de coaching
   validée. Ne pas ajouter une règle copiée des six erreurs du holdout pour les cacher.
-- [ ] Conserver la correction OCR historique comme chantier A distinct : reproduire
+- [x] Conserver la correction OCR historique comme chantier A distinct : reproduire
   les lectures 0→7 et 2/3→20/30, inspecter crop et traitement avant de choisir un moteur.
   Un comparatif OCR n'est ouvert que si le développement l'exige ; il est gelé avant
   tout test indépendant. Ne pas mélanger remplacement OCR et correction de médiane.
-- [ ] Si l'un de ces chantiers dépasse cette tranche, le laisser explicitement en
+- [x] Si l'un de ces chantiers dépasse cette tranche, le laisser explicitement en
   échec/not_evaluated avec un prochain test précis ; S2/S3 ne ferment pas Gate A.
+
+S4 : 76 991 frames réellement rejouées ; 40/40 points vitesse exacts, 43/44
+observations fraîches exactes dans la revue visuelle séparée (une abstention).
+Une autre revue de six frames choisies parmi les grands sauts confirme deux lectures
+erronées encore admises (162→4, 177→7) ; sélection diagnostique, pas test indépendant.
+HUD : contrat testé avec backend contrôlé, implémentation et mesure empirique
+restent ouvertes. Compteur : 5/10 endpoints erronés reproduits ; rappel complet
+du nouveau code non évalué. Aucun changement de moteur ni de seuil.
 
 ## S5 — Publier une preuve compatible, sans recycler le holdout
 
-- [ ] Vérifier source/annotations/reviewers immuables. Publier les six checks A7 pour
+- [x] Vérifier source/annotations/reviewers immuables. Publier les six checks A7 pour
   le nouveau code ; aucun résultat A7 d'une ancienne empreinte n'est transféré.
-- [ ] Le holdout run-008 est désormais connu. Après gel des corrections, un replay
+- [x] Le holdout run-008 est désormais connu. Après gel des corrections, un replay
   éventuel de celui-ci reste une régression historique ; ne pas réécrire sa réservation
   pour déclarer une compatibilité fictive ou une nouvelle indépendance.
 - [ ] Pour une nouvelle acceptation indépendante, réserver une capture/enregistrement
   distinct avant inspection avec le nouveau code/config. Préparer le dossier précis
   seulement lorsque cette entrée devient nécessaire ; aucune demande de nouvelle
   vidéo n'est requise pendant la rédaction de ce plan.
-- [ ] Garder les latences non annotées `not_evaluated`. E16 n'est pas un onset à 5%,
+- [x] Garder les latences non annotées `not_evaluated`. E16 n'est pas un onset à 5%,
   les relâchements génériques ne sont pas des passages sous 5%, les candidats voisins
   non annotés ne sont pas automatiquement des faux positifs.
-- [ ] Ne déclarer Gate A passé que si tous les contrôles nécessaires passent avec
+- [x] Ne déclarer Gate A passé que si tous les contrôles nécessaires passent avec
   preuve compatible. Aucun B tant qu'un contrôle échoue ou manque.
-- [ ] Synchroniser handoff, résultats et cases, vérifier, committer puis pousser sur
+- [x] Synchroniser handoff, résultats et cases, vérifier, committer puis pousser sur
   la branche autorisée. Aucun merge vers main.
+
+S5 : `run-010/reports/gate-a-final.json` publie les six checks et garde A en échec.
+`independent-acceptance-dossier.json` précise les prérequis avant une nouvelle
+réservation. La case d'acceptation indépendante reste ouverte : aucune nouvelle
+capture n'est réservée ni évaluée ; pas de demande humaine prématurée.
 
 ## R — Régression locale de vitesse : différée, hors tranche active
 

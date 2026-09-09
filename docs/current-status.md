@@ -16,10 +16,10 @@ preserved; do not ask them to repeat accepted or reliably agent-verifiable revie
 
 **A0–A7 implementation/evaluation complete. Gate A FAILS; B blocked. C remains
 separate/inactive.** A8 changes modern speed extraction; acceptance targets remain
-unchanged. Full BMW/crash development replays finished; measurement publication remains.
+unchanged. Full BMW/crash development replays and scoped measurements are published.
 
 Active correction specification: `signal-treatment.md`.
-Active plan: `plans/2026-09-09-fresh-measurements.md` (**S1–S3 implemented; S4/S5 being finalized**).
+Active plan: `plans/2026-09-09-fresh-measurements.md` (**S1–S3 delivered; S4/S5 completed within available evidence; independent acceptance open**).
 Parent product specification: `specs/2026-09-05-reference-corner-coach-design.md`.
 Completed A7 execution: `plans/2026-09-05-coaching-reliability.md`; Gate A still fails.
 Contract: `capture-validation.md`. Full results: `capture-validation-results.md`.
@@ -36,8 +36,23 @@ Real decoder/artifact/API tests protect pedal dynamics, nulls, old HELD and odom
 provenance; no consumer substitutes an estimated speed for the measured field.
 New evidence: `fresh-measurement-results.md`, ignored run-010. HUD validity and
 historical OCR remain separate A blockers; B and R must not start.
+An additional review of six output-selected development frames confirms two wrong
+OBSERVED speeds (162→4, 177→7); numerical admission also remains an A blocker.
 
-New confirmed development evidence: **40/40 raw OCR speed readings are exact** on
+New full replays cover 47,589 BMW + 29,402 crash frames. Speed is exact on 40/40
+approved development points (MAE/P95 0/0); fixed-segment speed availability is
+564/564 and 681/683. Raw OCR and pedal observations are unchanged on all frames.
+Separate 44-frame agent image review has 43 exact fresh readings and one explicit
+out-of-range abstention. These windows overlap four approved points.
+
+Run-010 gate `reports/gate-a-final.json` remains **fail**: software, scoped coverage and
+development timebase pass; HUD contract and extra speed readings fail; full new-code historical event
+recall and independent holdout remain `not_evaluated`. New fingerprint:
+`7120555640e848989484cd9f681bf10748d13cecb2cdc8c4241e5e9e677fe48a`.
+Calibration and `s` were replayed; BMW loses two available `s` frames, and all
+changes/denominators are recorded in `fresh-measurement-results.md`.
+
+Original development diagnosis: **40/40 raw OCR speed readings are exact** on
 the selected 19 BMW + 21 crash labels. Subsequent median-filtered outputs include
 246→255 and 179→188. Scope is these points only, not all frames. Read-only proof with
 input hashes: `data/lab/coaching-reliability/run-009/reports/speed-raw-vs-output.json`.
@@ -120,9 +135,17 @@ and sparse extra crossings from being misreported as latency errors/false positi
 
 Run-010 preserves S1 RED (5 tests, 6 functional failures), S2 GREEN (5 tests),
 16 OCR/legacy tests, 91 S3 focused tests and a 298-test passing full suite.
-`reports/preservation-before.json` verified 128 prior files and source sizes/hashes
-before edits. The old gate/reservation and A6 authorship remain unchanged.
+`reports/preservation-before.json` and `preservation-after.json` verified 128 prior
+files and source sizes/hashes before/after edits. The old gate/reservation and A6
+authorship remain unchanged. Final 24 capture/298 full tests are in
+`reports/final-focused.txt` and `final-full.txt`.
 Known holdout run-008 cannot become independent again or receive a rewritten reservation.
 
-**Next action:** publish S4/S5 metrics
-and the six-check gate from existing run-010 development artifacts without rerunning OCR.
+**Next action:** write the isolated real-pipeline RED for source-bound speed HUD
+visibility (visible/absent/unknown, menu, black ROI, non-HUD digits, return), using
+the contract and targeted evidence paths in `fresh-measurement-results.md`.
+Keep the additional 162→4/177→7 admission failures as a separate development RED,
+without restoring holds or tuning thresholds to the selected examples.
+Historical OCR fixtures are ready for their separate correction. No new human
+approval is needed for those readable development images; independent recording
+reservation follows only after the remaining corrections are frozen.

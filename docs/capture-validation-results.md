@@ -7,6 +7,11 @@ read_when:
 
 # A7 independent results — 2026-09-09
 
+This page preserves the frozen A7 fingerprint and results. A8 changes modern speed
+extraction; its separate new-code development measurements and remaining blockers
+are in [fresh-measurement-results.md](fresh-measurement-results.md). No result below
+is transferred as acceptance of the changed extractor.
+
 **Gate A fails. B remains blocked.** Authoritative local evidence is under
 `data/lab/coaching-reliability/run-008/reports/evaluation-final-v2/`.
 `gate-a.json` in that directory supersedes earlier run-008 gates. The earlier reports
@@ -144,6 +149,6 @@ Local run drivers are preserved in `run-008/`: `verify_inputs.py`, review script
 outputs; do not rerun over existing directories. For a new single-source measurement,
 use the CLI in `capture-validation.md` with a new output filename.
 
-The next correction should begin with development-only RED regressions for the
-historical OCR (0 read as 7, later 2/3 as 20/30) and the independent speed errors.
-Do not change thresholds to pass, use holdout to fit corrections, or start B.
+A8 executed the development speed RED correction and reproduced historical OCR
+errors separately. The living next action is in `current-status.md`. Do not change
+thresholds to pass, use holdout to fit corrections, or start B.

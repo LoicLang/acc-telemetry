@@ -30,8 +30,9 @@ Pedal MAEs and scoped availability pass; no overall gate is passed. See
 
 The approved September 9 follow-up prioritizes fresh speed measurements and preserves
 abrupt brake/throttle transitions without smoothing. Optional speed regression is
-separate and deferred; no estimator or signal correction is implemented by that
-planning decision. See `signal-treatment.md` and
+separate and deferred. A8 now implements fresh modern speed and preserves exact
+CSV/API timestamps; development-only results do not close Gate A. See
+`fresh-measurement-results.md`, `signal-treatment.md` and
 `plans/2026-09-09-fresh-measurements.md`. Existing Gate A targets and blockers remain.
 
 - capture_status: native_1080p60_validated
