@@ -90,8 +90,16 @@ field/independent evidence; calibration and `s` are unavailable under sparse rev
   Run-014: all cells readable; scoped fresh admission 564/564 BMW, 679/683 incidents.
   V-CRASH-15 remains 28/31, below 95%; whole-lap and independent gates remain open.
   Evidence and limitations: `docs/speed-visibility-results.md`.
-- [ ] Review complete calibration-lap speed visibility and replay admission/progress;
-  do not infer whole-lap readability from short target segments.
+- [x] Freeze and prepare the first complete BMW calibration-lap dossier: run-015,
+  frames 17160–25888 with padding; counter boundaries separately reviewed.
+- [x] Review every frame of that complete-lap dossier: 8,729 readable cells,
+  separately attributed to two gpt-5.6-sol reviewers; no inferred numerical truth.
+- [x] Replay admission/progress with the complete calibration-lap visibility;
+  run-015 full BMW replay: one accepted lap, 8,679/8,705 fresh speed observations,
+  `s` available on 8,473 lap frames. No whole-source or independent accuracy claim.
+  Evidence and interpolation limits: `docs/calibration-lap-results.md`.
+- [ ] Prepare and review exhaustive native 1080p lap-counter event evidence on
+  BMW and incidents; the historical 720p review cannot satisfy this gate.
 - [ ] Reserve and evaluate a distinct independent recording before any inspection,
   after development choices are frozen. Keep missing latency truth not_evaluated.
 

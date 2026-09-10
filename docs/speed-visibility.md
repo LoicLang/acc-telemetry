@@ -52,3 +52,7 @@ Development review completed on 10 September: all 1,247 prepared segment frames
 are readable. Scoped current-code admission and remaining failures are documented
 in [speed-visibility-results.md](speed-visibility-results.md); this does not extend
 visibility to complete laps or qualify Gate A.
+
+The subsequent first complete BMW lap review and full-source replay are recorded in
+[calibration-lap-results.md](calibration-lap-results.md). One development calibration
+is accepted; independent Gate A and metric spatial accuracy remain unqualified.

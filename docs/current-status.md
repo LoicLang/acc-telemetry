@@ -19,14 +19,43 @@ separate/inactive.** A8 changes modern speed extraction; acceptance targets rema
 unchanged. Full BMW/crash development replays and scoped measurements are published.
 
 Active correction specification: `signal-treatment.md`.
-Active plan: `plans/2026-09-09-admission-corrections.md` (**C1/C2/C3 delivered; short-segment visibility reviewed; whole-lap and independent acceptance remain open**).
+Active plan: `plans/2026-09-09-admission-corrections.md` (**C1/C2/C3 delivered; one complete BMW lap reviewed and calibrated; exhaustive events and independent acceptance remain open**).
 Previous A8: `plans/2026-09-09-fresh-measurements.md` (completed within available evidence).
 Parent product specification: `specs/2026-09-05-reference-corner-coach-design.md`.
 Completed A7 execution: `plans/2026-09-05-coaching-reliability.md`; Gate A still fails.
 Contract: `capture-validation.md`. Full results: `capture-validation-results.md`.
 Preserved semantic constraints: `coaching-reliability-resume.md`.
 
-## Latest verified tranche — run-014
+## Latest verified tranche — run-015
+
+The first complete BMW calibration-lap dossier is reviewed exhaustively: **8,729
+readable images**, including padding, on 182 sequential sheets plus all 40 scene
+contexts. Two gpt-5.6-sol reviewers own disjoint halves; root independently reviewed
+the two counter boundaries. No user approval is implied. Source metadata/cadence,
+every sheet cell and all media hashes pass. No code/configuration changed.
+
+A frozen full-source production replay exports **47,589 frames**, exact frame/time
+alignment. The calibration interval (17172–25876) has **8,679/8,705 fresh speed
+observations (99.70%)**, 26 explicit abstentions. One lap is now accepted, effective
+integrated length 6,950.81 m, an internal estimate rather than metric accuracy.
+Internal odometry bridges short gaps (45 interpolated edges); published speed stays
+null. The reported zero missing odometry fraction is not 100% raw speed coverage.
+
+`s` becomes available on **8,473/8,705 lap frames**, with 232 uncertainty rejections.
+Only 1/2 BMW landmark passages is now measurable; dispersion remains not_evaluated.
+19/19 approved speed points remain exact; all 564 fixed BMW segment frames are
+admitted. Across the entire source, raw speed OCR and both pedal observations are
+unchanged versus run-011. Current results: `calibration-lap-results.md` and ignored
+`run-015/reports/results.json`; production artifacts: `run-015/processed/bmw-session/`.
+
+**Gate A FAIL; B blocked.** Exhaustive native1080p event truth, broader numerical
+accuracy and distinct independent validation are still missing. Incidents segment
+V-CRASH-15 remains below 95% in run-014. Full-source BMW visibility still has 38,679
+unknown frames. One calibrated development lap does not validate all laps or spatial
+precision. No further source/video is required for the next development task; a new
+recording will be required for independent acceptance. No job remains active.
+
+## Previous verified tranche — run-014
 
 The 32 fixed development segments / 1,247 individual images and all 64 scene
 contexts are reviewed: BMW 564 visible, incidents 683 visible, zero absent or unknown
@@ -231,6 +260,10 @@ Run-014 final verification: focused speed/format/capture/layout tests and the fu
 suite, docs discovery, diff check and preservation hashes are recorded in
 `reports/final-verification.json`; no code or acceptance setting changed.
 
-**Next action:** prepare an all-frame speed-visibility dossier for one complete BMW
-calibration lap, fixing its frame boundaries and source/code/config hashes before
-review and replay. Do not infer lap visibility from these 32 short segments.
+Run-015 final verification: focused calibration/progress/admission/artifact tests,
+317 full-suite tests, media/source preservation, docs discovery and diff check are
+recorded in `run-015/reports/final-verification.json`.
+
+**Next action:** prepare the exhaustive native 1080p lap-counter review dossier for
+BMW and incidents development sources, binding every frame and source hash; reuse
+existing approved boundary windows without expanding their authority.

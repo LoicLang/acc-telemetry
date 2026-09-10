@@ -111,6 +111,7 @@ validation are still missing. Calibration and `s` remain unavailable and were no
 recomputed. Pedal, latency and spatial evidence were not extended. No holdout review,
 720p processing, R, B or research implementation was performed.
 
-No user intervention is required to resolve these reviewed images. Next: prepare an
-all-frame speed-visibility dossier for **one complete BMW calibration lap**, fixing
-its boundaries and source/code/config hashes before review and replay.
+No user intervention is required to resolve these reviewed images. The subsequent
+complete BMW lap review and full-source replay are now published in
+[calibration-lap-results.md](calibration-lap-results.md). The run-014 results and
+fingerprints above remain frozen; the later artifact owns its new calibration evidence.
