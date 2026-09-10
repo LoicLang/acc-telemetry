@@ -7,7 +7,7 @@ read_when:
 
 # Current status
 
-Last verified: **2026-09-09**. Branch `codex/coaching-reliability`; A6 checkpoint
+Last verified: **2026-09-10**. Branch `codex/coaching-reliability`; A6 checkpoint
 `f060637`, A7 validator introduced by `006629f`. Recent Git history owns later IDs.
 Delegate only with an explicitly selected model below GPT-6 Astra, proportionate
 to complexity. Push is authorized; no merge to main. The user
@@ -19,12 +19,35 @@ separate/inactive.** A8 changes modern speed extraction; acceptance targets rema
 unchanged. Full BMW/crash development replays and scoped measurements are published.
 
 Active correction specification: `signal-treatment.md`.
-Active plan: `plans/2026-09-09-admission-corrections.md` (**C1/C2/C3 delivered and replayed; continuous visibility and independent acceptance remain open**).
+Active plan: `plans/2026-09-09-admission-corrections.md` (**C1/C2/C3 delivered; short-segment visibility reviewed; whole-lap and independent acceptance remain open**).
 Previous A8: `plans/2026-09-09-fresh-measurements.md` (completed within available evidence).
 Parent product specification: `specs/2026-09-05-reference-corner-coach-design.md`.
 Completed A7 execution: `plans/2026-09-05-coaching-reliability.md`; Gate A still fails.
 Contract: `capture-validation.md`. Full results: `capture-validation-results.md`.
 Preserved semantic constraints: `coaching-reliability-resume.md`.
+
+## Latest verified tranche — run-014
+
+The 32 fixed development segments / 1,247 individual images and all 64 scene
+contexts are reviewed: BMW 564 visible, incidents 683 visible, zero absent or unknown
+inside the scope. Root (gpt-6-astra) and gpt-5.6-sol retain separate authorship;
+no user approval is implied. Media/source hashes and native 1080p60 cadence pass.
+
+Fresh selected-source speed reader → admission → normalization gives **564/564 BMW
+and 679/683 incidents**, versus frozen sparse-review 39/564 and 40/683. The 40
+preserved approved numeric points are exact (MAE/P95 0/0). Other frame accuracy is
+not established by visibility. Four incidents abstentions retain raw OCR/reasons;
+one rejects a correct 39 after a real displayed 66→39 drop. No policy tuning.
+**V-CRASH-15 remains below target: 28/31 = 90.32%. Gate A FAIL; B blocked.**
+
+This is scoped speed-path evidence, not a full pipeline/artifact replay or a new
+gate pass. Calibration and `s` remain unavailable; complete-lap visibility,
+exhaustive 1080p lap events and a distinct reserved independent recording are missing.
+Full traceability and exact paths: `speed-visibility-results.md`, ignored
+`run-014/reports/scoped-results.json`. New reviews are standalone; old annotations,
+approvals and runs are preserved. One floating end-bound export error was detected
+and corrected in a separate incidents canonical derivative; no code/config changed.
+No job remains active after publication. No user image clarification is needed.
 
 ## Current implementation
 
@@ -79,12 +102,10 @@ kept uninspected until reservation under frozen code. Existing pilot captures re
 the starting point; a second circuit follows the first useful case. See
 `coaching-implementation-roadmap.md` for roles and required sources.
 
-This session ends after this documentation-only decision. No B/C implementation,
-new extraction, acquisition or review is requested today. Brainstorming questions
-should receive explanations without triggering implementation. No job remains active.
-At resumption, retain the exact A visibility-review next action at the end of this file.
-Decision verification: repository-layout tests, 317 full-suite tests, docs discovery
-and diff check pass; logs under `run-013/reports/`. No code or evidence input changed.
+The 10 September request explicitly resumed the work after the prior documentation
+session. The authorized short-segment review and measurement are now complete;
+this does not authorize downstream B/C implementation. Run-013 remains frozen
+verification of the 9 September decision.
 
 Real extraction/pipeline RED tests reproduced 246→255, 179→188 and held invalids.
 Modern speed now publishes strict fresh OCR values or explicit absence, retaining
@@ -206,8 +227,10 @@ Known holdout run-008 cannot become independent again or receive a rewritten res
 Final run-011 logs: `reports/final-focused-v2.txt` (103 tests), `final-full-v2.txt`
 (314 tests), and `preserved-final-v2.json` (207 unchanged prior evidence files).
 
-**Next action:** review every sequential sheet and scene context in
-`run-011/reports/speed-continuous-review-dossier.json` (32 frozen segments, 1,247
-frames), then publish separately attributed source-bound visibility into a new
-output. All proposed frames are unknown/unreviewed. Complete calibration-lap
-visibility and a distinct pre-reserved independent recording follow; B remains blocked.
+Run-014 final verification: focused speed/format/capture/layout tests and the full
+suite, docs discovery, diff check and preservation hashes are recorded in
+`reports/final-verification.json`; no code or acceptance setting changed.
+
+**Next action:** prepare an all-frame speed-visibility dossier for one complete BMW
+calibration lap, fixing its frame boundaries and source/code/config hashes before
+review and replay. Do not infer lap visibility from these 32 short segments.

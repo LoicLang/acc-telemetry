@@ -7,6 +7,11 @@ read_when:
 
 # A9 correction evidence
 
+The frozen correction results below remain unchanged. The 10 September exhaustive
+short-segment visibility review and new scoped admission results are published in
+[speed-visibility-results.md](speed-visibility-results.md). Gate A still fails;
+old full-session fingerprints are not transferred to that scoped replay.
+
 Baseline `b5eb04c`; outputs are exclusively under ignored
 `data/lab/coaching-reliability/run-011/`. Prior A6/A7/A8 sources, annotations,
 reviewer identities and gates remain frozen. `reports/preserved-before.json`

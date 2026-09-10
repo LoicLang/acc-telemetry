@@ -85,8 +85,11 @@ field/independent evidence; calibration and `s` are unavailable under sparse rev
   trajectory review and exercise follow-up; metric `d` deferred until an evidenced
   limitation justifies separate research. No B/C execution started by this decision.
 
-- [ ] Review the prepared 32-segment / 1,247-frame speed visibility dossier with
+- [x] Review the prepared 32-segment / 1,247-frame speed visibility dossier with
   explicit reviewer identity and uncertainty, preserving all previous approvals.
+  Run-014: all cells readable; scoped fresh admission 564/564 BMW, 679/683 incidents.
+  V-CRASH-15 remains 28/31, below 95%; whole-lap and independent gates remain open.
+  Evidence and limitations: `docs/speed-visibility-results.md`.
 - [ ] Review complete calibration-lap speed visibility and replay admission/progress;
   do not infer whole-lap readability from short target segments.
 - [ ] Reserve and evaluate a distinct independent recording before any inspection,

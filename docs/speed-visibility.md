@@ -47,3 +47,8 @@ Software evidence: run-011 `reports/hud-red.txt` (two real functional failures),
 digits, menu/absence, explicit unknown, omitted intervals, black ROI, fresh return,
 source mismatch, invalid intervals and artifact roundtrip. Synthetic contexts do
 not establish empirical detection accuracy on unreviewed video.
+
+Development review completed on 10 September: all 1,247 prepared segment frames
+are readable. Scoped current-code admission and remaining failures are documented
+in [speed-visibility-results.md](speed-visibility-results.md); this does not extend
+visibility to complete laps or qualify Gate A.
