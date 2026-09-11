@@ -129,6 +129,6 @@ Measurement fingerprint:
 Results fingerprint:
 `dc6860d3c6995ff5953a16bb13bba0910ca945b2e46d72dc9a13c71d4708d10c`.
 
-Next action: prepare the exhaustive native 1080p lap-counter review dossier for the
-BMW and incidents development sources, with source hashes and every frame accounted
-for; reuse existing approved boundary windows without expanding their authority.
+The subsequent exhaustive native1080p counter dossier is now prepared; see
+[lap-counter-dossier.md](lap-counter-dossier.md). Its full visual event review remains
+open, with prior approvals and their channel semantics kept separate.

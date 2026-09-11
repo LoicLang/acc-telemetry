@@ -98,8 +98,12 @@ field/independent evidence; calibration and `s` are unavailable under sparse rev
   run-015 full BMW replay: one accepted lap, 8,679/8,705 fresh speed observations,
   `s` available on 8,473 lap frames. No whole-source or independent accuracy claim.
   Evidence and interpolation limits: `docs/calibration-lap-results.md`.
-- [ ] Prepare and review exhaustive native 1080p lap-counter event evidence on
-  BMW and incidents; the historical 720p review cannot satisfy this gate.
+- [x] Prepare exhaustive native1080p BMW/incidents counter media: run-016,
+  76,991 ordered frames / 803 sheets, bound hashes and preserved prior annotations.
+  L2 timer reset10→11 and numeric counter14→15 are separately recorded; no relabelling.
+  Preparation and limits: `docs/lap-counter-dossier.md`.
+- [ ] Review every prepared BMW/incidents counter cell, then evaluate compatible
+  event measurements. Keep timer resets distinct; 720p cannot satisfy this gate.
 - [ ] Reserve and evaluate a distinct independent recording before any inspection,
   after development choices are frozen. Keep missing latency truth not_evaluated.
 

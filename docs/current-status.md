@@ -7,7 +7,7 @@ read_when:
 
 # Current status
 
-Last verified: **2026-09-10**. Branch `codex/coaching-reliability`; A6 checkpoint
+Last verified: **2026-09-11**. Branch `codex/coaching-reliability`; A6 checkpoint
 `f060637`, A7 validator introduced by `006629f`. Recent Git history owns later IDs.
 Delegate only with an explicitly selected model below GPT-6 Astra, proportionate
 to complexity. Push is authorized; no merge to main. The user
@@ -19,14 +19,33 @@ separate/inactive.** A8 changes modern speed extraction; acceptance targets rema
 unchanged. Full BMW/crash development replays and scoped measurements are published.
 
 Active correction specification: `signal-treatment.md`.
-Active plan: `plans/2026-09-09-admission-corrections.md` (**C1/C2/C3 delivered; one complete BMW lap reviewed and calibrated; exhaustive events and independent acceptance remain open**).
+Active plan: `plans/2026-09-09-admission-corrections.md` (**C1/C2/C3 delivered; one BMW lap calibrated; exhaustive counter dossier prepared, event review and independent acceptance open**).
 Previous A8: `plans/2026-09-09-fresh-measurements.md` (completed within available evidence).
 Parent product specification: `specs/2026-09-05-reference-corner-coach-design.md`.
 Completed A7 execution: `plans/2026-09-05-coaching-reliability.md`; Gate A still fails.
 Contract: `capture-validation.md`. Full results: `capture-validation-results.md`.
 Preserved semantic constraints: `coaching-reliability-resume.md`.
 
-## Latest verified tranche — run-015
+## Latest verified tranche — run-016
+
+The exhaustive native1080p counter dossier is **prepared, not fully visually reviewed**:
+47,589 BMW + 29,402 incidents frames, **76,991 ordered cells on 803 sheets**,
+132 scene contexts. Source/metadata/cadence and all sheet/crop/index hashes and pixel
+correspondence pass. Every frame retains its own row/cell; identical crop pixels share
+storage only. All preparation labels remain unreviewed/null/unknown. No new OCR,
+telemetry replay, code/configuration or acceptance target change occurred.
+
+Original three user boundary intervals and two run-015 agent reviews remain separate
+and preserved. A targeted root review of incidents frames8–19 confirms timer reset
+at10→11, numeric counter3→4 at14→15. The old L2 interval coincides with timer reset;
+do not silently reuse it as counter-event truth or change its approval.
+
+Entry: `lap-counter-dossier.md`, ignored `run-016/START_HERE.md` and
+`run-016/reports/lap-counter-review-dossier.json`. **Gate A FAIL; B blocked.**
+Exhaustive counter semantics and independent acceptance remain open; no user video
+or clarification is needed for the next review. No job remains active.
+
+## Previous calibration tranche — run-015
 
 The first complete BMW calibration-lap dossier is reviewed exhaustively: **8,729
 readable images**, including padding, on 182 sequential sheets plus all 40 scene
@@ -264,6 +283,10 @@ Run-015 final verification: focused calibration/progress/admission/artifact test
 317 full-suite tests, media/source preservation, docs discovery and diff check are
 recorded in `run-015/reports/final-verification.json`.
 
-**Next action:** prepare the exhaustive native 1080p lap-counter review dossier for
-BMW and incidents development sources, binding every frame and source hash; reuse
-existing approved boundary windows without expanding their authority.
+Run-016 final verification: focused capture/format/lap/layout tests and the full
+317-test suite, old evidence preservation, complete preparation integrity, docs
+discovery and diff check are recorded in `run-016/reports/final-verification.json`.
+
+**Next action:** review all 496 BMW and 307 incidents counter sheets in order and
+publish a separately attributed source-bound counter-event review with uncertainty;
+keep original L2 approval and the timer/counter channel distinction intact.
