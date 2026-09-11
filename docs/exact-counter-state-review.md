@@ -1,15 +1,16 @@
 ---
-summary: paused run-020 exact RGB counter-state mapping, independent mechanical audit and partial primary-agent semantic review
+summary: complete BMW fixed-ROI counter review, exact pixel mapping and scoped run-021 event and observation results
 read_when:
   - resuming the counter review after sustained Astra inconsistency
   - interpreting exact-pixel equivalence and its limited annotation scope
 ---
 
-# Exact counter-state review — paused
+# Exact counter-state review — BMW complete
 
-The owner requested shutdown. No job remains active. Resume at ignored
-`data/lab/coaching-reliability/run-020/START_HERE.md` and
-`reports/pause-checkpoint.json`.
+The owner resumed after the run-020 shutdown checkpoint. The primary agent finished
+all44 state sheets; new compiled labels and measurements are frozen in ignored
+`data/lab/coaching-reliability/run-021/`. The original pause checkpoint and its ledger
+prefix remain intact; run-020 review rows were appended after actual visual inspection.
 
 ## Why the method changed
 
@@ -43,23 +44,61 @@ full-frame/HUD context, physical line crossings, spatial accuracy or independent
 acceptance. Any eventual mapped label must retain its representative review and equality
 provenance; never present mapping as separate manual inspection of every duplicate frame.
 
-## Exact pause point
+## Completed BMW result — run-021
 
-Primary agent visually inspected **sheets1–12, groups0–1151 inclusive**, representing
-1152 distinct matrices. All these matrices show literal0, visible. The per-sheet source
-hashes, group ranges and reviewer are recorded in `reports/root-exact-state-review.jsonl`.
-Sheet12 was appended before pausing. The first366 matrices needed by the initial3840-frame
-batch are within this review, but no final per-frame result or gate verdict was published.
+The primary agent visually inspected **4,159 distinct RGB matrices on44 sheets**, all
+readable. This is a review of unique fixed-ROI states, mapped to **47,589 source frames**
+by exact byte equality; it is not a claim of manual review of all496 original sheets.
+The label ledger preserves each sheet hash, inclusive ranges and reviewer identity.
+No rejected Sol/Astra labels were imported. No user approval is implied.
 
-**Groups1152–4158 remain semantically unreviewed.** The next image is
-`processed/bmw-exact-states/013.png`, groups1152–1247. Display it at original detail,
-inspect every matrix, then append actual ranges with `append_state_review.py`.
-Continue through sheet44 before compiling and validating full-source fixed-ROI labels.
-Do not infer later values from the previously reviewed zeros.
+The compiler rechecks every source crop's hash and decoded ROI against its representative,
+all sheet hashes, the original pause-ledger prefix, source SHA/size, artifact payloads,
+current extraction modules and resolved settings. All pass. It retains each frame's
+source PTS, group, representative, literal label and reviewer. No gaps or unknown labels
+remain inside this numeric ROI. The initial3840-frame lot covers366 states and agrees
+with all21 predeclared native QA references.
 
-Incidents mechanical inventory:29402 frames and24267 distinct RGB matrices. No semantic
-exact-state review was started for that source. Previous eight targeted event checks
-remain scoped; no exhaustive recall claim or new gate pass follows from this pause.
+| Numeric change | Last old → first new frame | First new digit (s) |
+| --- | --- | --- |
+| 0→1 | 17167→17168 | 286.133333 |
+| 1→2 | 25871→25872 | 431.200000 |
+| 2→3 | 34630→34631 | 577.183333 |
+| 3→4 | 43342→43343 | 722.383333 |
 
-**Gate A remains FAIL; B/R remain blocked.** No code/configuration/threshold, old review
-or source file changed. Pause tests and docs checks are saved in `run-020/reports/`.
+These are all four changes in the mapped ordered sequence; no reset or other numeric
+change appears. No boundary is invented before/after the source; its initial and final
+lap fragments remain partial. Literal frame counts:0=17168,1=8704,2=8759,3=8712,4=4246.
+
+The unchanged run-015 full BMW extraction has **47,589/47,589 exact fresh lap-number
+observations**, zero missing/wrong/nonfresh observations, against these labels. This
+measures extraction observations, not the normalized confirmed lap state, speed,
+physical lap timing or full telemetry accuracy.
+
+All4 events match with no miss, duplicate or unmatched prediction: scoped precision
+and recall1.0. P95 midpoint error is **0.008333s**, equal to the half-width of each
+one-frame annotation bracket. First candidate is exactly the first frame displaying
+the new digit; confirmation follows **0.066667s** later. The unchanged1s association
+window and0.10s P95 target yield `fixed_roi_event_status: pass` for BMW only.
+
+Evidence under run-021: `reports/bmw-numeric-truth.json`, `bmw-results.json`,
+`result-audit.json`, `integrity.json` and `processed/bmw-fixed-roi-labels.jsonl`.
+The scripts `evaluate_bmw.py` and `verify_results.py` retain the reproducible checks;
+outputs are created exclusively and old reports are never overwritten.
+
+## Remaining scope
+
+Incidents inventory contains29,402 frames and24,267 distinct RGB matrices. Its full
+semantic exact-state review has not started. The eight earlier targeted event checks
+remain preserved; the incidents recall is still not_evaluated. Its L2 timer reset10→11
+must remain distinct from the numeric change14→15.
+
+**Gate A remains FAIL; B/R remain blocked.** This result validates a numeric ROI on one
+known development video. It does not establish full-scene context, physical crossings,
+other-circuit performance or independent acceptance. Speed coverage, numerical speed
+truth and independent recording evidence remain separate blockers. No application code,
+configuration, threshold, source or old approval changed.
+
+Next: prepare the incidents unique-state review sheets from its existing exact inventory,
+verify their native ROI mapping, and begin explicit primary visual labels. Do not infer
+those labels from BMW states or revive the failed sustained agent ledgers.

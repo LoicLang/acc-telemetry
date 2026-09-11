@@ -26,23 +26,24 @@ Completed A7 execution: `plans/2026-09-05-coaching-reliability.md`; Gate A still
 Contract: `capture-validation.md`. Full results: `capture-validation-results.md`.
 Preserved semantic constraints: `coaching-reliability-resume.md`.
 
-## Paused by owner — run-020
+## BMW counter review completed — run-021
 
-**Owner requested shutdown; no active job. Resume only on request.**
-Sustained Astra again read identical native PNGs inconsistently. Its run-020 ledger
-is diagnostic, not truth. The protocol audit confirms single-image calls; cause remains
-unknown. No source/code/configuration or acceptance threshold changed.
+Owner resumed. Primary review now covers all **4,159 distinct BMW numeric-ROI states**,
+with exact RGB mapping to **47,589 native source frames**. Every decoded source ROI was
+rechecked against its representative; sheet/source/payload hashes and current extraction
+compatibility pass. This is unique-state review plus exact mapping, not manual inspection
+of every original sheet. Rejected agent labels remain diagnostic only.
 
-A new exact-pixel method is under evaluation: every BMW frame is mapped by byte-exact
-raw RGB equality in the existing counter ROI. Independent mechanical audit passes all
-47,589 rows,35,546 original crop paths,4,159 groups and44 state sheets. This is only
-fixed-ROI equality proof, not full-frame context or semantic/independent acceptance.
+**47,589/47,589 fresh counter observations are exact.** All four numeric transitions are
+found with zero missed/extra events; scoped precision/recall1.0, P95 midpoint error8.3ms,
+confirmation delay66.7ms. No additional numeric reset/change appears in the ordered ROI
+sequence. The initial3840-frame QA lot agrees21/21. BMW fixed-ROI event check passes;
+**overall Gate A still FAILS; B/R blocked**. No code/configuration/threshold changed.
 
-Primary visual review is saved through **sheet12 / groups0–1151**, all literal0,
-visible. **Groups1152–4158 remain unreviewed.** No fullsource mapped truth or new gate
-verdict has been published. Exact resume: `run-020/START_HERE.md`,
-`reports/pause-checkpoint.json`; details: `exact-counter-state-review.md`.
-Gate A FAIL; B/R blocked. Existing measurements and old evidence remain preserved.
+This is one development recording, not independent acceptance or physical crossing truth.
+Incidents full-source review and speed/independent blockers remain. Details and evidence:
+`exact-counter-state-review.md`, ignored `run-021/START_HERE.md`,
+`reports/bmw-results.json`, `result-audit.json` and `integrity.json`.
 
 ## Previous bounded trial — run-019
 
@@ -360,6 +361,10 @@ docs discovery and diff check; logs are under `run-019/reports/`.
 Run-020 pause verification: focused/full tests, docs discovery and diff check are
 recorded in `run-020/reports/`. No active job remains.
 
-**Next action:** view `run-020/processed/bmw-exact-states/013.png` (groups1152–1247),
-inspect every matrix, then append its actual labels; continue from the saved exact-state
-ledger without inferring unreviewed values or consuming rejected Astra annotations.
+Run-021 verification: completed exact mapping and output audit; focused/full tests,
+docs discovery and diff check recorded under `run-021/reports/`.
+
+**Next action:** prepare incidents unique-state sheets from the preserved run-020
+`reports/crash-exact-pixel-inventory.json`, verify native ROI mapping, then begin primary
+visual review. Keep incidents timer-reset and counter-change labels distinct; no failed
+agent labels or inferred unreviewed states.
