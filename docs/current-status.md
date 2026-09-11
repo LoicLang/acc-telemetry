@@ -26,6 +26,24 @@ Completed A7 execution: `plans/2026-09-05-coaching-reliability.md`; Gate A still
 Contract: `capture-validation.md`. Full results: `capture-validation-results.md`.
 Preserved semantic constraints: `coaching-reliability-resume.md`.
 
+## Incidents counter review completed — run-022
+
+Primary review covers all **24,267 distinct incidents numeric-ROI states**, mapped by
+exact raw RGB equality to **29,402 source frames**. Every state is readable. All source
+ROI mappings, sheet tiles, source identity and counter-path compatibility rechecked.
+No rejected reviewer labels, OCR rerun, code/configuration or threshold change.
+
+**29,402/29,402 counter observations exact;4/4 events, zero missed/extra events.**
+Scoped P95 midpoint error8.3ms, confirmation66.7ms. The complete numeric sequence has
+only3→4,4→5,5→6,6→7. L2's timer-reset10→11 remains distinct from counter14→15.
+This is unique-state review plus exact mapping, not manual inspection of every duplicate.
+
+The result uses the **isolated counter path**, whose `last_observed_time_s` is null;
+it is not full-source telemetry-v2 freshness/parity or independent acceptance.
+**Gate A FAIL; B/R blocked.** Full pipeline verification and speed/independent blockers
+remain. Details: `incidents-counter-results.md`; ignored `run-022/START_HERE.md`,
+`reports/crash-results.json`, `result-audit.json` and `final-integrity.json`.
+
 ## BMW counter review completed — run-021
 
 Owner resumed. Primary review now covers all **4,159 distinct BMW numeric-ROI states**,
@@ -41,7 +59,7 @@ sequence. The initial3840-frame QA lot agrees21/21. BMW fixed-ROI event check pa
 **overall Gate A still FAILS; B/R blocked**. No code/configuration/threshold changed.
 
 This is one development recording, not independent acceptance or physical crossing truth.
-Incidents full-source review and speed/independent blockers remain. Details and evidence:
+Incidents counter review is now completed above; speed/independent blockers remain. Details and evidence:
 `exact-counter-state-review.md`, ignored `run-021/START_HERE.md`,
 `reports/bmw-results.json`, `result-audit.json` and `integrity.json`.
 
@@ -364,7 +382,11 @@ recorded in `run-020/reports/`. No active job remains.
 Run-021 verification: completed exact mapping and output audit; focused/full tests,
 docs discovery and diff check recorded under `run-021/reports/`.
 
-**Next action:** prepare incidents unique-state sheets from the preserved run-020
-`reports/crash-exact-pixel-inventory.json`, verify native ROI mapping, then begin primary
-visual review. Keep incidents timer-reset and counter-change labels distinct; no failed
-agent labels or inferred unreviewed states.
+Run-022 verification: full exact-state media/mapping audit, complete counter evaluation,
+prior BMW evidence preservation,45 focused tests and317 full tests; docs discovery and
+diff check logged under `run-022/reports/`.
+
+**Next action:** replay complete incidents through the shared telemetry pipeline using
+existing source-bound visibility evidence, then compare every counter observation and
+event against run-022 truth. Preserve missing speed; no inferred visibility, threshold
+tuning or historical holdout inspection.

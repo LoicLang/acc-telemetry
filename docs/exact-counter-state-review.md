@@ -88,17 +88,16 @@ outputs are created exclusively and old reports are never overwritten.
 
 ## Remaining scope
 
-Incidents inventory contains29,402 frames and24,267 distinct RGB matrices. Its full
-semantic exact-state review has not started. The eight earlier targeted event checks
-remain preserved; the incidents recall is still not_evaluated. Its L2 timer reset10→11
-must remain distinct from the numeric change14→15.
+Incidents review is now complete in run-022:24,267 manually reviewed unique RGB states,
+29,402 exact mapped source frames,29,402/29,402 observed counter reads exact and4/4 events,
+zero misses/extras, P95 8.3ms. The incidents measurement uses the isolated counter path,
+not a full telemetry-v2 artifact. See [incidents-counter-results.md](incidents-counter-results.md)
+for evidence, null freshness metadata and the unchanged L2 channel distinction.
 
-**Gate A remains FAIL; B/R remain blocked.** This result validates a numeric ROI on one
-known development video. It does not establish full-scene context, physical crossings,
-other-circuit performance or independent acceptance. Speed coverage, numerical speed
-truth and independent recording evidence remain separate blockers. No application code,
-configuration, threshold, source or old approval changed.
+**Gate A remains FAIL; B/R remain blocked.** Both fixed-ROI reviews are development
+measurements, not full-scene context, physical crossings or independent acceptance.
+Speed coverage, numerical speed truth and independent recording evidence remain separate
+blockers. No application code, configuration, threshold, source or old approval changed.
 
-Next: prepare the incidents unique-state review sheets from its existing exact inventory,
-verify their native ROI mapping, and begin explicit primary visual labels. Do not infer
-those labels from BMW states or revive the failed sustained agent ledgers.
+Next: replay the incidents full shared telemetry pipeline with existing visibility evidence,
+compare its counter output against run-022 truth, and preserve missing speed explicitly.

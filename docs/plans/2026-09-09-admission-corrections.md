@@ -104,13 +104,11 @@ field/independent evidence; calibration and `s` are unavailable under sparse rev
   76,991 ordered frames / 803 sheets, bound hashes and preserved prior annotations.
   L2 timer reset10→11 and numeric counter14→15 are separately recorded; no relabelling.
   Preparation and limits: `docs/lap-counter-dossier.md`.
-- [ ] Review every prepared BMW/incidents counter cell, then evaluate compatible
-  event measurements. Keep timer resets distinct; 720p cannot satisfy this gate.
-  Run-018 recovery:960/960 short pilot agreement did not hold in extended passes;
-  compact presentation also unqualified. Failed labels remain rejected. Root verifies
-  all 8 published predictions against targeted pixels, but recall/exhaustiveness remain
-  not_evaluated. See `docs/counter-review-recovery.md`; stronger-model qualification
-  required an explicit exception to the owner’s no-Astra-subagent restriction.
+- [x] Complete exhaustive fixed numeric-counter ROI review on BMW/incidents via
+  primary unique-state inspection and exact source-frame mapping, then evaluate
+  compatible counter events. Run-021/022 cover76991frames,8/8events, zero misses/extras.
+  This replaces the rejected sustained source-sheet reviews; it is not a claim that
+  all803 original sheets were manually read. Timer reset and numeric events stay distinct.
 - [x] Run the explicitly authorized bounded Astra qualification: run-019,
   1,355/1,355 presentations agree (1,348 distinct frames), 8/8 brackets exact.
   This is a small method trial; sustained/exhaustive review remains unqualified.
@@ -122,8 +120,12 @@ field/independent evidence; calibration and `s` are unavailable under sparse rev
   observations exact;4/4 events, zero misses/extras, P95 8.3ms. BMW ROI scope only;
   incidents/global gate and independent validation remain open.
   Method, evidence and limits: `docs/exact-counter-state-review.md`.
-- [ ] Complete incidents fixed-ROI review and compatible event/observation evaluation,
-  preserving timer-reset versus numeric-counter semantics and explicit uncertainty.
+- [x] Complete incidents fixed-ROI review and compatible event/observation evaluation.
+  Run-022:24267 states/29402frames;29402 observed counter values exact,4/4events,
+  P95 8.3ms. Isolated counter-path scope, no full telemetry-v2 freshness/parity claim.
+  Evidence/limits: `docs/incidents-counter-results.md`.
+- [ ] Replay incidents through the full shared telemetry pipeline and compare counters
+  to frozen run-022 truth with existing visibility evidence; retain speed abstentions.
 - [ ] Reserve and evaluate a distinct independent recording before any inspection,
   after development choices are frozen. Keep missing latency truth not_evaluated.
 
