@@ -104,9 +104,11 @@ field/independent evidence; calibration and `s` are unavailable under sparse rev
   Preparation and limits: `docs/lap-counter-dossier.md`.
 - [ ] Review every prepared BMW/incidents counter cell, then evaluate compatible
   event measurements. Keep timer resets distinct; 720p cannot satisfy this gate.
-  Run-017 paused by owner: exploratory visual labels failed root pixel QA and are
-  not accepted. Validate viewing method before restarting. Current BMW compatibility
-  and fresh incidents counter-only reads are saved; no event verdict published.
+  Run-018 recovery:960/960 short pilot agreement did not hold in extended passes;
+  compact presentation also unqualified. Failed labels remain rejected. Root verifies
+  all8 published predictions against targeted pixels, but recall/exhaustiveness remain
+  not_evaluated. See `docs/counter-review-recovery.md`; stronger-model qualification
+  needs an explicit exception to the owner’s no-Astra-subagent restriction.
 - [ ] Reserve and evaluate a distinct independent recording before any inspection,
   after development choices are frozen. Keep missing latency truth not_evaluated.
 

@@ -125,3 +125,7 @@ Current-code BMW artifact compatibility passed. Fresh source-complete incidents
 reads from the counter-only path (29,402 frames) are saved, with a passing40-frame
 comparison against the actual pipeline. Neither operation establishes visual event
 truth; no new lap-event gate verdict was published.
+
+Subsequent recovery attempts and targeted verification of the eight published events
+are documented in [counter-review-recovery.md](counter-review-recovery.md). Exhaustive
+review remains unqualified; failed run-018 ledgers must not supply annotation truth.
