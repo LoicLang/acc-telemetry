@@ -79,7 +79,7 @@ No background job remains active. Focused/full tests, docs discovery, diff check
 saved-evidence checks are recorded under `run-018/reports/`.
 
 The owner originally prohibited Astra sub-agents and limited visual delegation to
-explicitly selected gpt-5.6-sol. The next step is to obtain an explicit exception for
-a **bounded stronger-model visual qualification**, before any further exhaustive pass.
-No exception has been assumed or exercised. Start at `run-018/START_HERE.md`; preserve
-all failed reports and use only the targeted results within their stated scope.
+explicitly selected gpt-5.6-sol. They subsequently authorized a bounded Astra visual
+experiment. Its result and limits are in [astra-review-trial.md](astra-review-trial.md).
+The older failures above remain preserved and unaccepted; the new trial does not
+retroactively qualify them or establish complete-source truth.

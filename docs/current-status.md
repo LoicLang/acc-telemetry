@@ -9,8 +9,8 @@ read_when:
 
 Last verified: **2026-09-11**. Branch `codex/coaching-reliability`; A6 checkpoint
 `f060637`, A7 validator introduced by `006629f`. Recent Git history owns later IDs.
-Delegate only with an explicitly selected model below GPT-6 Astra, proportionate
-to complexity. Push is authorized; no merge to main. The user
+Default delegation stays below GPT-6 Astra with explicit model selection. The owner
+authorized one bounded Astra visual trial on 11 September; see `astra-review-trial.md`. Push is authorized; no merge to main. The user
 explicitly requests autonomous visual verification wherever reliable, with uncertainty
 preserved; do not ask them to repeat accepted or reliably agent-verifiable reviews.
 
@@ -26,7 +26,25 @@ Completed A7 execution: `plans/2026-09-05-coaching-reliability.md`; Gate A still
 Contract: `capture-validation.md`. Full results: `capture-validation-results.md`.
 Preserved semantic constraints: `coaching-reliability-resume.md`.
 
-## Latest work — run-018, 11 September 2026
+## Latest verified work — run-019
+
+The owner authorized the bounded Astra experiment. One gpt-6-astra sub-agent with high
+reasoning inspected 14 sheets and 11 native crops. **All 1,355 presentations agree with
+root's withheld pixel references (1,348 distinct source frames); all 8 transition
+brackets match and all 11 disputed crops are read correctly.** No false absence or
+uncertainty was reported on this fixed lot. Source/media/code/config integrity passes.
+
+This qualifies only the small trial. Prior short Sol qualification also passed before
+sustained failure; no general reliability, real-HUD-absence detection, other-circuit
+performance or full 803-sheet coverage is implied. No new recording or OCR replay.
+**Gate A FAIL; exhaustive recall not_evaluated; B/R blocked.** Old failed labels remain
+rejected and preserved. No job remains active.
+
+Results: `astra-review-trial.md`, ignored `run-019/reports/trial-results.json` and
+`run-019/reports/final-verification.json`. The model exception is recorded for this
+bounded visual trial; it is not blanket authorization for unrelated Astra delegation.
+
+## Previous recovery work — run-018, 11 September 2026
 
 Owner resumed after the shutdown checkpoint. No job now remains active.
 **Exhaustive visual annotation remains blocked by reviewer reliability.** The single
@@ -48,8 +66,8 @@ change, old annotation rewrite or holdout work. **Gate A FAIL; B/R blocked.**
 Evidence and limits: `counter-review-recovery.md`, ignored `run-018/START_HERE.md`,
 `reports/method-outcome.json`, `reports/targeted-event-results.json` and
 `reports/reuse-integrity.json` under run-018. Run-017 and run-018 exploratory annotations
-remain rejected/preserved. A stronger visual reviewer requires an exception to the
-owner's original no-Astra-subagent restriction; no exception has been assumed.
+remain rejected/preserved. The subsequent explicitly authorized bounded Astra
+experiment is documented above; these older failed labels remain unaccepted.
 
 ## Prepared dossier — run-016
 
@@ -318,5 +336,9 @@ recorded under `run-017/reports/`. No repository code/configuration changed.
 Run-018 verification: focused/full tests, saved-source/payload integrity, docs discovery
 and diff check are recorded under `run-018/reports/`.
 
-**Next action:** obtain the owner's exception for a bounded stronger-model visual
-qualification before another exhaustive pass; do not reuse the failed reviewer labels.
+Run-019 final verification includes preserved inputs/code/config, focused/full tests,
+docs discovery and diff check; logs are under `run-019/reports/`.
+
+**Next action:** freeze the first 40 consecutive BMW counter sheets (frames 0–3839) and
+native QA sentinels before a controlled sustained-reading pass; assess that batch
+before extending to the complete dossier.

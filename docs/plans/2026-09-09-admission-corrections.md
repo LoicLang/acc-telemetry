@@ -19,7 +19,9 @@ The completed historical tasks below predate this decision and must not be rerun
 
 Authorized after A8 on 2026-09-09. Specification: `docs/signal-treatment.md`.
 Baseline: `b5eb04c`; evidence remains frozen under run-010. New outputs: run-011.
-Only explicitly selected models below GPT-6 Astra may receive delegated work.
+Default delegation uses explicitly selected models below GPT-6 Astra. On 11 September
+the owner explicitly authorized a bounded Astra visual experiment; its scope and
+result are recorded in `docs/astra-review-trial.md`.
 No holdout inspection/tuning, acceptance target change, pedal smoothing, R or B.
 
 ## C1 — Source-bound speed HUD visibility
@@ -106,9 +108,14 @@ field/independent evidence; calibration and `s` are unavailable under sparse rev
   event measurements. Keep timer resets distinct; 720p cannot satisfy this gate.
   Run-018 recovery:960/960 short pilot agreement did not hold in extended passes;
   compact presentation also unqualified. Failed labels remain rejected. Root verifies
-  all8 published predictions against targeted pixels, but recall/exhaustiveness remain
+  all 8 published predictions against targeted pixels, but recall/exhaustiveness remain
   not_evaluated. See `docs/counter-review-recovery.md`; stronger-model qualification
-  needs an explicit exception to the owner’s no-Astra-subagent restriction.
+  required an explicit exception to the owner’s no-Astra-subagent restriction.
+- [x] Run the explicitly authorized bounded Astra qualification: run-019,
+  1,355/1,355 presentations agree (1,348 distinct frames), 8/8 brackets exact.
+  This is a small method trial; sustained/exhaustive review remains unqualified.
+- [ ] Freeze and assess a contiguous 40-sheet BMW batch with predeclared native QA
+  before extending the visual review to all 803 sheets.
 - [ ] Reserve and evaluate a distinct independent recording before any inspection,
   after development choices are frozen. Keep missing latency truth not_evaluated.
 
