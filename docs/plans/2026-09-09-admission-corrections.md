@@ -124,8 +124,14 @@ field/independent evidence; calibration and `s` are unavailable under sparse rev
   Run-022:24267 states/29402frames;29402 observed counter values exact,4/4events,
   P95 8.3ms. Isolated counter-path scope, no full telemetry-v2 freshness/parity claim.
   Evidence/limits: `docs/incidents-counter-results.md`.
-- [ ] Replay incidents through the full shared telemetry pipeline and compare counters
-  to frozen run-022 truth with existing visibility evidence; retain speed abstentions.
+- [ ] Run the existing incidents capture through the actual shared telemetry pipeline,
+  compare counters to frozen run-022 truth and retain speed abstentions.
+- [ ] Open/show the generated report, including curves, laps, missing data and available
+  progress. Complete bounded video-aligned QA on braking, acceleration, incident and
+  lap-boundary windows; deliver usefulness and concrete blockers to the owner.
+  Owner priority: `docs/real-system-trial.md`. No further exhaustive annotation or
+  reviewer qualification before this end-to-end demonstration. Fix only material
+  evidenced defects; Gate A still blocks trustworthy coaching, not this trial.
 - [ ] Reserve and evaluate a distinct independent recording before any inspection,
   after development choices are frozen. Keep missing latency truth not_evaluated.
 

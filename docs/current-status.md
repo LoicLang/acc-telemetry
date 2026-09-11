@@ -19,12 +19,26 @@ separate/inactive.** A8 changes modern speed extraction; acceptance targets rema
 unchanged. Full BMW/crash development replays and scoped measurements are published.
 
 Active correction specification: `signal-treatment.md`.
-Active plan: `plans/2026-09-09-admission-corrections.md` (**C1/C2/C3 delivered; one BMW lap calibrated; exhaustive counter dossier prepared, event review and independent acceptance open**).
+Active plan: `plans/2026-09-09-admission-corrections.md` (**C1/C2/C3 delivered; fixed-ROI counter reviews complete; complete-system demonstration next; independent acceptance open**).
 Previous A8: `plans/2026-09-09-fresh-measurements.md` (completed within available evidence).
 Parent product specification: `specs/2026-09-05-reference-corner-coach-design.md`.
 Completed A7 execution: `plans/2026-09-05-coaching-reliability.md`; Gate A still fails.
 Contract: `capture-validation.md`. Full results: `capture-validation-results.md`.
 Preserved semantic constraints: `coaching-reliability-resume.md`.
+
+## Immediate owner priority — complete-system demonstration
+
+The owner explicitly redirects effort from exhaustive annotation to a real end-to-end
+trial. Follow `real-system-trial.md` before further evidence campaigns. Reuse completed
+counter truth. Process the existing incidents video through the actual shared pipeline,
+**open and show its output**, and compare a few useful braking/acceleration/incident/lap
+windows with the source. Report gaps and unavailable progress rather than delaying the
+trial for complete visibility annotations. Fix only demonstrated material defects.
+No new exhaustive review, reviewer qualification, agents or threshold search is needed.
+
+Gate A remains FAIL and coaching B/R stays blocked; this does not block a development
+trial and visualization of current outputs. No new recording is required for this step.
+Independent testing on a distinct reserved capture comes later. Respect the user's quota.
 
 ## Incidents counter review completed — run-022
 
@@ -386,7 +400,8 @@ Run-022 verification: full exact-state media/mapping audit, complete counter eva
 prior BMW evidence preservation,45 focused tests and317 full tests; docs discovery and
 diff check logged under `run-022/reports/`.
 
-**Next action:** replay complete incidents through the shared telemetry pipeline using
-existing source-bound visibility evidence, then compare every counter observation and
-event against run-022 truth. Preserve missing speed; no inferred visibility, threshold
-tuning or historical holdout inspection.
+**Next action:** execute `real-system-trial.md`: run the complete incidents video through
+the real shared pipeline with existing visibility evidence, open the generated report,
+and inspect a small set of useful video-aligned windows. Reuse frozen counter truth;
+show missing speed/progress honestly. Deliver the visible result before any further
+exhaustive review. No new recording or Gate A pass is required to demonstrate it.

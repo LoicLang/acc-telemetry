@@ -11,6 +11,12 @@ Last verified: 2026-09-09
 
 ## Current state
 
+**Immediate owner priority:** demonstrate the complete existing system on the incidents
+video, show the actual generated curves/laps/gaps/progress and check a few useful video
+windows. Reuse completed counter evidence; avoid another exhaustive annotation campaign.
+See `real-system-trial.md`. This development trial is allowed while Gate A fails;
+trustworthy coaching admission remains blocked and acceptance targets are unchanged.
+
 **Approved delivery priority (September 9):** finish A, then deliver one useful B
 corner dossier with qualified metrics, an explained reference, mandatory paired
 trajectory images, one exercise and follow-up evidence. Metric `d` is outside B;
@@ -20,8 +26,9 @@ requires Gate A. Start with Spa, then consider a second circuit after the first 
 
 **Latest owner decision: process only native 1920×1080 at exactly 60 fps CFR.**
 Other input formats are refused before extraction. Historical 720p work is retired;
-its preserved 5/5 result does not qualify the active 1080p gate. An exhaustive
-1080p lap-event review remains necessary. This narrows source scope; it does not
+its preserved 5/5 result does not qualify the active 1080p gate. Fixed-ROI
+1080p counter reviews are complete on BMW/incidents (run-021/022); incidents full-pipeline
+verification and independent acceptance remain pending. This narrows source scope; it does not
 relax numerical acceptance targets or pass Gate A.
 
 The September 5 technical audit narrows the meaning of earlier validation claims:
@@ -61,7 +68,7 @@ calibration and independent acceptance remain open. See `admission-correction-re
 - s_status: representative_clean_and_crash_gates_pass
 - s_latest_validation_status: unavailable_under_sparse_reviewed_speed
 - s_repair_design_status: generic_fusion_implemented
-- long_capture_lap_transition_status: exhaustive_1080p_review_pending_720p_retired
+- long_capture_lap_transition_status: fixed_roi_development_review_complete_full_pipeline_trial_next
 - quality_propagation_status: provenance_verified_independent_gate_blocked
 - downstream_coaching_status: blocked
 
