@@ -107,3 +107,21 @@ validation and other previously recorded coverage/accuracy limits also remain op
 Next action: review all 496 BMW and 307 incidents sheets in order, publishing a new
 source-bound counter-event review with uncertainty, while preserving the original
 L2 interval and its separately established timer/counter distinction.
+
+## Interrupted review attempt — run-017
+
+The owner requested shutdown during review. No job remains active. Reusable technical
+checks and extraction are saved in `run-017/START_HERE.md` and
+`reports/pause-checkpoint.json`; the original run-016 dossier is unchanged.
+
+Exploratory BMW/incident reviewer checkpoints failed root native-pixel QA: some
+claimed absent/unknown counters are clearly visible. The incidents individual
+reinspection (`run-017/reports/crash-review/audit-v2.json`) confirms two wrong labels.
+The cause is not established. These exploratory labels must not be used as truth or
+counted as completed exhaustive review. Validate a reliable display/reading method
+on the disputed crops and sheets before restarting in new report files.
+
+Current-code BMW artifact compatibility passed. Fresh source-complete incidents
+reads from the counter-only path (29,402 frames) are saved, with a passing40-frame
+comparison against the actual pipeline. Neither operation establishes visual event
+truth; no new lap-event gate verdict was published.

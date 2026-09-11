@@ -26,7 +26,29 @@ Completed A7 execution: `plans/2026-09-05-coaching-reliability.md`; Gate A still
 Contract: `capture-validation.md`. Full results: `capture-validation-results.md`.
 Preserved semantic constraints: `coaching-reliability-resume.md`.
 
-## Latest verified tranche — run-016
+## Paused by owner — run-017, 11 September 2026
+
+**Owner requested shutdown; no job remains active. Resume only on their request.**
+Resume file: ignored `run-017/START_HERE.md`; checkpoint:
+`run-017/reports/pause-checkpoint.json`.
+
+Completed reusable work: current-code compatibility verified for the full run-015
+BMW artifact; no new BMW OCR needed. A fresh incidents counter-only extraction covers
+all 29,402 source frames, with source/code/config/pixel binding. Its 40-frame smoke
+agrees with the actual pipeline. Files: `reports/bmw-compatible-extraction.json`,
+`reports/crash-{smoke,full}-counter.json`, `processed/crash-full-counter.jsonl` in
+run-017. Counter-only extraction is not a full telemetry-v2 or six-check gate proof.
+
+**The attempted visual-review checkpoints are NOT VALIDATED TRUTH.** BMW checkpoints
+claim examination through sheet76 and incidents through sheet26, but root native-pixel
+checks disprove their unknown/absence labels: BMW103,110,117,339,864,900,945,5523 show0;
+incidents339/341 show4. Incidents' separate `crash-review/audit-v2.json` confirms the
+correction. Files remain intact for diagnosis; do not treat those sheets as completed
+or publish event metrics from these labels. The reason for the misreading is not
+established; viewing/batching and interpretation must be checked before restarting.
+No old approval or run-016 evidence was changed. Gate A FAIL; B blocked.
+
+## Prepared dossier — run-016
 
 The exhaustive native1080p counter dossier is **prepared, not fully visually reviewed**:
 47,589 BMW + 29,402 incidents frames, **76,991 ordered cells on 803 sheets**,
@@ -287,6 +309,9 @@ Run-016 final verification: focused capture/format/lap/layout tests and the full
 317-test suite, old evidence preservation, complete preparation integrity, docs
 discovery and diff check are recorded in `run-016/reports/final-verification.json`.
 
-**Next action:** review all 496 BMW and 307 incidents counter sheets in order and
-publish a separately attributed source-bound counter-event review with uncertainty;
-keep original L2 approval and the timer/counter channel distinction intact.
+Run-017 pause checks: focused and full tests, docs discovery and diff check are
+recorded under `run-017/reports/`. No repository code/configuration changed.
+
+**Next action:** validate a reliable visual reading method on the disputed native
+crops and corresponding sheets, then restart the exhaustive counter review into new
+reports; never consume the exploratory run-017 checkpoints as accepted truth.
