@@ -26,7 +26,25 @@ Completed A7 execution: `plans/2026-09-05-coaching-reliability.md`; Gate A still
 Contract: `capture-validation.md`. Full results: `capture-validation-results.md`.
 Preserved semantic constraints: `coaching-reliability-resume.md`.
 
-## Latest verified work — run-019
+## Paused by owner — run-020
+
+**Owner requested shutdown; no active job. Resume only on request.**
+Sustained Astra again read identical native PNGs inconsistently. Its run-020 ledger
+is diagnostic, not truth. The protocol audit confirms single-image calls; cause remains
+unknown. No source/code/configuration or acceptance threshold changed.
+
+A new exact-pixel method is under evaluation: every BMW frame is mapped by byte-exact
+raw RGB equality in the existing counter ROI. Independent mechanical audit passes all
+47,589 rows,35,546 original crop paths,4,159 groups and44 state sheets. This is only
+fixed-ROI equality proof, not full-frame context or semantic/independent acceptance.
+
+Primary visual review is saved through **sheet12 / groups0–1151**, all literal0,
+visible. **Groups1152–4158 remain unreviewed.** No fullsource mapped truth or new gate
+verdict has been published. Exact resume: `run-020/START_HERE.md`,
+`reports/pause-checkpoint.json`; details: `exact-counter-state-review.md`.
+Gate A FAIL; B/R blocked. Existing measurements and old evidence remain preserved.
+
+## Previous bounded trial — run-019
 
 The owner authorized the bounded Astra experiment. One gpt-6-astra sub-agent with high
 reasoning inspected 14 sheets and 11 native crops. **All 1,355 presentations agree with
@@ -339,6 +357,9 @@ and diff check are recorded under `run-018/reports/`.
 Run-019 final verification includes preserved inputs/code/config, focused/full tests,
 docs discovery and diff check; logs are under `run-019/reports/`.
 
-**Next action:** freeze the first 40 consecutive BMW counter sheets (frames 0–3839) and
-native QA sentinels before a controlled sustained-reading pass; assess that batch
-before extending to the complete dossier.
+Run-020 pause verification: focused/full tests, docs discovery and diff check are
+recorded in `run-020/reports/`. No active job remains.
+
+**Next action:** view `run-020/processed/bmw-exact-states/013.png` (groups1152–1247),
+inspect every matrix, then append its actual labels; continue from the saved exact-state
+ledger without inferring unreviewed values or consuming rejected Astra annotations.

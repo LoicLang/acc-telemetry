@@ -116,6 +116,10 @@ field/independent evidence; calibration and `s` are unavailable under sparse rev
   This is a small method trial; sustained/exhaustive review remains unqualified.
 - [ ] Freeze and assess a contiguous 40-sheet BMW batch with predeclared native QA
   before extending the visual review to all 803 sheets.
+  Run-020 sustained Astra pass is not accepted. Exact raw RGB grouping is being
+  evaluated instead: mechanical4159-state/47589-frame BMW audit passes; primary
+  semantic review saved through group1151/sheet12. Owner paused; resume sheet13.
+  Limits and exact state: `docs/exact-counter-state-review.md`.
 - [ ] Reserve and evaluate a distinct independent recording before any inspection,
   after development choices are frozen. Keep missing latency truth not_evaluated.
 

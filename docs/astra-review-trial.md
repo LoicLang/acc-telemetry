@@ -79,3 +79,8 @@ Next action: freeze a contiguous **first 40 BMW sheets (frames 0–3839)** with 
 QA sentinels selected and read before the next pass, then evaluate sustained reading
 before extending the review. Preserve exact per-sheet evidence and stop on a confirmed
 misreading; never convert a short pilot result into exhaustive truth.
+
+The subsequent sustained run-020 attempt did not qualify. Exact-pixel mapping and
+its partial primary review are documented in
+[exact-counter-state-review.md](exact-counter-state-review.md); no broad reliability
+claim is transferred from this successful small trial.
