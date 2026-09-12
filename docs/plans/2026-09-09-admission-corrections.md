@@ -135,6 +135,13 @@ field/independent evidence; calibration and `s` are unavailable under sparse rev
   Run-023 delivered:29402 frames, counters exact4/4, speed679/pedals683 available,
   no s. Misleading pedal fill across gaps corrected with RED/GREEN;33 focused/318
   full tests. See `docs/real-system-trial-results.md`.
+- [x] Apply the owner's12 September clarification: automatic full-video extraction,
+  with annotations used only for subsequent validation, not as extraction permission.
+  Explicit shared CLI/web mode preserves unverified provenance and existing defaults.
+- [x] Finish run-024 automatic incidents replay, compare existing annotated zones,
+  show continuous curves and scoped errors, and publish verification/commit/push.
+  Result: speed29298/29402, pedals29402/29402; speed21/21 exact, pedal MAE1.60/3.12;
+  counter29402 exact/4events. See `docs/automatic-system-trial.md`.
 - [ ] Reserve and evaluate a distinct independent recording before any inspection,
   after development choices are frozen. Keep missing latency truth not_evaluated.
 

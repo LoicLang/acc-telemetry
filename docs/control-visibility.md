@@ -8,11 +8,18 @@ read_when:
 
 # Reviewed control visibility
 
-The generic production pipeline uses strict control observations. Without reviewed
+The default `reviewed` mode uses strict control observations. Without reviewed
 spans, throttle, brake and steering remain missing, even if a decoder could return a
 number. TC/ABS always remain missing with `indicator_semantics_unverified`; visibility
 alone cannot establish whether an indicator means intervention or an aid setting.
 The explicit legacy extraction wrappers retain their historical numerical behavior.
+
+The explicit `automatic` measurement mode runs the same decoder without annotation
+inputs; extracted values retain `hud_visibility_unverified`, rather than claiming a
+review. Empty/black ROIs and missing steering candidates stay missing, TC/ABS remain
+unsupported and pedal values are neither smoothed nor rescaled. Annotation files
+are used only afterward to measure quality. This does not validate automatic HUD
+presence; see `automatic-system-trial.md`.
 
 Pass `--visibility-json PATH` to the CLI. The file is a JSON array, for example:
 

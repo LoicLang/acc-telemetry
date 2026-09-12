@@ -139,6 +139,23 @@ retains distinct provenance and never replaces the measured speed. Changing spee
 requires new calibration/progress evidence. Optional regression R remains deferred.
 The implementation checklist is `plans/2026-09-09-fresh-measurements.md`.
 
+## Automatic development extraction
+
+`TelemetryPipeline(measurement_mode="automatic")` explicitly separates extraction
+from annotation-based validation. It rejects annotation inputs and uses the same fresh
+speed/control readers, causal numerical admission, normalization and progress engine.
+Unreviewed values retain field reasons; derived progress adds
+`automatic_measurements_unverified`. `observed` denotes a fresh machine observation,
+not verified correctness. Invalid readings remain null. No automatic HUD detector,
+new threshold or pedal treatment is introduced. The default remains `reviewed`.
+
+CLI `--measurement-mode automatic` and the web Python service's `measurement_mode`
+argument reach that same application behavior. HTTP forms keep the reviewed default.
+CSV/API preserve the field/progress reasons; artifacts record the mode in resolved
+configuration and keep coaching ineligible. Web metadata also records the mode.
+Existing artifacts remain readable. See `automatic-system-trial.md` for the full
+source trial and measurements scoped to preexisting annotated zones.
+
 ## Generic position estimation
 
 The implemented estimator is generic across circuits using the static full-map HUD.

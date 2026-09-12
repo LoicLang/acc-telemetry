@@ -66,6 +66,7 @@ class VideoProcessingService:
         artifact_dir: Optional[str] = None,
         clip_origin: Optional[dict] = None,
         speed_visibility_json: Optional[str] = None,
+        measurement_mode: str = "reviewed",
     ) -> VideoMetadata:
         """
         Process a video and extract telemetry data.
@@ -124,6 +125,7 @@ class VideoProcessingService:
 
         pipeline = TelemetryPipeline(
             settings=telemetry_settings,
+            measurement_mode=measurement_mode,
             visibility=load_visibility(visibility_json),
             speed_visibility=load_speed_visibility(speed_visibility_json),
             video=processor,
@@ -156,6 +158,7 @@ class VideoProcessingService:
             summary=summary,
             csv_path=csv_path,
         )
+        metadata.measurement_mode = measurement_mode
         self.storage.save_metadata(video_name, metadata)
         if progress_callback:
             progress_callback(100, "Processing complete!")

@@ -49,6 +49,15 @@ exported as modern sessions. The web service accepts optional `artifact_dir` and
 `clip_origin` parameters; HTTP forms do not expose these options yet. Its OCR
 thresholds now use the same resolved settings recorded in the artifact.
 
+## Measurement mode provenance
+
+New resolved configurations include `measurement_mode` (`reviewed` by default or
+explicit `automatic`). Automatic extraction supplies no visibility annotation files;
+unverified visibility remains in field reasons, and estimated progress carries
+`automatic_measurements_unverified`. The mode is preserved on artifact reload;
+`coaching_eligible` stays false. Numerical checks against annotations are a separate
+step. Existing artifacts without this setting retain their historical semantics.
+
 ## Validation and publication
 
 The adapter hashes the source before extraction. Export verifies it again, rejects

@@ -16,6 +16,23 @@ Gate A reste bloqué. Plan d'exécution :
 [2026-09-09-admission-corrections.md](plans/2026-09-09-admission-corrections.md).
 La spécification générale de coaching du 5 septembre reste la référence produit.
 
+## Clarification du 12 septembre : extraire puis vérifier
+
+Le propriétaire demande désormais un essai automatique sur toute la vidéo existante,
+avec les annotations utilisées **uniquement après extraction pour mesurer la qualité**.
+Le mode explicite `automatic` du pipeline partagé répond à cet essai : aucun fichier
+annoté n'est fourni au pipeline, aucune visibilité humaine n'est inventée. La lecture
+fraîche, les refus numériques, les valeurs absentes et l'absence de lissage des pédales
+restent conservés. Une valeur extraite n'est pas une valeur vérifiée.
+
+Le mode `reviewed` reste le défaut compatible avec A3/C1 et les résultats précédents.
+En mode automatique, les valeurs admissibles portent `speed_hud_unverified` ou
+`hud_visibility_unverified`; les positions dérivées portent
+`automatic_measurements_unverified`. `observed` signifie lecture fraîche par la machine,
+pas vérité numérique ni visibilité revue. Le mode est exporté dans la configuration
+et la session reste non admissible au coaching. Aucun détecteur automatique de HUD
+n'est qualifié par cette option. Voir `automatic-system-trial.md` pour l'essai.
+
 ## Pourquoi changer
 
 A7 a mesuré des erreurs sur la vitesse publiée. Une inspection supplémentaire des

@@ -580,16 +580,19 @@ class LapDetector:
         )
         return self._last_valid_speed
 
-    def observe_speed(self, frame: np.ndarray, *, hud_state: str = 'unknown') -> FieldObservation[int]:
+    def observe_speed(self, frame: np.ndarray, *, hud_state: str = 'unknown',
+                      allow_unreviewed: bool = False) -> FieldObservation[int]:
         """Publish this frame's validated number, never a median or held value.
 
         The application verifies the source-bound visibility review. Unknown or
-        absent HUD always abstains, even if the single OCR read yields digits.
+        absent HUD abstains by default. Explicit automatic extraction may read unknown
+        HUD, retaining unverified provenance; this is not a HUD presence detector.
         """
         raw, reasons = self._read_speed_text(frame)
         if hud_state not in ('visible', 'absent', 'unknown'):
             raise ValueError('invalid speed HUD state')
-        if hud_state != 'visible':
+        unreviewed = allow_unreviewed and hud_state == 'unknown'
+        if hud_state != 'visible' and not unreviewed:
             reasons += ('speed_hud_absent' if hud_state == 'absent' else 'speed_hud_unverified',)
         elif frame is not None and frame.size:
             roi = self._extract_roi(frame, self.speed_roi)
@@ -617,6 +620,8 @@ class LapDetector:
                         reasons = ("speed_out_of_range",)
                     else:
                         quality = QualityFlag.OBSERVED
+        if unreviewed:
+            reasons += ('speed_hud_unverified',)
         self._last_speed_raw = raw
         self._last_speed_reasons = reasons
         self._last_speed_quality = quality

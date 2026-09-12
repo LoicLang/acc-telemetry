@@ -7,11 +7,20 @@ read_when:
 
 # Reviewed speed visibility
 
-Modern speed requires reviewed visible HUD. Without a review, or in absent/unknown
+The default `reviewed` measurement mode requires reviewed visible HUD. Without a review, or in absent/unknown
 intervals, speed is missing with `speed_hud_absent` or `speed_hud_unverified`.
 The extractor retains its one raw OCR read and reasons even when admission fails.
 Inside a visible interval, black/empty ROI still abstains. A readable zero remains
 zero; it is never inferred from missing HUD. Explicit legacy extraction is unchanged.
+
+For the owner-requested automatic trial, `--measurement-mode automatic` reads the
+whole source without annotation inputs. Unknown visibility no longer prevents a
+numerically admissible fresh reading, but `speed_hud_unverified` remains attached.
+Empty/black ROI, invalid text and numerical admission failures still abstain. This
+is an explicit development mode, not a qualified automatic HUD detector. The pipeline
+rejects annotation inputs in this mode; use them only for separate validation.
+The manifest records the mode; `coaching_eligible` stays false. See
+`automatic-system-trial.md` and the12 September clarification in `signal-treatment.md`.
 
 The CLI accepts `--speed-visibility-json PATH` separately from pedal/steering
 `--visibility-json`. The web processing Python service accepts

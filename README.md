@@ -35,6 +35,13 @@ chosen output directory. Modern CSV rows expose `s_odometry`, `s_visual`, `s_fus
 uncertainty, source, and reasons. `track_position` remains a compatibility percentage
 derived only from available `s_fused`.
 
+For an automatic development trial on a complete video, add
+`--measurement-mode automatic`. Supply no visibility annotation inputs in this mode;
+compare the output to existing annotations afterward. Fresh extracted values retain
+unverified visibility reasons, invalid readings remain missing and coaching stays
+ineligible. The default `reviewed` mode is unchanged. See the
+[automatic trial](docs/automatic-system-trial.md).
+
 ## Tests
 
 ```bash
@@ -82,7 +89,7 @@ Compatibility modules under `src/` keep older imports working during the migrati
   crash-heavy representative validation gates pass.
 - Legacy map-only position remains importable for compatibility; production CLI and
   web processing use `s_odometry`, `s_visual`, and `s_fused`.
-- Modern speed requires [source-bound reviewed HUD visibility](docs/speed-visibility.md)
+- By default, modern speed requires [source-bound reviewed HUD visibility](docs/speed-visibility.md)
   (`--speed-visibility-json`); without it speed is missing. Admitted speed retains
   fresh OCR text and explicit gaps; legacy median/holding remains isolated.
   Pedal transitions remain unsmoothed. See [A8 evidence](docs/fresh-measurement-results.md).

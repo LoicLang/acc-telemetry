@@ -29,6 +29,8 @@ def _parser() -> argparse.ArgumentParser:
         default=Path("data/output"),
         help="directory for generated CSV and HTML files",
     )
+    parser.add_argument("--measurement-mode", choices=("reviewed", "automatic"), default="reviewed",
+                        help="automatic extracts without annotations; validate its measurements separately")
     parser.add_argument("--visibility-json", type=Path, help="reviewed control visibility spans")
     parser.add_argument("--speed-visibility-json", type=Path, help="source-bound reviewed speed HUD visibility")
     parser.add_argument("--artifact-dir", type=Path, help="new telemetry-v2 session directory")
@@ -43,6 +45,8 @@ def main(argv: Sequence[str] | None = None) -> int:
         _parser().error(f"video not found: {args.video}")
 
     try:
+        if args.measurement_mode == "automatic" and (args.visibility_json or args.speed_visibility_json):
+            raise ValueError("automatic extraction uses annotations only for later validation")
         source_before = None
         if args.artifact_dir is not None:
             target = check_destination(args.artifact_dir, args.video)
@@ -66,6 +70,7 @@ def main(argv: Sequence[str] | None = None) -> int:
     profile = settings.profile(args.profile)
     pipeline = TelemetryPipeline(
         settings=settings,
+        measurement_mode=args.measurement_mode,
         visibility=components.visibility,
         speed_visibility=components.speed_visibility,
         video=components.video,
@@ -84,12 +89,14 @@ def main(argv: Sequence[str] | None = None) -> int:
             clip_origin=({"source_id": args.clip_source_id, "start_s": args.clip_start_s}
                          if args.clip_source_id else None))
         print(f"Session artifacts: {output}")
-    print("Speed and controls require reviewed visibility; TC/ABS remain unavailable. Coaching gate pending.")
+    print(f"Measurement mode: {args.measurement_mode}; extracted does not mean independently verified. TC/ABS unavailable; coaching gate pending.")
 
     visualizer = InteractiveTelemetryVisualizer(output_dir=str(args.output))
     dataframe = visualizer.create_dataframe(result.records)
     csv_path = visualizer.export_csv(dataframe)
-    html_path = visualizer.plot_telemetry(dataframe)
+    html_path = visualizer.plot_telemetry(dataframe, title=(
+        "Automatic extraction — unverified" if args.measurement_mode == "automatic"
+        else "ACC Telemetry Analysis"))
     print(f"CSV: {csv_path}")
     print(f"Report: {html_path}")
     return 0

@@ -10,6 +10,11 @@ read_when:
 Completed12 September2026: [run-023 result](real-system-trial-results.md). The
 original execution contract below is preserved; do not repeat the trial by default.
 
+After viewing run-023, the owner clarified the intended experiment: extract the whole
+video automatically and use annotations only to verify quality afterward. This takes
+priority over the sparse-review extraction prerequisite below. Follow
+`automatic-system-trial.md`; retain run-023 as the reviewed-mode diagnostic baseline.
+
 The owner considers the exhaustive review effort excessive and now prioritizes a
 concrete end-to-end trial. The next delivery is a usable, inspectable output from an
 existing real video, with an honest account of defects and missing data. Do not start

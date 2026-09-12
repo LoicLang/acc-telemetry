@@ -26,6 +26,33 @@ Completed A7 execution: `plans/2026-09-05-coaching-reliability.md`; Gate A still
 Contract: `capture-validation.md`. Full results: `capture-validation-results.md`.
 Preserved semantic constraints: `coaching-reliability-resume.md`.
 
+## Automatic full-video trial delivered — run-024
+
+The owner clarified the objective after run-023: extract the entire video automatically,
+then verify quality only on annotated zones. The annotation gate is not used for this
+trial. An explicit shared CLI/web `measurement_mode="automatic"` now supports this;
+`reviewed` remains the default. No synthetic visibility review, thresholds, smoothing,
+new annotations, agents or holdout inspection. See `automatic-system-trial.md`.
+
+Full incidents source: **29402/29402 native1080p60CFR frames**, decode/PTS aligned.
+Speed **29298/29402 (99.65%)**; brake/throttle **29402/29402**; estimated `s` **26844
+(91.30%)**. Extracted does not mean verified: unreviewed field/progress reasons and
+mode provenance survive normalization/artifacts/API; coaching eligibility stays false.
+Open `data/lab/coaching-reliability/run-024/reports/index.html` for continuous three-channel
+curves, black annotated-reference crosses, error tables, progress and four video windows.
+
+Post-extraction validation on the existing21 points: speed exact21/21, brake MAE1.60
+and throttle MAE3.12 percentage points, maxima5.88. Existing683-frame scope remains
+speed679/pedals683; V-CRASH-15 still28/31. Full counter truth run-022 matches29402 fresh
+observations and4/4 events, no misses/extras. All raw speed OCR and reviewed pedal
+values match run-023; the visibility admission mode changed, not the decoder values.
+
+Five new regressions plus reviewed defaults pass:32 focused/323 full-suite tests. Logs and
+source/prior-evidence hashes are in `run-024/reports/final-verification.json`.
+Browser inspection shows continuous curves and reference points. Full pedal bias,
+true impact-speed rejection, untested numerical accuracy outside annotations and
+unverified spatial progress remain limitations. **Gate A FAIL; B/R blocked.**
+
 ## Complete-system demonstration delivered — run-023
 
 Full incidents recording processed by the actual CLI/shared pipeline after native
@@ -418,7 +445,10 @@ counter comparisons,21-point field checks, four bounded video windows, UI RED/GR
 The local report server on127.0.0.1:8765 is intentionally left available for viewing;
 no extraction/review job remains active.
 
-**Next action:** reserve a distinct independent native1920×1080 exactly60fps CFR capture,
-with extractor/settings frozen and reservation recorded before any inspection. Keep
-Gate A blocked until compatible independent evidence supports acceptance. Do not
-restart exhaustive annotation of the demonstrated BMW/incidents recordings.
+Run-024 supersedes run-023 as the requested automatic demonstration. Its local preview
+on127.0.0.1:8766 is intentionally available for viewing; no extraction job remains.
+
+**Next action:** reserve the later distinct independent native1080p60CFR capture under
+frozen extractor/settings before inspection, then repeat extraction-first and validate
+only against its independently annotated test zones. Keep Gate A blocked until the
+compatible independent evidence supports acceptance.

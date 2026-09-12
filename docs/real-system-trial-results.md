@@ -7,6 +7,10 @@ read_when:
 
 # Complete incidents demonstration — run-023
 
+This reviewed-mode trial is superseded for the owner’s intended experiment by
+[run-024 automatic extraction](automatic-system-trial.md). Run-023 remains the
+frozen diagnostic explaining the sparse annotation gate and display correction.
+
 Delivered 12 September 2026 on `codex/coaching-reliability`. This is a development
 trial, **not independent acceptance. Gate A FAIL; B/R remain blocked.**
 

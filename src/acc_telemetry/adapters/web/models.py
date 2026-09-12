@@ -1,6 +1,6 @@
 """Pydantic models for API request/response validation."""
 
-from typing import Optional, List
+from typing import Optional, List, Literal
 from pydantic import BaseModel, Field, ConfigDict
 
 
@@ -37,6 +37,7 @@ class VideoMetadata(BaseModel):
     processed_at: str  # ISO 8601 timestamp
     csv_path: str
     track_position_available: bool
+    measurement_mode: Literal["reviewed", "automatic"] = "reviewed"
 
 
 class TelemetryDataPoint(BaseModel):

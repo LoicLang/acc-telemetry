@@ -330,14 +330,15 @@ class TelemetryExtractor:
         
         return 1 if orange_pixel_count >= min_pixels_threshold else 0
     
-    def observe_frame_telemetry(self, rois, *, time_s, visibility):
-        """Decode only reviewed visible controls; preserve absence as missing."""
+    def observe_frame_telemetry(self, rois, *, time_s, visibility, allow_unreviewed=False):
+        """Read controls, optionally without review, preserving unknown provenance."""
         def missing(reason):
             return FieldObservation(None, QualityFlag.MISSING, None, (reason,))
 
         observations = {}
         for field in ("throttle", "brake", "steering"):
-            if not visible_at(visibility, field, time_s):
+            reviewed = visible_at(visibility, field, time_s)
+            if not reviewed and not allow_unreviewed:
                 observations[field] = missing("hud_visibility_unverified")
                 continue
             roi = rois.get(field)
@@ -352,6 +353,7 @@ class TelemetryExtractor:
             observations[field] = (
                 missing("steering_candidate_missing") if value is None else
                 FieldObservation(value, QualityFlag.OBSERVED, value,
+                                 () if reviewed else ("hud_visibility_unverified",),
                                  last_observed_time_s=time_s)
             )
         for field in ("tc_active", "abs_active"):

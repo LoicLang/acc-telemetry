@@ -45,12 +45,21 @@ class TelemetryPipeline:
         has_track_map: bool,
         visibility: tuple[VisibilitySpan, ...] = (),
         speed_visibility: SpeedVisibilityReview | None = None,
+        measurement_mode: str = "reviewed",
         settings: TelemetrySettings | None = None,
         sample_count: int = 11,
         frequency_threshold: float | None = None,
         progress_callback: ProgressCallback | None = None,
         position_diagnostic_callback: PositionDiagnosticCallback | None = None,
     ):
+        if measurement_mode not in ("reviewed", "automatic"):
+            raise ValueError("invalid measurement mode")
+        if measurement_mode == "automatic":
+            if visibility or speed_visibility is not None:
+                raise ValueError("automatic extraction uses annotations only for later validation")
+            if progress is None:
+                raise ValueError("automatic extraction requires the modern shared pipeline")
+        self.measurement_mode = measurement_mode
         self.settings = settings
         self.visibility = tuple(visibility)
         self.speed_visibility = speed_visibility
@@ -194,10 +203,11 @@ class TelemetryPipeline:
             last_progress = 20
             total_frames = max(int(video_info["frame_count"]), 1)
 
+            reader_options = {"allow_unreviewed": True} if self.measurement_mode == "automatic" else {}
             for frame_number, timestamp, rois in self.video.process_frames():
                 if self.progress is not None:
                     control_observations = self.controls.observe_frame_telemetry(
-                        rois, time_s=timestamp, visibility=self.visibility)
+                        rois, time_s=timestamp, visibility=self.visibility, **reader_options)
                     controls = {k: o.value for k, o in control_observations.items()}
                 else:
                     controls = self.controls.extract_frame_telemetry(rois)
@@ -206,7 +216,7 @@ class TelemetryPipeline:
                     lap_number = lap_observation.value
                     speed_observation = self.laps.observe_speed(self.video.current_frame,
                         hud_state=(self.speed_visibility.state_at(timestamp)
-                                   if self.speed_visibility is not None else 'unknown'))
+                                   if self.speed_visibility is not None else 'unknown'), **reader_options)
                     speed_observation = speed_admission.observe(speed_observation, time_s=timestamp,
                         context=(self.speed_visibility.span_at(timestamp)
                                  if self.speed_visibility is not None else None))
@@ -359,7 +369,10 @@ class TelemetryPipeline:
                     record["s_fused"] = estimate.s_fused
                     record["s_uncertainty"] = estimate.uncertainty
                     record["s_source"] = estimate.source.value
-                    record["s_reasons"] = ";".join(estimate.reasons)
+                    progress_reasons = estimate.reasons
+                    if self.measurement_mode == "automatic":
+                        progress_reasons += ("automatic_measurements_unverified",)
+                    record["s_reasons"] = ";".join(progress_reasons)
                     if frame_result.boundary is not None:
                         boundary = frame_result.boundary
                         transitions.append({
@@ -393,6 +406,7 @@ class TelemetryPipeline:
                     if self.settings is not None else (),
                 observations=tuple(observations),
                 resolved_config={"settings": self.settings, "visibility": self.visibility,
+                                 "measurement_mode": self.measurement_mode,
                                  "speed_visibility": self.speed_visibility}
                     if self.settings is not None else None,
             )
