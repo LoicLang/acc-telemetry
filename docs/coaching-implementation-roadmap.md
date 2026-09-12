@@ -8,6 +8,16 @@ read_when:
 
 # Du repo actuel au premier débrief utilisable
 
+## Point d'entrée actuel — 12 septembre2026
+
+Le [plan de livraison local détaillé](plans/2026-09-12-local-gpt-coaching-delivery.md)
+fixe maintenant l'ordre d'exécution. Il s'appuie sur l'audit réel du code et sur
+[l'essai de coaching du rapport](gpt-coaching-report-trial.md). Dernière consigne :
+plan seulement, pas d'implémentation. Aucun travail sur l'interface web.
+Le cas McLaren/fin des Combes issu de l'essai est candidat ; BMW/Bruxelles ci-dessous
+reste une proposition historique, à ne pas imposer à la vidéo incidents.
+Les contrats B et Gate A sont conservés, sans baisse des cibles ni coaching validé.
+
 ## Priorité approuvée le 9 septembre 2026
 
 Le premier résultat produit est un **exercice utile sur un virage**, étayé par une
@@ -158,7 +168,8 @@ largeur physique, angle de dérive ou « turn-in 7 m trop tôt » n'est produit.
 ## Première action pour le futur agent
 
 Lire `AGENTS.md`, lancer `./scripts/docs-list`, lire `docs/current-status.md`, la
-spécification commune et le plan actif indiqué par le handoff. Reprendre exactement
-la prochaine action vérifiée, actuellement la revue de visibilité continue 1080p.
+spécification commune et le plan actif indiqué par le handoff. La dernière demande
+porte uniquement sur le plan local : attendre une reprise explicite avant son
+implémentation. Ne pas recommencer une revue de visibilité ou de compteur terminée.
 Conserver les gates en échec tant que leurs preuves manquent. Les cases ne sont
 cochées qu'après vérification et commit de leur tâche.

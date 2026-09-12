@@ -7,6 +7,11 @@ read_when:
 
 # A9 — Admission and historical OCR corrections
 
+Sequencing update12 September2026: the remaining independent acceptance work is
+carried by the [local GPT delivery plan](2026-09-12-local-gpt-coaching-delivery.md).
+The owner currently requests planning only; no new extraction/implementation begins
+from this old next-step checkbox. Existing completed evidence remains frozen.
+
 ## Latest source-scope decision
 
 - [x] Restrict all new video extraction/preparation to native 1920×1080 at exactly

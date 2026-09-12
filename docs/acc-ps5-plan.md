@@ -7,15 +7,18 @@ read_when:
 
 # ACC PS5 telemetry plan
 
-Last verified: 2026-09-09
+Last verified: 2026-09-12
 
 ## Current state
 
-**Immediate owner priority:** demonstrate the complete existing system on the incidents
-video, show the actual generated curves/laps/gaps/progress and check a few useful video
-windows. Reuse completed counter evidence; avoid another exhaustive annotation campaign.
-See `real-system-trial.md`. This development trial is allowed while Gate A fails;
-trustworthy coaching admission remains blocked and acceptance targets are unchanged.
+**Immediate owner priority:** a detailed local-only plan to produce an autonomous
+report the driver can attach to GPT. The complete automatic extraction trial is done
+(run-024); its manual coaching test exposed missing context, aligned passages and an
+admitted experienced-driver reference. Follow
+`plans/2026-09-12-local-gpt-coaching-delivery.md`. Latest request is planning only,
+not implementation. The inherited web UI/upload/API is outside this delivery path.
+The report must support a specific weakness, evidence, a reasoned correction and a
+measurable exercise; extraction completeness alone is not success.
 
 **Approved delivery priority (September 9):** finish A, then deliver one useful B
 corner dossier with qualified metrics, an explained reference, mandatory paired
@@ -28,7 +31,7 @@ requires Gate A. Start with Spa, then consider a second circuit after the first 
 Other input formats are refused before extraction. Historical 720p work is retired;
 its preserved 5/5 result does not qualify the active 1080p gate. Fixed-ROI
 1080p counter reviews are complete on BMW/incidents (run-021/022); incidents full-pipeline
-verification and independent acceptance remain pending. This narrows source scope; it does not
+verification is complete in run-024; independent acceptance remains pending. This narrows source scope; it does not
 relax numerical acceptance targets or pass Gate A.
 
 The September 5 technical audit narrows the meaning of earlier validation claims:
@@ -62,13 +65,13 @@ extras (P95 0.0083335 s). Current speed visibility is sparse; continuous coverag
 calibration and independent acceptance remain open. See `admission-correction-results.md`.
 
 - capture_status: native_1080p60_validated
-- controls_speed_gears_status: reviewed_measurements_only_coaching_blocked
+- controls_speed_gears_status: automatic_extraction_available_coaching_blocked
 - track_path_extraction_status: usable
 - centerline_component_selection_status: temporal_persistence_and_unique_long_cycle_validated
 - s_status: representative_clean_and_crash_gates_pass
-- s_latest_validation_status: unavailable_under_sparse_reviewed_speed
+- s_latest_validation_status: run024_automatic_available_spatial_accuracy_unverified
 - s_repair_design_status: generic_fusion_implemented
-- long_capture_lap_transition_status: fixed_roi_development_review_complete_full_pipeline_trial_next
+- long_capture_lap_transition_status: fixed_roi_development_and_incidents_full_pipeline_verified
 - quality_propagation_status: provenance_verified_independent_gate_blocked
 - downstream_coaching_status: blocked
 

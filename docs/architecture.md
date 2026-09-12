@@ -215,6 +215,15 @@ measurement-model tuning or gate approval.
 
 Unit tests cover sampling, position direction and smoothing, OCR recovery, web profile propagation, configuration validation, pipeline closure, and normalization. The representative CSV fixture is synthetic and safe for Git. Full-video checks use ignored local session data.
 
+## Current delivery boundary
+
+The12 September owner direction is local extraction followed by a portable dossier
+attached manually to GPT. Web adapters remain legacy/optional and are outside the
+current delivery plan. No new service, upload UI or GPT API integration is required.
+The code audit confirms that the corner-event/metric and coaching-dossier modules
+listed below are planned, not implemented. See `gpt-coaching-readiness-audit.md` and
+`plans/2026-09-12-local-gpt-coaching-delivery.md`. Latest request is planning only.
+
 ## Planned coaching extension (not implemented)
 
 Approved priority: B combines the seven qualified metrics with mandatory reviewed

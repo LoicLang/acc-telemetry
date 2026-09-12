@@ -1,5 +1,5 @@
 ---
-summary: living A9 handoff for delivered admission corrections, final development replay and remaining coverage evidence
+summary: living handoff for the local GPT coaching delivery plan, completed extraction trials and unresolved reliability prerequisites
 read_when:
   - starting any task
   - resuming reliability corrections or changing stage-gate status
@@ -18,13 +18,44 @@ preserved; do not ask them to repeat accepted or reliably agent-verifiable revie
 separate/inactive.** A8 changes modern speed extraction; acceptance targets remain
 unchanged. Full BMW/crash development replays and scoped measurements are published.
 
-Active correction specification: `signal-treatment.md`.
-Active plan: `plans/2026-09-09-admission-corrections.md` (**C1/C2/C3 delivered; fixed-ROI counter reviews complete; complete-system demonstration delivered; independent acceptance open**).
+Active delivery plan: `plans/2026-09-12-local-gpt-coaching-delivery.md` (**planning only;
+no implementation started**). Product specification:
+`specs/2026-09-05-reference-corner-coach-design.md`; measurement specification:
+`signal-treatment.md`. Prior A9 execution:
+`plans/2026-09-09-admission-corrections.md` (changes/trials delivered; independent
+acceptance open and sequenced by the new plan).
 Previous A8: `plans/2026-09-09-fresh-measurements.md` (completed within available evidence).
 Parent product specification: `specs/2026-09-05-reference-corner-coach-design.md`.
 Completed A7 execution: `plans/2026-09-05-coaching-reliability.md`; Gate A still fails.
 Contract: `capture-validation.md`. Full results: `capture-validation-results.md`.
 Preserved semantic constraints: `coaching-reliability-resume.md`.
+
+## Latest owner direction — detailed local GPT-report plan only
+
+The owner clarified that the inherited web interface is outside the delivery path.
+The goal is a locally generated portable dossier they can attach to GPT for coaching.
+Latest instruction: **prepare only the plan; do not implement it yet**.
+
+Audit: `gpt-coaching-readiness-audit.md`. Actual manual attempt to coach from run-024:
+`gpt-coaching-report-trial.md`; private working report under run-025/reports/essai-gpt/.
+The attempt supports a cautious descriptive debrief, but **fails readiness for specific
+validated coaching**: incident clip begins already off track, no aligned passages,
+no admitted experienced-driver reference, incomplete car/conditions/hardware, no
+implemented corner metrics or portable dossier generator. Gray synthetic ROIs also
+show why automatic pedal availability does not prove HUD presence.
+
+Eight additional source frames (no new OCR/annotation campaign) clarify the approach:
+McLaren720S GT3 family, Les Combes ending/Malmedy candidate, variant and precise
+landmarks unconfirmed. Do not substitute the historical BMW/Bruxelles case by default.
+A public pedagogical guide and an older Nils Naujoks candidate were inspected; no
+reference media acquired or quantitatively admitted. A case/reference brief, bounded
+measurement closure, independent validation, corner facts, portable export and a real
+GPT-response review form the new plan. No web work or new model/replay research.
+
+The acceptance test is substantive: can the report explain an evidenced weakness,
+compare relevant passages, discuss alternatives, support a correction and measure
+its effect? A list of files or a plausible generic exercise is not enough.
+**Gate A remains FAIL; B/R remain blocked. No implementation job is active.**
 
 ## Automatic full-video trial delivered — run-024
 
@@ -448,7 +479,10 @@ no extraction/review job remains active.
 Run-024 supersedes run-023 as the requested automatic demonstration. Its local preview
 on127.0.0.1:8766 is intentionally available for viewing; no extraction job remains.
 
-**Next action:** reserve the later distinct independent native1080p60CFR capture under
-frozen extractor/settings before inspection, then repeat extraction-first and validate
-only against its independently annotated test zones. Keep Gate A blocked until the
-compatible independent evidence supports acceptance.
+Planning/audit verification is recorded in ignored run-025/reports/ (docs discovery,
+focused/full tests and preservation). Only documentation is changed in this delivery.
+
+**Next action:** stop at the requested plan. When the owner explicitly resumes execution,
+start lot0 of `plans/2026-09-12-local-gpt-coaching-delivery.md`: confirm the case/context,
+select comparable passages and qualify the reference; then prepare the bounded Gate A
+closeout matrix. Do not resume exhaustive counter review or implement B before its gate.

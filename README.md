@@ -129,6 +129,13 @@ The [complete incidents trial](docs/real-system-trial-results.md) provides a loc
 report with video-aligned examples and explicit missing coverage. It remains a
 development demonstration; Gate A still blocks reliable coaching.
 
+The current [local GPT coaching delivery plan](docs/plans/2026-09-12-local-gpt-coaching-delivery.md)
+starts from the implemented extraction and specifies the missing portable dossier:
+comparable passages, calculated metrics, visual evidence and an explained reference.
+Its [readiness audit](docs/gpt-coaching-readiness-audit.md) and
+[manual report trial](docs/gpt-coaching-report-trial.md) explain the concrete gaps.
+The plan is not implemented yet; the inherited web interface is outside this work.
+
 ## Reference documents
 
 - [Current status](docs/current-status.md)
