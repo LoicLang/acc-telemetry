@@ -113,10 +113,14 @@ frame counts. Holdout roles and explicitly reviewed HUD absence remain intact.
 --artifacts SESSION --annotations LABELS_JSON --output NEW_REPORT_JSON`. Missing
 evidence stays `not_evaluated`; failed measurements keep coaching blocked.
 
-The [planned signal correction](docs/signal-treatment.md) preserves fresh speed
-readings and abrupt pedal inputs. Speed regression remains an optional separate
-estimate; it is not implemented. The current speed path still uses its legacy filter.
-See the [implementation plan](docs/plans/2026-09-09-fresh-measurements.md).
+The [signal treatment](docs/signal-treatment.md) preserves fresh admitted speed
+readings and abrupt pedal inputs. The modern pipeline does not use the legacy speed
+filter. Speed regression remains deferred. See the active
+[admission plan](docs/plans/2026-09-09-admission-corrections.md).
+
+The [complete incidents trial](docs/real-system-trial-results.md) provides a local
+report with video-aligned examples and explicit missing coverage. It remains a
+development demonstration; Gate A still blocks reliable coaching.
 
 ## Reference documents
 

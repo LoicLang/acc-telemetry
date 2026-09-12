@@ -7,6 +7,9 @@ read_when:
 
 # Priority: try the complete system
 
+Completed12 September2026: [run-023 result](real-system-trial-results.md). The
+original execution contract below is preserved; do not repeat the trial by default.
+
 The owner considers the exhaustive review effort excessive and now prioritizes a
 concrete end-to-end trial. The next delivery is a usable, inspectable output from an
 existing real video, with an honest account of defects and missing data. Do not start

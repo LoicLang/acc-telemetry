@@ -75,7 +75,7 @@ No full-scene visibility, speed accuracy, pedal accuracy or spatial precision fo
 **Overall Gate A remains FAIL; B/R remain blocked.** Speed coverage/numerical truth,
 independent recording validation and other previously documented checks remain open.
 
-Next action: replay the complete incidents video through the current shared telemetry
-pipeline using the existing source-bound visibility evidence, compare counter observations
-and events against this frozen truth, and preserve explicit missing speed. Do not tune
-thresholds, expand visibility by inference or inspect the historical holdout.
+The complete shared-pipeline trial is now delivered in run-023; see
+[real-system-trial-results.md](real-system-trial-results.md). All29402 fresh counter
+observations and4/4 events match this frozen truth. The next step is reservation of a
+distinct independent capture before inspection, not another counter review.

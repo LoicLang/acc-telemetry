@@ -119,8 +119,8 @@ class InteractiveTelemetryVisualizer:
                 mode='lines',
                 name='Throttle',
                 line=dict(color='#00FF00', width=2),
-                fill='tozeroy',
-                fillcolor='rgba(0, 255, 0, 0.3)',
+                fill='none',
+                connectgaps=False,
                 hovertemplate='<b>Throttle</b><br>Time: %{x:.2f}s<br>Value: %{y:.1f}%<extra></extra>'
             ),
             row=1, col=1
@@ -134,8 +134,8 @@ class InteractiveTelemetryVisualizer:
                 mode='lines',
                 name='Brake',
                 line=dict(color='#FF0000', width=2),
-                fill='tozeroy',
-                fillcolor='rgba(255, 0, 0, 0.3)',
+                fill='none',
+                connectgaps=False,
                 hovertemplate='<b>Brake</b><br>Time: %{x:.2f}s<br>Value: %{y:.1f}%<extra></extra>'
             ),
             row=2, col=1
@@ -391,8 +391,8 @@ class InteractiveTelemetryVisualizer:
             mode='lines',
             name='Throttle',
             line=dict(color='#00FF00', width=2),
-            fill='tozeroy',
-            fillcolor='rgba(0, 255, 0, 0.3)',
+            fill='none',
+            connectgaps=False,
             yaxis='y1',
             hovertemplate='Throttle: %{y:.1f}%<extra></extra>'
         ))
@@ -404,8 +404,8 @@ class InteractiveTelemetryVisualizer:
             mode='lines',
             name='Brake',
             line=dict(color='#FF0000', width=2),
-            fill='tozeroy',
-            fillcolor='rgba(255, 0, 0, 0.3)',
+            fill='none',
+            connectgaps=False,
             yaxis='y2',
             hovertemplate='Brake: %{y:.1f}%<extra></extra>'
         ))

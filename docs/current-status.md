@@ -7,7 +7,7 @@ read_when:
 
 # Current status
 
-Last verified: **2026-09-11**. Branch `codex/coaching-reliability`; A6 checkpoint
+Last verified: **2026-09-12**. Branch `codex/coaching-reliability`; A6 checkpoint
 `f060637`, A7 validator introduced by `006629f`. Recent Git history owns later IDs.
 Default delegation stays below GPT-6 Astra with explicit model selection. The owner
 authorized one bounded Astra visual trial on 11 September; see `astra-review-trial.md`. Push is authorized; no merge to main. The user
@@ -19,26 +19,37 @@ separate/inactive.** A8 changes modern speed extraction; acceptance targets rema
 unchanged. Full BMW/crash development replays and scoped measurements are published.
 
 Active correction specification: `signal-treatment.md`.
-Active plan: `plans/2026-09-09-admission-corrections.md` (**C1/C2/C3 delivered; fixed-ROI counter reviews complete; complete-system demonstration next; independent acceptance open**).
+Active plan: `plans/2026-09-09-admission-corrections.md` (**C1/C2/C3 delivered; fixed-ROI counter reviews complete; complete-system demonstration delivered; independent acceptance open**).
 Previous A8: `plans/2026-09-09-fresh-measurements.md` (completed within available evidence).
 Parent product specification: `specs/2026-09-05-reference-corner-coach-design.md`.
 Completed A7 execution: `plans/2026-09-05-coaching-reliability.md`; Gate A still fails.
 Contract: `capture-validation.md`. Full results: `capture-validation-results.md`.
 Preserved semantic constraints: `coaching-reliability-resume.md`.
 
-## Immediate owner priority — complete-system demonstration
+## Complete-system demonstration delivered — run-023
 
-The owner explicitly redirects effort from exhaustive annotation to a real end-to-end
-trial. Follow `real-system-trial.md` before further evidence campaigns. Reuse completed
-counter truth. Process the existing incidents video through the actual shared pipeline,
-**open and show its output**, and compare a few useful braking/acceleration/incident/lap
-windows with the source. Report gaps and unavailable progress rather than delaying the
-trial for complete visibility annotations. Fix only demonstrated material defects.
-No new exhaustive review, reviewer qualification, agents or threshold search is needed.
+Full incidents recording processed by the actual CLI/shared pipeline after native
+1080p60 CFR preflight: **29402/29402 presented frames**, decode and PTS checks pass.
+Open `data/lab/coaching-reliability/run-023/reports/index.html`: corrected production
+curves, four video excerpts and aligned windows, laps, missing coverage and progress.
+Detailed results and exact reproduction evidence: `real-system-trial-results.md`.
 
-Gate A remains FAIL and coaching B/R stays blocked; this does not block a development
-trial and visualization of current outputs. No new recording is required for this step.
-Independent testing on a distinct reserved capture comes later. Respect the user's quota.
+Automatic frozen-counter comparison: incidents **29402 fresh exact observations,
+4/4 events, no extras/misses**; BMW reused artifact **47589 exact,4/4 events**.
+No new visual counter campaign, agents, visibility expansion or threshold search.
+Speed679/29402 and each pedal683/29402: approximately2.3% availability with existing
+reviews; **s unavailable throughout**, no complete incidents calibration. Speed21/21
+approved points exact. Pedal MAE1.60/3.12 points, full throttle often94.12 rather than100;
+small residual inputs and rejected true39km/h at impact remain concrete limitations.
+
+Opened CLI report exposed **filled pedal areas bridging null gaps**. Focused RED then
+bounded visualization fix removes those fills in both time-report layouts. Regenerated
+charts from unchanged CSV; no extraction replay or signal modification. Browser QA
+confirms corrected gaps and braking shape.33 focused/318 full tests pass; source and
+prior evidence preserved. Original misleading chart remains diagnostic only.
+
+**Gate A FAIL; B/R blocked.** Development trial is delivered, not independent acceptance.
+Next is a distinct reserved independent capture, before inspection under frozen code.
 
 ## Incidents counter review completed — run-022
 
@@ -197,7 +208,8 @@ No job remains active after publication. No user image clarification is needed.
 are rejected from metadata/cadence checks before frames/OCR, including 720p and
 59.94 fps. CLI and web default to the 1080p profile. No more 720p extraction or
 investigation; preserved historical results do not qualify the active 1080p gate.
-An exhaustive 1080p event review is still needed. Format RED/GREEN evidence is in
+Fixed-ROI counter reviews are complete in run-021/022, with full incidents pipeline
+verification in run-023. Format RED/GREEN evidence is in
 run-012/reports; 317 tests pass. This code change invalidates previous extraction fingerprints.
 
 A9 C1 now requires source-bound speed visibility in the modern pipeline; unknown
@@ -400,8 +412,13 @@ Run-022 verification: full exact-state media/mapping audit, complete counter eva
 prior BMW evidence preservation,45 focused tests and317 full tests; docs discovery and
 diff check logged under `run-022/reports/`.
 
-**Next action:** execute `real-system-trial.md`: run the complete incidents video through
-the real shared pipeline with existing visibility evidence, open the generated report,
-and inspect a small set of useful video-aligned windows. Reuse frozen counter truth;
-show missing speed/progress honestly. Deliver the visible result before any further
-exhaustive review. No new recording or Gate A pass is required to demonstrate it.
+Run-023 verification: full incidents CLI artifact, automatic frozen BMW/incidents
+counter comparisons,21-point field checks, four bounded video windows, UI RED/GREEN,
+33 focused/318 full tests and preservation audit. See `run-023/reports/final-verification.json`.
+The local report server on127.0.0.1:8765 is intentionally left available for viewing;
+no extraction/review job remains active.
+
+**Next action:** reserve a distinct independent native1920×1080 exactly60fps CFR capture,
+with extractor/settings frozen and reservation recorded before any inspection. Keep
+Gate A blocked until compatible independent evidence supports acceptance. Do not
+restart exhaustive annotation of the demonstrated BMW/incidents recordings.

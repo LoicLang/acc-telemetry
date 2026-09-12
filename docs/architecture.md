@@ -94,6 +94,10 @@ with source/configuration/module hashes and exclusive atomic directory publicati
 See `session-artifacts.md` for envelope contracts, optional adapter flags and the
 separation between CFR/PTS checks and the still-pending independent reliability gate.
 
+Time reports draw unfilled pedal lines with explicit gap breaks. Filled polygons had
+bridged null spans in the real incidents trial; the display correction does not change
+measurements. See `real-system-trial-results.md`.
+
 A5 delegates position alignment to pure `analysis/alignment.py`: temporal runs,
 bounded interpolation, explicit channel quality and common-coverage deltas relative
 to confirmed lap origins. Plotly masks gaps, and typed API responses preserve full
