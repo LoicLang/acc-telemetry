@@ -1,17 +1,35 @@
 # ACC Telemetry — premier export GPT local
 
-Le prochain livrable est **`session_coaching.md`**, un fichier expérimental autonome
+Le premier livrable est **`session_coaching.md`**, un fichier expérimental autonome
 produit à partir d'une vraie session ACC PS5, que le pilote joint lui-même à GPT pour
-obtenir une priorité et des exercices étayés. L'extraction existe ; cet assembleur et
-le fichier final ne sont **pas encore implémentés**.
+obtenir une priorité et des exercices étayés. **L’assembleur et le vrai fichier run-026
+sont livrés** : trois passages personnels, repères physiques revus et limites explicites.
 
 Commencer par [l'état courant](docs/current-status.md), puis suivre
 [le plan actif en quatre lots](docs/plans/2026-09-13-first-gpt-export.md) et
 [le contrat du fichier](docs/specs/2026-09-13-session-coaching-report.md).
-Le premier travail est de relire les artefacts run-024 et sélectionner les passages,
-sans refaire l'OCR. Gate A reste FAIL et `coaching_eligible=false`, mais cet export
+Le dossier réutilise les artefacts run-024, sans refaire l'OCR.
+Gate A reste FAIL et `coaching_eligible=false`, mais cet export
 expérimental à portée limitée est explicitement autorisé. La qualification générale,
 la référence professionnelle et le suivi de l'entraînement viennent ensuite.
+
+## Reproduire le premier fichier
+
+Le livrable privé est `data/lab/coaching-reliability/run-026/reports/session_coaching.md`.
+La fiche et ses images de preuve restent locales et ignorées par Git. Depuis le dépôt :
+
+```bash
+PYTHONPATH=src .venv/bin/python -m acc_telemetry.adapters.session_report \
+  --session data/lab/coaching-reliability/run-024/processed/crash-session \
+  --case data/lab/coaching-reliability/run-026/interim/case.json \
+  --output data/lab/coaching-reliability/run-026/reports/reproduction-02/session_coaching.md
+```
+
+Choisir une sortie nouvelle : fichier existant, source, répertoire d’artefacts et `raw/`
+sont refusés. L’export vérifie les artefacts, la fiche liée au manifeste et les empreintes
+des preuves revues. Aucun OCR, GPT ou service web n’est appelé. La relecture par le même
+assistant permet un exercice de régularité local ; l’essai dans une nouvelle conversation
+GPT et l’efficacité à l’entraînement restent non réalisés.
 
 ## Moteur local existant
 

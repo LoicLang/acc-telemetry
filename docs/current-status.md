@@ -1,109 +1,117 @@
 ---
-summary: single handoff for the approved first experimental session_coaching.md export
+summary: first real session_coaching.md delivered from run-024; reproduction, evidence limits and next GPT reading trial
 read_when:
   - starting any repository task
-  - deciding the next action or the active delivery scope
+  - locating the delivered file or reproducing it
+  - deciding the next action and remaining evidence limits
 ---
 
 # Current status
 
 Last verified: **2026-09-13**. Branch: `codex/coaching-reliability`.
-Push authorized; no merge to main. No sub-agents or exhaustive counter review.
-Owner policy13 September: autonomous implementation choices and proportionate checks
-per `AGENTS.md`; no mandatory full suite per commit or tests for trivial documentation.
-This policy edit was reviewed by diff; the historical test results below were not rerun.
+Push authorized, no merge. No sub-agents or exhaustive counter review.
 
-## One active objective
+## Delivered result
 
-Produce **one real, autonomous `session_coaching.md`** from an existing local session,
-so the driver can attach it to GPT for a supported training priority and exercises.
-The exporter supplies facts, comparisons, reviewed visual descriptions and limits;
-GPT supplies hypotheses/exercises. No web service or GPT API integration.
+**The first real `session_coaching.md` is generated and locally reviewed.**
+It is a standalone French evidence dossier from the owner's actual run-024 session:
+three passages, shared physical landmarks, 22 locally reviewed speed readings,
+approximate transit times, approach/incident context and a request to GPT.
+The exporter supplies facts and limits; GPT proposes hypotheses and exercises.
 
-Active plan: `plans/2026-09-13-first-gpt-export.md`
-Active specification: `specs/2026-09-13-session-coaching-report.md`
+Active plan: [four lots](plans/2026-09-13-first-gpt-export.md).
+Implemented contract: [session report](specs/2026-09-13-session-coaching-report.md).
+Lots 1–3 and the local reading review are done. **A fresh GPT conversation has not
+been tested.** The user's delivery instruction expressly distinguishes these checks;
+that remaining trial does not prevent delivery of the file.
 
-The owner adopted this smaller milestone on 13 September and requested documentation
-cleanup. That cleanup is complete; **the report exporter is not implemented yet**.
-The next implementation task follows the four lots below, not another planning phase.
+## File and reproduction
 
-## Explicit scope decision
+Private/generated files remain ignored under `data/lab/coaching-reliability/`:
 
-**Gate A: FAIL. `coaching_eligible=false`.** Targets and existing artifact flags stay
-unchanged. The owner expressly authorizes the limited experimental export **without
-first passing all of Gate A**. This replaces the old rule that blocked every report
-behind complete qualification, a professional reference and the full seven-metric dossier.
+- **Deliverable:** `run-026/reports/session_coaching.md`.
+- **Source-bound selection:** `run-026/interim/case.json`; referenced review images
+  must remain available. 91 source images reviewed, including eight reused from
+  `run-025/reports/incident-context/`; new local scene decoding only, no OCR replay.
+- **Integrity:** `run-026/reports/integrity.json` (payload/envelope check via
+  `read_session_artifacts()`, source size/SHA-256 verified; unchanged CFR proof reused).
+- **Reading verdict:** `run-026/reports/relecture.md`, same assistant and task,
+  constrained to the file's facts; not blind, independent or driver-validated.
+- **Checks:** `run-026/reports/tests.txt`, `verification.json`, `command.txt`.
 
-Use or exclude each fact according to its actual local evidence. `observed` is not
-`verified`; a reason such as `hud_visibility_unverified` must affect its admissibility.
-A duration needs evidence across its relevant interval, not just two correct endpoints.
-No unsupported fine trajectory diagnosis, invented visibility, zero replacement or
-certain causal inference. General reliability and validated automated coaching remain
-blocked. A professional reference and next-session improvement are later milestones.
+From repository root, choose a new output directory (existing files are refused):
 
-## Verified starting material
+```bash
+PYTHONPATH=src .venv/bin/python -m acc_telemetry.adapters.session_report \
+  --session data/lab/coaching-reliability/run-024/processed/crash-session \
+  --case data/lab/coaching-reliability/run-026/interim/case.json \
+  --output data/lab/coaching-reliability/run-026/reports/reproduction-02/session_coaching.md
+```
 
-All paths below are repository-relative, under ignored `data/lab/coaching-reliability/`:
+Reproduction needs only the existing artifacts, case and its image/supporting evidence;
+it does not decode video, run OCR or call GPT. The source clip is unchanged. SHA-256:
+`b2558ba17c174043e94345f240b31614f4a428246cc437ac09537d37156b7124`, 453613415 bytes.
+The 29,402 presented frames are native 1920×1080 exactly 60 fps CFR. Source times are
+relative to that clip, not a guessed origin in a larger recording.
 
-- **Session:** `run-024/processed/crash-session/` — load with `read_session_artifacts()`.
-  Its four files are manifest, observations, normalized samples and telemetry CSV.
-- **Measurements:** `run-024/reports/results.json`, `annotated-validation.json` and
-  `final-verification.json`; existing display: `run-024/reports/index.html`.
-- **Frozen counter truth:** `run-022/processed/crash-fixed-roi-labels.jsonl` and
-  `run-022/reports/crash-numeric-truth.json`. No repeat visual annotation is needed.
-- **Report-reading trial:** `run-025/reports/essai-gpt/ESSAI_COACHING.md`, `preuves.json`
-  and images; additional approach frames: `run-025/reports/incident-context/`.
-  This is a manual provisional analysis, not the promised generated session report.
+## What the file establishes
 
-The manifest identifies source `data/lab/2026-09-03-generic-s-fusion/crash-representative.mov`,
-SHA-256 `b2558ba17c174043e94345f240b31614f4a428246cc437ac09537d37156b7124`,453613415 bytes.
-All 29,402 presented frames were processed in native 1920×1080 exactly 60 fps CFR.
-Times are relative to that input clip; do not infer a different original-video origin.
-Artifacts and supporting paths were rechecked during this cleanup.
+Spa, McLaren 720S GT3 family cockpit, original/EVO unknown. The shared zone is the
+left/right transition after the first right of Les Combes toward Malmedy. A/B refer
+to the disappearing ends of the first/final inside right curbs, reviewed in 0.5 s
+windows. Perspective/lateral-position error is unquantified: no exact timing plane.
 
-| Fact | Scope |
-| --- | --- |
-| Speed available29,298/29,402 (99.65%) | Availability, not accuracy |
-| Brake/throttle available29,402/29,402 | Does not prove HUD visibility |
-| Speed exact21/21 annotated points | No numerical truth between those points |
-| Pedal MAE brake1.60/gas3.12 points; maximum 5.88 |21 points per field |
-| Counter29,402 fresh exact values;4/4 transitions | Frozen run-022 comparison, not physical crossing truth |
-| Estimated `s` available26,844 frames | Spatial accuracy unverified; use physical landmarks for comparison |
+| Passage | Preserved window | A | B | Approximate A→B | Reviewed outcome |
+| --- | --- | --- | --- | --- | --- |
+| P1, HUD lap 4 | 39–57 s | 45–45.5 s | 51–51.5 s | 5.5–6.5 s | Continues on visible roadway; four-wheel legality unverified |
+| P2, HUD lap 5 | 185–204 s | 191.5–192 s | 200–200.5 s | 8–9 s | Slows in/after left, approaches inside runoff/rail before final right |
+| P3, HUD lap 6 | 334–352 s | 339.5–340 s | 345.5–346 s | 5.5–6.5 s | Goes into left gravel after B, then reorients toward barriers |
 
-Known limitations: full throttle often reads 94.12%; released pedals can leave
-0.65–1.70%; blips may be automatic; true39km/h at impact is rejected; V-CRASH-15
-has28/31 available speed frames. Keep these facts, do not tune them away for this export.
+Speeds near A are close (six reviewed readings 110–114 km/h). The later outcomes
+differ: this supports a local repeatability exercise, not a certain common cause.
+P1/P3 transit similarity does not mean equally successful exits; the aftermath is
+retained. P2 is not included in clean-passage statistics. No perfect reference exists.
 
-The actual clip shows a **McLaren 720S GT3 family** cockpit; original/EVO and hardware
-remain unconfirmed. The ending of Les Combes/Malmedy is a candidate zone. Precise
-landmarks and two/three comparable passages remain to be selected. Do not substitute
-BMW/Bruxelles from another capture. Include the approach to an incident: the old
-347–352s excerpt already starts off track. Conditions/setup can remain explicitly unknown.
+## Trust boundary, unchanged
 
-## Implementation and stop condition
+**Gate A: FAIL. `coaching_eligible=false`.** Owner authorized this limited export
+before general qualification. Targets, original annotations and artifact flags are
+unchanged. Historical manifest `gate_a=not_evaluated` is distinguished from the
+run-024 final verification's FAIL; neither is silently rewritten.
 
-Existing: shared automatic pipeline, typed measurements, integrity-checked artifacts,
-validation, local CSV/HTML. Proposed, **not yet present**:
-`analysis/session_summary.py`, `application/session_report.py`, `adapters/session_report.py`.
+Availability remains 29,298/29,402 speeds, all pedals, 26,844 estimated s values;
+availability is not accuracy. Existing 21-point speed/control checks and frozen
+run-022 counter comparison are reused, not generalized to all frames. New point
+reviews supplement, never overwrite, the old annotations. A speed is admitted only
+when observed and equal to the reviewed HUD reading; nulls and reasons persist.
 
-1. Freeze/reload the existing session and select comparable passages.
-2. Calculate only locally supported facts needed for a training subject.
-3. Generate `session_coaching.md` with a reproducible local command.
-4. Read it without repository/history, test it with GPT and fix precise missing evidence.
+No continuous pedal metrics or minimum speeds are published. Full gas often reads
+94.12%, released pedals 0.65–1.70%, blips can be automatic; true 39 km/h at impact was
+rejected, V-CRASH-15 has 28/31 speeds. No diagnosis of steering/TC/ABS or certain
+causality. Hardware, exact conditions/setup and driver feel remain unknown. Estimated
+s is not used for alignment. General reliability, validated automated coaching,
+professional reference and next-session improvement remain separate later work.
 
-Stop this milestone when the real file is autonomous and supports an evidenced exercise.
-No mandatory seven-metric implementation, new capture, professional reference, web work,
-full OCR replay, perfect `s`, or measured next-session improvement before that delivery.
-Private/generated outputs stay ignored. Old reports/designs are evidence in
-[the archive](archive/README.md), never competing instructions.
+## Implementation and verification
 
-## Verification and exact next action
+Implemented `analysis/session_summary.py` (pure admission/coverage/bounded times),
+`application/session_report.py` (artifact/case/evidence reading and atomic text
+publication), and thin `adapters/session_report.py`. No extraction/pipeline changes.
+Case schema and constraints are documented in the active specification.
 
-Runtime code/configuration are unchanged by this documentation cleanup. Prior run-024
-artifacts and referenced evidence are preserved.16 focused and324 full-suite tests pass;
-link/routing checks pass. All verification results are
-recorded in `data/lab/coaching-reliability/docs-cleanup-2026-09-13/reports/`.
+Focused report and existing artifact tests: **28 pass**. Report-specific tests cover
+source/manifest mismatch, null/held/anomalous/discordant speeds, missing landmark
+reasons, interval review gaps, bounds, units/source origin, image integrity and
+exclusive publication (including a concurrent writer). Real reproduction is byte-identical.
+No full-suite rerun: this is an isolated downstream consumer. Existing Pydantic
+configuration deprecation warning remains unrelated. Documentation reviewed and
+listed with `./scripts/docs-list`.
 
-**Next action: execute lot 1 of the active plan — load and integrity-check
-`run-024/processed/crash-session/`, then write a source-bound local selection sheet for
-two or three comparable passages with reviewed entry/exit landmarks and incident context.**
+## Exact next action
+
+**The driver attaches `run-026/reports/session_coaching.md` alone to a fresh GPT
+conversation and uses section 6 to request a priority, exercises and a session.**
+Then check that GPT cites the facts, distinguishes the two incidents and does not
+invent causality or turn the approximate measurements into ideal targets. Any next
+implementation should address a specific missing fact in that response, not reopen
+OCR or general qualification by default. Archived documents preserve evidence only.

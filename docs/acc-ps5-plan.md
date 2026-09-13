@@ -19,9 +19,11 @@ vitesses disponibles, pédales extraites sur toutes les images.21 points contrô
 prouvent pas la qualité globale ; biais de pédales, trous et anomalies restent connus.
 Les artefacts et leur intégrité permettent de travailler sans relancer la vidéo.
 
-Manquent pour ce jalon : une sélection source-bound de passages comparables, les
-quelques faits utiles calculés et vérifiés, l'assembleur local, et le vrai fichier testé
-avec GPT. Pas de nouvelle application web ou pipeline de coaching complet.
+Livrés dans run-026 : sélection source-bound de trois passages, repères A/B revus,
+22 lectures ponctuelles concordantes, trois temps de transit approximatifs et le vrai
+`session_coaching.md` produit par l’assembleur local. Relecture utile par le même assistant
+effectuée ; essai dans une nouvelle conversation GPT et entraînement réel non réalisés.
+Pas de nouvelle application web ou pipeline de coaching complet.
 
 ## Changement explicite de périmètre
 

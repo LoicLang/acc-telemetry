@@ -1,5 +1,5 @@
 ---
-summary: current local pipeline and artifact boundaries plus the unimplemented single-file experimental report extension
+summary: current local pipeline and artifact boundaries plus the implemented single-file experimental report extension
 read_when:
   - changing package boundaries or measurement data flow
   - implementing the first local session report from existing artifacts
@@ -91,16 +91,21 @@ supposer `s` exact. Ne pas forcer l'approbation du gate des interpolations spati
 [Contrat de comparaison](comparison-reliability.md). Les anciens designs détaillés
 sont dans [l'archive](archive/README.md), sans nouvelle action de recherche implicite.
 
-## Extension autorisée, pas encore implémentée
+## Export expérimental implémenté
 
-Le futur assembleur **relit les artefacts existants**, sans exécuter `TelemetryPipeline` :
+L’assembleur **relit les artefacts existants**, sans exécuter `TelemetryPipeline` :
 
 - `analysis/session_summary.py` : faits et comparaisons nécessaires, fonctions pures ;
 - `application/session_report.py` : lecture artefacts/fiche et assemblage du texte ;
 - `adapters/session_report.py` : commande locale, entrées/sorties/erreurs.
 
-Ces chemins sont proposés. Ne pas créer un format brut ni un moteur de sept métriques
-avant d'avoir un besoin précis. La fiche locale porte sources/repères/passages et revue.
+La fiche locale `session-coaching-case-v1` porte source/manifeste/payloads, repères,
+frames revues, lectures HUD ponctuelles, attribution et limites. Les images et preuves
+complémentaires sont vérifiées par SHA-256. Les fonctions pures calculent disponibilité
+et intervalles temporels ; une vitesse n’est admise que fraîche et concordante avec la
+lecture locale. Nulls et raisons persistent. Les durées de commande ne sont pas calculées.
+Le fichier est préparé entièrement puis publié par lien atomique sans remplacement,
+hors source, `raw/` et répertoire d’artefacts. Aucun nouveau format brut n’est introduit.
 Le Markdown fournit les faits au modèle ; le générateur ne produit pas de coaching.
 
 **Gate A reste FAIL et les artefacts gardent `coaching_eligible=false`.** La décision du

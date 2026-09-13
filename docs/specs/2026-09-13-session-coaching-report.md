@@ -9,7 +9,7 @@ read_when:
 
 Décision du propriétaire,13 septembre2026 : produire localement **un seul fichier
 `session_coaching.md`** à partir d'une vraie session. L'export technique existe ; le
-fichier autonome destiné à GPT reste à produire. Le plan d'exécution est
+fichier autonome destiné à GPT est livré dans run-026. Le plan d'exécution est
 [le plan en quatre lots](../plans/2026-09-13-first-gpt-export.md).
 
 ## Statut et frontière de confiance
@@ -87,7 +87,33 @@ Le livrable est **le fichier réel et la commande qui le reproduit**, pas un sch
 un faux exemple ou un script non exécuté. Sortie nouvelle, sans écrasement et sans
 modification du moteur sauf défaut démontré affectant une donnée nécessaire.
 
-Le jalon est terminé après lecture utile du fichier dans une conversation sans
-historique et contrôle des nombres/preuves/incertitudes. Une réponse séduisante mais
-non étayée échoue. Compléter seulement la pièce qui manque puis réessayer. La séance
+Pour la livraison autorisée le 13 septembre, une relecture limitée au fichier et le
+contrôle des nombres/preuves/incertitudes sont effectués. L’essai dans une nouvelle
+conversation sans historique est explicitement distingué : il reste à réaliser par le
+pilote. Une réponse séduisante mais non étayée échoue. Compléter seulement la pièce qui manque puis réessayer. La séance
 suivante et le gain de performance ne sont pas des conditions rétroactives de livraison.
+
+## Fiche locale implémentée
+
+`--case` lit un JSON `session-coaching-case-v1`, sans créer de nouvelles observations
+brutes. La fiche personnelle de run-026 est l’entrée reproductible livrée localement.
+
+- `source_sha256`, `source_size_bytes`, `manifest_sha256`, `artifact_files` lient la
+  sélection aux artefacts exacts ; `gate_a=FAIL`, `coaching_eligible=false` sont requis.
+- `review` contient date ISO, auteur, type et limites ; `context`, `question`,
+  `session_evidence`, `exclusions`, `landmark_limits` sont du texte revu, pas inféré.
+- `landmarks.entry/exit` définissent les objets communs. Chaque élément de `passages`
+  porte ID, `window_frames`, bornes `entry/exit`, `reviewed_frames` ordonnées,
+  `max_review_gap_s` positif validé, issue et limite de comparaison. Une borne absente
+  exige `entry_missing_reason` ou `exit_missing_reason` et interdit sa durée.
+- `speed_reviews` porte ID, frame, `hud_kmh` (nullable), contexte et raison ; seuls
+  les points `observed` égaux à cette lecture sont admis. `visuals` porte ID, frames,
+  description. Le code vérifie la portée déclarée, pas la véracité du jugement visuel.
+- `frame_evidence` associe chaque frame revue à un fichier image et son SHA-256 ;
+  `supporting_evidence` fait de même pour les validations réutilisées. Les chemins se
+  résolvent depuis la fiche. Ces médias servent à l’audit local, pas à la lecture GPT.
+
+L’export refuse une sortie existante, la source, `raw/` et le dossier d’artefacts.
+Les images doivent rester disponibles pour reproduire le fichier ; aucun décodage
+ni OCR n’a lieu dans l’exporteur. Une nouvelle sélection nécessite une vraie revue,
+pas simplement l’ajout d’IDs ou de drapeaux dans le JSON.
