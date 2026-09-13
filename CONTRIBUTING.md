@@ -12,9 +12,9 @@ python -m pip install -r requirements.txt
 
 Run commands from the repository root. Until the package is installed, expose the source tree with `PYTHONPATH=src`.
 
-Before changing the repository, run `./scripts/docs-list`, read
-`docs/current-status.md`, and follow the `read_when` hints for the task. If the status
-names an active specification or plan, read it before implementation.
+Use [AGENTS.md](AGENTS.md) for working rules. Read `docs/current-status.md` and inspect
+Git when starting work unless that context is already current. Use `./scripts/docs-list`
+and the active plan/specification as needed; do not repeat reads without a reason.
 
 ## Active delivery
 
@@ -25,21 +25,25 @@ false; complete general qualification is not a prerequisite for this limited exp
 Use only locally supported facts with reasons and uncertainty. Do not restart old
 counter campaigns, web work or obsolete plans from the archive.
 
-## Tests
+## Proportionate verification
 
-Run a focused test while working, then the complete suite:
+Choose checks that address the actual risk:
+
+- Documentation: reread the change; check links/references when affected. No tests
+  for trivial text edits. Check routing for moved/deleted documents.
+- Localized behavior: focused tests; add a regression when it protects meaningful behavior.
+- Pipeline/data-contract changes, broad refactoring or significant uncertainty:
+  focused checks and the full suite when warranted.
+
+There is no mandatory full suite per commit and no universal failing-test-first rule.
+Do not repeat passing checks without a relevant change or failure. Tests must not modify
+personal captures. Run `./scripts/docs-list` when document discovery/structure changes.
+
+Commands available when appropriate:
 
 ```bash
 PYTHONPATH=src python -m unittest tests.test_video_sampling -v
 PYTHONPATH=src python -m unittest discover -s tests -v
-```
-
-New behavior and bug fixes require a failing test first. Tests must not read or modify personal data under `data/sessions/`.
-
-If active documentation changes, also run:
-
-```bash
-./scripts/docs-list
 ```
 
 ## Data
@@ -66,7 +70,8 @@ test: cover anomalous normalized samples
 docs: explain ACC PS5 position quality
 ```
 
-Do not mix large file moves, behavior changes, data migration, and documentation rewrites in one commit.
+Group related changes coherently; separate migrations or unrelated changes when that
+improves review or data safety. Small policy edits need only a review/diff check.
 
 Update `docs/current-status.md` in the same commit whenever a behavior change alters
 verified project truth, blockers, the active milestone, or the exact next action.

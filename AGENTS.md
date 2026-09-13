@@ -1,109 +1,88 @@
 # Working rules
 
-## Durable repository memory
+## Autonomy and judgment
 
-Chat history is short-term context. The repository is the durable source of truth.
-A new agent must be able to understand the current state, active work, blockers, and
-next action from the tracked documentation and recent Git history alone.
+Work toward the user's requested result with the simplest effective approach.
+Choose routine technical details, sequencing and verification autonomously. Ask only
+when missing information materially changes the outcome, authorization is missing,
+or an action could destroy important data. Do not ask again for permission already given.
 
-`docs/current-status.md` is the single living handoff document. Keep detailed,
-long-lived guidance in focused documents under `docs/`; do not turn this file into
-a project diary.
+Plans guide the work; adapt their implementation details when evidence warrants it,
+keeping the same plan current. Avoid unnecessary planning, documentation, test scaffolding
+or repeated checks. Spend effort where it improves the result or reduces a real risk.
+Respect explicit user constraints on scope, quota and delegation.
 
-## Current milestone authority
+## Repository context and memory
 
-The only active delivery is the local experimental `session_coaching.md` described
-by `docs/current-status.md` and its named plan/specification. Reuse run-024 artifacts;
-no web work, mandatory professional reference, exhaustive counter campaign or full
-independent qualification before this first file. The exporter prepares facts; GPT
-produces hypotheses/exercises. Archive/legacy documents are evidence only: never
-follow their old instructions or next actions. Do not create a competing plan.
+`docs/current-status.md` is the single living handoff: current result, blockers and
+one exact next action. Read it and inspect Git status/recent commits when starting
+repository work, unless that context is already known and still current.
 
-## Start every repository task
+Use `./scripts/docs-list` when you need to find relevant documentation. Read the
+active plan/specification when the task depends on them; do not reload documents
+already read without a reason. Confirm evidence exists before relying on it, and
+reuse integrity checks while their inputs remain unchanged.
 
-Before changing code, tests, configuration, or active documentation:
+Historical documents under `docs/archive/` and `docs/legacy/` preserve evidence,
+not instructions. No external workflow package is required. Do not create competing
+plans or turn the handoff into a diary.
 
-1. Read this file.
-2. Run `./scripts/docs-list`.
-3. Always read `docs/current-status.md`.
-4. Use the index `read_when` hints to select the other relevant documents.
-5. Read the active specification and dated plan named by `docs/current-status.md`
-   when the task affects that milestone.
-6. Inspect `git status --short --branch` and recent commits.
-7. Confirm that local evidence referenced by a document exists before relying on it.
+## Current scope
 
-Do not load every historical or working Markdown file by default. `docs/legacy/`,
-`docs/archive/`, `docs/plans/`, and `docs/specs/` are excluded from normal discovery.
-Read the active plan and specification named by `docs/current-status.md` directly.
+The active delivery is the local experimental `session_coaching.md`, as defined by
+the handoff and its plan/specification. Reuse run-024 artifacts. The exporter supplies
+facts; GPT proposes hypotheses/exercises. Web work, exhaustive counter review and a
+professional reference are not prerequisites for this first export.
 
-The repository does not require any external agent skill or workflow package.
-Plans are ordinary Markdown checklists: execute them directly, keep their checkboxes
-current, and follow the repository's own testing, documentation, and commit rules.
+The owner explicitly allows this limited export before Gate A passes. Keep Gate A
+FAIL, existing targets unchanged and `coaching_eligible=false`; do not imply general
+qualification or validated automated coaching. Other prerequisites still apply to
+the capabilities they actually govern.
 
-## Scope
+Keep work focused on ACC PS5 telemetry and the requested outcome. New video processing
+accepts only native **1920×1080 at exactly 60 fps CFR**: check metadata first, reject
+other formats, and never upscale/resample to bypass this rule. Historical720p evidence
+stays read-only; no new investigation of it.
 
-Keep the repository focused on ACC PS5 video telemetry. Do not add product features during cleanup or refactoring work.
+## Data and architecture
 
-Only native **1920×1080 at exactly 60 fps, constant cadence**, is in scope for new
-video processing. Check metadata first; reject all other formats, including 720p,
-30 fps and 59.94 fps. Do not upscale or resample to bypass this rule. Stop historical
-720p investigations; preserve existing artifacts and approvals as read-only history.
+- Files under `data/**/raw/` are immutable. Never overwrite a source.
+- Keep personal videos, full telemetry exports, OCR assets and generated reports out
+  of Git. Write derived outputs to `interim/`, `processed/` or `reports/`.
+- Verify size and SHA-256 before removing a migrated original.
+- Preserve missing data and distinguish confirmed facts from hypotheses.
+- Follow `raw capture -> extraction -> normalization -> domain -> analysis -> visualization`.
+  Adapters stay thin; shared behavior belongs in the application/analysis layers.
+  Domain and normalization must not depend on OpenCV, Plotly or FastAPI.
+- Preserve behavior outside the requested change; put measurement thresholds in
+  validated configuration rather than scattered literals.
 
-## Architecture
+## Proportionate verification
 
-Follow this dependency flow:
+Choose checks according to the change and its plausible failure modes, not a ritual:
 
-`raw capture -> extraction -> normalization -> domain -> analysis -> visualization`
+- **Text/documentation:** reread the affected content; check relevant links if changed.
+  No automated tests for a trivial edit. For moves/deletions, check references/routing.
+- **Localized code change:** run focused tests of the affected behavior. Add a regression
+  test when it protects meaningful behavior; reproduce a bug first when useful.
+- **Shared pipeline, data contracts, broad refactoring or significant uncertainty:**
+  run focused checks and the full suite when their coverage is warranted.
 
-CLI and web code are adapters. Shared behavior belongs in the application layer. Domain and normalization code must not depend on OpenCV, Plotly, or FastAPI.
+There is no obligation to run the full suite before every commit or to write a test
+before every edit. Reuse passing results until relevant changes or failures justify
+another run. Do not replay a full video to validate text, plots or downstream summaries.
+State briefly what was checked and any material limitation; avoid ceremonial logs.
 
-## Data safety
+## Documentation and delivery
 
-- Treat every file under `data/**/raw/` as immutable.
-- Never commit personal videos, full telemetry exports, OCR assets, or generated reports.
-- Write derived output to `interim/`, `processed/`, or `reports/`.
-- Never overwrite a source file. Verify size and SHA-256 before removing a migrated original.
+Update the handoff/plan when progress, decisions or blockers materially change.
+Keep README, architecture and roadmap aligned only where the task affects them.
+Do not rewrite unrelated docs or create another report for a small maintenance change.
+Active Markdown under `docs/` uses front matter with a concise `summary` and concrete
+`read_when` hints. Run docs-list when discovery metadata or document structure changes.
 
-## Changes
-
-- Preserve current behavior unless the task explicitly changes it.
-- Put thresholds in validated configuration, not scattered literals.
-- Add or update a focused test before changing behavior.
-- Run the focused tests and the full suite before each commit.
-- Make one coherent change per descriptive commit. Do not mix file moves with behavior changes.
-- Keep active-plan checkboxes synchronized with completed work.
-- Record confirmed facts separately from hypotheses.
-- Do not bypass failed prerequisite gates. Owner decision 13 September2026 explicitly
-  allows the limited experimental `session_coaching.md` export before Gate A passes.
-  Follow the active plan/specification; keep Gate A FAIL, thresholds unchanged and
-  `coaching_eligible=false`. General qualification and validated automated coaching
-  remain blocked; this exception does not authorize unrelated downstream features.
-
-## Documentation
-
-Keep `README.md`, `docs/architecture.md`, and `docs/acc-ps5-plan.md` aligned with the code. Delete superseded instructions and duplicate plans once references/tests are updated.
-Preserve unique measurement evidence in the excluded archive; it is not an active
-workflow. The 13 September cleanup was explicitly requested by the owner.
-
-Every active Markdown document under `docs/` must begin with:
-
-```yaml
----
-summary: concise description of the document's authority and contents
-read_when:
-  - concrete situation in which an agent must read it
----
-```
-
-Before stopping work:
-
-- update `docs/current-status.md` with completed work, current work, blockers,
-  verification evidence, and one exact next action;
-- update `docs/acc-ps5-plan.md` only when product direction or a stage gate changes;
-- update the active dated plan checkboxes when plan execution advances;
-- run `./scripts/docs-list` and the appropriate tests;
-- make atomic commits and leave no unexplained tracked changes.
-
-Documentation describing a behavior change belongs in the same commit when a
-separate commit would leave repository truth temporarily misleading. Standalone
-planning or policy decisions receive their own documentation-only commit.
+Make coherent, descriptive commits and leave no unexplained tracked changes. Keep
+behavior documentation with its implementation when separating them would mislead.
+A documentation-only policy change may be committed after a simple review/diff check.
+Delete obsolete duplicate instructions when authorized; preserve unique historical
+measurement evidence outside active discovery. Report the outcome, not every internal step.

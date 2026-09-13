@@ -9,6 +9,9 @@ read_when:
 
 Last verified: **2026-09-13**. Branch: `codex/coaching-reliability`.
 Push authorized; no merge to main. No sub-agents or exhaustive counter review.
+Owner policy13 September: autonomous implementation choices and proportionate checks
+per `AGENTS.md`; no mandatory full suite per commit or tests for trivial documentation.
+This policy edit was reviewed by diff; the historical test results below were not rerun.
 
 ## One active objective
 

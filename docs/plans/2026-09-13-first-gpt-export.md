@@ -122,8 +122,10 @@ ce qui ne l'est pas ; ne pas prétendre avoir obtenu une réponse indépendante.
 
 ## Protections et discipline d'exécution
 
-- Tests ciblés avant tout comportement ajouté : calcul connu, point/intervalle absent,
-  ambiguïté, unités/raisons, portabilité et absence d'écrasement ; full suite avant commit.
+- Vérifications proportionnées selon `AGENTS.md` : tests ciblés pour les calculs,
+  absences/ambiguïtés, unités/raisons et non-écrasement réellement affectés. Ajouter
+  une régression utile ; suite complète si l'impact transversal ou le risque le justifie,
+  pas systématiquement avant chaque commit. Une simple retouche de texte se relit.
 - Réutiliser les annotations du compteur et les preuves run-024. Nouveau décodage seulement
   pour une revue locale nécessaire, après contrôle du 1080p60 CFR. Nouveau replay/OCR seulement
   si une correction démontrée du lecteur affecte les données utiles au fichier.
@@ -134,7 +136,7 @@ ce qui ne l'est pas ; ne pas prétendre avoir obtenu une réponse indépendante.
   Une référence personnelle permet d'étudier la régularité, pas une technique optimale.
 - Conserver les sources/anciens résultats. Sorties personnelles ignorées sous
   `interim/`, `processed/` ou `reports/`. Mettre à jour cases et `current-status.md`,
-  exécuter docs-list/tests, commit atomique et push de la branche, sans merge.
+  choisir les vérifications utiles, commit cohérent et push de la branche, sans merge.
 
 **Prochaine action unique : lot 1 — vérifier/recharger run-024 et préparer la fiche
 locale de deux ou trois passages avec les mêmes repères physiques revus.**
