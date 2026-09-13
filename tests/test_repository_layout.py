@@ -131,46 +131,49 @@ class TestRepositoryLayout(unittest.TestCase):
     def test_active_documentation_has_routing_metadata(self):
         self.assertEqual(validate_active_docs(ROOT / "docs"), [])
 
-    def test_acc_plan_records_verified_reliability_blockers(self):
-        plan = (ROOT / "docs" / "acc-ps5-plan.md").read_text(
-            encoding="utf-8"
-        )
-        for expected in (
-            "s_status: representative_clean_and_crash_gates_pass",
-            "generic_fusion_implemented",
-            "88.033333",
-            "50.027742",
-            "initial_s_anchor",
-            "false lap transitions",
-            "quality propagation",
-            "blocked",
-        ):
-            with self.subTest(plan_contains=expected):
-                self.assertIn(expected, plan)
+    def test_current_docs_route_to_the_first_experimental_export(self):
+        import re
+        status = (ROOT / "docs/current-status.md").read_text(encoding="utf-8")
+        match = re.search(r"Active plan: `([^`]+)`", status)
+        self.assertIsNotNone(match)
+        self.assertTrue((ROOT / "docs" / match.group(1)).is_file())
+        self.assertEqual(len(list((ROOT / "docs/plans").glob("*.md"))), 1)
+        self.assertEqual(len(list((ROOT / "docs/specs").glob("*.md"))), 1)
+        for name in ("AGENTS.md", "README.md", "docs/current-status.md",
+                     "docs/acc-ps5-plan.md", "docs/architecture.md"):
+            with self.subTest(document=name):
+                text = (ROOT / name).read_text(encoding="utf-8")
+                self.assertIn("session_coaching.md", text)
+        self.assertIn("Gate A: FAIL", status)
+        self.assertIn("coaching_eligible=false", status)
+        self.assertLess(len(status.splitlines()), 130)
+        self.assertFalse((ROOT / "DEPLOY.md").exists())
+        self.assertFalse((ROOT / "QUICKSTART_WEB.md").exists())
 
-    def test_current_docs_record_approved_fused_s_direction(self):
+    def test_active_document_links_resolve(self):
+        import re
+        from urllib.parse import unquote
+        from scripts.docs_list import walk_markdown_files
+        paths = [ROOT / name for name in ("AGENTS.md", "README.md", "CONTRIBUTING.md")]
+        paths += walk_markdown_files(ROOT / "docs")
+        paths += list((ROOT / "docs/plans").glob("*.md"))
+        paths += list((ROOT / "docs/specs").glob("*.md"))
+        for path in paths:
+            for target in re.findall(r"\[[^\]]*\]\(([^)]+)\)", path.read_text(encoding="utf-8")):
+                if target.startswith(("https://", "http://", "mailto:", "#")):
+                    continue
+                local = unquote(target.split("#", 1)[0].strip("<>"))
+                with self.subTest(document=path.relative_to(ROOT), target=local):
+                    self.assertTrue((path.parent / local).exists())
+
+    def test_current_docs_preserve_generic_progress_contract(self):
         readme = (ROOT / "README.md").read_text(encoding="utf-8")
-        plan = (ROOT / "docs" / "acc-ps5-plan.md").read_text(encoding="utf-8")
-        architecture = (ROOT / "docs" / "architecture.md").read_text(
-            encoding="utf-8"
-        )
-        status = (ROOT / "docs" / "current-status.md").read_text(
-            encoding="utf-8"
-        )
-
+        architecture = (ROOT / "docs/architecture.md").read_text(encoding="utf-8")
         self.assertIn("ps5_full_map_1080p", readme)
         self.assertIn("1920x1080", readme)
         for concept in ("s_odometry", "s_visual", "s_fused", "v * delta_t"):
-            with self.subTest(plan_contains=concept):
-                self.assertIn(concept, plan)
+            self.assertIn(concept, architecture)
         self.assertIn("Generic position estimation", architecture)
-        self.assertIn("2026-09-03-generic-s-fusion-design.md", status)
-        self.assertIn(
-            "Last completed implementation plan: `docs/plans/2026-09-04-temporal-centerline-selection.md`",
-            status,
-        )
-        self.assertIn("implementation and representative validation complete", status)
-        self.assertIn("Tasks 1-10 complete", status)
 
 
 if __name__ == "__main__":

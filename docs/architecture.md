@@ -1,239 +1,109 @@
 ---
-summary: current code boundaries, dependency flow, telemetry contract, and adapter responsibilities
+summary: current local pipeline and artifact boundaries plus the unimplemented single-file experimental report extension
 read_when:
-  - changing package boundaries or data flow
-  - modifying extraction, normalization, domain, application, visualization, or adapters
+  - changing package boundaries or measurement data flow
+  - implementing the first local session report from existing artifacts
 ---
 
 # Architecture
 
-## Data flow
+## Chaîne existante
 
 ```text
-immutable video
-  -> extraction observations
-  -> normalization + quality/anomalies
-  -> domain telemetry
-  -> driving analysis
-  -> CSV/HTML/API presentation
+capture immuable -> extraction -> normalisation -> domaine -> analyse -> visualisation
+                                        application = orchestration
+                                        CLI/web = adaptateurs
 ```
 
-The dependency direction follows the arrows. Domain and normalization code do not import OpenCV, Plotly, or FastAPI.
+Le livrable actif est le fichier expérimental `session_coaching.md`, préparé **localement**
+puis joint à GPT par le pilote. [Contrat](specs/2026-09-13-session-coaching-report.md) et
+[plan](plans/2026-09-13-first-gpt-export.md). Le service web hérité existe mais ne fait pas
+partie de ce travail. Aucun appel API GPT ou hébergement à ajouter.
 
-## Boundaries
+| Module | Responsabilité existante |
+| --- | --- |
+| `extraction/video.py` | Métadonnées, validation1080p60CFR, images/ROI et couverture de décodage |
+| `extraction/laps.py` | Lectures fraîches vitesse/rapport/compteur ; wrappers legacy isolés |
+| `extraction/controls.py` | Barres frein/gaz, candidat de direction, raisons d'absence |
+| `application/components.py`, `pipeline.py` | Configuration et traitement séquentiel partagé ; progression hors ligne |
+| `normalization/samples.py`, `domain/telemetry.py` | Unités, valeurs nullable, qualités, raisons et valeurs sources |
+| `application/session_artifacts.py` | Écriture/relecture telemetry-v2, hashes et publication exclusive |
+| `analysis/validation.py`, `application/capture_validation.py` | Évaluation des annotations et preuves des gates |
+| `analysis/alignment.py` | Interpolation bornée et comparaisons diagnostiques |
+| `visualization/interactive.py` | CSV/HTML et résumés de session ; pas le premier fichier GPT |
+| `adapters/cli.py` | Entrée locale `main.py` |
 
-- `extraction`: frame I/O, HUD crops, color detection, OCR, minimap path and red-dot position.
-- `normalization`: units, legacy CSV conversion, missing values, held/interpolated values, and anomaly labels.
-- `domain`: immutable telemetry samples and quality vocabulary.
-- `analysis`: position-aligned calculations and future coaching rules. It is intentionally small today.
-- `application`: validated settings, component construction, and the sequential shared pipeline.
-- `visualization`: DataFrame conversion, CSV export, Plotly reports, and summaries.
-- `adapters`: argument parsing, filesystem choices, FastAPI requests, storage, and responses.
+Domaine/normalisation ne dépendent pas d'OpenCV, Plotly ou FastAPI. Les règles partagées
+appartiennent à l'application/analyse, pas aux adaptateurs. Les modules de compatibilité
+sous `src/` et `main.py` délèguent aux modules packagés.
 
-Root `main.py` and modules such as `src/video_processor.py` are compatibility entry points. New code imports `acc_telemetry.*` directly.
+## Configuration et mesures
 
-## Configuration
+`config/roi_config.yaml` définit la géométrie du HUD ; `config/telemetry.yaml` contient
+les paramètres de lecture, admission et progression, chargés/validés par `load_settings()`.
+Le format des nouvelles captures est strictement1920×1080 à exactement 60 fps CFR.
+FFprobe contrôle les timestamps de présentation ; les paquets MOV marqués discard ne
+sont pas des images à publier. Autres formats refusés avant extraction, sans conversion.
 
-The product input contract is fixed to native 1920×1080 at exactly 60 fps CFR.
-`VideoProcessor.open_video` refuses incompatible metadata before reading frames;
-FFprobe packet timestamps verify cadence without OCR or image extraction. Annotation
-preflight applies the same rule. Unknown format, 59.94 fps and VFR are rejected;
-there is no automatic resizing or resampling. CLI/web defaults select 1080p.
-Generic helpers and old artifact readers remain usable for historical evidence.
+`TelemetryPipeline` lit la vidéo séquentiellement et la ferme dans `finally`. Elle
+collecte les observations puis confirme les tours, calibre l'odométrie et fusionne la
+progression hors ligne. Les observations brutes du compteur et son état confirmé sont
+séparés ; les événements conservent premier candidat, confirmation et dernière preuve
+ancienne. La confirmation n'est pas un franchissement physique de ligne.
 
-`config/roi_config.yaml` owns HUD geometry and profile-specific map detection. `config/telemetry.yaml` owns shared position, OCR recovery, and normalization thresholds. `load_settings()` validates both before the packaged CLI builds components.
+Le mode `reviewed`, par défaut, exige des plages de visibilité revues pour publier
+vitesse/pédales. Le mode explicite `automatic` refuse des annotations d'entrée et lit
+les mêmes ROI sans revue préalable. Les résultats portent `speed_hud_unverified` /
+`hud_visibility_unverified`; cela ne qualifie pas un détecteur automatique de HUD.
+La visibilité est documentée dans [speed-visibility](speed-visibility.md) et
+[control-visibility](control-visibility.md).
 
-## Telemetry contract
+La vitesse moderne conserve une lecture OCR fraîche ou une absence, sans médiane ni
+maintien. `speed_admission.py` applique les limites validées de variation/gap et conserve
+la lecture brute rejetée ; aucun chiffre estimé ne remplace la mesure. Les pédales ne
+sont ni lissées ni rescalées. TC/ABS restent indisponibles. Les artefacts anciens gardent
+leurs statuts HELD et leur sémantique, sans qualification rétroactive.
 
-Legacy extraction records use `track_position` in percent for CSV compatibility. The domain converts it to `s` in `[0, 1]`. A value outside the expected range is retained and marked anomalous; it is never silently clipped.
-
-Each field has one quality state: observed, missing, held, interpolated, predicted,
-fused, or anomalous. The sample also preserves source values and anomaly reasons.
-Longitudinal progress additionally carries its odometric and visual components,
-uncertainty, source, and stable reasons. Lateral `d` is not present because video
-evidence does not yet support it reliably.
-
-In production, compatibility `track_position` is derived from available `s_fused *
-100`. Only the explicit legacy tracker diagnostic remains map-only. Neither numeric
-output alone proves spatial accuracy.
-
-A1 resolves the audited lap integration gap: the generic pipeline reads one strict
-fresh `FieldObservation` per lap label, while the explicit legacy path retains
-smoothing/holding. Missing observations restart confirmation. Boundaries export
-first-candidate, confirmation and last fresh previous-lap times; anchors remain at
-confirmation. Sustained plausible OCR errors remain a limitation, and consensus is
-not a calibrated probability. A2 preserves speed/gear/confirmed-lap quality in
-`quality_hint` and reasons in CSV JSON `field_reasons`; normalization retains both.
-`speed_raw`, `gear_raw` and `raw_lap_number` retain extraction evidence. A8 publishes strict fresh speed readings without median/recovery on the modern path;
-the explicit legacy wrapper retains its filter and old HELD artifacts retain their quality; production gear uses fresh
-symbols and marks N/R unsupported. Modern numeric normalization rejects NaN/inf;
-CSV nulls must be imported as empty strings or None (the CSV loader does this), not
-pandas-inferred NaN. The comparison API now retains modern progress provenance and nullable controls. `TelemetrySample` is an available contract,
-now an application result, but not yet the universal consumer boundary. See
-`technical-audit-2026-09-05.md` before relying on field quality for analysis.
-
-A9 C3 bounds the thresholded foreground for modern lap OCR only on the explicitly
-configured historical 720p profile, retaining every digit component and word segmentation.
-1080p retains its full ROI after the first replay exposed a regression from global
-cropping. Its one-pixel margin is validated
-configuration. The explicit legacy lap wrapper keeps its full ROI. Blank modern ROI
-abstains and shared word mode is restored after reads. See
-`admission-correction-results.md`; ten correct endpoints do not establish full event
-recall or arbitrary multi-digit accuracy.
-
-A3 adds reviewed `VisibilitySpan` inputs (see `control-visibility.md`). Generic
-control decoding requires a reviewed span and a nonempty/nonblack ROI; missing
-steering candidates remain unavailable. Quality and reasons reach CSV normalization.
-TC/ABS remain unsupported. CLI and web metadata/report consumers handle null controls;
-the explicit legacy extraction path retains its historical values.
-
-A4 makes normalized samples and extraction frame observations available alongside
-compatible records when explicit settings are supplied. The CLI and web service
-provide those settings. `session_artifacts.py` writes and reloads `telemetry-v2`
-with source/configuration/module hashes and exclusive atomic directory publication.
-See `session-artifacts.md` for envelope contracts, optional adapter flags and the
-separation between CFR/PTS checks and the still-pending independent reliability gate.
-
-Time reports draw unfilled pedal lines with explicit gap breaks. Filled polygons had
-bridged null spans in the real incidents trial; the display correction does not change
-measurements. See `real-system-trial-results.md`.
-
-A5 delegates position alignment to pure `analysis/alignment.py`: temporal runs,
-bounded interpolation, explicit channel quality and common-coverage deltas relative
-to confirmed lap origins. Plotly masks gaps, and typed API responses preserve full
-evidence. Legacy unqualified data remains diagnostic only. See
-`comparison-reliability.md` for admission rules and absent frontend limitations.
-
-A6 separates annotation preparation from measurement inference. `capture_annotations`
-prepares unreviewed media and source manifests; pure `analysis/validation.py` validates
-human labels/corpus readiness. `validation_config.py` owns independent thresholds.
-Video preflight compares presentation packet PTS with decoded frames and profile
-resolution; runtime decode status remains visible. See `capture-annotations.md` for
-MOV discard-packet handling and accepted A6 inputs.
-
-A7 adds pure field/event/landmark metrics and the application orchestrator
-`capture_validation.py`. Its CLI consumes integrity-checked telemetry-v2 artifacts
-without OCR, keeps missing evidence explicit, and reports all six gate checks with
-component/configuration fingerprints. See `capture-validation.md`; independent
-measurements currently fail Gate A. Review provenance distinguishes original user
-labels from separately authorized agent visibility/exhaustiveness reviews.
-
-## Fresh signal correction (A8)
-
-`LapDetector.observe_speed` reads the shared raw OCR primitive once and admits only
-complete decimal text within the existing speed range. It preserves original text,
-reasons and explicit absence; it neither reads nor mutates legacy speed history.
-`extract_speed` retains historical median/recovery behavior. A9 C2 adds configured
-causal rate admission in `application/speed_admission.py` before records and odometry:
-reject to explicit absence, never replace the speed. Gaps, invalid reads and reviewed
-context changes reset support. No pedal smoothing is added. A9 C1 adds source-bound reviewed speed HUD
-visibility in `application/speed_visibility.py`; the pipeline verifies source SHA/size
-and supplies visible/absent/unknown context to the extractor. Unknown/absent and black
-ROI abstain. CLI and web service supply this same contract; artifacts preserve and
-verify its source binding. This is not an automatic detector or proof of numeric
-accuracy; see `speed-visibility.md` and the frozen `fresh-measurement-results.md`.
-
-Pipeline, normalization, CSV, telemetry-v2 and typed API preserve measurement evidence.
-Odometry receives fresh speed or absence; its existing bounded internal interpolation
-retains distinct provenance and never replaces the measured speed. Changing speed
-requires new calibration/progress evidence. Optional regression R remains deferred.
-The implementation checklist is `plans/2026-09-09-fresh-measurements.md`.
-
-## Automatic development extraction
-
-`TelemetryPipeline(measurement_mode="automatic")` explicitly separates extraction
-from annotation-based validation. It rejects annotation inputs and uses the same fresh
-speed/control readers, causal numerical admission, normalization and progress engine.
-Unreviewed values retain field reasons; derived progress adds
-`automatic_measurements_unverified`. `observed` denotes a fresh machine observation,
-not verified correctness. Invalid readings remain null. No automatic HUD detector,
-new threshold or pedal treatment is introduced. The default remains `reviewed`.
-
-CLI `--measurement-mode automatic` and the web Python service's `measurement_mode`
-argument reach that same application behavior. HTTP forms keep the reviewed default.
-CSV/API preserve the field/progress reasons; artifacts record the mode in resolved
-configuration and keep coaching ineligible. Web metadata also records the mode.
-Existing artifacts remain readable. See `automatic-system-trial.md` for the full
-source trial and measurements scoped to preexisting annotated zones.
+Les qualités (`observed`, `missing`, `held`, `interpolated`, `predicted`, `fused`,
+`anomalous`) et raisons atteignent CSV, `TelemetrySample` et telemetry-v2. `observed`
+indique la fraîcheur, pas une exactitude vérifiée. Les consommateurs doivent conserver
+nulls et raisons. [Traitement des signaux](signal-treatment.md).
 
 ## Generic position estimation
 
-The implemented estimator is generic across circuits using the static full-map HUD.
-Its production wiring and representative clean/crash validation gates are complete.
-
 ```text
-speed + delta time -> integrated distance -> s_odometry + uncertainty
-
-static map -> unique centerline
-red contours -> plausible dot candidates
-centerline + candidates + odometry prediction -> s_visual
-
-s_odometry + s_visual + confirmed lap boundary
-  -> s_fused + source + uncertainty + reasons
-  -> normalized domain telemetry
+speed + delta time -> v * delta_t -> distance intégrée -> s_odometry
+carte statique -> centerline -> candidats du point voiture -> s_visual
+s_odometry + s_visual + tour confirmé -> s_fused + incertitude + raisons
 ```
 
-`s_odometry` integrates `speed_kmh / 3.6 * delta_time_s`. Completed clean laps are
-normalized by their measured integrated distance; the median becomes an effective
-lap-length calibration. Official circuit length is optional sanity evidence, not the
-primary denominator.
+Le tracker exige une centerline unique et des candidats cohérents ; seules les bornes
+de tour confirmées ancrent la progression. La calibration utilise les distances
+intégrées des tours admissibles. L'interpolation interne bornée d'odométrie conserve
+sa provenance et ne remplit jamais la vitesse mesurée. Les longues incertitudes restent
+manquantes. La compatibilité `track_position` est `s_fused * 100`, jamais une distance
+physique latérale. En automatique, `automatic_measurements_unverified` accompagne la
+progression dérivée. Les contrôles représentatifs établissent la cohérence interne,
+pas une précision spatiale indépendante.
 
-The visual side first retains white pixels that recur in at least 60% of sampled
-frames. It evaluates disconnected components independently and accepts exactly one
-component whose pruned skeleton yields a sufficiently long closed cycle. This uses
-the fixed HUD evidence without a circuit template or car-specific crop. The selected
-cycle becomes a single centerline, not the external outline of the thick map stroke.
-All plausible red-dot candidates are then retained, and odometric prediction plus
-temporal continuity disambiguates nearby branches. A visual gap may be bridged briefly
-with explicitly predicted/interpolated progress; long uncertain gaps become
-unavailable.
+Pour le premier rapport, comparer des repères physiques et des temps revus plutôt que
+supposer `s` exact. Ne pas forcer l'approbation du gate des interpolations spatiales.
+[Contrat de comparaison](comparison-reliability.md). Les anciens designs détaillés
+sont dans [l'archive](archive/README.md), sans nouvelle action de recherche implicite.
 
-Only a confirmed lap boundary may reset `s_fused` to zero. The opening partial lap is
-unanchored unless offline evidence provides both trusted boundaries. The geometric
-top-of-map start heuristic and unconditional forced completion are not part of the
-target architecture.
+## Extension autorisée, pas encore implémentée
 
-## State and error handling
+Le futur assembleur **relit les artefacts existants**, sans exécuter `TelemetryPipeline` :
 
-Frame extraction remains sequential because OCR recovery and lap observations depend
-on history. `TelemetryPipeline` first collects raw evidence, then runs an offline pass
-to confirm boundaries, calibrate measured lap distance, align the visual centerline,
-and fuse progress. It owns video lifetime and closes the capture in a `finally` block.
-CLI and web adapters construct the same application engine and do not duplicate fusion
-rules.
+- `analysis/session_summary.py` : faits et comparaisons nécessaires, fonctions pures ;
+- `application/session_report.py` : lecture artefacts/fiche et assemblage du texte ;
+- `adapters/session_report.py` : commande locale, entrées/sorties/erreurs.
 
-`PositionTrackerV2` remains importable for compatibility and the legacy diagnostic,
-but normal component construction does not instantiate it. Production CLI and web
-paths use only `ProgressSessionEstimator` for longitudinal progress.
+Ces chemins sont proposés. Ne pas créer un format brut ni un moteur de sept métriques
+avant d'avoir un besoin précis. La fiche locale porte sources/repères/passages et revue.
+Le Markdown fournit les faits au modèle ; le générateur ne produit pas de coaching.
 
-## Testing
-
-Scoped annotation approvals can be consolidated into per-source labels with explicit
-unknown metadata. Reviewed absence stays absent, duplicate approvals cannot inflate
-counts, and source roles/lineage are retained. This is annotation preparation, not
-measurement-model tuning or gate approval.
-
-Unit tests cover sampling, position direction and smoothing, OCR recovery, web profile propagation, configuration validation, pipeline closure, and normalization. The representative CSV fixture is synthetic and safe for Git. Full-video checks use ignored local session data.
-
-## Current delivery boundary
-
-The12 September owner direction is local extraction followed by a portable dossier
-attached manually to GPT. Web adapters remain legacy/optional and are outside the
-current delivery plan. No new service, upload UI or GPT API integration is required.
-The code audit confirms that the corner-event/metric and coaching-dossier modules
-listed below are planned, not implemented. See `gpt-coaching-readiness-audit.md` and
-`plans/2026-09-12-local-gpt-coaching-delivery.md`. Latest request is planning only.
-
-## Planned coaching extension (not implemented)
-
-Approved priority: B combines the seven qualified metrics with mandatory reviewed
-paired trajectory images, then an exercise and follow-up. It introduces no metric
-`d` or lateral model. Separate replay research is reconsidered only from limitations
-observed in those first debriefs; A remains the implementation prerequisite.
-
-`coaching-implementation-roadmap.md` links a reliability plan and a downstream
-reference-corner dossier plan. The planned flow retains these package boundaries:
-versioned observations -> normalized samples -> pure event/metric/comparison code ->
-Markdown/JSON and paired cockpit media. Physical landmark annotations and a sourced
-reference explanation are required for the first real dossier. ChatGPT receives
-user-attached files; no LLM API integration or metric lateral estimator exists yet.
+**Gate A reste FAIL et les artefacts gardent `coaching_eligible=false`.** La décision du
+13 septembre permet ce seul export expérimental avant qualification générale, à partir
+de faits localement soutenus et de leurs limites. Elle ne valide ni le moteur entier,
+ni une référence professionnelle, ni le coaching automatique. Voir le contrat actif.

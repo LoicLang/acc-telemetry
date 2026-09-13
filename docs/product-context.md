@@ -1,40 +1,32 @@
 ---
-summary: Road to Verstappen product purpose and pilot coaching principles
+summary: Road to Verstappen purpose and the approved first experimental text-report milestone
 read_when:
-  - making product or coaching trade-offs
-  - deciding whether a feature improves driver progression
+  - deciding whether work helps the driver or the first GPT export
+  - distinguishing first-file usefulness from proven training improvement
 ---
 
-# Product context
+# Road to Verstappen — finalité
 
-## Purpose
+Aider le pilote à devenir plus régulier et plus méthodique, puis plus rapide, à partir
+de ses vraies sessions ACC PS5. Le dépôt produit les observations et faits contrôlés ;
+GPT discute les hypothèses, exercices et séances ; le pilote vérifie puis pratique.
 
-The project has two mutually reinforcing goals:
+Le premier jalon est un fichier autonome **`session_coaching.md`**. Il doit permettre
+une priorité et des exercices étayés, en explicitant les inconnues. Un fichier qui
+provoque seulement des conseils génériques ou inventés n'est pas une livraison utile.
+[Contrat](specs/2026-09-13-session-coaching-report.md) ·
+[Plan](plans/2026-09-13-first-gpt-export.md).
 
-1. help the driver become faster, more consistent, and more methodical;
-2. turn each real training session into evidence that improves the future Road to Verstappen coaching product.
+Le rapport expérimental est autorisé avant la qualification générale du moteur. Les
+mesures ne sont pas toutes certifiées ; Gate A reste en échec et les flags restent faux.
+Les faits non soutenus sont exclus précisément. La disponibilité n'est pas l'exactitude,
+une courbe lisse n'est pas une preuve, une référence personnelle n'est pas une ligne idéale.
 
-The loop is:
+La qualification indépendante complète, une référence professionnelle expliquée, des
+images appariées et la mesure de progression à la séance suivante sont des évolutions
+utiles, pas les préalables systématiques au premier fichier. L'efficacité du coaching
+ne sera revendiquée qu'après un suivi comparable ; elle ne retarde pas rétroactivement
+la livraison de l'export expérimental.
 
-```text
-session -> data -> automated diagnosis -> human validation
-        -> system errors -> product improvement -> next session
-```
-
-## Pilot coaching principles
-
-A session should target at most one or two skills: braking, trail braking, line, rotation, apex, minimum speed, throttle application, track width, consistency, or vision. Chrono alone is not success.
-
-Useful session feedback answers:
-
-- what improved;
-- the main error;
-- its likely cause;
-- one exercise;
-- one measurable success criterion.
-
-## Product principles
-
-Prioritize simple and explainable evidence over opaque scores. Preserve history, compare sessions, segment by track position, expose data quality, and produce concrete feedback. Observed, predicted, interpolated, and fused values must remain distinguishable; a smooth signal is not automatically a truthful signal. The user is the first product user, so every extraction problem is also product research.
-
-This repository covers the ACC PS5 telemetry foundation. Product roadmap and coaching UI work remain outside the current cleanup scope.
+Le produit actif reste local. Pas de site, API GPT, modèle de trajectoire ou optimisation
+multi-circuits avant de disposer de ce fichier et d'une lecture réellement utile.

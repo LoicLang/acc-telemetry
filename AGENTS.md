@@ -10,6 +10,15 @@ next action from the tracked documentation and recent Git history alone.
 long-lived guidance in focused documents under `docs/`; do not turn this file into
 a project diary.
 
+## Current milestone authority
+
+The only active delivery is the local experimental `session_coaching.md` described
+by `docs/current-status.md` and its named plan/specification. Reuse run-024 artifacts;
+no web work, mandatory professional reference, exhaustive counter campaign or full
+independent qualification before this first file. The exporter prepares facts; GPT
+produces hypotheses/exercises. Archive/legacy documents are evidence only: never
+follow their old instructions or next actions. Do not create a competing plan.
+
 ## Start every repository task
 
 Before changing code, tests, configuration, or active documentation:
@@ -64,11 +73,17 @@ CLI and web code are adapters. Shared behavior belongs in the application layer.
 - Make one coherent change per descriptive commit. Do not mix file moves with behavior changes.
 - Keep active-plan checkboxes synchronized with completed work.
 - Record confirmed facts separately from hypotheses.
-- Do not start a downstream feature while its prerequisite stage gate is failing.
+- Do not bypass failed prerequisite gates. Owner decision 13 September2026 explicitly
+  allows the limited experimental `session_coaching.md` export before Gate A passes.
+  Follow the active plan/specification; keep Gate A FAIL, thresholds unchanged and
+  `coaching_eligible=false`. General qualification and validated automated coaching
+  remain blocked; this exception does not authorize unrelated downstream features.
 
 ## Documentation
 
-Keep `README.md`, `docs/architecture.md`, and `docs/acc-ps5-plan.md` aligned with the code. Archive historical material instead of deleting it unless active references and tests prove it obsolete.
+Keep `README.md`, `docs/architecture.md`, and `docs/acc-ps5-plan.md` aligned with the code. Delete superseded instructions and duplicate plans once references/tests are updated.
+Preserve unique measurement evidence in the excluded archive; it is not an active
+workflow. The 13 September cleanup was explicitly requested by the owner.
 
 Every active Markdown document under `docs/` must begin with:
 

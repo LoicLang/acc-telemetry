@@ -1,3 +1,5 @@
+> Historical evidence only — archived13 September2026. Old instructions, gates and next actions below are not current. Follow [current status](../current-status.md).
+
 # Performance Optimization Guide
 
 ## OCR Performance Experiment Results
@@ -206,7 +208,7 @@ If 50ms per frame is still too slow for your use case, consider these alternativ
 - ✅ Already implemented in codebase (`TemplateMatcher` class)
 - ❌ Requires one-time calibration (20 minutes of manual template extraction)
 
-**How to switch:** See [TEMPLATE_MATCHING_GUIDE.md](TEMPLATE_MATCHING_GUIDE.md)
+**How to switch:** See [TEMPLATE_MATCHING_GUIDE.md](https://github.com/LoicLang/acc-telemetry/blob/55f32cccbe1ac5c28afc3c959365d1ea01338e61/docs/legacy/TEMPLATE_MATCHING_GUIDE.md)
 
 ### 2. **Frame Skipping**
 Run OCR every Nth frame instead of every frame:

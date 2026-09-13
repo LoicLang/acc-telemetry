@@ -1,128 +1,59 @@
 ---
-summary: owner-clarified automatic full-video trial with annotations used only for subsequent numerical validation
+summary: verified run-024 automatic extraction baseline and concrete evidence limitations for the first export
 read_when:
-  - running a complete video without annotation-gated extraction
-  - interpreting run-024 continuous curves and scoped quality measurements
+  - reusing run-024 without rerunning extraction
+  - assessing available data and the scope of existing annotations
 ---
 
-# Extract the whole video, validate on annotated zones
+# Run-024 — point de départ existant
 
-Owner clarification, 12 September 2026: run-023 was not the intended experiment.
-Its sparse annotation gate suppressed nearly all useful data. The requested test is
-**automatic extraction of a complete existing video, followed by quality checks only
-where reference annotations exist**. Run-024 completes that experiment. Gate A remains
-FAIL; B/R remain blocked. No fresh recording was required for this demonstration.
+La vidéo incidents a été intégralement traitée par la vraie CLI et `TelemetryPipeline`,
+en `measurement_mode=automatic`, sans annotation d'entrée. Aucun nouveau traitement
+n'est nécessaire pour commencer le premier export. Le mode reviewed reste le défaut.
 
-## Inspect the result
+Artefacts : `data/lab/coaching-reliability/run-024/processed/crash-session/`.
+Mesures : `run-024/reports/results.json`, `annotated-validation.json`,
+`final-verification.json`. Rapports et scripts expérimentaux restent locaux/ignorés.
+`read_session_artifacts()` vérifie le manifeste, les hashes et les enveloppes avant usage.
 
-Open `data/lab/coaching-reliability/run-024/reports/index.html` directly, or serve
-run-024 locally and visit `/reports/index.html` (live preview on127.0.0.1:8766).
-The simplified report displays three continuous curves with reference annotations
-as black crosses, error tables, estimated progress and four reused video excerpts.
-`reports/continuous.html` opens the complete curves alone; `processed/crash-session/`
-contains the original telemetry-v2 manifest, observations, samples and CSV.
-The actual CLI report is also retained in `reports/telemetry_interactive_*.html`.
-The simpler presentation uses the same exported values without smoothing or filling.
+Source du manifeste : `data/lab/2026-09-03-generic-s-fusion/crash-representative.mov`,
+SHA-256 `b2558ba17c174043e94345f240b31614f4a428246cc437ac09537d37156b7124`,453613415 bytes.
+Format natif 1920×1080 exactement 60 fps CFR ;29402 images présentées,490.033s. Décodage et
+PTS alignés. Le compteur conteneur29416 inclut14 paquets discard ; ne pas l'utiliser
+comme dénominateur des images. Temps relatifs à ce clip d'entrée.
 
-All paths below are relative to ignored run-024. `reports/command.json` records the
-exact CLI invocation; `run.py`, `evaluate.py`, `publish.py` and `verify_final.py`
-record local reproduction. Use a fresh run directory, never overwrite frozen runs.
-Personal video, full telemetry, generated reports and OCR assets remain ignored.
-
-## Explicit automatic mode and provenance
-
-CLI: `--measurement-mode automatic`; web Python service:
-`process_video(..., measurement_mode="automatic")`. Both use the same modern
-`TelemetryPipeline`. The `reviewed` default and historical behavior remain available.
-HTTP forms retain that default; no upload form or deployment was added.
-
-Automatic mode rejects visibility annotation inputs. The same fresh speed and control
-readers run on every frame; numerical speed admission keeps its existing settings.
-There is no synthetic full-source visibility review, interpolation of measured speed,
-legacy median, pedal smoothing, rescaling to100% or threshold search. Empty/black ROI,
-invalid text and rejected speed remain missing. TC/ABS remain unsupported.
-
-Values may be `observed` because they are fresh machine readings; this does **not**
-mean verified accuracy or reviewed HUD visibility. Available values retain
-`speed_hud_unverified` / `hud_visibility_unverified`; derived progress retains
-`automatic_measurements_unverified`. The manifest records the mode in resolved
-configuration, its measurement fingerprint includes that configuration, and coaching
-eligibility remains false. CSV, normalized samples and web data preserve reasons;
-web session metadata also records the mode. This does not qualify a HUD detector:
-a plausible reading on the wrong HUD can still be wrong outside the annotated scope.
-
-## Actual complete-source result
-
-Same immutable incidents source as run-023, SHA-256
-`b2558ba17c174043e94345f240b31614f4a428246cc437ac09537d37156b7124`,
-453613415 bytes. Native1920×1080, exactly60fps CFR preflight passed before extraction.
-All **29402 presented frames / 490.033s** were processed, with passing final decode
-coverage and exact PTS/frame alignment. No annotations were supplied to extraction.
-
-| Signal | Available /29402 | Coverage, not accuracy |
+| Champ | Disponible /29402 | Signification |
 | --- | --- | --- |
-| Speed |29298|99.65%|
-| Brake |29402|100%|
-| Throttle |29402|100%|
-| Raw counter |29402|100%|
-| Gear |28913|98.34%|
-| Steering |29232|99.42%, numerical accuracy untested|
-| Fused progress `s` |26844|91.30%, spatial accuracy untested|
-| Odometric / visual `s` |29383 /26462|estimated components|
-| TC / ABS |0|unsupported|
+| Vitesse |29298|99.65% d'extraction, pas d'exactitude générale |
+| Frein/gaz |29402 chacun|Visibilité toujours non vérifiée hors revue locale |
+| Compteur brut |29402|Toutes les lectures fraîches exactes face à run-022 |
+| Rapport engagé |28913|Exactitude générale non qualifiée |
+| Direction |29232|Exactitude non testée, pas de conseil sur angle volant |
+| `s` fusionné |26844|Estimation disponible, précision spatiale inconnue |
+| TC/ABS |0|Non supportés |
 
-The104 absent speed readings retain reasons:95 empty OCR,5 rate refusals,3 out of
-range and1 invalid text. All29402 raw speed OCR strings are byte-for-byte unchanged
-versus run-023. The1366 pedal readings in the previously reviewed cells (683 per
-channel) are numerically unchanged. No held/interpolated/predicted speed or pedals
-are published. Internal bounded odometry interpolation retains separate provenance.
+Les 104 vitesses absentes gardent les raisons :95 OCR vides,5 refus de variation,
+3 hors plage,1 texte invalide. Les 29402 textes OCR sont identiques à run-023 ; aucun
+lissage/maintien n'a été ajouté. Les 1366 valeurs de pédales des anciens points/plages
+revus sont inchangées. L'interpolation d'odométrie est distincte de la mesure.
 
-Progress is now available because the full automatic speed series reaches calibration
-and fusion. Availability is not independent spatial accuracy; no meter-error or
-coaching claim follows. The report shows the estimate and its missing intervals.
+Contrôles a posteriori : vitesse exacte21/21 ; pédales sur 21 points chacune,
+MAE frein/gaz1.60/3.12, P95 5.62/5.88, maximum 5.88 points. Les 18 segments de visibilité
+couvrent683 images :679 vitesses,683 valeurs par pédale ; V-CRASH-15 reste28/31.
+Ces plages de visibilité ne sont pas une vérité numérique dense.
 
-## Quality checks only against existing annotations
+Le plein gaz autour de 94.12%, les petits résidus et le vrai39km/h rejeté après66→39
+à l'impact restent des limites connues. Ne pas les interpréter comme erreurs du pilote.
+Le compteur donne4 transitions exactes sans manque/extra ; confirmation66.7ms après le
+premier chiffre, distincte du reset chronomètre et d'un franchissement physique.
 
-Both the existing `scripts/validate_capture.py` and the run's direct comparison read
-the new artifact after extraction. Original annotations/reviewers/approvals remain
-unchanged. No new numerical labels, exhaustive review, agents or holdout inspection.
+L'essai manuel run-025 montre le manque de contexte du vieux clip d'incident : il débute
+à347s, déjà hors piste. Des images336–349s donnent l'approche de la fin des Combes/Malmedy.
+Le cockpit indique la famille McLaren 720S GT3 ; variante/hardware non confirmés.
+Ce test est une analyse provisoire, pas le fichier généré ni une revue GPT indépendante.
 
-| Field | Available annotated points | MAE | P95 | Maximum absolute error |
-| --- | --- | --- | --- | --- |
-| Speed, km/h |21/21|0.00|0.00|0.00|
-| Brake, percentage points |21/21|1.60|5.62|5.88|
-| Throttle, percentage points |21/21|3.12|5.88|5.88|
-
-On the18 existing visibility segments /683 frames, speed is available679/683 and each
-pedal683/683. Segment V-CRASH-15 remains28/31 (90.32%); do not substitute the aggregate
-for this local limitation. These segments provide visibility/availability evidence,
-not dense numerical ground truth. The21 numerical points do not validate every frame.
-
-The main observed pedal limitation persists: full throttle often reads94.12%, and
-released signals can leave0.65–1.70%. Do not infer insufficient full throttle or a
-voluntary overlap from these differences. At the known impact, correct39km/h following
-66→39 remains rejected by the unchanged rate policy. No tuning on this incident.
-
-The frozen run-022 full counter labels match **29402/29402 fresh observations and
-4/4 transitions**, with zero missed/extra events. Candidate/confirmation times and
-source-frame alignment are unchanged. L2 timer-reset truth remains distinct from
-numeric counter truth. No BMW replay was necessary for this corrected experiment.
-
-Evidence: `reports/results.json`, `annotated-validation.json`, `preflight.json`,
-`preservation.json`, `pipeline.log`; final tests, hashes and browser inspection:
-`reports/final-verification.json`. The standard validator's fingerprint is compatible
-with this automatic extraction configuration; no old acceptance result transfers.
-
-## Verification and next action
-
-Five new regression tests cover explicit automatic reads, black/absent/invalid
-abstentions, unsmoothed pedal changes, pipeline/artifact provenance, invalid modes,
-annotation-input rejection and CLI/web wiring. Default reviewed-mode regressions stay
-green. 32 focused tests and323 full-suite tests pass; logs are recorded with the final verification.
-The complete and braking charts were opened in the app; the reference crosses and
-continuous measurements are visible. Sources, run-023 and earlier labels are preserved.
-
-**Next action:** reserve the later distinct independent native1080p60CFR recording
-under frozen extractor/settings before inspection, then use the same extraction-first,
-annotation-validation workflow. No exhaustive review of these development recordings
-is needed to inspect the delivered trial; Gate A still blocks reliable coaching.
+**Gate A reste FAIL ; `coaching_eligible=false`.** Depuis la décision du 13 septembre,
+ces limites ne bloquent pas tout export expérimental : utiliser seulement les faits
+localement soutenus et leurs limites dans le [premier fichier](specs/2026-09-13-session-coaching-report.md).
+La référence professionnelle et la validation indépendante complète ne sont pas ses
+prérequis. [Current status](current-status.md) donne la seule prochaine action.

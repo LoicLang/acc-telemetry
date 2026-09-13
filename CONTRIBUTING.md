@@ -16,6 +16,15 @@ Before changing the repository, run `./scripts/docs-list`, read
 `docs/current-status.md`, and follow the `read_when` hints for the task. If the status
 names an active specification or plan, read it before implementation.
 
+## Active delivery
+
+The owner-approved first milestone is the experimental `session_coaching.md` export
+from existing local artifacts. Follow [current status](docs/current-status.md) and its
+single active plan/specification. Gate A remains failed and artifact eligibility stays
+false; complete general qualification is not a prerequisite for this limited export.
+Use only locally supported facts with reasons and uncertainty. Do not restart old
+counter campaigns, web work or obsolete plans from the archive.
+
 ## Tests
 
 Run a focused test while working, then the complete suite:

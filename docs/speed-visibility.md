@@ -1,5 +1,5 @@
 ---
-summary: source-bound reviewed speed HUD intervals, fail-closed modern extraction and artifact provenance
+summary: reviewed and automatic speed visibility semantics and preserved provenance
 read_when:
   - extracting modern speed with CLI or web service
   - preparing reviewed speed visibility or evaluating its source binding
@@ -45,7 +45,7 @@ must never be retroactively interpreted as a new approval.
 This is reviewed admission, not an automatic HUD detector or a numerical accuracy
 guarantee. A visible HUD can still be misread. A9 numerical admission also checks
 the configured rate envelope within the same reviewed interval, with gaps and new
-intervals resetting temporal support; see `admission-correction-results.md`.
+intervals resetting temporal support; see `archive/reliability/admission-correction-results.md`.
 New development visibility must be
 reviewed from pixels with its author recorded; model outputs cannot supply truth.
 Missing whole-source review can reduce speed/odometry/calibration availability and
@@ -59,9 +59,13 @@ not establish empirical detection accuracy on unreviewed video.
 
 Development review completed on 10 September: all 1,247 prepared segment frames
 are readable. Scoped current-code admission and remaining failures are documented
-in [speed-visibility-results.md](speed-visibility-results.md); this does not extend
+in [speed-visibility-results.md](archive/reliability/speed-visibility-results.md); this does not extend
 visibility to complete laps or qualify Gate A.
 
 The subsequent first complete BMW lap review and full-source replay are recorded in
-[calibration-lap-results.md](calibration-lap-results.md). One development calibration
+[calibration-lap-results.md](archive/reliability/calibration-lap-results.md). One development calibration
 is accepted; independent Gate A and metric spatial accuracy remain unqualified.
+
+For the experimental first export, unverified visibility remains evidence to assess
+locally, not an instruction to rerun a full review campaign. The report is allowed
+before general qualification under [its explicit contract](specs/2026-09-13-session-coaching-report.md).

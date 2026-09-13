@@ -99,3 +99,11 @@ These files support downstream analysis without repeating OCR. They do not conta
 all visual candidates required to rerun the full progress fusion. The artifact
 reader loads complete JSONL payloads in memory; large-session resource optimization
 is not part of this milestone.
+
+## First experimental export
+
+The owner-authorized `session_coaching.md` report may read these artifacts before
+Gate A passes. It must preserve `coaching_eligible=false`, unverified reasons, source
+identity and nulls, and use only locally supported facts. No new extraction is needed
+to format text or derive supported summaries. See
+[the report contract](specs/2026-09-13-session-coaching-report.md).

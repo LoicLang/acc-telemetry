@@ -1,3 +1,5 @@
+> Historical evidence only — archived13 September2026. Old instructions, gates and next actions below are not current. Follow [current status](../current-status.md).
+
 # Brake Drop Diagnostic Report - Turn 1 Issue
 **Video:** suzuka-go.mp4
 **Issue:** Brake drops from 60% to 0% at ~13s during trail braking

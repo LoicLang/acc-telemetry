@@ -1,5 +1,5 @@
 ---
-summary: A7 independent telemetry-v2 measurement contract, evidence scopes, fingerprints and gate limitations
+summary: existing general validation contract and its separation from the authorized experimental text export
 read_when:
   - running independent capture validation or interpreting gate-a.json
   - changing field, event, coverage or landmark measurement definitions
@@ -102,5 +102,13 @@ metric spatial accuracy remain excluded from coaching capabilities.
 `scripts/diagnose_progress.py` preserves old counters with
 `metric_scope: internal_consistency_only` and `spatial_accuracy: not_evaluated`.
 Identically biased curves can have zero checkpoint spread; this is a regression test,
-not independent spatial evidence. Final run-008 results and limitations are in `capture-validation-results.md`;
+not independent spatial evidence. Final run-008 results and limitations are in `archive/reliability/capture-validation-results.md`;
 `current-status.md` owns the live next action.
+
+## Experimental report boundary — owner decision13 September2026
+
+The six-check gate above remains the general qualification contract; its code/targets
+and `coaching_eligible=false` are unchanged. The first experimental `session_coaching.md`
+is explicitly allowed before the full gate passes. It retains local admissibility,
+nulls, reasons and uncertainty without certifying the session. Do not start a new
+holdout/corpus campaign as its prerequisite. See [the report contract](specs/2026-09-13-session-coaching-report.md).

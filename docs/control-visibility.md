@@ -1,5 +1,5 @@
 ---
-summary: A3 reviewed control visibility format, strict missing-value behavior and current adapter limitations
+summary: reviewed and automatic control visibility semantics, missing values and experimental report evidence
 read_when:
   - extracting controls with reviewed visibility annotations
   - preparing visibility.json for the annotation and artifact plans
@@ -58,4 +58,9 @@ Web processing uses the same strict pipeline. Its Python service accepts an opti
 `visibility_json` path; the HTTP upload/process forms do not yet expose annotations,
 so their controls default to missing. Metadata preserves null averages. A5 makes the typed
 comparison endpoint nullable and preserves provenance; it remains diagnostic only.
-The reliability gate remains pending independent annotations and validation in A6/A7.
+General reliability remains unqualified; this does not make it the next export task.
+
+This measurement contract does not block the owner-approved experimental text export
+behind all of Gate A. That report uses locally supported facts with explicit reasons
+and limitations, without changing artifact flags. See
+[its contract](specs/2026-09-13-session-coaching-report.md).

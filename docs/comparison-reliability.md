@@ -1,9 +1,9 @@
 ---
-summary: A5 bounded comparison rules, nullable provenance-preserving API and verified client limitations
+summary: existing bounded comparison semantics and experimental report use of reviewed physical landmarks
 read_when:
   - comparing partial or degraded laps
   - consuming the comparison API or Plotly position report
-  - implementing A6/A7 admission gates for estimated progress
+  - checking strict admission for estimated progress
 ---
 
 # Comparison without invented coverage
@@ -58,11 +58,11 @@ Plotly trace data/line breaks. A manual local Uvicorn/curl smoke also verified b
 comparison and summary routes returned HTTP 200 and retained provenance/nulls.
 Evidence is ignored under `data/lab/coaching-reliability/run-001/a5-http-*`.
 
-The React frontend mentioned in `QUICKSTART_WEB.md` is absent from this checkout;
-there are no tracked JS/TS client sources to run. No compatibility claim is made for
-that external/older UI. Verified current consumers are the API and repository Plotly
-reports. No frontend dependency was installed or substituted.
+The inherited web frontend is absent and outside the current local milestone.
+No current UI compatibility is implied. Existing strict `coaching=True` / progress-gate
+checks stay unchanged; do not fake approval to reuse spatial interpolation.
 
-A0–A5 close the audited software paths. A6/A7 must still annotate actual video and
-measure error/coverage independently before gate A can pass. None of these comparison
-rules establishes spatial accuracy in metres or validates a driving recommendation.
+The first experimental text export compares locally reviewed physical landmarks and
+time evidence. It may be produced before the general gate passes, with explicit
+limitations, without treating estimated `s` as exact. See
+[the active report contract](specs/2026-09-13-session-coaching-report.md).

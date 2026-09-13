@@ -6,6 +6,8 @@ read_when:
   - changing project priorities or milestone status
 ---
 
+> Historical evidence only — archived13 September2026. Old instructions, gates and next actions below are not current. Follow [current status](../current-status.md).
+
 # Archived status before A6 lineage completion
 
 Historical snapshot only. Current authority: `../current-status.md`.

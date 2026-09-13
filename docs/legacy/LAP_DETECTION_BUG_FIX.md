@@ -1,3 +1,5 @@
+> Historical evidence only — archived13 September2026. Old instructions, gates and next actions below are not current. Follow [current status](../current-status.md).
+
 # Lap Detection Bug Fix - Oscillation at Lap 10 and 20
 
 ## Problem Description

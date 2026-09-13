@@ -1,3 +1,5 @@
+> Historical evidence only — archived13 September2026. Old instructions, gates and next actions below are not current. Follow [current status](../current-status.md).
+
 # Brake Detection Diagnostic Report
 **Video:** suzuka-go.mp4
 **Issue:** Light trail braking (5%) not detected at 13-15s (Turn 1)
