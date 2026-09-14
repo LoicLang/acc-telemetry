@@ -32,6 +32,14 @@ Pas d'achat/cloud payant, de dataset massif ou de reverse engineering implicite.
 
 ## Livrable cible
 
+**Contrainte produit clarifiée après le retour externe : condenser une séance entière
+pour identifier ses difficultés et pertes récurrentes avec un budget de lecture borné.**
+Les 60 fps sont une entrée de traitement local, pas une charge à transférer au modèle
+de coaching. Le PDF run-028 (17 pages pour 18 s) prouve une possibilité de lecture
+locale ; il ne démontre ni une compression suffisante ni la viabilité sur une séance.
+L'ajout du clip342–351 s n'est plus la prochaine action. La vidéo reste une preuve
+consultable à la demande, sans visionnage intégral requis pour l'analyse principale.
+
 Un **dossier de perception de session**, contenant :
 
 - vue d'ensemble de tous les tours et zones, avec les périodes non observables ;
@@ -47,6 +55,46 @@ avec le mode d'utilisation retenu. Tester réellement ce mode : des PNG chronolo
 ne sont pas un flux60fps, une vidéo non lue n'est pas une preuve consultée. Le paquet
 indique ce qui est couvert, ce qui est résumé et comment obtenir un détail manquant.
 Aucun seul CSV brut, photo isolée ou graphe de vitesse ne représente toute la conduite.
+
+### Prochaine tranche — condensation globale, avant de multiplier les médias
+
+À prototyper sur tous les tours exploitables de run-024, en réutilisant les mesures.
+Pas de nouveau moteur OCR, appel de modèle ou campagne de seuils pour ce cadrage.
+
+1. **Index complet zone × passage.** Chaque passage reste compté, y compris les cas
+   ordinaires et les inconnus. Identifier des zones comparables avec provenance des
+   bornes ; ne pas appliquer les mêmes temps absolus à tous les tours. Conserver nombre
+   de passages, contexte/perturbations et couverture réelle de chaque champ.
+2. **Descripteurs compacts.** Temps de traversée, vitesses aux repères qualifiés,
+   séquence frein/relâchement/roue libre/reprise des gaz, durées et variations entre
+   passages lorsque les entrées les soutiennent. Chaque résumé porte validité,
+   incertitude et accès aux sources. Préserver transitions, impulsions et absences ;
+   aucune moyenne globale ne remplace la chronologie et aucun lissage des pédales.
+   Placement/rotation/écart aux bords restent inconnus sans mesure ou revue attestée.
+3. **Récurrences et importance.** Regrouper les signatures comparables et présenter
+   fréquence, dispersion et conséquences observées. Une perte de temps exige une
+   référence explicite, des bornes comparables et des conditions compatibles. Une
+   référence personnelle reproductible peut décrire un écart ; le meilleur passage
+   isolé ne devient pas une cible. Sans référence, annoncer écart/irrégularité ou
+   difficulté observée, pas secondes récupérables. Une faute répétée sur tous les
+   passages peut échapper à une référence personnelle ; conserver ce manque.
+4. **Sélection traçable pour le modèle.** Résumé de toutes les zones, puis quelques
+   cas dominants avec occurrences, contre-exemples et qualité. Classer les écarts
+   mesurables et leur répétition sans coder leur cause. Ne pas compter deux fois des
+   pertes sur fenêtres superposées ou traiter absence de données comme absence de défaut.
+5. **Budget initial à éprouver.** Pour environ20 min : une synthèse structurée visant
+   au plus4 000 tokens textuels, six graphiques et24 images en tout, sans vidéo à lire
+   obligatoirement. Ce sont des cibles de produit provisoires, pas un coût modèle
+   mesuré ni une précision garantie. L'audit détaillé reste local et se consulte sur
+   demande. Si la compression retire une preuve nécessaire, le signaler et revoir
+   la représentation ; ne pas qualifier le résultat en ajoutant tacitement des médias.
+
+**Acceptation de cette tranche :** l'IA retrouve les principales récurrences dans
+plusieurs zones et leur portée réelle depuis le paquet borné ; on vérifie occurrences,
+comparabilité, classement des écarts, contre-exemples et inconnus contre les artefacts.
+Mesurer aussi taille textuelle, nombre d'images/graphiques et demandes de détail. Un
+diagnostic réussi sur un seul incident ne remplit pas cette condition. L'estimation
+spatiale M2/M3 contribue précisément à condenser le placement en données comparables.
 
 ## M1 — Couverture du tour entier et perception temporelle
 
@@ -195,7 +243,8 @@ la sortie reste une estimation à précision non établie ; ne pas dessiner une 
   trous et source géométrique. Ailleurs, garder les images et l'inconnu ; ne pas boucher
   le parcours pour produire un dessin continu. Le lecteur doit voir les limitations.
 - [ ] Présenter globalement toutes les zones et fournir les détails temporels associés.
-  Une sélection réduite pour le modèle est annoncée ; elle ne vaut pas vision exhaustive.
+  Appliquer la condensation et le budget définis ci-dessus. Le résumé couvre tous les
+  passages ; les rares preuves visuelles sont sélectionnées avec une trace explicite.
 - [ ] Garder distinctes : données PC qui servent de labels, passages personnels qui
   décrivent le pilote, référence expérimentée qui explique une technique. Cette dernière
   peut être ajoutée pour l'analyse par GPT ; elle n'est ni la définition de `d`, ni
@@ -209,6 +258,9 @@ spatiale demandée est livrée ou la remettre indéfiniment hors périmètre san
 ## M5 — Tester les yeux de l'IA avant de juger le coaching
 
 - [ ] Fournir les seules pièces du dossier au modèle et contrôler ce qu'il a pu lire.
+- [ ] Évaluer d'abord la synthèse bornée sur la séance entière : récurrences retrouvées,
+  importance étayée, omissions et coût de lecture. La vidéo intégrale n'est pas un
+  prérequis ni un moyen de contourner l'échec de condensation.
 - [ ] Lui demander d'abord des reconstructions factuelles : ordre des actions avant
   une excursion, placement et évolution dans une zone, différences entre passages,
   situations similaires ailleurs et inconnues. Vérifier les réponses sur la source.
@@ -228,7 +280,7 @@ ultérieure évalue l'utilité du coaching, pas la fidélité des données à el
 - [x] Extraction automatique complète et premier export local livrés (run-024/run-026).
 - [x] Clarification du rôle perceptif, couverture temporelle et intérêt de `d`.
 - [x] M1 : prototype temporel à l’échelle d’un tour complet livré dans run-027.
-- [ ] M1 suite : complément vidéo du test externe, extension à d’autres tours et fenêtres.
+- [ ] M1 suite : condensation globale des passages, récurrences et budget de lecture.
 - [ ] M2 : échantillon PC vidéo+télémétrie avec vérité spatiale démontrée.
 - [ ] M3 : prototype modèle et évaluation de transfert.
 - [ ] M4 : dossier global multimodal avec placement qualifié.
@@ -239,8 +291,8 @@ encore développé. Tests/lectures proportionnés selon AGENTS.md. Sources priv�
 configurations et sorties préservés ; pas de replay OCR pour une retouche de rapport.
 Le premier export demeure reproductible via son contrat, sans le confondre avec la finalité.
 
-**Prochaine action : compléter le cas run-028 par le clip source342–351 s avec audio,
-puis comparer les confirmations/corrections de l'IA à son premier retour conservé.
-Étendre ensuite la couverture à plusieurs passages avant de parler d'habitudes. Pour M2,
+**Prochaine action : prototyper l'index zone × passage et la synthèse compacte de tous
+les tours exploitables de run-024 selon la tranche de condensation ci-dessus ; rendre
+visibles les métriques calculables et les prérequis manquants. Pour M2,
 confirmer logiciel/service ACC sur Mac et durée du créneau avant de préparer le
 logger adapté ; ne pas consommer le créneau pour découvrir ces contraintes.**
