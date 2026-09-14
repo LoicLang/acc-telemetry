@@ -15,8 +15,9 @@ capture immuable -> extraction -> normalisation -> domaine -> analyse -> visuali
                                         CLI/web = adaptateurs
 ```
 
-Le livrable actif est le fichier expérimental `session_coaching.md`, préparé **localement**
-puis joint à GPT par le pilote. [Contrat](specs/2026-09-13-session-coaching-report.md) et
+Le premier fichier expérimental `session_coaching.md` est livré localement. La cible
+active est la perception de session pour une IA : chronologie scène/commandes et
+évaluation de la position latérale depuis apprentissage PC. [Contrat](specs/2026-09-13-session-coaching-report.md) et
 [plan](plans/2026-09-13-first-gpt-export.md). Le service web hérité existe mais ne fait pas
 partie de ce travail. Aucun appel API GPT ou hébergement à ajouter.
 
@@ -112,3 +113,13 @@ Le Markdown fournit les faits au modèle ; le générateur ne produit pas de coa
 13 septembre permet ce seul export expérimental avant qualification générale, à partir
 de faits localement soutenus et de leurs limites. Elle ne valide ni le moteur entier,
 ni une référence professionnelle, ni le coaching automatique. Voir le contrat actif.
+
+## Perception temporelle et spatiale — planifiée, non implémentée
+
+Le plan actif ajoute couverture du tour entier, index d'événements neutres et fenêtres
+scène/signaux synchronisées. Il évalue ensuite des labels PC calculés depuis position,
+orientation et géométrie de piste, puis un modèle image/séquence→d avec contrôle de
+transfert PS5. Les nouvelles estimations doivent conserver origine, temps, qualité
+et incertitude. L'interface de données sera fixée après la preuve de labels ; aucun
+modèle ou schéma spatial prêt à produire n'est présumé. Le diagnostic et les exercices
+appartiennent au modèle consommateur, pas aux détecteurs d'événements du pipeline.

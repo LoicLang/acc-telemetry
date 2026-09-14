@@ -29,15 +29,16 @@ plans or turn the handoff into a diary.
 
 ## Current scope
 
-The active delivery is the local experimental `session_coaching.md`, as defined by
-the handoff and its plan/specification. Reuse run-024 artifacts. The exporter supplies
-facts; GPT proposes hypotheses/exercises. Web work, exhaustive counter review and a
-professional reference are not prerequisites for this first export.
+The current objective and milestones are defined by the handoff and its single
+active plan. The first experimental `session_coaching.md` is already delivered;
+the owner now targets whole-session perception for an AI, including temporal context
+and evaluation of PC-supervised spatial estimation. Reuse existing artifacts where
+applicable. The software supplies observations; the consuming AI analyses driving.
 
-The owner explicitly allows this limited export before Gate A passes. Keep Gate A
-FAIL, existing targets unchanged and `coaching_eligible=false`; do not imply general
-qualification or validated automated coaching. Other prerequisites still apply to
-the capabilities they actually govern.
+Keep Gate A FAIL, existing targets unchanged and `coaching_eligible=false`; do not
+imply general qualification or validated automated coaching. Planned experiments
+must establish the evidence required by the capability they claim. Other prerequisites
+still apply to the capabilities they actually govern.
 
 Keep work focused on ACC PS5 telemetry and the requested outcome. New video processing
 accepts only native **1920×1080 at exactly 60 fps CFR**: check metadata first, reject

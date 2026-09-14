@@ -18,12 +18,12 @@ and the active plan/specification as needed; do not repeat reads without a reaso
 
 ## Active delivery
 
-The owner-approved first milestone is the experimental `session_coaching.md` export
-from existing local artifacts. Follow [current status](docs/current-status.md) and its
-single active plan/specification. Gate A remains failed and artifact eligibility stays
-false; complete general qualification is not a prerequisite for this limited export.
-Use only locally supported facts with reasons and uncertainty. Do not restart old
-counter campaigns, web work or obsolete plans from the archive.
+The first experimental `session_coaching.md` is delivered. Follow
+[current status](docs/current-status.md) and its evolving plan for the next perception
+milestones: whole-session temporal evidence and evaluation of PC-supervised spatial
+estimation. The software supplies observations; the consuming AI analyses driving.
+Preserve unknowns and evidence boundaries. This does not certify Gate A or authorize
+unrelated web work, exhaustive counter campaigns or unrequested paid services.
 
 ## Proportionate verification
 

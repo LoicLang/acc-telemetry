@@ -1,62 +1,47 @@
 ---
-summary: current product priority and explicit boundary between the first experimental export and general reliability qualification
+summary: local session-perception objective with temporal coverage and PC-supervised spatial feasibility
 read_when:
-  - deciding product priorities or prerequisite gates
-  - assessing whether proposed work belongs to the first GPT export
+  - deciding priorities after the first export
+  - distinguishing perception, AI coaching and spatial validation
 ---
 
-# Road to Verstappen — direction active
+# Direction active — construire les yeux de l'IA
 
-Décision du 13 septembre2026 : livrer **`session_coaching.md`**, fichier autonome issu
-d'une vraie session locale, permettant à GPT de proposer une priorité et des exercices
-fondés sur les faits disponibles. Suivre [le seul plan actif](plans/2026-09-13-first-gpt-export.md)
-et [son contrat](specs/2026-09-13-session-coaching-report.md).
+Clarification du14 septembre2026 : notre logiciel fournit une représentation fidèle
+et temporelle de la session entière. L'IA analyse les faiblesses globales et propose
+l'entraînement. Le premier `session_coaching.md` run-026 est livré ; il est une brique,
+pas la finalité. [Plan actif unique](plans/2026-09-13-first-gpt-export.md).
 
-## Ce qui existe et ce qui manque
+## Capacités à construire
 
-L'extraction automatique run-024 est réalisée :29 402 images en 1080p60 CFR,99,65% de
-vitesses disponibles, pédales extraites sur toutes les images.21 points contrôlés ne
-prouvent pas la qualité globale ; biais de pédales, trous et anomalies restent connus.
-Les artefacts et leur intégrité permettent de travailler sans relancer la vidéo.
+1. Couverture de tous les tours/zones, avec actions neutres et contexte, sans choisir
+   uniquement les erreurs supposées. Scène et commandes synchronisées.
+2. Fenêtres temporelles adaptant leur granularité aux transitions à observer ; trois
+   photos de placement ne suffisent pas à expliquer une action rapide.
+3. Position latérale `d` et orientation, lorsque leur estimation est démontrée. Étudier
+   explicitement vidéo PC+télémétrie synchronisées comme source de labels d'entraînement.
+4. Dossier multimodal réellement lisible par l'IA, avec incertitudes et couverture déclarée.
+5. Test de reconstruction factuelle par le modèle, avant évaluation de son coaching.
 
-Livrés dans run-026 : sélection source-bound de trois passages, repères A/B revus,
-22 lectures ponctuelles concordantes, trois temps de transit approximatifs et le vrai
-`session_coaching.md` produit par l’assembleur local. Relecture utile par le même assistant
-effectuée ; essai dans une nouvelle conversation GPT et entraînement réel non réalisés.
-Pas de nouvelle application web ou pipeline de coaching complet.
+`d` n'est plus exclu comme simple raffinement. PC ne signifie pas que tous les labels
+sont disponibles directement : position, géométrie, point de voiture, unités et horloges
+sont à établir. L'entraînement et le transfert PC→PS5 demandent une preuve distincte.
+Une ligne plausible n'est pas une position métrique vérifiée. Le `s` existant reste
+une progression estimée ; `s_odometry`, `s_visual`, `s_fused` ne décrivent pas seuls
+la trajectoire latérale. Le lecteur conserve qualité, trous et anomalies.
 
-## Changement explicite de périmètre
+Les passages imparfaits apportent des observations utiles. Les cas normaux et réussis
+doivent aussi être couverts pour donner au modèle une vue représentative. Une référence
+professionnelle sert à expliquer une technique ; elle ne définit ni `d` ni les labels
+PC et n'est pas nécessaire à la première preuve de perception temporelle.
 
-**Gate A reste FAIL ; `coaching_eligible=false`.** Ses six contrôles, ses seuils et les
-preuves historiques ne changent pas. La qualification indépendante générale et le
-coaching automatique validé restent **blocked**.
+## Frontière et exécution
 
-En revanche, le propriétaire autorise le **rapport expérimental limité avant Gate A**.
-L'ancienne interdiction de tout export avant qualification, référence professionnelle
-et dossier à sept métriques est remplacée pour ce jalon uniquement. La qualité est
-traitée au niveau des faits utilisés : valeur/intervalle contrôlé, raison, incertitude,
-exclusion précise. Aucun passage non vérifié ne devient fiable par simple étiquette.
+Gate A reste FAIL, `coaching_eligible=false`. L'expérimentation ne certifie pas le moteur,
+les nouveaux labels ou le coaching. Aucune ancienne preuve ne qualifie automatiquement
+le modèle spatial. La validation requise dépend de la capacité annoncée.
 
-## Ordre de travail
-
-1. Réutiliser run-024, confirmer le contexte et sélectionner deux/trois passages.
-2. Contrôler et calculer les faits nécessaires, sans métriques imposées.
-3. Produire localement le fichier autonome avec une commande reproductible.
-4. Vérifier sa lecture utile par GPT ; compléter les seules pièces manquantes et livrer.
-
-Les **passages imparfaits** sont conservés avec leurs limites ; un tour invalide ne
-supprime pas toutes ses portions utiles. Une référence personnelle sert à la régularité,
-pas à définir une trajectoire idéale. Le `s` estimé aide au repérage, sans alignement
-spatial supposé exact ni conversion en mètres. `d` latéral reste hors périmètre.
-
-## Après le premier fichier
-
-Selon les limites réellement rencontrées : ajouter une référence professionnelle
-expliquée, des preuves visuelles jointes et des métriques supplémentaires ; poursuivre
-la qualification indépendante et tester l'effet d'un exercice à la séance suivante.
-Ces étapes ne sont pas des conditions rétroactives pour livrer le premier fichier.
-Ne pas relancer les anciennes campagnes de compteur ou la recherche replays.
-
-Les résultats et décisions passés sont dans [l'archive](archive/README.md), hors
-instructions actives. [Current status](current-status.md) porte les chemins vérifiés,
-les blocages concrets et une seule prochaine action.
+Tout reste local ; pas de service web hébergé, d'achat ou d'appel API GPT implicite.
+Le présent travail est la consolidation du plan, pas son implémentation. Commencer M1
+sur la vidéo existante ; préparer M2 lorsque l'accès PC et les données sont confirmés.
+[Current status](current-status.md) donne le point de reprise et les fichiers réels.

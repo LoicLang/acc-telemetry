@@ -11,7 +11,7 @@ Aider le pilote à devenir plus régulier et plus méthodique, puis plus rapide,
 de ses vraies sessions ACC PS5. Le dépôt produit les observations et faits contrôlés ;
 GPT discute les hypothèses, exercices et séances ; le pilote vérifie puis pratique.
 
-Le premier jalon est un fichier autonome **`session_coaching.md`**. Il doit permettre
+Le premier jalon livré est un fichier autonome **`session_coaching.md`**. Il doit permettre
 une priorité et des exercices étayés, en explicitant les inconnues. Un fichier qui
 provoque seulement des conseils génériques ou inventés n'est pas une livraison utile.
 [Contrat](specs/2026-09-13-session-coaching-report.md) ·
@@ -28,5 +28,12 @@ utiles, pas les préalables systématiques au premier fichier. L'efficacité du 
 ne sera revendiquée qu'après un suivi comparable ; elle ne retarde pas rétroactivement
 la livraison de l'export expérimental.
 
-Le produit actif reste local. Pas de site, API GPT, modèle de trajectoire ou optimisation
-multi-circuits avant de disposer de ce fichier et d'une lecture réellement utile.
+La direction clarifiée le14 septembre est de construire les yeux de l'IA : rendre
+observable l'ensemble d'une session avec chronologie, commandes, scène et placement.
+Le logiciel ne décide pas des faiblesses ou des exercices. Le premier fichier est une
+brique ; sa portée locale ne suffit pas à l'objectif de perception globale.
+
+Le produit reste local. L'évaluation d'un modèle de placement `d` entraîné depuis des
+captures PC+télémétrie appartient désormais au plan. Les labels, la géométrie, les
+horloges et le transfert PS5 doivent être démontrés. Pas de site ou API GPT implicite.
+La lecture factuelle du dossier par une IA est testée avant de juger son coaching.

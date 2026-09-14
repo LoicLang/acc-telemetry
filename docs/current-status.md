@@ -1,5 +1,5 @@
 ---
-summary: first real session_coaching.md delivered from run-024; reproduction, evidence limits and next GPT reading trial
+summary: perception-system handoff after the first export; next full-lap temporal prototype and PC-supervised spatial feasibility
 read_when:
   - starting any repository task
   - locating the delivered file or reproducing it
@@ -8,8 +8,27 @@ read_when:
 
 # Current status
 
-Last verified: **2026-09-13**. Branch: `codex/coaching-reliability`.
+Last verified: **2026-09-14**. Branch: `codex/coaching-reliability`.
 Push authorized, no merge. No sub-agents or exhaustive counter review.
+
+## Active objective — the AI's eyes, not a coaching-rule engine
+
+Owner clarification14 September: the software must expose what happened across the
+whole session, with scene, controls, timing and placement. The consuming AI analyses
+weaknesses and proposes training. The first text export is a completed intermediate
+step, not the final perception system. Single evolving [active plan](plans/2026-09-13-first-gpt-export.md).
+
+Next milestones: M1 full-lap temporal coverage; M2 synchronized PC video/position
+labels and track geometry; M3 image/temporal d model and PS5 transfer evaluation;
+M4 global multimodal perception package; M5 factual reconstruction test by the AI.
+The spatial component is now a first-class feasibility objective, not permanently
+excluded. No dataset/model or new perception module has been built in this planning turn.
+
+PC live capture access is unconfirmed. `d` must be derived from position plus a stable
+track frame, not from an expert's lap alone. Metric truth/units, synchronization and
+PC→PS5 transfer remain to establish. M1 can proceed with existing source/artifacts
+while these prerequisites are prepared. Professional reference and PC training labels
+serve different roles. Gate A FAIL and `coaching_eligible=false` stay unchanged.
 
 ## Delivered result
 
@@ -19,8 +38,8 @@ three passages, shared physical landmarks, 22 locally reviewed speed readings,
 approximate transit times, approach/incident context and a request to GPT.
 The exporter supplies facts and limits; GPT proposes hypotheses and exercises.
 
-Active plan: [four lots](plans/2026-09-13-first-gpt-export.md).
-Implemented contract: [session report](specs/2026-09-13-session-coaching-report.md).
+Active plan: [perception milestones](plans/2026-09-13-first-gpt-export.md).
+Implemented first-export contract: [session report](specs/2026-09-13-session-coaching-report.md).
 Lots 1–3 and the local reading review are done. **A fresh GPT conversation has not
 been tested.** The user's delivery instruction expressly distinguishes these checks;
 that remaining trial does not prevent delivery of the file.
@@ -89,8 +108,9 @@ No continuous pedal metrics or minimum speeds are published. Full gas often read
 94.12%, released pedals 0.65–1.70%, blips can be automatic; true 39 km/h at impact was
 rejected, V-CRASH-15 has 28/31 speeds. No diagnosis of steering/TC/ABS or certain
 causality. Hardware, exact conditions/setup and driver feel remain unknown. Estimated
-s is not used for alignment. General reliability, validated automated coaching,
-professional reference and next-session improvement remain separate later work.
+s is not used for alignment. General reliability and validated automated coaching remain unqualified. The new
+perception plan explicitly evaluates temporal detail and spatial estimation; a
+professional reference and next-session improvement are separate from that measurement.
 
 ## Implementation and verification
 
@@ -109,9 +129,8 @@ listed with `./scripts/docs-list`.
 
 ## Exact next action
 
-**The driver attaches `run-026/reports/session_coaching.md` alone to a fresh GPT
-conversation and uses section 6 to request a priority, exercises and a session.**
-Then check that GPT cites the facts, distinguishes the two incidents and does not
-invent causality or turn the approximate measurements into ideal targets. Any next
-implementation should address a specific missing fact in that response, not reopen
-OCR or general qualification by default. Archived documents preserve evidence only.
+**M1: use an existing complete run-024 lap to index all its zones and build a first
+synchronized scene/control temporal window, without rerunning OCR.** Confirm ACC PC
+access and candidate position/orientation/track-geometry sources for M2 preparation.
+The next output is perceptual evidence, not another skill diagnosis based on the same
+three selected passages. This turn updates the plan only; implementation is not started.

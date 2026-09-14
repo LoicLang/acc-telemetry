@@ -1,4 +1,10 @@
-# ACC Telemetry — premier export GPT local
+# ACC Telemetry — perception locale de conduite pour une IA
+
+La cible est de construire les « yeux » de l'IA : session entière, scène et commandes
+synchronisées, placement/trajectoire avec qualité explicite. L'IA produit l'analyse
+et les exercices. Le [plan actif](docs/plans/2026-09-13-first-gpt-export.md) prolonge
+l'export existant par la perception temporelle et un test de labels/modèle `d` depuis
+vidéo+télémétrie PC. Ces nouvelles capacités ne sont pas encore implémentées.
 
 Le premier livrable est **`session_coaching.md`**, un fichier expérimental autonome
 produit à partir d'une vraie session ACC PS5, que le pilote joint lui-même à GPT pour
@@ -6,7 +12,7 @@ obtenir une priorité et des exercices étayés. **L’assembleur et le vrai fic
 sont livrés** : trois passages personnels, repères physiques revus et limites explicites.
 
 Commencer par [l'état courant](docs/current-status.md), puis suivre
-[le plan actif en quatre lots](docs/plans/2026-09-13-first-gpt-export.md) et
+[le plan actif de perception](docs/plans/2026-09-13-first-gpt-export.md) et
 [le contrat du fichier](docs/specs/2026-09-13-session-coaching-report.md).
 Le dossier réutilise les artefacts run-024, sans refaire l'OCR.
 Gate A reste FAIL et `coaching_eligible=false`, mais cet export

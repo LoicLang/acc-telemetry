@@ -5,12 +5,17 @@ read_when:
   - deciding whether a fact or passage is usable in the experimental report
 ---
 
-# Premier fichier pour GPT — contrat actif
+# Premier fichier pour GPT — contrat de la version implémentée
+
+Le14 septembre, la finalité est précisée : perception temporelle/spatiale de toute la
+session pour l’IA. Ce document décrit seulement le premier export run-026, toujours
+reproductible. La suite est définie dans le plan actif ; un fichier texte seul n’est
+plus présenté comme la finalité de perception.
 
 Décision du propriétaire,13 septembre2026 : produire localement **un seul fichier
 `session_coaching.md`** à partir d'une vraie session. L'export technique existe ; le
 fichier autonome destiné à GPT est livré dans run-026. Le plan d'exécution est
-[le plan en quatre lots](../plans/2026-09-13-first-gpt-export.md).
+[le plan évolutif](../plans/2026-09-13-first-gpt-export.md).
 
 ## Statut et frontière de confiance
 

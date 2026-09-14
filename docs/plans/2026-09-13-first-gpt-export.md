@@ -1,161 +1,186 @@
 ---
-summary: sole active four-lot execution plan for a real experimental session_coaching.md from existing run-024 artifacts
+summary: single evolving plan from the delivered first export to complete temporal perception and PC-supervised lateral placement for AI analysis
 read_when:
-  - resuming implementation of the first GPT export
-  - checking what must be delivered and when to stop
+  - deciding the next milestone after the first session_coaching.md
+  - preparing full-session temporal evidence or the PC-supervised d feasibility test
 ---
 
-# Premier export GPT — quatre lots
+# Plan actif — construire les yeux de l'IA
 
-**Plan adopté le 13 septembre2026**, d'après l'analyse externe
-`PLAN_PREMIER_EXPORT_GPT.md` fournie par le propriétaire. Cette version dans le dépôt
-fait autorité ; aucune copie dans Downloads ou ancien chat n'est nécessaire pour agir.
-Spécification : [contrat du fichier](../specs/2026-09-13-session-coaching-report.md).
-État/chemins vérifiés : [current-status](../current-status.md).
+**Direction clarifiée le14 septembre2026.** Ce même plan prolonge le premier export,
+il ne lance pas une nouvelle implémentation dans cette tâche de cadrage.
+[État réel](../current-status.md) ; [contrat du premier export déjà implémenté](../specs/2026-09-13-session-coaching-report.md).
 
-## Décision de périmètre, déjà actée
+## Finalité et séparation des responsabilités
 
-Livrer un fichier autonome **`session_coaching.md` d'une vraie session existante**.
-Le rapport prépare des faits ; GPT produit les hypothèses, exercices et séance.
-Le propriétaire autorise ce premier export expérimental sans attendre tout Gate A.
-C'est un changement explicite par rapport aux anciens plans supprimés, pas leur
-exécution inchangée. Gate A reste FAIL, les seuils et `coaching_eligible=false` restent
-intacts. La qualification générale et le coaching certifié ne sont pas déclarés réussis.
+Notre logiciel rend la session observable : scène, commandes, temps, placement,
+contexte et qualité. **L'IA identifie les difficultés, discute les causes et propose
+l'entraînement.** Le générateur ne sélectionne pas uniquement des erreurs supposées,
+ne produit pas de diagnostic de conduite ni de programme d'entraînement.
 
-Aucune nouvelle phase de planification ni référence professionnelle obligatoire.
-Tout est local, sans API GPT, site ou développement web. Aucun sous-agent, nouvelle
-revue exhaustive du compteur ou recherche générale de seuils. L’implémentation est
-livrée dans run-026 le 13 septembre : lots 1–3 terminés, relecture locale du lot 4 faite.
-L’essai dans une nouvelle conversation GPT reste distinct et non réalisé.
+Le fichier texte run-026 est une brique déjà livrée : trois passages,22 vitesses revues,
+descriptions et limites. Il ne remplit pas la finalité : un seul enchaînement, pas de
+vision du tour entier, séquences visuelles trop espacées pour certaines actions,
+aucune position latérale `d`. L'export et les données run-024 restent réutilisables.
 
-## Lot 1 — Figer l'entrée, le contexte et les passages
+Le travail reste local et expérimental. Gate A reste FAIL, `coaching_eligible=false`.
+Les anciens reports/tests ne deviennent pas une validation de nouvelles estimations.
+La présence de `d` dans ce plan remplace son exclusion comme simple raffinement :
+sa faisabilité doit être évaluée, sans prétendre qu'un modèle fiable existe déjà.
+Pas d'achat/cloud payant, de dataset massif ou de reverse engineering implicite.
 
-- [x] Recharger `data/lab/coaching-reliability/run-024/processed/crash-session/` avec
-  `read_session_artifacts()`. Vérifier les hashes/enveloppes et 29402 samples ; conserver
-  une preuve d'intégrité dans un nouveau dossier local. Si une entrée manque, indiquer
-  le fichier exact ; ne pas inventer un chemin ni relancer l'OCR par défaut.
-- [x] Utiliser la source du manifeste. Confirmer uniquement ce que les pièces permettent :
-  famille McLaren 720S GT3, zone candidate fin des Combes/Malmedy. Variante, matériel,
-  conditions et repères non confirmés restent inconnus. Ne pas substituer BMW/Bruxelles.
-- [x] Sélectionner deux ou trois passages complets d'une même zone ; revoir les mêmes
-  repères d'entrée/sortie depuis la scène, pas depuis les pics ou un `s` supposé exact.
-  Conserver l'incident avec son approche, en réutilisant le complément run-025.
-- [x] Écrire une fiche locale source-bound : ID/hash source, contexte, IDs de passages,
-  bornes frame/temps, définition illustrable des repères, auteur/type de revue,
-  incertitude, portions valides et exclusions. Une sélection manuelle suffit.
-  Ne pas rejeter tout un tour parce qu'une autre portion est invalide.
+## Livrable cible
 
-**Sortie :** entrée figée + fiche de sélection vérifiée. Si aucun comparateur pertinent
-n'existe, nommer la pièce qui manque au lieu de fabriquer un cas ou d'ouvrir une campagne.
+Un **dossier de perception de session**, contenant :
 
-## Lot 2 — Calculer seulement les faits nécessaires
+- vue d'ensemble de tous les tours et zones, avec les périodes non observables ;
+- chronologie des mesures et événements neutres, liée aux frames et à la scène ;
+- fenêtres temporelles comprenant approche, action et conséquence, réussies ou ratées ;
+- placements/orientations/trajectoires estimés avec leur validité, lorsque démontrés ;
+- contexte pilote/voiture/caméra et éventuelles références pédagogiques distinctes ;
+- une entrée réellement consommable par l'IA, sans lui supposer l'accès à nos chemins locaux.
 
-- [x] Définir la question soutenue par la comparaison : régularité, vitesse à un repère,
-  ordre d'actions ou récupération après incident. Un sujet étayé suffit au premier fichier.
-- [x] Calculer les temps entre repères communs et vitesses à ces repères, lorsque les
-  observations requises sont effectivement contrôlées. Garder unités, source/temps,
-  méthode, incertitude et identifiants de preuve.
-- [x] Ajouter freinage/relâchement/reprise seulement si utile et localement vérifié.
-  Revoir l'intervalle d'une durée/épisode ; deux points exacts ne suffisent pas.
-  Un minimum possiblement caché par un trou ou un événement ambigu reste indisponible.
-- [x] Préserver les mesures, les nulls et leurs raisons. Les éventuelles nouvelles
-  bornes revues sont des annotations séparées, sans changer les anciens ledgers.
-  `observed` avec `hud_visibility_unverified` ne devient pas automatiquement vérifié.
-- [x] Rédiger les observations visuelles textuelles réellement examinées, avec temps,
-  auteur/type de revue et limites. Ne pas demander à GPT de voir une vidéo par son chemin.
+Pour nous : lecteur local avec vidéo/chronologie/courbes synchronisées. Pour le modèle :
+texte d'index + données structurées compactes + preuves visuelles temporelles compatibles
+avec le mode d'utilisation retenu. Tester réellement ce mode : des PNG chronologiques
+ne sont pas un flux60fps, une vidéo non lue n'est pas une preuve consultée. Le paquet
+indique ce qui est couvert, ce qui est résumé et comment obtenir un détail manquant.
+Aucun seul CSV brut, photo isolée ou graphe de vitesse ne représente toute la conduite.
 
-**Sortie :** faits locaux reproductibles et au moins un sujet d'entraînement fondé,
-ou la pièce précise qui manque. Pas de sept métriques imposées, diagnostic causal
-certain, trajectoire idéale, `d` en mètres, TC/ABS ou angle volant déduits.
+## M1 — Couverture du tour entier et perception temporelle
 
-## Lot 3 — Assembler le fichier réel avec une commande locale
+**Entrée :** source et artefacts run-024, export/revues run-026. Pas de nouvel OCR.
 
-- [x] Créer le minimum de calcul/assemblage/adaptation nécessaire. Découpage implémenté :
+- [ ] Sur un premier tour complet, définir toutes les zones à observer, pas seulement
+  Les Combes ou les incidents. Conserver succès, passages ordinaires et perturbations.
+  Le découpage initial peut être revu manuellement puis réutilisé sur les autres tours.
+- [ ] Indexer les événements factuels : attaque/relâchement frein, reprise/coupure gaz,
+  changement de rapport, passage de repère. Le code produit des candidats avec seuils,
+  persistance, temps et qualité explicites ; jamais « freinage trop tardif ».
+- [ ] Produire la chronologie complète et les fenêtres liées aux zones/actions, avec
+  contexte avant/après. Aucun freinage ne fait disparaître les virages parcourus à
+  gaz constants : le découpage des zones complète la détection d'événements.
+- [ ] Synchroniser vitesse/frein/gaz/rapport avec les images. Garder les samples60fps
+  disponibles, sans lisser ; précision réelle limitée par rafraîchissement HUD/lecteur.
+- [ ] Adapter le détail temporel à l'action : vue d'approche, séquence resserrée autour
+  de la transition (par exemple0,1s, davantage si nécessaire), puis conséquence.
+  Le pas de revue n'est pas une borne d'erreur garantie ; conserver les trous.
+- [ ] Tester une première entrée IA avec ces pièces, en annonçant les éléments qu'elle
+  peut réellement lire. Une demande de détail doit pouvoir désigner zone/tour/temps.
 
-| Module sous `src/acc_telemetry/` | Responsabilité |
-| --- | --- |
-| `analysis/session_summary.py` | Faits, exclusions et comparaisons retenus ; fonctions pures |
-| `application/session_report.py` | Lire artefacts/fiche et assembler le texte sans OCR |
-| `adapters/session_report.py` | Arguments locaux entrée/sortie et erreurs compréhensibles |
+**Sortie :** prototype consultable d'un tour entier, avec au moins une séquence dynamique
+suffisamment détaillée pour suivre l'ordre des commandes et mouvements. Pas de nouveau
+bilan de compétences inventé. Étendre ensuite à tous les tours sans exclure les cas normaux.
+**Acceptation :** retrouver la scène/les valeurs à un instant, examiner l'avant/après,
+comparer une zone entre tours et identifier les intervalles réellement inconnus.
 
-Ces fichiers sont implémentés. Réutiliser `application/session_artifacts.py` et
-`domain/telemetry.py`. Ne pas refondre l'architecture ; les adaptateurs ne portent
-pas de logique métier et l'assembleur n'appelle pas `TelemetryPipeline` ou GPT.
+## M2 — Construire et prouver les labels spatiaux sur PC
 
-- [x] Générer les six sections du contrat : contexte, session entière, passages,
-  faits/mesures, descriptions visuelles revues, questions/consigne GPT.
-- [x] Annoncer l'expérimentation, le périmètre et les limites dès le début. Distinguer
-  couverture extraite et portions examinées, contrôle d'OCR et référence de conduite.
-- [x] Refuser source/raw/sortie existante ; préserver les données et publier un fichier
-  complet. Aucun chemin local absolu ne doit être nécessaire à la lecture par GPT.
-- [x] Exécuter la commande sur les vrais artefacts et livrer le fichier, pas seulement
-  le code ou un exemple fictif. Conserver la commande exacte et les empreintes localement.
+Ce volet peut se préparer pendant M1. **Dépendance : accès à ACC Windows et à une
+capture locale simultanée vidéo+télémétrie**, à confirmer. Un fichier replay seul ne
+prouve pas la disponibilité de tous les champs physiques.
 
-Commande **implémentée et exécutée** (sortie nouvelle à chaque lancement) :
+- [ ] Commencer par environ30–60s de capture live PC native1080p60CFR et un logger
+  des données disponibles : temps, identité voiture, position3D, orientation,
+  vitesse/commandes, configuration caméra/FOV. Choisir le lecteur après vérification
+  des champs réellement exposés, de leurs unités et de leur horloge.
+- [ ] Mesurer la correspondance temps vidéo/télémétrie : offset, dérive, latence de
+  rendu, pauses/doublons. Les samples proches ne suffisent pas à supposer une synchro.
+- [ ] Obtenir une géométrie de piste de référence avec unités/axes et provenance.
+  Définir quel point de voiture est mesuré. La ligne d'un pilote n'est pas la centerline.
+- [ ] Calculer `d`, décalage signé dans le repère local de la route, et l'orientation
+  relative à sa tangente si les données la permettent. Les bords servent à exprimer
+  les marges/positions sur la largeur. Ni le d brut ni la géométrie ne sont présumés
+  disponibles directement dans un fichier MoTeC ou un replay.
+- [ ] Vérifier sur les images quelques positions volontairement différentes et des
+  transitions ; publier erreurs/limites de labels et de synchronisation. Définir le
+  budget de précision utile avant toute évaluation d'un modèle.
 
-```bash
-PYTHONPATH=src .venv/bin/python -m acc_telemetry.adapters.session_report \
-  --session data/lab/coaching-reliability/run-024/processed/crash-session \
-  --case data/lab/coaching-reliability/run-026/interim/case.json \
-  --output data/lab/coaching-reliability/run-026/reports/reproduction-02/session_coaching.md
-```
+**Sortie :** une courte vidéo PC et ses labels spatiaux réellement synchronisés, avec
+un repère géométrique démontré. **Acceptation :** on peut expliquer et vérifier chaque
+label dans l'extrait. Si position, géométrie ou horloge manquent, nommer le composant
+à obtenir : pas de grand entraînement sur des labels approximatifs non assumés.
 
-**Sortie :** `session_coaching.md` réel, autonome et reproductible.
+## M3 — Tester un modèle visuel/ temporel et son transfert PS5
 
-## Lot 4 — Tester la lecture utile puis arrêter ce jalon
+**Dépendance : M2 concluant.** Données d'entraînement et test distinctes.
 
-- [x] Relire le fichier en se limitant à son contenu ; contrôler les nombres, unités,
-  preuves, inconnues et descriptions. Même assistant/tâche, pas une lecture aveugle.
-- [ ] Le pilote le transmet à GPT dans une nouvelle conversation. Demander une priorité,
-  deux exercices complémentaires si étayés et une séance structurée, avec critères
-  de réussite. Le générateur ne rédige pas ces exercices et n'envoie rien automatiquement.
-- [ ] Vérifier que la réponse s'appuie sur des faits identifiables, distingue hypothèses
-  et causes alternatives et n'invente pas les informations manquantes. Une réponse
-  générique ou seulement convaincante ne suffit pas.
-- [x] Relecture locale : pas de pièce manquante bloquant un exercice de reproductibilité.
-  Le transit A→B ne suffit pas : l’issue après B est incluse. Diagnostic causal non résolu.
-- [x] Livrer le fichier et un verdict de revue. L'efficacité à la séance suivante,
-  la référence professionnelle et la qualification indépendante générale viennent après.
+- [ ] Collecter ensuite plusieurs passages variés : intérieur/centre/extérieur,
+  vitesses/angles différents, corrections et excursions. Ne pas entraîner uniquement
+  sur des tours optimaux qui incitent à mémoriser une trajectoire habituelle.
+- [ ] Première portée : une voiture, une caméra, Spa. Conserver des sessions entières
+  hors entraînement ; ne pas séparer aléatoirement des frames voisines entre train/test.
+- [ ] Comparer une baseline simple, une prédiction depuis une image et une courte
+  séquence. Le contexte avant/après est permis hors ligne et doit être annoncé.
+  Aucun nom d'architecture ou coût de calcul n'est figé avant examen des données.
+- [ ] Mesurer erreur médiane/P95, biais par zone, continuité, échecs/hors piste et
+  abstentions. Si `s` aide le modèle, tester avec le `s` imparfait disponible sur PS5,
+  pas uniquement le `s` vrai PC. Vérifier que l'image apporte plus qu'une ligne mémorisée.
+- [ ] Éprouver caméra/FOV, rendu et compression proches de PS5, puis le vrai domaine
+  PS5. La précision PC ne prouve pas celle sur console. Prévoir une référence spatiale
+  indépendante/positions contrôlées pour prétendre à une erreur PS5 en mètres ; une
+  simple inspection de trajectoire plausible n'est qu'un contrôle qualitatif.
 
-**Arrêt :** un vrai fichier autonome permet un exercice étayé dans une conversation
-sans historique. Tant que l'essai réel n'a pas eu lieu, consigner ce qui est testé et
-ce qui ne l'est pas ; ne pas prétendre avoir obtenu une réponse indépendante.
+**Sortie :** prototype d'estimation `d` et éventuellement orientation, accompagné de
+son erreur mesurée et de ses limites. **Acceptation :** gain démontré face à la baseline
+et précision compatible avec le placement à distinguer. Sans preuve métrique PS5,
+la sortie reste une estimation à précision non établie ; ne pas dessiner une ligne exacte.
 
-## Protections et discipline d'exécution
+## M4 — Assembler la perception globale et spatiale
 
-- Vérifications proportionnées selon `AGENTS.md` : tests ciblés pour les calculs,
-  absences/ambiguïtés, unités/raisons et non-écrasement réellement affectés. Ajouter
-  une régression utile ; suite complète si l'impact transversal ou le risque le justifie,
-  pas systématiquement avant chaque commit. Une simple retouche de texte se relit.
-- Réutiliser les annotations du compteur et les preuves run-024. Nouveau décodage seulement
-  pour une revue locale nécessaire, après contrôle du 1080p60 CFR. Nouveau replay/OCR seulement
-  si une correction démontrée du lecteur affecte les données utiles au fichier.
-- Ne pas interpréter94% comme défaut de plein gaz ni les résidus comme action volontaire.
-  Les blips peuvent être automatiques. Aucun lissage, visibilité inventée ou nouvelle
-  cible de fiabilité pour rendre le rapport plus séduisant.
-- Tout passage imparfait n'est pas inutile ; exclure précisément les faits non soutenus.
-  Une référence personnelle permet d'étudier la régularité, pas une technique optimale.
-- Conserver les sources/anciens résultats. Sorties personnelles ignorées sous
-  `interim/`, `processed/` ou `reports/`. Mettre à jour cases et `current-status.md`,
-  choisir les vérifications utiles, commit cohérent et push de la branche, sans merge.
+- [ ] Étendre M1 à la session entière : même index de zones/tours, actions et qualité.
+  Le pilote peut fournir une nouvelle séance naturelle d'environ20min pour disposer
+  de situations plus représentatives ; elle n'est pas requise pour commencer M1.
+- [ ] Relier chaque mesure et estimation spatiale à son temps, source et domaine de
+  validité. Une direction HUD non qualifiée n'est pas un angle réel des roues.
+- [ ] Afficher la trajectoire estimée seulement là où M3 la soutient, avec incertitude,
+  trous et source géométrique. Ailleurs, garder les images et l'inconnu ; ne pas boucher
+  le parcours pour produire un dessin continu. Le lecteur doit voir les limitations.
+- [ ] Présenter globalement toutes les zones et fournir les détails temporels associés.
+  Une sélection réduite pour le modèle est annoncée ; elle ne vaut pas vision exhaustive.
+- [ ] Garder distinctes : données PC qui servent de labels, passages personnels qui
+  décrivent le pilote, référence expérimentée qui explique une technique. Cette dernière
+  peut être ajoutée pour l'analyse par GPT ; elle n'est ni la définition de `d`, ni
+  une nécessité pour constituer des labels PC de positions variées.
 
-## Résultat et décisions de livraison — 13 septembre
+**Sortie :** dossier multimodal de perception complet dans son périmètre déclaré,
+réutilisant l'exporteur existant. Pas d'outil web hébergé ni d'appel API GPT implicite.
+Si M3 échoue, M1 reste un livrable temporel partiel : ne pas annoncer que la capacité
+spatiale demandée est livrée ou la remettre indéfiniment hors périmètre sans décision.
 
-- Run-026 : 91 images revues, dont huit images d’approche run-025 réutilisées ; aucune
-  nouvelle extraction OCR. Source, CFR et 29 402 samples contrôlés en réutilisant les
-  preuves temporelles inchangées.
-- Trois passages de la fin du premier droit à la fin du dernier droit ; approches et
-  conséquences conservées. A/B sont des disparitions de vibreurs physiques encadrées
-  par vues espacées de 0,5 s, avec erreur de perspective non quantifiée.
-- D-P1 et D-P3 : 5,5–6,5 s ; D-P2 : 8–9 s. P2 reste un passage perturbé, P3 finit dans
-  les graviers après B. Aucun classement de passages propres ni gain cible n’est déduit.
-- 22 vitesses ponctuelles concordantes. Pédales et métriques continues exclues : elles
-  n’ajoutent pas de fait localement suffisamment qualifié pour ce premier fichier.
-- Générateur et commande livrés ; revue locale dans `run-026/reports/relecture.md`.
-  La demande de livraison distingue cette revue du test GPT neuf : ce dernier n’est
-  pas revendiqué et ne bloque pas la remise du fichier. Les deux cases restantes du
-  lot 4 décrivent cet essai futur, pas un travail d’implémentation oublié.
+## M5 — Tester les yeux de l'IA avant de juger le coaching
 
-**Prochaine action unique : le pilote joint le fichier run-026 `session_coaching.md`
-à une nouvelle conversation GPT et demande la priorité, les exercices et la séance
-selon la section 6 ; vérifier ensuite les preuves citées et les causes laissées ouvertes.**
+- [ ] Fournir les seules pièces du dossier au modèle et contrôler ce qu'il a pu lire.
+- [ ] Lui demander d'abord des reconstructions factuelles : ordre des actions avant
+  une excursion, placement et évolution dans une zone, différences entre passages,
+  situations similaires ailleurs et inconnues. Vérifier les réponses sur la source.
+- [ ] S'il manque une transition ou une zone, améliorer couverture, granularité ou
+  représentation ; ne pas remplacer le défaut perceptif par un meilleur prompt de conseil.
+- [ ] Une fois cette lecture fidèle, laisser l'IA analyser les habitudes globales et
+  proposer l'entraînement. Examiner les erreurs de raisonnement séparément des erreurs
+  de perception. Aucun modèle n'est censé rendre une cause physique certaine avec des
+  observations insuffisantes.
+
+**Acceptation :** le modèle reconstruit correctement les situations examinées, cite
+les preuves, compare les cas pertinents et reconnaît ses inconnues. La séance d'entraînement
+ultérieure évalue l'utilité du coaching, pas la fidélité des données à elle seule.
+
+## Discipline et état
+
+- [x] Extraction automatique complète et premier export local livrés (run-024/run-026).
+- [x] Clarification du rôle perceptif, couverture temporelle et intérêt de `d`.
+- [ ] M1 : prototype temporel à l'échelle d'un tour complet.
+- [ ] M2 : échantillon PC vidéo+télémétrie avec vérité spatiale démontrée.
+- [ ] M3 : prototype modèle et évaluation de transfert.
+- [ ] M4 : dossier global multimodal avec placement qualifié.
+- [ ] M5 : essai réel de lecture factuelle, puis analyse par l'IA.
+
+Aucun de ces nouveaux modules/datasets n'est développé par la présente mise à jour de
+plan. Tests/lectures proportionnés selon AGENTS.md. Sources privées, anciens labels,
+configurations et sorties préservés ; pas de replay OCR pour une retouche de rapport.
+Le premier export demeure reproductible via son contrat, sans le confondre avec la finalité.
+
+**Prochaine action : M1 — choisir un tour complet de run-024, établir toutes ses zones
+et produire une première fenêtre scène+commandes synchronisées en réutilisant les
+mesures. En parallèle de préparation, confirmer l'accès à ACC PC et aux données
+position/orientation/géométrie nécessaires pour M2.**
