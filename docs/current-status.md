@@ -28,6 +28,9 @@ Keep source/provenance/quality explicit. PC clocks, track geometry and derived d
 need verification. No MCP server or common session-store implementation delivered yet.
 
 Active plan: `plans/2026-09-13-first-gpt-export.md` (M1–M5 perception milestones).
+Research catalogue: [driving metrics](driving-metrics.md), 72 proposed entries with
+definitions, input requirements, primary sources and interpretation limits. Use its
+priority set to define the shared contract; it is not an implemented metric library.
 Implemented M1 contract: [perception package](perception-package.md).
 The earlier [text-export contract](specs/2026-09-13-session-coaching-report.md) remains
 implemented, but a single text dossier is not the final perception system.
@@ -107,6 +110,9 @@ support, now included. No source or prior artifact was modified.
 prototype the zone × passage index and compact synthesis across usable run-024 laps.**
 Follow the active plan's architecture and condensation tranche; keep MCP a thin
 adapter over shared application services, independent of the storage implementation.
+The Internet research is complete for this first catalogue. Define time-loss,
+trajectory/control and recurrence primitives with explicit reference and quality,
+using `driving-metrics.md`; do not implement all72 entries as a prerequisite.
 Preserve coverage, recurring signatures, counterexamples, uncertainty and provenance.
 Quantified losses require comparable bounds and an explicit suitable reference;
 neither the single best lap nor missing data may silently define the target.

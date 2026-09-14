@@ -32,6 +32,11 @@ Pas d'achat/cloud payant, de dataset massif ou de reverse engineering implicite.
 
 ## Livrable cible
 
+Le [catalogue de métriques](../driving-metrics.md) précise les mesures, données
+nécessaires, limites et priorités à partir de sources primaires consultées en ligne.
+Ses 72 entrées sont un catalogue de conception, pas72 fonctionnalités à développer
+avant de livrer. Les définitions du socle guideront le contrat commun vidéo/PC.
+
 **Contrainte produit clarifiée après le retour externe : condenser une séance entière
 pour identifier ses difficultés et pertes récurrentes avec un budget de lecture borné.**
 Les 60 fps sont une entrée de traitement local, pas une charge à transférer au modèle
