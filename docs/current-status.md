@@ -1,5 +1,5 @@
 ---
-summary: M1 full-lap scene/control prototype delivered; next AI-input review and unresolved PC capture setup
+summary: one external passage reconstruction assessed; next continuous clip comparison and unresolved PC capture setup
 read_when:
   - starting repository work or opening the current perception result
   - continuing temporal coverage or preparing PC-supervised spatial data
@@ -93,8 +93,8 @@ support, now included. No source or prior artifact was modified.
 
 ## Exact next action
 
-**Collect the user's external AI response to the run-028 PDF, then compare its actual
-image access and factual reconstruction with the reference saved before that response.**
+**Supplement the same run-028 case with the source clip 342–351 s and preserved audio,
+then ask what the external AI confirms or revises relative to its first response.**
 The owner asked for one self-contained passage to submit personally. Prepared:
 `run-028/reports/Passage_ACC_pour_analyse_IA.pdf` (17 pages, 19.2 MB), Les Combes,
 HUD lap 6, source 334–352 s. Includes 1,081 samples as unsmoothed curves, neutral
@@ -103,11 +103,19 @@ transition times, missing-data list, 31 context views and 36 views at 0.1 s over
 from run-026 reused; no new OCR. Source/image integrity and common-frame alignment
 checked, PDF pages rendered/reviewed; no application-code changes or suite rerun.
 Private pre-response reference: `run-028/interim/reference_avant_reponse.md`.
-Do not send that reference with the PDF or count preparation as a successful external
-test. No external model called and no response received. Generation scripts and
-verification remain with the ignored run. Extend coverage after assessing the return.
+The user supplied an external response, preserved as `run-028/reports/reponse_externe.txt`.
+Assessment: `run-028/reports/evaluation_reponse_externe.md`. Favorable reconstruction
+on this one case: sequence, controls and off-track consequence are consistent. Visual
+access is self-reported and supported by specific descriptions; model identity and
+tool log unavailable. Its earlier right-side placement observation at 343–344 s was
+confirmed against four existing frames and improves our initial reference. Cause
+remains uncertain; its exercise changes several factors and cannot isolate placement.
+The frozen reference remains untouched; separate errata correct two transcription
+errors in that reference (the exported PDF/data were correct). No new OCR/code/test
+campaign. Clip supplement not yet produced or transmitted. Keep the existing PDF and
+response as the baseline; extend to more passages before inferring global habits.
 
-M1's first-lap prototype is complete; full-session multimodal coverage and fresh-model
-factual reconstruction remain pending. For M2, obtain the ACC-on-Mac environment name
+M1's first-lap prototype and one user-mediated external reconstruction trial are complete;
+full-session coverage and broader validation remain pending. For M2, obtain the ACC-on-Mac environment name
 and usable duration, then prepare synchronized PC logging before consuming that window.
 Do not start training or a paid service while those inputs are unknown.

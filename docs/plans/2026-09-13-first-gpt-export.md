@@ -72,11 +72,13 @@ une couverture multimodale de tous les tours ou un essai dans une IA sans histor
 - [x] Adapter le détail temporel à l'action : vue d'approche, séquence resserrée autour
   de la transition (par exemple0,1s, davantage si nécessaire), puis conséquence.
   Le pas de revue n'est pas une borne d'erreur garantie ; conserver les trous.
-- [ ] Tester une première entrée IA avec ces pièces, en annonçant les éléments qu'elle
+- [x] Tester une première entrée IA avec ces pièces, en annonçant les éléments qu'elle
   peut réellement lire. Une demande de détail doit pouvoir désigner zone/tour/temps.
   Préparation livrée dans run-028 : PDF autonome du passage 334–352 s, images intégrées,
   courbes et transitions, détail à 0,1 s. Le pilote le soumet lui-même à une IA externe.
-  Référence locale conservée séparément avant retour ; essai non encore évalué.
+  Retour reçu et comparé à la référence figée : reconstruction locale favorable,
+  placement avant virage confirmé sur les images ; cause et coaching non validés.
+  Accès visuel déclaré et étayé par le contenu, sans journal d'outils externe.
 
 **Sortie :** prototype consultable d'un tour entier, avec au moins une séquence dynamique
 suffisamment détaillée pour suivre l'ordre des commandes et mouvements. Pas de nouveau
@@ -226,7 +228,7 @@ ultérieure évalue l'utilité du coaching, pas la fidélité des données à el
 - [x] Extraction automatique complète et premier export local livrés (run-024/run-026).
 - [x] Clarification du rôle perceptif, couverture temporelle et intérêt de `d`.
 - [x] M1 : prototype temporel à l’échelle d’un tour complet livré dans run-027.
-- [ ] M1 suite : revue comme entrée IA, extension à d’autres tours et fenêtres.
+- [ ] M1 suite : complément vidéo du test externe, extension à d’autres tours et fenêtres.
 - [ ] M2 : échantillon PC vidéo+télémétrie avec vérité spatiale démontrée.
 - [ ] M3 : prototype modèle et évaluation de transfert.
 - [ ] M4 : dossier global multimodal avec placement qualifié.
@@ -237,8 +239,8 @@ encore développé. Tests/lectures proportionnés selon AGENTS.md. Sources priv�
 configurations et sorties préservés ; pas de replay OCR pour une retouche de rapport.
 Le premier export demeure reproductible via son contrat, sans le confondre avec la finalité.
 
-**Prochaine action : recueillir la réponse externe au PDF run-028 et contrôler son
-accès aux images, sa reconstruction et ses inconnues face à la référence préservée ;
-puis adapter le dossier et étendre sa couverture selon les défauts démontrés. Pour M2,
+**Prochaine action : compléter le cas run-028 par le clip source342–351 s avec audio,
+puis comparer les confirmations/corrections de l'IA à son premier retour conservé.
+Étendre ensuite la couverture à plusieurs passages avant de parler d'habitudes. Pour M2,
 confirmer logiciel/service ACC sur Mac et durée du créneau avant de préparer le
 logger adapté ; ne pas consommer le créneau pour découvrir ces contraintes.**
