@@ -114,12 +114,21 @@ Le Markdown fournit les faits au modèle ; le générateur ne produit pas de coa
 de faits localement soutenus et de leurs limites. Elle ne valide ni le moteur entier,
 ni une référence professionnelle, ni le coaching automatique. Voir le contrat actif.
 
-## Perception temporelle et spatiale — planifiée, non implémentée
+## Perception temporelle M1 — premier prototype implémenté
 
-Le plan actif ajoute couverture du tour entier, index d'événements neutres et fenêtres
-scène/signaux synchronisées. Il évalue ensuite des labels PC calculés depuis position,
-orientation et géométrie de piste, puis un modèle image/séquence→d avec contrôle de
-transfert PS5. Les nouvelles estimations doivent conserver origine, temps, qualité
-et incertitude. L'interface de données sera fixée après la preuve de labels ; aucun
-modèle ou schéma spatial prêt à produire n'est présumé. Le diagnostic et les exercices
-appartiennent au modèle consommateur, pas aux détecteurs d'événements du pipeline.
+`analysis/perception.py` construit un index d'événements neutres avec hystérésis,
+persistance et ruptures explicites ; `config/perception.yaml` est validé séparément
+sans modifier les paramètres d'extraction/qualification. Les zones sont une partition
+source-bound revue, pas des limites spatiales supposées exactes.
+
+`application/perception.py` relit les artefacts, vérifie source/zone/media, rend les
+clips par plages natives de frames et publie le paquet atomiquement. Le rendu local
+`visualization/perception.py` lie vidéo, curseur et valeurs via l'horodatage de l'image
+présentée, avec fallback explicite. La CLI `adapters/perception.py` orchestre seulement
+les arguments. `adapters/perception_preview.py` est un lecteur HTTP localhost facultatif,
+confiné au dossier et compatible Range pour la navigation vidéo, sans API métier.
+
+[Contrat et résultat M1](perception-package.md). Aucune modification du pipeline OCR.
+Le premier export texte demeure disponible. Les labels PC et modèle image/séquence→d
+restent planifiés : géométrie, horloges et transfert PS5 à démontrer. Le diagnostic et
+les exercices appartiennent à l'IA consommatrice, pas aux détecteurs du pipeline.

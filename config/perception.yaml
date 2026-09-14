@@ -1,0 +1,6 @@
+# Neutral event-index settings, not coaching or general qualification targets.
+events:
+  on_pct: 5.0
+  off_pct: 2.0
+  persistence_s: 0.10
+  max_gap_s: 0.05

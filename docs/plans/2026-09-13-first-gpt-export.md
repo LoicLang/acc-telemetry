@@ -7,8 +7,9 @@ read_when:
 
 # Plan actif — construire les yeux de l'IA
 
-**Direction clarifiée le14 septembre2026.** Ce même plan prolonge le premier export,
-il ne lance pas une nouvelle implémentation dans cette tâche de cadrage.
+**Direction clarifiée le 14 septembre 2026.** Ce même plan prolonge le premier export.
+La première tranche M1 est implémentée le 14 septembre dans run-027 ; M2–M5 restent
+à exécuter selon leurs prérequis.
 [État réel](../current-status.md) ; [contrat du premier export déjà implémenté](../specs/2026-09-13-session-coaching-report.md).
 
 ## Finalité et séparation des responsabilités
@@ -49,20 +50,26 @@ Aucun seul CSV brut, photo isolée ou graphe de vitesse ne représente toute la 
 
 ## M1 — Couverture du tour entier et perception temporelle
 
+Première tranche livrée : [paquet M1](../perception-package.md), un tour8766 frames,
+14 zones,95 candidats neutres, lecteur synchronisé et séquence dense. Pas encore
+une couverture multimodale de tous les tours ou un essai dans une IA sans historique.
+
 **Entrée :** source et artefacts run-024, export/revues run-026. Pas de nouvel OCR.
 
-- [ ] Sur un premier tour complet, définir toutes les zones à observer, pas seulement
+- [x] Sur un premier tour complet, définir toutes les zones à observer, pas seulement
   Les Combes ou les incidents. Conserver succès, passages ordinaires et perturbations.
   Le découpage initial peut être revu manuellement puis réutilisé sur les autres tours.
-- [ ] Indexer les événements factuels : attaque/relâchement frein, reprise/coupure gaz,
-  changement de rapport, passage de repère. Le code produit des candidats avec seuils,
+- [x] Indexer les événements factuels : attaque/relâchement frein, reprise/coupure gaz,
+  changement de rapport. Le code produit des candidats avec seuils,
   persistance, temps et qualité explicites ; jamais « freinage trop tardif ».
-- [ ] Produire la chronologie complète et les fenêtres liées aux zones/actions, avec
+- [ ] Ajouter les passages de repères physiques avec leurs preuves temporelles ; les
+  bornes grossières de navigation du prototype ne constituent pas ces repères.
+- [x] Produire la chronologie complète et les fenêtres liées aux zones/actions, avec
   contexte avant/après. Aucun freinage ne fait disparaître les virages parcourus à
   gaz constants : le découpage des zones complète la détection d'événements.
-- [ ] Synchroniser vitesse/frein/gaz/rapport avec les images. Garder les samples60fps
+- [x] Synchroniser vitesse/frein/gaz/rapport avec les images. Garder les samples60fps
   disponibles, sans lisser ; précision réelle limitée par rafraîchissement HUD/lecteur.
-- [ ] Adapter le détail temporel à l'action : vue d'approche, séquence resserrée autour
+- [x] Adapter le détail temporel à l'action : vue d'approche, séquence resserrée autour
   de la transition (par exemple0,1s, davantage si nécessaire), puis conséquence.
   Le pas de revue n'est pas une borne d'erreur garantie ; conserver les trous.
 - [ ] Tester une première entrée IA avec ces pièces, en annonçant les éléments qu'elle
@@ -116,8 +123,9 @@ position/orientation et la source de géométrie. Variante McLaren, caméra/FOV 
 restent à préciser. Tant que ces entrées ne sont pas disponibles, noter le besoin exact
 et poursuivre M1 ; ne pas lancer un entraînement ni acheter une solution.
 
-Cette mise à jour est documentaire. Le travail ci-dessus commence à la reprise de
-ce soir ; aucune case M1–M5 n'est cochée au titre de cette préparation.
+Cette préparation a été exécutée pour le premier tour : run-027 contient le paquet
+réel. La revue navigateur et45 tests ciblés sont faits. Les cases ne qualifient pas
+les données ou le modèle globalement ; aucune exécution M2–M5 n’est impliquée.
 
 ## M2 — Construire et prouver les labels spatiaux sur PC
 
@@ -214,18 +222,19 @@ ultérieure évalue l'utilité du coaching, pas la fidélité des données à el
 
 - [x] Extraction automatique complète et premier export local livrés (run-024/run-026).
 - [x] Clarification du rôle perceptif, couverture temporelle et intérêt de `d`.
-- [ ] M1 : prototype temporel à l'échelle d'un tour complet.
+- [x] M1 : prototype temporel à l’échelle d’un tour complet livré dans run-027.
+- [ ] M1 suite : revue comme entrée IA, extension à d’autres tours et fenêtres.
 - [ ] M2 : échantillon PC vidéo+télémétrie avec vérité spatiale démontrée.
 - [ ] M3 : prototype modèle et évaluation de transfert.
 - [ ] M4 : dossier global multimodal avec placement qualifié.
 - [ ] M5 : essai réel de lecture factuelle, puis analyse par l'IA.
 
-Aucun de ces nouveaux modules/datasets n'est développé par la présente mise à jour de
-plan. Tests/lectures proportionnés selon AGENTS.md. Sources privées, anciens labels,
+Les modules M1 sont livrés et testés. Aucun dataset PC ou modèle spatial n’est
+encore développé. Tests/lectures proportionnés selon AGENTS.md. Sources privées, anciens labels,
 configurations et sorties préservés ; pas de replay OCR pour une retouche de rapport.
 Le premier export demeure reproductible via son contrat, sans le confondre avec la finalité.
 
-**Prochaine action : M1 — choisir un tour complet de run-024, établir toutes ses zones
-et produire une première fenêtre scène+commandes synchronisées en réutilisant les
-mesures. En parallèle de préparation, confirmer l'accès à ACC PC et aux données
-position/orientation/géométrie nécessaires pour M2.**
+**Prochaine action : examiner le paquet M1 comme entrée de perception pour une IA,
+puis étendre zones et fenêtres aux autres tours/à la nouvelle vidéo. Pour M2,
+confirmer logiciel/service ACC sur Mac et durée du créneau avant de préparer le
+logger adapté ; ne pas consommer le créneau pour découvrir ces contraintes.**

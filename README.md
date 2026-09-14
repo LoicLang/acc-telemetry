@@ -4,7 +4,10 @@ La cible est de construire les « yeux » de l'IA : session entière, scène et 
 synchronisées, placement/trajectoire avec qualité explicite. L'IA produit l'analyse
 et les exercices. Le [plan actif](docs/plans/2026-09-13-first-gpt-export.md) prolonge
 l'export existant par la perception temporelle et un test de labels/modèle `d` depuis
-vidéo+télémétrie PC. Ces nouvelles capacités ne sont pas encore implémentées.
+vidéo+télémétrie PC. Le [premier prototype M1](docs/perception-package.md) est livré : un tour complet,
+vidéo et commandes synchronisées,14 zones, événements neutres et séquence détaillée.
+Les labels PC, le modèle d et la couverture multimodale de toute une session restent
+à développer/évaluer.
 
 Le premier livrable est **`session_coaching.md`**, un fichier expérimental autonome
 produit à partir d'une vraie session ACC PS5, que le pilote joint lui-même à GPT pour

@@ -42,6 +42,7 @@ les nouveaux labels ou le coaching. Aucune ancienne preuve ne qualifie automatiq
 le modèle spatial. La validation requise dépend de la capacité annoncée.
 
 Tout reste local ; pas de service web hébergé, d'achat ou d'appel API GPT implicite.
-Le présent travail est la consolidation du plan, pas son implémentation. Commencer M1
-sur la vidéo existante ; préparer M2 lorsque l'accès PC et les données sont confirmés.
+Le premier prototype M1 est livré sur un tour existant ; voir le
+[paquet de perception](perception-package.md). Étendre sa couverture et tester sa
+lecture réelle par une IA ; préparer M2 lorsque l’accès PC et les données sont confirmés.
 [Current status](current-status.md) donne le point de reprise et les fichiers réels.
