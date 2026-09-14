@@ -74,6 +74,9 @@ une couverture multimodale de tous les tours ou un essai dans une IA sans histor
   Le pas de revue n'est pas une borne d'erreur garantie ; conserver les trous.
 - [ ] Tester une première entrée IA avec ces pièces, en annonçant les éléments qu'elle
   peut réellement lire. Une demande de détail doit pouvoir désigner zone/tour/temps.
+  Préparation livrée dans run-028 : PDF autonome du passage 334–352 s, images intégrées,
+  courbes et transitions, détail à 0,1 s. Le pilote le soumet lui-même à une IA externe.
+  Référence locale conservée séparément avant retour ; essai non encore évalué.
 
 **Sortie :** prototype consultable d'un tour entier, avec au moins une séquence dynamique
 suffisamment détaillée pour suivre l'ordre des commandes et mouvements. Pas de nouveau
@@ -234,7 +237,8 @@ encore développé. Tests/lectures proportionnés selon AGENTS.md. Sources priv�
 configurations et sorties préservés ; pas de replay OCR pour une retouche de rapport.
 Le premier export demeure reproductible via son contrat, sans le confondre avec la finalité.
 
-**Prochaine action : examiner le paquet M1 comme entrée de perception pour une IA,
-puis étendre zones et fenêtres aux autres tours/à la nouvelle vidéo. Pour M2,
+**Prochaine action : recueillir la réponse externe au PDF run-028 et contrôler son
+accès aux images, sa reconstruction et ses inconnues face à la référence préservée ;
+puis adapter le dossier et étendre sa couverture selon les défauts démontrés. Pour M2,
 confirmer logiciel/service ACC sur Mac et durée du créneau avant de préparer le
 logger adapté ; ne pas consommer le créneau pour découvrir ces contraintes.**

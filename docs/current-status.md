@@ -93,8 +93,20 @@ support, now included. No source or prior artifact was modified.
 
 ## Exact next action
 
-**Review the actual M1 package as an AI input and extend the zone/window coverage to
-other laps or the user's new video, keeping temporal evidence and unknowns explicit.**
+**Collect the user's external AI response to the run-028 PDF, then compare its actual
+image access and factual reconstruction with the reference saved before that response.**
+The owner asked for one self-contained passage to submit personally. Prepared:
+`run-028/reports/Passage_ACC_pour_analyse_IA.pdf` (17 pages, 19.2 MB), Les Combes,
+HUD lap 6, source 334–352 s. Includes 1,081 samples as unsmoothed curves, neutral
+transition times, missing-data list, 31 context views and 36 views at 0.1 s over
+344–347.5 s (59 distinct native-resolution images embedded). Nine speed annotations
+from run-026 reused; no new OCR. Source/image integrity and common-frame alignment
+checked, PDF pages rendered/reviewed; no application-code changes or suite rerun.
+Private pre-response reference: `run-028/interim/reference_avant_reponse.md`.
+Do not send that reference with the PDF or count preparation as a successful external
+test. No external model called and no response received. Generation scripts and
+verification remain with the ignored run. Extend coverage after assessing the return.
+
 M1's first-lap prototype is complete; full-session multimodal coverage and fresh-model
 factual reconstruction remain pending. For M2, obtain the ACC-on-Mac environment name
 and usable duration, then prepare synchronized PC logging before consuming that window.
