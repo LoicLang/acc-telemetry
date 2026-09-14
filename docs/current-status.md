@@ -30,6 +30,24 @@ PC→PS5 transfer remain to establish. M1 can proceed with existing source/artif
 while these prerequisites are prepared. Professional reference and PC training labels
 serve different roles. Gate A FAIL and `coaching_eligible=false` stay unchanged.
 
+## Ready for tonight —14 September
+
+Start M1 on **HUD lap4 of run-024**, frames19–8784 inclusive, source interval
+[0.316667,146.416667) s between confirmed counter boundaries. The source, session
+artifacts and run-026 case/report paths were checked present; no OCR or model run.
+These are counter-defined bounds, not certified physical crossings/legal-lap evidence.
+
+Tonight's concrete output: one complete-lap timeline, source-bound zone/action index,
+and one detailed synchronized scene/control window. Use a new ignored output folder
+(e.g. run-027 if still free). Existing Combes imagery can bootstrap the detail window;
+do not restrict the overview to that zone. Follow the practical M1 subsection in the
+active plan. Tests are proportionate to the actual changes.
+
+M2 needs ACC Windows access, simultaneous video/telemetry recording and a usable
+track-geometry source. Access, car variant, camera/FOV and hardware remain unknown.
+Confirm them when possible, but do not block M1 or start paid services/training.
+This update prepares the handoff only: M1–M5 implementation has not started.
+
 ## Delivered result
 
 **The first real `session_coaching.md` is generated and locally reviewed.**
@@ -129,8 +147,11 @@ listed with `./scripts/docs-list`.
 
 ## Exact next action
 
-**M1: use an existing complete run-024 lap to index all its zones and build a first
-synchronized scene/control temporal window, without rerunning OCR.** Confirm ACC PC
-access and candidate position/orientation/track-geometry sources for M2 preparation.
-The next output is perceptual evidence, not another skill diagnosis based on the same
-three selected passages. This turn updates the plan only; implementation is not started.
+**Resume M1 tonight: load the existing run-024 session, select frames19–8784 and
+produce the full-lap timeline plus a first synchronized scene/control window.**
+Then extend zone/action indexing and temporal detail under the active plan. Prepare
+ACC PC access/labels/geometry for M2 independently of this local work. No new OCR,
+exhaustive counter review or coaching diagnosis is needed to begin.
+
+Documentation-only handoff update: relevant paths/bounds checked, text/links/diff
+reviewed; no automated test suite or video processing was needed for this update.

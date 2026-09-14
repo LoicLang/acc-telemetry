@@ -74,6 +74,51 @@ bilan de compétences inventé. Étendre ensuite à tous les tours sans exclure 
 **Acceptation :** retrouver la scène/les valeurs à un instant, examiner l'avant/après,
 comparer une zone entre tours et identifier les intervalles réellement inconnus.
 
+### Reprise du14 septembre au soir — première livraison M1
+
+**Point de départ choisi : tour HUD4 de run-024**, entre les confirmations des
+compteurs3→4 et4→5 : intervalle source **[0,316667 ;146,416667[ s**, frames19 à8784
+incluses. Le manifeste confirme les bornes19 et8785. Ce sont des bornes du compteur
+confirmé, pas une certification du franchissement physique ou de la légalité du tour.
+
+Entrées déjà disponibles et vérifiées présentes lors de cette préparation :
+
+- `data/lab/coaching-reliability/run-024/processed/crash-session/` ;
+- vidéo indiquée dans ce manifeste : `data/lab/2026-09-03-generic-s-fusion/crash-representative.mov` ;
+- fiche et images revues : `run-026/interim/case.json` ;
+- ancien export : `run-026/reports/session_coaching.md`, comme contexte/audit uniquement.
+
+Commencer par relire les artefacts et réutiliser les preuves d'intégrité encore
+applicables. Ne pas relancer l'extracteur pour découper la chronologie ou afficher
+les données existantes. Pour de nouvelles images, respecter le contrôle1080p60CFR.
+
+**Résultat concret attendu pour cette première tranche :**
+
+1. Une vue de l'intégralité du tour choisi, avec temps, vitesse/frein/gaz/rapport,
+   bornes de zones et données manquantes. Les zones non identifiées sont explicitement
+   marquées, pas omises pour ne garder que les événements intéressants.
+2. Un premier index source-bound des zones/actions neutres. La détection ne doit pas
+   nommer une erreur de conduite. Les normales/réussites restent aussi accessibles.
+3. Une fenêtre détaillée scène+commandes synchronisées, avec approche/action/sortie.
+   Les Combes peut servir au premier raccord grâce aux médias existants ; cette fiche
+   ne remplace pas la couverture du tour. Resserrement temporel si0,5s masque une action.
+4. Un contrôle simple : choisir un temps, retrouver la frame/les valeurs, vérifier
+   l'ordre d'une transition et constater que les absences restent visibles.
+
+Sorties dans un nouveau dossier local ignoré, par exemple `run-027/` si toujours libre
+(il l'était lors de cette préparation). L'agent choisit les détails de représentation
+et les vérifications proportionnées. Aucun nouveau cadre web, bilan de faiblesses,
+plan d'entraînement ou répétition de revue du compteur pour cette tranche.
+
+**Préparation M2 sans bloquer M1 :** confirmer l'accès à un PC Windows avec ACC,
+la possibilité d'enregistrer localement vidéo+télémétrie simultanées, les champs de
+position/orientation et la source de géométrie. Variante McLaren, caméra/FOV et matériel
+restent à préciser. Tant que ces entrées ne sont pas disponibles, noter le besoin exact
+et poursuivre M1 ; ne pas lancer un entraînement ni acheter une solution.
+
+Cette mise à jour est documentaire. Le travail ci-dessus commence à la reprise de
+ce soir ; aucune case M1–M5 n'est cochée au titre de cette préparation.
+
 ## M2 — Construire et prouver les labels spatiaux sur PC
 
 Ce volet peut se préparer pendant M1. **Dépendance : accès à ACC Windows et à une
