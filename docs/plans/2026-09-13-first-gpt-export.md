@@ -40,7 +40,7 @@ locale ; il ne démontre ni une compression suffisante ni la viabilité sur une 
 L'ajout du clip342–351 s n'est plus la prochaine action. La vidéo reste une preuve
 consultable à la demande, sans visionnage intégral requis pour l'analyse principale.
 
-Un **dossier de perception de session**, contenant :
+Une **base persistante de séances interrogeable par l'IA**, contenant :
 
 - vue d'ensemble de tous les tours et zones, avec les périodes non observables ;
 - chronologie des mesures et événements neutres, liée aux frames et à la scène ;
@@ -55,6 +55,35 @@ avec le mode d'utilisation retenu. Tester réellement ce mode : des PNG chronolo
 ne sont pas un flux60fps, une vidéo non lue n'est pas une preuve consultée. Le paquet
 indique ce qui est couvert, ce qui est résumé et comment obtenir un détail manquant.
 Aucun seul CSV brut, photo isolée ou graphe de vitesse ne représente toute la conduite.
+
+### Architecture cible — acquisition interchangeable, données communes, outils
+
+Décision du pilote : la sortie principale est un ensemble de données stockées et
+enrichies, parcourues à la demande par l'IA. Le PDF devient un export facultatif.
+
+- **Acquisition :** vidéo PS5 et extraction aujourd'hui ; adaptateur de télémétrie PC
+  directe ensuite, avec vidéo facultative comme preuve. Les deux alimentent le même
+  contrat normalisé. Le PC simplifie l'obtention des champs disponibles ; horloges,
+  unités, géométrie de piste et calcul de d restent à vérifier.
+- **Stockage indépendant :** sources immuables, mesures normalisées, tours/zones,
+  trajectoires, références et résumés dérivés versionnés. Chaque valeur garde origine
+  (lecture vidéo, mesure PC ou estimation), temps, unité, qualité et incertitude.
+  Une mesure directe ne rend pas rétroactivement fiables les anciennes estimations.
+- **Couche applicative commune :** alignement, comparaisons, récurrences et sélection
+  de preuves. Elle conserve ses services lors du changement de source et dessert les
+  interfaces existantes comme les nouveaux outils ; pas de logique métier dupliquée.
+- **Adaptateur MCP prévu :** synthèse de séance, comparaison de passages/référence,
+  recherche de récurrences et récupération de preuves à un temps/une zone. Réponses
+  compactes par défaut, bornées et détaillables ; images ou clip ciblé selon les
+  capacités réelles du client. MCP est l'accès aux données, pas leur format de stockage.
+- **Skills éventuels :** méthode de lecture et de vérification pour l'IA, séparée des
+  faits et des calculs. Le diagnostic reste à l'IA ; les outils doivent permettre
+  aussi de rechercher des contre-exemples et de réfuter une hypothèse.
+
+Cette architecture est une cible, pas un serveur déjà livré. Prochaine tranche :
+définir le contrat minimal des données persistées et des requêtes à partir des
+artefacts existants, puis la condensation globale ci-dessous. Le passage au PC doit
+réutiliser ces contrats ; la sélection d'une base ou d'un SDK reste un détail ultérieur.
 
 ### Prochaine tranche — condensation globale, avant de multiplier les médias
 
@@ -250,8 +279,9 @@ la sortie reste une estimation à précision non établie ; ne pas dessiner une 
   peut être ajoutée pour l'analyse par GPT ; elle n'est ni la définition de `d`, ni
   une nécessité pour constituer des labels PC de positions variées.
 
-**Sortie :** dossier multimodal de perception complet dans son périmètre déclaré,
-réutilisant l'exporteur existant. Pas d'outil web hébergé ni d'appel API GPT implicite.
+**Sortie :** base de séances et outils de consultation avec synthèse multimodale
+bornée, export humain facultatif. Réutiliser les couches applicatives existantes ;
+pas d'outil web hébergé ni d'appel API GPT implicite.
 Si M3 échoue, M1 reste un livrable temporel partiel : ne pas annoncer que la capacité
 spatiale demandée est livrée ou la remettre indéfiniment hors périmètre sans décision.
 
@@ -291,8 +321,9 @@ encore développé. Tests/lectures proportionnés selon AGENTS.md. Sources priv�
 configurations et sorties préservés ; pas de replay OCR pour une retouche de rapport.
 Le premier export demeure reproductible via son contrat, sans le confondre avec la finalité.
 
-**Prochaine action : prototyper l'index zone × passage et la synthèse compacte de tous
-les tours exploitables de run-024 selon la tranche de condensation ci-dessus ; rendre
+**Prochaine action : définir le contrat minimal commun vidéo/PC et les requêtes de
+consultation, puis prototyper l'index zone × passage et la synthèse compacte des tours
+exploitables de run-024 selon la tranche de condensation ci-dessus ; rendre
 visibles les métriques calculables et les prérequis manquants. Pour M2,
 confirmer logiciel/service ACC sur Mac et durée du créneau avant de préparer le
 logger adapté ; ne pas consommer le créneau pour découvrir ces contraintes.**

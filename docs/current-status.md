@@ -20,6 +20,12 @@ The main model must receive a compact whole-session representation, not tens of
 minutes of 60 fps video. Local extraction/perception carries that volume; the output
 must expose recurring difficulties and defensible performance gaps under a bounded
 reading budget. This central condensation capability is still missing.
+The owner confirmed the target as a persistent session data store queried by AI tools,
+with MCP as the planned access adapter and PDF as an optional human export. Video
+extraction and future direct PC telemetry must feed the same normalized contracts;
+comparisons, references, summaries and evidence queries must survive that transition.
+Keep source/provenance/quality explicit. PC clocks, track geometry and derived d still
+need verification. No MCP server or common session-store implementation delivered yet.
 
 Active plan: `plans/2026-09-13-first-gpt-export.md` (M1–M5 perception milestones).
 Implemented M1 contract: [perception package](perception-package.md).
@@ -97,8 +103,10 @@ support, now included. No source or prior artifact was modified.
 
 ## Exact next action
 
-**Prototype the zone × passage index and compact synthesis across usable run-024 laps,
-following the active plan's new whole-session condensation tranche.**
+**Define the minimal shared video/PC data contract and bounded query contract, then
+prototype the zone × passage index and compact synthesis across usable run-024 laps.**
+Follow the active plan's architecture and condensation tranche; keep MCP a thin
+adapter over shared application services, independent of the storage implementation.
 Preserve coverage, recurring signatures, counterexamples, uncertainty and provenance.
 Quantified losses require comparable bounds and an explicit suitable reference;
 neither the single best lap nor missing data may silently define the target.
