@@ -112,6 +112,6 @@ en images denses. L'entrée complète dans un modèle sans historique reste à t
 L'extension à d'autres tours nécessite leurs zones revues, sans réutiliser des temps
 absolus d'un autre tour. Le code n'effectue aucun diagnostic de conduite.
 
-[Plan actif](plans/2026-09-13-first-gpt-export.md) · [Passation](current-status.md).
+[Plan actif](plans/video-to-agent-platform.md) · [Passation](current-status.md).
 M2 nécessite toujours le logiciel/service ACC sur Mac et la durée du créneau avant
 préparation d'un logger PC adapté. Aucune capture PC ni entraînement n'a été lancé.

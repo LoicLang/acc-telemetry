@@ -1,50 +1,32 @@
-# ACC Telemetry — perception locale de conduite pour une IA
+# ACC Telemetry — plateforme de données de conduite pour agents IA
 
-La cible est de construire les « yeux » de l'IA : session entière, scène et commandes
-synchronisées, placement/trajectoire avec qualité explicite. L'IA produit l'analyse
-et les exercices. Le [plan actif](docs/plans/2026-09-13-first-gpt-export.md) prolonge
-l'export existant par la perception temporelle et un test de labels/modèle `d` depuis
-vidéo+télémétrie PC. Le [premier prototype M1](docs/perception-package.md) est livré : un tour complet,
-vidéo et commandes synchronisées,14 zones, événements neutres et séquence détaillée.
-Les labels PC, le modèle d et la couverture multimodale de toute une session restent
-à développer/évaluer.
+**Transformer une vidéo de conduite en données stockées, mesurables et explorables
+par un agent.** L'agent pourra comparer trajectoires et commandes, consulter une
+référence, rechercher les difficultés récurrentes et demander les preuves utiles.
+La plateforme est la destination ; un PDF est un export facultatif.
 
-Le premier livrable est **`session_coaching.md`**, un fichier expérimental autonome
-produit à partir d'une vraie session ACC PS5, que le pilote joint lui-même à GPT pour
-obtenir une priorité et des exercices étayés. **L’assembleur et le vrai fichier run-026
-sont livrés** : trois passages personnels, repères physiques revus et limites explicites.
+**Priorité actuelle : récupérer et qualifier les données depuis la vidéo.** La base
+applicative, le serveur MCP et les skills de navigation viendront après ce socle.
+L'acquisition directe PC pourra ensuite remplacer une partie de l'extraction vidéo,
+en conservant les concepts de mesures, passages, références et qualité.
 
-Commencer par [l'état courant](docs/current-status.md), puis suivre
-[le plan actif de perception](docs/plans/2026-09-13-first-gpt-export.md) et
-[le contrat du fichier](docs/specs/2026-09-13-session-coaching-report.md).
-Le dossier réutilise les artefacts run-024, sans refaire l'OCR.
-Gate A reste FAIL et `coaching_eligible=false`, mais cet export
-expérimental à portée limitée est explicitement autorisé. La qualification générale,
-la référence professionnelle et le suivi de l'entraînement viennent ensuite.
+## Reprendre le travail
 
-## Reproduire le premier fichier
+1. [État courant et prochaine action](docs/current-status.md).
+2. [Plan actif unique](docs/plans/video-to-agent-platform.md).
+3. [Audit du code : données réellement disponibles](docs/video-data-audit.md).
+4. [Catalogue des72 entrées recherchées](docs/driving-metrics.md).
 
-Le livrable privé est `data/lab/coaching-reliability/run-026/reports/session_coaching.md`.
-La fiche et ses images de preuve restent locales et ignorées par Git. Depuis le dépôt :
+Le code lit déjà vitesse, frein/gaz, rapport et compteur ; il estime une progression
+normalisée et indexe les transitions de commande. **Trajectoire métrique, dynamique
+et synthèse des pertes récurrentes restent à construire.** Gate A reste FAIL,
+`coaching_eligible=false` ; données manquantes et incertitudes sont conservées.
 
-```bash
-PYTHONPATH=src .venv/bin/python -m acc_telemetry.adapters.session_report \
-  --session data/lab/coaching-reliability/run-024/processed/crash-session \
-  --case data/lab/coaching-reliability/run-026/interim/case.json \
-  --output data/lab/coaching-reliability/run-026/reports/reproduction-02/session_coaching.md
-```
+## Exécuter le moteur local
 
-Choisir une sortie nouvelle : fichier existant, source, répertoire d’artefacts et `raw/`
-sont refusés. L’export vérifie les artefacts, la fiche liée au manifeste et les empreintes
-des preuves revues. Aucun OCR, GPT ou service web n’est appelé. La relecture par le même
-assistant permet un exercice de régularité local ; l’essai dans une nouvelle conversation
-GPT et l’efficacité à l’entraînement restent non réalisés.
-
-## Moteur local existant
-
-Seules les captures **1920x1080 à exactement 60 fps CFR**, avec HUD statique full-map ACC
-et profil `ps5_full_map_1080p`, sont admises pour un nouveau traitement. Pas d'upscaling,
-resampling,720p ou59,94fps. Prérequis : Python 3.10+ et Tesseract OCR.
+Environnement de l'audit : Python3.13.2. Utiliser Python3.12+ ; le code emploie notamment
+`StrEnum`, incompatible avec l'ancienne indication3.10. Tesseract et FFmpeg/FFprobe
+sont nécessaires. Depuis la racine :
 
 ```bash
 python3 -m venv .venv
@@ -52,7 +34,9 @@ source .venv/bin/activate
 python -m pip install -r requirements.txt
 ```
 
-Exemple d'extraction, **uniquement lorsqu'un nouveau traitement est nécessaire** :
+Seules les nouvelles captures **1920x1080 à exactement60 fps CFR**, avec HUD compatible
+et profil `ps5_full_map_1080p`, sont acceptées. Pas d'upscaling, resampling ou59,94fps.
+Exemple pour une nouvelle source, lorsque le traitement est nécessaire :
 
 ```bash
 PYTHONPATH=src python main.py \
@@ -62,33 +46,40 @@ PYTHONPATH=src python main.py \
   --artifact-dir data/sessions/2026/example/processed/session-001
 ```
 
-La CLI produit CSV, HTML et artefacts telemetry-v2. Le mode `automatic` extrait sans
-annotations d'entrée ; les sorties gardent leurs raisons de visibilité non vérifiée.
-Le mode historique `reviewed` reste le défaut et exige des plages revues pour publier
-vitesse/pédales. Les nulls, lectures brutes et transitions de pédales restent conservés.
-Voir [le résultat run-024](docs/automatic-system-trial.md) et
-[le contrat des artefacts](docs/session-artifacts.md).
+Le mode explicite `automatic` extrait sans annotation d'entrée et conserve les raisons
+de visibilité non vérifiée. Le mode `reviewed`, défaut historique, exige des plages
+revues pour publier vitesse/pédales. [Signaux](docs/signal-treatment.md) et
+[artefacts telemetry-v2](docs/session-artifacts.md).
 
-## Structure et données
+Les artefacts run-024 existent déjà ; les prochains calculs doivent les relire au lieu
+de relancer l'OCR. Les sources et exports personnels restent locaux, hors Git.
 
-`extraction -> normalization -> domain -> analysis -> visualization` ; l'application
-orchestre et les adaptateurs restent minces. [Architecture](docs/architecture.md).
-Les composants web hérités ne font pas partie du jalon local ; aucun hébergement,
-service web ou appel API GPT n'est nécessaire.
+## Résultats expérimentaux conservés
 
-Vidéos immuables dans `data/sessions/.../raw/`, dérivés dans `interim/`, `processed/`
-ou `reports/`, expériences dans `data/lab/`. Vidéos, exports complets, OCR et rapports
-personnels restent ignorés par Git. [Organisation des données](data/README.md).
+- [Extraction automatique run-024](docs/automatic-system-trial.md).
+- [Lecteur d'un tour, run-027](docs/perception-package.md) : vidéo, courbes, zones et index.
+- `session_coaching.md`, run-026 : [contrat reproductible](docs/specs/2026-09-13-session-coaching-report.md).
+- run-028 : un essai externe de perception sur PDF ; bon retour local, volume impropre
+  à une séance entière. Les fichiers et limites figurent dans la passation.
 
-## Vérifications et documentation
+Ces livrables prouvent des briques du système ; ils ne constituent pas la plateforme.
+
+## Architecture, données et vérification
+
+`capture -> extraction -> normalisation -> domaine -> analyse -> visualisation`.
+Les couches applicatives sont partagées entre adaptateurs. Les composants web hérités
+restent utilisables ; ils ne sont pas le futur serveur MCP. [Architecture](docs/architecture.md).
+
+Sources dans `data/sessions/.../raw/`, dérivés dans `interim/`, `processed/` ou `reports/`.
+[Organisation des données](data/README.md). Aucune vidéo ou télémétrie personnelle dans Git.
+
+Vérifications proportionnées à la modification ; commandes disponibles :
 
 ```bash
 PYTHONPATH=src python -m unittest discover -s tests -v
 ./scripts/docs-list
 ```
 
-Les tests utilisent des fixtures et ne modifient pas les vidéos personnelles.
-[Règles de travail](AGENTS.md) · [Contribution](CONTRIBUTING.md) ·
-[Direction produit](docs/acc-ps5-plan.md) · [Contexte produit](docs/product-context.md).
-Les documents historiques contenant des preuves sont [archivés](docs/archive/README.md) ;
-les anciens plans et guides obsolètes ont été retirés pour éviter les reprises contradictoires.
+[Règles](AGENTS.md) · [Contribution](CONTRIBUTING.md) · [Preuves historiques](docs/archive/README.md).
+La vision vit ici, la séquence de réalisation dans un seul plan et la reprise dans
+une seule passation. Les anciens documents de cadrage redondants ont été retirés.

@@ -1,5 +1,5 @@
 ---
-summary: existing general validation contract and its separation from the authorized experimental text export
+summary: existing annotation-based validation tools and capability-specific evidence boundaries
 read_when:
   - running independent capture validation or interpreting gate-a.json
   - changing field, event, coverage or landmark measurement definitions
@@ -112,3 +112,7 @@ and `coaching_eligible=false` are unchanged. The first experimental `session_coa
 is explicitly allowed before the full gate passes. It retains local admissibility,
 nulls, reasons and uncertainty without certifying the session. Do not start a new
 holdout/corpus campaign as its prerequisite. See [the report contract](specs/2026-09-13-session-coaching-report.md).
+
+Current priority is video data acquisition and qualification, before the agent platform.
+This contract supports targeted checks of each new measurement; it does not require a
+new exhaustive campaign for every increment. [Plan](plans/video-to-agent-platform.md).

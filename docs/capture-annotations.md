@@ -3,7 +3,7 @@ summary: source-bound annotation tooling and targeted review contract, with gene
 read_when:
   - preparing or reviewing capture annotations
   - validating visibility files for telemetry extraction
-  - preparing general independent measurement benchmarks after the first export
+  - preparing targeted ground truth for a new video measurement capability
 ---
 
 # Independent capture annotations
@@ -104,7 +104,7 @@ compatible with A3. Existing exports are refused. A reviewed empty truth set ret
 `not_evaluated` with `error: null`, never zero error. Per-file `pass` means structural
 review validity only, not accuracy or corpus acceptance.
 
-## General qualification corpus (deferred from the first export)
+## General qualification corpus — historical evidence and limits
 
 `corpus_readiness()` checks the configured minima: 100 readable frames per speed,
 brake and throttle, 20 degraded frames, 20 pedal-event windows, at least two recordings,
@@ -129,7 +129,9 @@ The accepted corpus is run-007/processed/accepted-corpus-v4; do not rewrite its 
 roles or event semantics. In particular a full-throttle marker is not a5% onset,
 and an initial release is not a falling5% threshold crossing.
 
-For the first `session_coaching.md`, use only targeted review of the chosen landmarks,
-values and intervals. Selection may be manual and source-bound. Do not restart corpus
-completion or exhaustive review. Follow [the active report contract](specs/2026-09-13-session-coaching-report.md)
-and [current status](current-status.md).
+Reuse existing accepted annotations before requesting any new review. Add targeted
+truth only for the next measurement's demonstrated needs; no exhaustive campaign by
+default. Manual scene statements remain attributed evidence, not automatic extraction.
+Follow [current status](current-status.md) and the [active plan](plans/video-to-agent-platform.md).
+The [old report contract](specs/2026-09-13-session-coaching-report.md) still describes
+its implemented exporter, not the current delivery priority.

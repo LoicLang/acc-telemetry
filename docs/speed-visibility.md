@@ -66,6 +66,7 @@ The subsequent first complete BMW lap review and full-source replay are recorded
 [calibration-lap-results.md](archive/reliability/calibration-lap-results.md). One development calibration
 is accepted; independent Gate A and metric spatial accuracy remain unqualified.
 
-For the experimental first export, unverified visibility remains evidence to assess
-locally, not an instruction to rerun a full review campaign. The report is allowed
-before general qualification under [its explicit contract](specs/2026-09-13-session-coaching-report.md).
+For the next video-derived metrics, unverified visibility remains evidence to assess
+locally, not an instruction to restart a full review campaign. Keep nulls and raw reads
+when an event interval cannot be supported. [Code audit](video-data-audit.md) and
+[current status](current-status.md) define the next bounded task.

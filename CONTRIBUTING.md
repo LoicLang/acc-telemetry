@@ -2,7 +2,7 @@
 
 ## Environment
 
-Use Python 3.10 or newer. Create a local environment and install the pinned dependencies:
+Use Python 3.12 or newer (the audited local environment is Python 3.13.2). Create a local environment and install the pinned dependencies:
 
 ```bash
 python3 -m venv .venv
@@ -18,12 +18,13 @@ and the active plan/specification as needed; do not repeat reads without a reaso
 
 ## Active delivery
 
-The first experimental `session_coaching.md` is delivered. Follow
-[current status](docs/current-status.md) and its evolving plan for the next perception
-milestones: whole-session temporal evidence and evaluation of PC-supervised spatial
-estimation. The software supplies observations; the consuming AI analyses driving.
-Preserve unknowns and evidence boundaries. This does not certify Gate A or authorize
-unrelated web work, exhaustive counter campaigns or unrequested paid services.
+The target is a persistent session-data platform navigable by AI tools/MCP. Current
+priority: extract and qualify video-derived data before building that platform or its
+agent skills. Follow [current status](docs/current-status.md), the
+[single active plan](docs/plans/video-to-agent-platform.md), and the
+[code capability audit](docs/video-data-audit.md). Existing telemetry-v2 artifacts are
+sufficient for the next downstream metrics. Preserve unknowns and evidence boundaries;
+a catalogue entry is not proof that its physical inputs are observable in video.
 
 ## Proportionate verification
 

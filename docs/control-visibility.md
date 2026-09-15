@@ -1,5 +1,5 @@
 ---
-summary: reviewed and automatic control visibility semantics, missing values and experimental report evidence
+summary: current video control visibility and missing-data semantics, with unsupported TC and ABS
 read_when:
   - extracting controls with reviewed visibility annotations
   - preparing visibility.json for the annotation and artifact plans
@@ -60,7 +60,7 @@ so their controls default to missing. Metadata preserves null averages. A5 makes
 comparison endpoint nullable and preserves provenance; it remains diagnostic only.
 General reliability remains unqualified; this does not make it the next export task.
 
-This measurement contract does not block the owner-approved experimental text export
-behind all of Gate A. That report uses locally supported facts with explicit reasons
-and limitations, without changing artifact flags. See
-[its contract](specs/2026-09-13-session-coaching-report.md).
+For new video metrics, retain those evidence boundaries and validate only the relevant
+new capability. The [existing report contract](specs/2026-09-13-session-coaching-report.md)
+remains useful for maintaining that consumer, not as the current product priority.
+[Code audit](video-data-audit.md) · [Current status](current-status.md).

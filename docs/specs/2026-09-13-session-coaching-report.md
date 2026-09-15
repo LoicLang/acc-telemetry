@@ -1,5 +1,5 @@
 ---
-summary: approved experimental single-file session report contract and fact-level evidence limits
+summary: historical implemented session_coaching exporter contract, retained for maintenance and reproduction
 read_when:
   - implementing or reviewing the first session_coaching.md exporter
   - deciding whether a fact or passage is usable in the experimental report
@@ -7,15 +7,15 @@ read_when:
 
 # Premier fichier pour GPT — contrat de la version implémentée
 
-Le14 septembre, la finalité est précisée : perception temporelle/spatiale de toute la
-session pour l’IA. Ce document décrit seulement le premier export run-026, toujours
+La cible du15 septembre est une plateforme de données navigable par agent, avec
+l'extraction vidéo d'abord. Ce document décrit seulement le premier export run-026, toujours
 reproductible. La suite est définie dans le plan actif ; un fichier texte seul n’est
 plus présenté comme la finalité de perception.
 
 Décision du propriétaire,13 septembre2026 : produire localement **un seul fichier
 `session_coaching.md`** à partir d'une vraie session. L'export technique existe ; le
 fichier autonome destiné à GPT est livré dans run-026. Le plan d'exécution est
-[le plan évolutif](../plans/2026-09-13-first-gpt-export.md).
+[le plan évolutif](../plans/video-to-agent-platform.md).
 
 ## Statut et frontière de confiance
 

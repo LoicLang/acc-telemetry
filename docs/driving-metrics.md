@@ -19,6 +19,13 @@ identifiants, définitions opérationnelles, agrégations et priorités ci-desso
 proposition de contrat**, pas une norme empruntée à un fournisseur. Aucun seuil de
 bonne conduite ni indicateur de compétence universel n'est adopté.
 
+## Utilisation actuelle du catalogue
+
+Depuis le15 septembre, la priorité est l'extraction des données depuis la vidéo ; la
+plateforme navigable par agent reste la destination, à construire ensuite. Voir
+[l'audit des72 entrées face au code](video-data-audit.md). Une métrique recherchée n'est
+pas une fonctionnalité existante ni une garantie d'observabilité depuis les pixels.
+
 ## Conclusion de la recherche
 
 Le socle utile combine **temps perdu + trajectoire + commandes + réponse de la voiture
@@ -37,7 +44,9 @@ ou à ACC ; il justifie de conserver les commandes et la dynamique avec la ligne
 ## Conventions et données requises
 
 - `t` : temps monotone de session en s, lié à la vidéo par une transformation documentée.
-- `s` : progression en m sur un **repère de piste commun** ; `l` : distance réellement
+- `s` : convention cible en m (`s_m`) sur un **repère de piste commun**. Le code
+  actuel utilise `s`/`s_fused` normalisés0–1 (`s_norm`), sans conversion métrique
+  garantie ; ne pas renommer les anciens artefacts implicitement. `l` : distance réellement
   parcourue par la voiture. Elles ne sont pas interchangeables.
 - `d` : écart latéral signé à ce repère ; convention proposée positif à gauche.
 - `psi` : orientation du châssis ; `e_psi` : angle châssis/tangente de piste.
@@ -371,7 +380,7 @@ une aide de tri documentée, mais n'est ni une perte causale ni une prescription
 additionner des fenêtres chevauchantes et ne pas supprimer un incident rare mais grave
 au seul motif qu'il est peu fréquent. Le diagnostic appartient à l'IA.
 
-## Conséquence pour les outils MCP envisagés
+## Conséquence pour les outils MCP envisagés — phase ultérieure
 
 - `get_session_summary` : couverture, contexte, zones, distribution des performances,
   références disponibles et récurrences ; budgets et sélection annoncés.
@@ -383,8 +392,9 @@ au seul motif qu'il est peu fréquent. Le diagnostic appartient à l'IA.
 - `get_evidence` : valeurs natives ou quelques images/extrait ciblé, liés au calcul.
 
 Noms et contrats indicatifs ; aucun serveur ni calcul nouveau n'est livré par cette
-recherche. La prochaine action est de transformer le socle prioritaire en contrat de
-données et de requêtes, puis de tester la condensation sur les artefacts existants.
+recherche. La prochaine action est l'extraction de données et les premiers épisodes
+frein/gaz depuis les artefacts existants. Le contrat de navigation/MCP attend le socle
+de mesures défini dans le plan ; l'audit distingue code présent et calculs à ajouter.
 
 ## Portée des sources et vérification
 
@@ -397,5 +407,5 @@ ne fondent pas nos formules ou seuils. Aucun résultat scientifique n'est une
 qualification ACC PS5, d'un modèle de trajectoire ou de notre extraction actuelle.
 
 Cette recherche modifie uniquement la documentation. Aucun replay OCR, entraînement,
-seuil changé, collecte PC ou test logiciel. [Plan actif](plans/2026-09-13-first-gpt-export.md)
+seuil changé, collecte PC ou test logiciel. [Plan actif](plans/video-to-agent-platform.md)
 et [passation](current-status.md) restent les points de conduite du travail.

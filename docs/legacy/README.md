@@ -15,5 +15,5 @@ Ne pas relancer leurs commandes ni leur donner priorité sur le jalon actif.
 - [Ancienne correction gaz](THROTTLE_DETECTION_BUG_FIX.md).
 - [Mesures historiques de performance](PERFORMANCE_OPTIMIZATION.md).
 
-[État courant](../current-status.md) · [Plan actif](../plans/2026-09-13-first-gpt-export.md) ·
+[État courant](../current-status.md) · [Plan actif](../plans/video-to-agent-platform.md) ·
 [Archives](../archive/README.md).

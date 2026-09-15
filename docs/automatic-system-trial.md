@@ -1,5 +1,5 @@
 ---
-summary: verified run-024 automatic extraction baseline and concrete evidence limitations for the first export
+summary: frozen run-024 video extraction baseline reusable for the next metrics without OCR replay
 read_when:
   - reusing run-024 without rerunning extraction
   - assessing available data and the scope of existing annotations
@@ -9,7 +9,7 @@ read_when:
 
 La vidéo incidents a été intégralement traitée par la vraie CLI et `TelemetryPipeline`,
 en `measurement_mode=automatic`, sans annotation d'entrée. Aucun nouveau traitement
-n'est nécessaire pour commencer le premier export. Le mode reviewed reste le défaut.
+n'est nécessaire pour les prochains calculs de métriques sur ces artefacts. Le mode reviewed reste le défaut.
 
 Artefacts : `data/lab/coaching-reliability/run-024/processed/crash-session/`.
 Mesures : `run-024/reports/results.json`, `annotated-validation.json`,
@@ -52,8 +52,7 @@ L'essai manuel run-025 montre le manque de contexte du vieux clip d'incident : i
 Le cockpit indique la famille McLaren 720S GT3 ; variante/hardware non confirmés.
 Ce test est une analyse provisoire, pas le fichier généré ni une revue GPT indépendante.
 
-**Gate A reste FAIL ; `coaching_eligible=false`.** Depuis la décision du 13 septembre,
-ces limites ne bloquent pas tout export expérimental : utiliser seulement les faits
-localement soutenus et leurs limites dans le [premier fichier](specs/2026-09-13-session-coaching-report.md).
-La référence professionnelle et la validation indépendante complète ne sont pas ses
-prérequis. [Current status](current-status.md) donne la seule prochaine action.
+**Gate A reste FAIL ; `coaching_eligible=false`.** Les résultats restent la preuve
+du run-024, pas une qualification de toutes les métriques. L'ancien export est décrit
+par son [contrat](specs/2026-09-13-session-coaching-report.md). L'[audit du code](video-data-audit.md)
+précise les capacités actuelles et [current status](current-status.md) la seule prochaine action.

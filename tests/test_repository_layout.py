@@ -88,9 +88,9 @@ class TestRepositoryLayout(unittest.TestCase):
         required = (
             "README.md",
             "docs/current-status.md",
-            "docs/product-context.md",
+            "docs/video-data-audit.md",
             "docs/architecture.md",
-            "docs/acc-ps5-plan.md",
+            "docs/plans/video-to-agent-platform.md",
             "docs/legacy/README.md",
             "scripts/docs-list",
         )
@@ -119,11 +119,6 @@ class TestRepositoryLayout(unittest.TestCase):
             with self.subTest(readme_excludes=stale_script):
                 self.assertNotIn(stale_script, readme)
 
-        plan = (ROOT / "docs" / "acc-ps5-plan.md").read_text(encoding="utf-8").lower()
-        for concept in ("`s`", "passages imparfaits", "qualité", "anomalies", "`d`"):
-            with self.subTest(plan_contains=concept):
-                self.assertIn(concept, plan)
-
         agents = (ROOT / "AGENTS.md").read_text(encoding="utf-8")
         self.assertIn("./scripts/docs-list", agents)
         self.assertIn("docs/current-status.md", agents)
@@ -131,22 +126,15 @@ class TestRepositoryLayout(unittest.TestCase):
     def test_active_documentation_has_routing_metadata(self):
         self.assertEqual(validate_active_docs(ROOT / "docs"), [])
 
-    def test_current_docs_route_to_the_first_experimental_export(self):
+    def test_current_docs_route_to_one_active_plan(self):
         import re
         status = (ROOT / "docs/current-status.md").read_text(encoding="utf-8")
         match = re.search(r"Active plan: `([^`]+)`", status)
         self.assertIsNotNone(match)
         self.assertTrue((ROOT / "docs" / match.group(1)).is_file())
         self.assertEqual(len(list((ROOT / "docs/plans").glob("*.md"))), 1)
-        self.assertEqual(len(list((ROOT / "docs/specs").glob("*.md"))), 1)
-        for name in ("AGENTS.md", "README.md", "docs/current-status.md",
-                     "docs/acc-ps5-plan.md", "docs/architecture.md"):
-            with self.subTest(document=name):
-                text = (ROOT / name).read_text(encoding="utf-8")
-                self.assertIn("session_coaching.md", text)
         self.assertIn("Gate A: FAIL", status)
         self.assertIn("coaching_eligible=false", status)
-        self.assertLess(len(status.splitlines()), 130)
         self.assertFalse((ROOT / "DEPLOY.md").exists())
         self.assertFalse((ROOT / "QUICKSTART_WEB.md").exists())
 

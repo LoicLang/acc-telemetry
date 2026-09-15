@@ -1,8 +1,8 @@
 ---
-summary: current local pipeline and artifact boundaries plus the implemented single-file experimental report extension
+summary: existing video extraction and artifact layers, with future agent platform boundaries and current acquisition-first priority
 read_when:
   - changing package boundaries or measurement data flow
-  - implementing the first local session report from existing artifacts
+  - separating current video acquisition from the future agent platform
 ---
 
 # Architecture
@@ -15,11 +15,15 @@ capture immuable -> extraction -> normalisation -> domaine -> analyse -> visuali
                                         CLI/web = adaptateurs
 ```
 
-Le premier fichier expérimental `session_coaching.md` est livré localement. La cible
-active est la perception de session pour une IA : chronologie scène/commandes et
-évaluation de la position latérale depuis apprentissage PC. [Contrat](specs/2026-09-13-session-coaching-report.md) et
-[plan](plans/2026-09-13-first-gpt-export.md). Le service web hérité existe mais ne fait pas
-partie de ce travail. Aucun appel API GPT ou hébergement à ajouter.
+**Cible : plateforme de données de séances navigable par un agent**, avec outils/MCP,
+comparaisons et preuves à la demande. **Travail actif : extraction et qualification des
+données vidéo avant la plateforme.** L'[audit du code](video-data-audit.md) distingue
+les capacités présentes des métriques du catalogue. [Plan unique](plans/video-to-agent-platform.md).
+
+Le premier `session_coaching.md` reste un export implémenté, décrit par son
+[contrat](specs/2026-09-13-session-coaching-report.md). Le service web hérité existe ;
+il ne constitue pas le futur MCP. Aucune infrastructure supplémentaire requise pour
+les prochains calculs sur les artefacts existants.
 
 | Module | Responsabilité existante |
 | --- | --- |
@@ -83,7 +87,8 @@ de tour confirmées ancrent la progression. La calibration utilise les distances
 intégrées des tours admissibles. L'interpolation interne bornée d'odométrie conserve
 sa provenance et ne remplit jamais la vitesse mesurée. Les longues incertitudes restent
 manquantes. La compatibilité `track_position` est `s_fused * 100`, jamais une distance
-physique latérale. En automatique, `automatic_measurements_unverified` accompagne la
+physique latérale. `TelemetrySample.s` est actuellement sans unité, entre0 et1 ; le futur
+`s_m` du catalogue doit rester explicitement distinct, comme `d_m`. En automatique, `automatic_measurements_unverified` accompagne la
 progression dérivée. Les contrôles représentatifs établissent la cohérence interne,
 pas une précision spatiale indépendante.
 
@@ -132,3 +137,12 @@ confiné au dossier et compatible Range pour la navigation vidéo, sans API mét
 Le premier export texte demeure disponible. Les labels PC et modèle image/séquence→d
 restent planifiés : géométrie, horloges et transfert PS5 à démontrer. Le diagnostic et
 les exercices appartiennent à l'IA consommatrice, pas aux détecteurs du pipeline.
+
+## Plateforme future — frontières à préserver
+
+Acquisition vidéo et futur adaptateur PC alimenteront un contrat commun, avec origine,
+unités, temps et qualité. Sources immuables et dérivés versionnés existent déjà via
+telemetry-v2 ; la nouvelle base de séances interrogeable reste à construire après le
+socle de données. Comparaison, récurrences et sélection de preuves appartiendront aux
+services applicatifs partagés. MCP sera un adaptateur fin ; skills éventuels = méthode
+d'investigation, séparée des faits. PDF et lecteur humain resteront des vues facultatives.

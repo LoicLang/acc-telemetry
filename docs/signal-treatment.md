@@ -1,8 +1,8 @@
 ---
-summary: current fresh-measurement semantics and evidence rules for the experimental session report
+summary: current video measurement semantics, missing values and evidence requirements for derived metrics
 read_when:
   - interpreting or changing speed and pedal measurements
-  - deciding how the first report handles missing or unverified values
+  - implementing video-derived metrics without inventing missing measurements
 ---
 
 # Traitement des signaux et faits utilisables
@@ -34,9 +34,9 @@ Les wrappers legacy et anciens artefacts HELD restent lisibles et distincts. Les
 interpolations internes d'odométrie ne remplissent pas la série de vitesse publiée.
 Une régression/lissage de vitesse serait une série estimée séparée ; elle est différée.
 
-## Admission des faits du premier export
+## Admission des faits et portée du contrat historique
 
-Le [contrat actif](specs/2026-09-13-session-coaching-report.md) autorise le rapport
+Le [contrat de l’export déjà implémenté](specs/2026-09-13-session-coaching-report.md) autorise le rapport
 expérimental sans déclarer Gate A réussi. Il exige une décision locale par fait :
 source, champ, valeur/intervalle contrôlé, qualité, raison, borne et limite.
 
@@ -50,6 +50,8 @@ source, champ, valeur/intervalle contrôlé, qualité, raison, borne et limite.
 - Les observations visuelles sont revues et attribuées, ou restent inconnues.
 
 Les seuils de validation générale, rôles de sources, approbations et exclusions ne
-changent pas. `coaching_eligible=false` reste inchangé ; la nouvelle priorité porte sur
-un fichier expérimental utile, pas une certification. Les résultats passés sont
+changent pas. `coaching_eligible=false` reste inchangé. La priorité est désormais de
+récupérer les données depuis la vidéo avant la plateforme, selon le
+[plan unique](plans/video-to-agent-platform.md). Les conditions spécifiques de l'ancien
+export ne deviennent pas une obligation de revue visuelle exhaustive de chaque future métrique. Les résultats passés sont
 [archivés](archive/README.md). [État de départ](automatic-system-trial.md).

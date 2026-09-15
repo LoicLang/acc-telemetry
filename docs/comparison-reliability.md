@@ -1,5 +1,5 @@
 ---
-summary: existing bounded comparison semantics and experimental report use of reviewed physical landmarks
+summary: existing diagnostic position alignment and delta semantics, with spatial qualification limits
 read_when:
   - comparing partial or degraded laps
   - consuming the comparison API or Plotly position report
@@ -65,4 +65,8 @@ checks stay unchanged; do not fake approval to reuse spatial interpolation.
 The first experimental text export compares locally reviewed physical landmarks and
 time evidence. It may be produced before the general gate passes, with explicit
 limitations, without treating estimated `s` as exact. See
-[the active report contract](specs/2026-09-13-session-coaching-report.md).
+[the implemented historical report contract](specs/2026-09-13-session-coaching-report.md).
+
+The current next task is video-derived data and episodes, before the agent platform.
+The [code audit](video-data-audit.md) identifies which comparison primitives can be
+reused and which spatial prerequisites remain unqualified.

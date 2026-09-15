@@ -29,11 +29,14 @@ plans or turn the handoff into a diary.
 
 ## Current scope
 
-The current objective and milestones are defined by the handoff and its single
-active plan. The first experimental `session_coaching.md` is already delivered;
-the owner now targets whole-session perception for an AI, including temporal context
-and evaluation of PC-supervised spatial estimation. Reuse existing artifacts where
-applicable. The software supplies observations; the consuming AI analyses driving.
+The final product is a persistent driving-data platform that an AI agent can navigate
+through tools/MCP and optional skills. The current priority is to extract and qualify
+useful data from video first; platform implementation and agent navigation follow that
+data foundation. Follow the single active plan and handoff. Reuse existing artifacts.
+PC video plus telemetry may support spatial labels; direct PC acquisition is a future
+adapter. Do not present hidden physical quantities as video measurements. The software
+supplies observations; the consuming AI analyses driving. Human reports are optional
+views, not the product milestone. The earlier `session_coaching.md` remains reproducible.
 
 Keep Gate A FAIL, existing targets unchanged and `coaching_eligible=false`; do not
 imply general qualification or validated automated coaching. Planned experiments

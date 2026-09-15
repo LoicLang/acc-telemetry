@@ -3,7 +3,7 @@
 Ces documents sont conservés pour leurs résultats, approbations, limites ou détails
 de conception. **Leurs anciens plans, gates de livraison et prochaines actions ne
 font pas autorité.** Commencer par [current-status](../current-status.md) et suivre
-[le seul plan actif](../plans/2026-09-13-first-gpt-export.md).
+[le seul plan actif](../plans/video-to-agent-platform.md).
 
 Le13 septembre2026, le propriétaire a adopté le premier export expérimental
 `session_coaching.md` et demandé la suppression des documents obsolètes. Les anciens
@@ -34,3 +34,11 @@ Aucune vidéo, annotation acceptée ou télémétrie n'a été supprimée ou mod
 Ces designs ne demandent pas de nouvelle implémentation. La documentation opérationnelle
 est [architecture](../architecture.md). Les anciens diagnostics du prototype conservés
 pour leur preuve sont listés dans [legacy](../legacy/README.md).
+
+## Nettoyage du15 septembre2026
+
+Le cadrage produit est consolidé dans README et le plan unique. Les deux anciennes
+synthèses `product-context` / `acc-ps5-plan`, les consignes d'agent archivées et la
+copie de l'ancien main ont été supprimées ; historique consultable dans Git. Les
+preuves de mesure et diagnostics uniques ci-dessus restent conservés. Les contrats
+des exporteurs encore présents dans le code ne sont pas des plans de réalisation.
