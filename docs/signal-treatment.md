@@ -55,7 +55,8 @@ format1920×1080/60 vérifié par les métadonnées existantes ; aucun nouvel OC
 vidéo. Régression reproduite avant correction,24 tests profil/contrôles/config passent.
 Les profils historiques720p restent inchangés, sans nouvelle investigation.
 
-La correction s'applique aux prochaines extractions avec ce profil. Les artefacts
+La correction s'applique aux extractions avec ce profil ; la séance run-031 et ses
+épisodes utilisent désormais les pédales réextraites. Les artefacts
 run-024 et les épisodes run-029 gardent leur ancienne calibration et ne sont pas
 réécrits. Pour publier une séance corrigée, réextraire les seules pédales dans de
 nouveaux artefacts et recalculer les épisodes : ne pas simplement remplacer leurs

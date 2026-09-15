@@ -146,7 +146,11 @@ plusieurs séances. La scène, le geste et la conséquence restent reliés.
 à144 pixels, vérifiée sur21 images annotées existantes ; les9 points de plein frein/gaz
 atteignent100 %. Anciens artefacts inchangés. [Détails](../signal-treatment.md).
 
-**Prochaine action exacte : rafraîchir les seules pédales dans de nouveaux artefacts
-avec le profil corrigé puis recalculer les épisodes, sans OCR. Ensuite préparer la
-petite vérité temporelle B2/gaz prévue, en distinguant mouvement visible et seuils.
-La plateforme reste différée.**
+**Réextraction run-031 livrée :**29 402 images, seules pédales recalibrées ; autres
+canaux/qualités/raisons conservés.91 épisodes recomposés,177/181 événements inchangés
+aux mêmes frames, quatre identifiants retirés et quatre ajoutés. Les contrôles annotés
+confirment l'amplitude, pas la précision temporelle continue.
+
+**Prochaine action exacte : définir la petite vérité temporelle B2/gaz sur run-031,
+en distinguant mouvement visible, seuils et plateau à100 %. Délimiter les preuves
+manquantes ; pas de campagne de seuils. La plateforme reste différée.**

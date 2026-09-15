@@ -73,6 +73,13 @@ Run-029 ci-dessous utilise toujours les samples historiques run-024 : modifier l
 configuration ne recalibre pas un export déjà extrait. Ne pas comparer ses pics à
 ceux d'une future extraction corrigée sans distinguer les deux calibrations.
 
+Run-031 fournit maintenant une séance et des épisodes recalibrés dans
+`data/lab/coaching-reliability/run-031/processed/`.91 épisodes restent présents, mais
+une paire coupure/reprise est supprimée et une autre apparaît ; deux bornes se déplacent.
+177 événements sur181 conservent leur identité et leurs temps. Les nouveaux pics à100 %
+peuvent déplacer le premier/dernier maximum exact. Comparaison et quatre exemples dans
+`run-031/reports/results.md` ; les chiffres run-029 ci-dessous restent historiques.
+
 ## Résultat et portée des preuves
 
 Run-029 : 91 épisodes (44 frein, 47 gaz), dont 89 bornés et deux gaz tronqués aux

@@ -1,5 +1,5 @@
 ---
-summary: native pedal calibration fixed at 144px; run-024 and run-029 retain old calibration and episode timing remains unqualified
+summary: calibrated run-031 session and episodes delivered; all other channels preserved, with temporal accuracy still unqualified
 read_when:
   - starting repository work or choosing the exact next action
   - checking current extraction capabilities, evidence and platform boundaries
@@ -111,6 +111,28 @@ brake MAE1.60→0.25 points, throttle3.12→0.41; all9 full-scale points read100
 `run-030/reports/`. Run-024/029 remain immutable historical outputs using the old
 calibration; they have **not** been recalibrated by this configuration fix.
 
+## Calibrated session and episodes — run-031
+
+- `processed/crash-session/`:29,402 native frames; pedal-only refresh using144px ROI.
+  All58,804 old-geometry pedal readings reproduced during decoding. Input size/hash,
+  native format/CFR, decoder timestamps and full coverage verified; no OCR.
+- Other samples/observations/CSV fields, original qualities/reasons and missing values
+  verified unchanged. Parent run-024 and old run-029 outputs preserved. Mixed provenance
+  is explicit in `manifest.pedal_refresh`; the old acquisition code belongs to inherited
+  channels, the refresh code to pedals.
+- `processed/control-episodes/`:91 episodes (89 bounded),181 events,89 resumption
+  relations,61 intersections, no pedal gaps.177 events retain their exact timing.
+  Brake-off1464→1451 and throttle-off2621→2624; throttle off/on12982/13018 disappears,
+  on/off20190/20305 appears. Same counts do not imply the same episodes.
+- Four example episodes retain their durations but reach100 % peaks. The first/last
+  exact peak can move because the full-scale plateau is now represented at100 %.
+- `reports/results.md` and `comparison.json`: point MAE brake0.254/throttle0.407;
+  all9 full-scale annotations read100 %. B2 onset and release comparisons unchanged;
+  continuous timing and the newly appearing events are not independently validated.
+- 31 distinct focused tests pass (replacement, missing evidence, decode failure cleanup,
+  episode and artifact checks). No video replay after successful publication.
+  [Refresh command and provenance](session-artifacts.md).
+
 ## Demonstrated issues to account for in the next increment
 
 - Do not treat normalized `s` as metres or minimap centerline as actual trajectory.
@@ -121,11 +143,11 @@ calibration; they have **not** been recalibrated by this configuration fix.
 
 ## Exact next action
 
-**Refresh the pedal channels into new native1080p60 artifacts using the corrected
-ROI, then regenerate episodes before continuing temporal qualification.** Reuse the
-other frozen channels and preserve missing values/provenance; no OCR is needed for
-pedals. Keep old artifacts and quantify changes at event thresholds. The small B2/
-throttle temporal truth check remains pending; no general gate promotion or platform.
+**Define a small temporal truth check on B2 and an existing throttle window using
+run-031.** Separate first visible movement, threshold crossing, first/last full-scale
+sample and off; identify the exact missing annotation evidence before claiming duration
+accuracy. Investigate changed events only with bounded evidence, no threshold campaign.
+Video data qualification remains the priority; platform/MCP stays deferred.
 
 For subsequent spatial work, ACC-on-Mac software/service and usable duration are still
 unknown. Prepare collection before consuming a limited PC window. Dataset/model work

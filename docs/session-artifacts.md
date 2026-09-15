@@ -79,6 +79,36 @@ observations/samples. Unknown versions and inconsistent files are refused. The s
 video need not remain accessible just to read an existing artifact. A standalone CSV
 is still readable with explicit normalization limits, but lacks modern evidence.
 
+## Réextraction des seules pédales
+
+`application/pedal_refresh.py` et `scripts/refresh_pedals.py` produisent une nouvelle
+séance telemetry-v2 à partir d'une séance automatique native1080p60 complète :
+
+```sh
+PYTHONPATH=src .venv/bin/python scripts/refresh_pedals.py \
+  data/lab/coaching-reliability/run-024/processed/crash-session \
+  data/lab/coaching-reliability/run-031/processed/crash-session
+```
+
+La source est vérifiée par taille/SHA-256, puis par métadonnées/PTS avant décodage.
+Les frames/temps du parent doivent couvrir exactement la source à60 fps. Chaque frame
+est décodée une fois : seules les deux pédales sont lues, avec la nouvelle ROI et
+l'ancienne pour contrôler la reproduction des valeurs historiques. Une discordance,
+perte de lecture fraîche, rupture de timestamp ou couverture incomplète annule la
+publication. Aucun OCR, rééchantillonnage ou lissage.
+
+Seules les pédales fraîches sont remplacées dans observations, samples/source_values
+et CSV ; les abstentions antérieures et les autres champs restent inchangés. Les raisons
+et qualités héritées ne sont pas promues. Les événements/épisodes sont recalculés à
+partir du nouveau dossier par `scripts/control_episodes.py`, pas copiés du parent.
+
+Le manifeste conserve les paramètres hérités et actualise uniquement les deux ROI.
+`pedal_refresh` référence les fichiers/empreintes/code du parent, les anciens/nouveaux
+rectangles, le format vérifié et le nombre de lectures reproduites. `code` décrit le
+programme de réextraction ; les canaux réutilisés conservent leur provenance parent.
+Publication atomique sans écrasement, avec lecteur d'intégrité et contrôle final des
+sources. Gate A FAIL et `coaching_eligible=false` restent explicites.
+
 ## Evidence limits
 
 FFprobe examines all decoded video PTS. The timebase report requires strictly
