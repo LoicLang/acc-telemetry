@@ -83,6 +83,26 @@ une paire coupure/reprise est supprimée et une autre apparaît ; deux bornes se
 peuvent déplacer le premier/dernier maximum exact. Comparaison et quatre exemples dans
 `run-031/reports/results.md` ; les chiffres run-029 ci-dessous restent historiques.
 
+## Qualification temporelle ciblée — run-032
+
+Huit fenêtres/208 images permettent une comparaison locale aux changements visibles
+([passation](current-status.md), données locales `run-032/reports/timing-review.json`).
+Les nouvelles revues sont provisoires, réalisées par modèle, non aveugles et distinctes
+des annotations humaines. B2 : durée candidate2,950s compatible avec2,933–2,967s entre
+les deux bornes relues ; pas de revue dense de l'intérieur ni de latence physique.
+
+Deux disparitions de gaz donnent des décalages locaux50–66,7ms et33,3–50ms. Une paire
+visible off/on12982/13018 manque : petits fragments colorés sous les textes produisent
+2,0833%, maintenant l'état actif. L'épisode20190–20305 contient une interruption visible
+non représentée comme coupure, avec des fragments donnant5%. La continuité calculée
+est celle de l'hystérésis, pas nécessairement celle du remplissage HUD ou de la pédale.
+Le lecteur doit conserver cette limite lors de toute utilisation des durées/reprises.
+
+Le problème est localisé dans `extract_bar_percentage` : fragments recherchés partout
+sur les lignes et lignes vides écartées du percentile. Aucun seuil/extracteur n'est
+modifié par cette revue. Dernier maximum et certaines fins restent sans référence
+univoque ; valeurs de précision correspondantes null, pas de score global.
+
 ## Résultat et portée des preuves
 
 Run-029 : 91 épisodes (44 frein, 47 gaz), dont 89 bornés et deux gaz tronqués aux

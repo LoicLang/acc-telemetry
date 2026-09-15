@@ -151,6 +151,12 @@ canaux/qualités/raisons conservés.91 épisodes recomposés,177/181 événement
 aux mêmes frames, quatre identifiants retirés et quatre ajoutés. Les contrôles annotés
 confirment l'amplitude, pas la précision temporelle continue.
 
-**Prochaine action exacte : définir la petite vérité temporelle B2/gaz sur run-031,
-en distinguant mouvement visible, seuils et plateau à100 %. Délimiter les preuves
-manquantes ; pas de campagne de seuils. La plateforme reste différée.**
+**Revue temporelle run-032 livrée :**208 images/8 fenêtres, références humaines
+existantes et revue modèle provisoire séparées. B2 localement cohérent ; coupures
+retardées et paire gaz visible omise. Des fragments sous les textes entretiennent
+un faux état actif. Dernier pic/fin frein dans certaines fenêtres restent ambigus.
+
+**Prochaine action exacte : corriger l'admission des fragments de texte/graphisme
+comme remplissage de pédale, sur les contre-exemples run-032. Protéger les vrais faibles
+niveaux et le plein, sans modifier les seuils pour masquer le problème. Puis vérifier
+les épisodes affectés. La plateforme reste différée.**

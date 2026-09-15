@@ -1,5 +1,5 @@
 ---
-summary: calibrated run-031 session and episodes delivered; all other channels preserved, with temporal accuracy still unqualified
+summary: run-032 timing review finds missed throttle transitions from HUD fragments; run-031 remains the data baseline
 read_when:
   - starting repository work or choosing the exact next action
   - checking current extraction capabilities, evidence and platform boundaries
@@ -134,6 +134,29 @@ calibration; they have **not** been recalibrated by this configuration fix.
   episode and artifact checks). No video replay after successful publication.
   [Refresh command and provenance](session-artifacts.md).
 
+## Targeted temporal review — run-032
+
+- 208 native frames in8 windows reviewed:67 reused,141 newly decoded after format/source
+  checks. No OCR, full replay, threshold change or source mutation. New visual labels
+  are provisional non-blind model review, not independent/human-approved ground truth.
+- B2 brake onset agrees with existing human11245–11246; model-reviewed end11422–11423
+  gives a local boundary-duration interval2.933–2.967s containing the computed2.950s.
+  This does not qualify the entire interior or physical input latency.
+- Throttle disappearance2620–2621 vs candidate2624:50–66.7ms offset. Disappearance
+  20302–20303 vs candidate20305:33.3–50ms. Different definitions/review status remain
+  separate; no global MAE or general precision assertion.
+- Visible off/on12982/13018 is missing from the calibrated event index. Mask fragments
+  under HUD text create3/144=2.0833%, keeping the hysteresis state active. At20196,
+  sparse upper-row/text pixels produce5% despite an apparently empty bar body and
+  support confirmation of an episode whose continuity is not visually supported.
+- `extract_bar_percentage` chooses the longest fragment anywhere, despite its comment
+  describing left-origin fill, and excludes empty rows from its percentile. This is
+  a concrete extraction limitation; no detector changes were made during this review.
+- `reports/timing-review.json`: capability-specific observations, frame brackets,
+  candidate/confirmation offsets, nulls for missing/ambiguous references. `results.md`
+  links all8 native sheets. First/last maximum and changed brake-off remain partly
+  ambiguous; no physical release onset inferred. Data baseline remains run-031.
+
 ## Demonstrated issues to account for in the next increment
 
 - Do not treat normalized `s` as metres or minimap centerline as actual trajectory.
@@ -144,11 +167,11 @@ calibration; they have **not** been recalibrated by this configuration fix.
 
 ## Exact next action
 
-**Define a small temporal truth check on B2 and an existing throttle window using
-run-031.** Separate first visible movement, threshold crossing, first/last full-scale
-sample and off; identify the exact missing annotation evidence before claiming duration
-accuracy. Investigate changed events only with bounded evidence, no threshold campaign.
-Video data qualification remains the priority; platform/MCP stays deferred.
+**Correct the pedal extractor's admission of disconnected HUD text/graphic pixels,
+starting with the run-032 counterexamples.** Preserve genuine low fill and full scale;
+do not raise off thresholds to hide residuals. Verify the bounded windows and existing
+calibration points, then recalculate affected episodes. No platform or trajectory
+implementation before resolving this demonstrated control-data issue.
 
 For subsequent spatial work, ACC-on-Mac software/service and usable duration are still
 unknown. Prepare collection before consuming a limited PC window. Dataset/model work
