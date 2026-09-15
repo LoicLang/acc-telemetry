@@ -1,5 +1,5 @@
 ---
-summary: run-033 fixes HUD fragment contamination and supplies the active calibrated session and episodes
+summary: run-033 controls remain stable; run-034 trains a spatial appearance probe and identifies dense segmentation labels as the next need
 read_when:
   - starting repository work or choosing the exact next action
   - checking current extraction capabilities, evidence and platform boundaries
@@ -75,6 +75,24 @@ Reproduction: [pedal refresh](session-artifacts.md), [episode export](control-ep
 Delivery evidence: `run-033/reports/results.md`, `verification.json`,
 `bounded-checks.json`, `calibration-points.json`, `tests-full.txt`.
 
+## Spatial/model frontier — run-034
+
+- Six existing native Combes images, no new video decode/OCR. Two P1 images train a
+  real local logistic appearance classifier (Lab + local texture); four P2/P3 images
+  are held out by passage.55 provisional model-reviewed patches, no dense labels.
+- Test:28/35 patches correct vs25/35 for a fixed color baseline; class-balanced
+  recall80.5% vs79.2%. The model still accepts runoff/barriers and misses both track
+  patches in the excursion image. Scores are not calibrated; one video is not an
+  independent capture test. All this material is now development evidence.
+- Generic Canny edge proposals and provisional image-coordinate boundary intervals
+  are exported, with occlusion/nulls. They do not select the track corridor reliably.
+  No car pose, camera calibration, metric geometry or labelled trajectory exists;
+  `s_m/d_m`, physical orientation and car placement remain unavailable.
+- Local deliverables: `run-034/processed/appearance-model.npz`,
+  `spatial-observations.json`, `interim/labels.json`, `reports/model-results.json`
+  and `reports/results.md`. Fit, split and image hashes verified; no production
+  pipeline changes or expensive/deep training. [Feasibility contract](spatial-feasibility.md).
+
 ## Reusable earlier evidence
 
 - Run-024: original full extraction; run-031: width-calibrated pedal refresh. Both
@@ -96,11 +114,13 @@ none is used by the new episode calculations.
 
 ## Exact next action
 
-**Define the first spatial data increment using the three already reviewed Combes
-passages and their native frames/landmarks.** Inventory measurable image placement and
-missing geometry before promising trajectories in metres. Use run-033 for controls;
-retain local timing limits and avoid another full pedal replay without a new defect.
+**Prepare dense development masks and visible/occluded boundaries on the six run-034
+images before testing a pretrained segmentation model.** Separate main track, curb,
+runoff and cockpit; preserve ambiguous regions. The appearance probe is insufficient
+for geometry. Reserve another capture for future independent evaluation; frame splits
+within this already-used video cannot establish generalization.
 
-ACC-on-Mac software/service and usable PC duration are unknown. Prepare any collection
-before consuming a limited PC window. No paired dataset, spatial model training or
-platform implementation has been launched.
+Run-033 remains the control baseline. Metric trajectory requires a separate geometric
+reference/calibration, potentially synchronized PC video+telemetry. ACC-on-Mac service
+and usable duration are still unknown; no PC collection, metric trajectory model or
+platform implementation has started. Only the small run-034 appearance model was trained.

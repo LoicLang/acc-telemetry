@@ -64,6 +64,11 @@ les cas ordinaires et les anomalies ; ne pas apprendre uniquement sur de beaux t
 
 ### 1C. Construire la représentation spatiale
 
+- [x] Essai borné run-034 : propositions de contours, labels visuels provisoires et
+  petit modèle d'apparence entraîné, avec séparation par passage. Résultat insuffisant
+  pour une segmentation fiable ; [preuves et limites](../spatial-feasibility.md).
+- [ ] Constituer des masques denses de développement et bords visibles/occultés, puis
+  essayer un modèle de segmentation préentraîné avant toute adaptation spécialisée.
 - [ ] Définir géométrie/bords de piste et point de voiture mesuré ; `s_norm` actuel
   entre0 et1 est distinct du futur `s_m` et de `d_m`.
 - [ ] Évaluer une estimation de placement/orientation depuis images et séquences,
@@ -76,7 +81,8 @@ les cas ordinaires et les anomalies ; ne pas apprendre uniquement sur de beaux t
   Ne pas dessiner une ligne précise lorsque les données ne la soutiennent pas.
 
 L'environnement ACC sur Mac et sa durée disponible restent inconnus. Ne pas consommer
-un créneau limité pour découvrir le logger. Aucune collecte PC ni entraînement lancé.
+un créneau limité pour découvrir le logger. Aucune collecte PC ni modèle de trajectoire
+métrique ; seul le petit classifieur d'apparence run-034 a été entraîné.
 Cette collecte sert d'abord la perception vidéo ; l'acquisition directe PC future
 pourra réutiliser nos contrats normalisés.
 
@@ -161,7 +167,12 @@ vides conservées dans le calcul. Contre-exemples ciblés corrigés sans changer
 réextraction pédales seule,83 épisodes deviennent la base active. Faibles niveaux et
 plein préservés ; aucune qualification temporelle générale supplémentaire.
 
-**Prochaine action exacte : définir le premier incrément spatial sur les trois passages
-des Combes déjà revus. Inventorier placement observable dans l'image, repères existants
-et géométrie manquante avant de promettre une trajectoire en mètres. Utiliser run-033
-pour les commandes. La plateforme reste différée.**
+**Essai run-034 livré :** six images, modèle couleur/texture entraîné sur P1 et testé
+sur P2/P3.28/35 patches corrects contre25/35 pour la règle couleur ; gain équilibré
+modeste et confusions avec le dégagement/barrières. Coordonnées image disponibles,
+géométrie métrique et trajectoire indisponibles. Aucun modèle profond encore testé.
+
+**Prochaine action exacte : préparer des masques denses piste/vibreur/dégagement/cockpit
+et les bords visibles/occultés sur les six images de développement run-034, puis essayer
+un modèle de segmentation préentraîné. Réserver une autre capture à l'évaluation
+indépendante. Utiliser run-033 pour les commandes ; plateforme toujours différée.**
