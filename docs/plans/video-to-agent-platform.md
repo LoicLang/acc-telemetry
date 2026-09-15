@@ -27,15 +27,21 @@ consultables dans les runs et Git.
 
 - [x] Auditer le chemin CLI/web partagé et les72 entrées, avec les vrais artefacts.
 - [x] Distinguer signaux présents, calculs manquants et grandeurs non observables.
-- [ ] À partir de run-024, apparier les candidats frein/gaz en épisodes temporels :
+- [x] À partir de run-024, apparier les candidats frein/gaz en épisodes temporels :
   début, confirmation, fin, troncature, lacunes et qualité. Réutiliser l'index existant.
-- [ ] Produire pour les épisodes admissibles durée, pic/temps au pic, profil de
-  relâchement, reprise/coupure et chevauchement. Les pentes/intégrales sont des
-  descripteurs de commandes HUD ; ne pas les appeler pression ou énergie physique.
+- [x] Premier incrément durée, pic/temps au pic, queue dernier maximum→fin,
+  reprise/coupure entre épisodes et chevauchement candidat livré en run-029.
+  Pente moyenne en points HUD/s ; ni pression ni énergie physique.
+- [ ] Qualifier la précision temporelle des épisodes : début réel du relâchement,
+  paliers/modulations internes et plein gaz calibré restent hors du premier incrément.
 - [ ] Corriger les agrégats hérités uniquement lorsqu'ils sont utilisés : absence de
   vitesse ne doit pas produire0 ; compteur de numéros ≠ nombre de tours complets.
-- [ ] Vérifier les résultats sur quelques fenêtres déjà annotées. Aucun replay OCR
+- [x] Vérifier les résultats sur quelques fenêtres déjà annotées. Aucun replay OCR
   nécessaire pour les calculs aval ; pas de nouvelle campagne de seuils.
+
+**Livraison run-029 :** [contrat, résultats et commande](../control-episodes.md).
+91 épisodes candidats,89 bornés ; annotations ponctuelles réutilisées, aucune précision
+temporelle continue démontrée. Agrégats hérités non utilisés, donc non modifiés.
 
 **Sortie :** données structurées locales reproductibles, reliées aux frames. `null` et
 raisons persistent, aucune visibilité inventée ni pédale lissée. Les positions de
@@ -136,6 +142,7 @@ plusieurs séances. La scène, le geste et la conséquence restent reliés.
 - Gate A reste FAIL, `coaching_eligible=false` ; aucune qualification spatiale ou
   causale générale. Vérités compteur run-021/run-022 réutilisées, pas de revue exhaustive.
 
-**Prochaine action exacte : phase1A — produire les épisodes frein/gaz et leurs premiers
-résumés depuis les artefacts run-024, avec troncatures, lacunes et preuves conservées.
-La plateforme et la navigation de l'agent viennent après les données.**
+**Prochaine action exacte : préparer une petite vérité temporelle définie sur B2 et
+une fenêtre gaz existante pour qualifier les descripteurs run-029. Distinguer mouvement
+visible et franchissement des seuils ; pas de campagne de seuils. La plateforme et la
+navigation de l'agent viennent après les données.**

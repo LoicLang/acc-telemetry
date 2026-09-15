@@ -13,6 +13,17 @@ de ses consommateurs et de leurs tests ; relecture des artefacts run-024 avec le
 vérifiant leurs empreintes. Aucun nouvel OCR. Le catalogue décrit la cible ; ce document
 établit les capacités présentes. Gate A: FAIL, `coaching_eligible=false`.
 
+## Mise à jour — incrément épisodes run-029
+
+L'audit initial ci-dessous reste la photographie avant implémentation. Depuis,
+[les épisodes HUD](control-episodes.md) apparient les181 candidats pédales existants :
+91 épisodes, durée si bornée, pic observé/temps au pic, queue dernier maximum→fin,
+relations coupure/reprise et intersections frein/gaz. B03 passe de C à P (durée seulement),
+B04/B06 et A01/A04 sont étendus, A03/A06 passent de C à P pour ces seuls descripteurs.
+B07/intégrales, plein gaz calibré, modulation interne, distances et précision temporelle
+continue restent non livrés/non qualifiés. Valeurs/raisons inchangées, aucune nouvelle
+extraction. Les agrégats hérités ne sont pas utilisés et n'ont pas été modifiés.
+
 ## Ce que nous produisons déjà
 
 | Sortie | Preuve dans le code | Portée réelle |

@@ -1,5 +1,5 @@
 ---
-summary: video data acquisition first; code audit complete and agent-navigable session platform deferred until the data foundation exists
+summary: first HUD pedal episodes delivered in run-029; temporal accuracy remains unqualified and agent platform is deferred
 read_when:
   - starting repository work or choosing the exact next action
   - checking current extraction capabilities, evidence and platform boundaries
@@ -7,11 +7,10 @@ read_when:
 
 # Current status
 
-Last verified: **2026-09-15**. Integration branch: `main`.
-The owner authorized merging `codex/coaching-reliability` into main for this delivery;
-the integration was a fast-forward. Start the next increment on a new `codex/` branch
-from current main. No sub-agents, exhaustive counter review or threshold campaign.
-Use proportionate checks from AGENTS.md; no OCR replay to change downstream data/docs.
+Last verified: **2026-09-15**. Work branch: `codex/video-control-episodes`, created
+from main at `6b2c04b`. First downstream episode increment delivered. No sub-agents,
+exhaustive review, threshold campaign or OCR replay. The pre-existing untracked
+`docs/plans/video-to-agent-platform 2.md` is untouched and is not the active plan.
 
 ## Vision and priority
 
@@ -42,8 +41,10 @@ Active plan: `plans/video-to-agent-platform.md`.
 - Diagnostic position alignment/delta, coarse per-lap summaries, manual-landmark
   time intervals, annotation-based accuracy/event metrics.
 
-Not delivered: general braking/throttle episode summaries, automatic physical corner
-landmarks, metric `s_m/d_m`, trajectory/orientation, dynamics or recurring-loss analysis.
+New: candidate brake/throttle episodes, temporal descriptors and frame-linked evidence
+([contract and reproduction](control-episodes.md)).
+Not delivered: generally qualified episodes, automatic physical corner landmarks,
+metric `s_m/d_m`, trajectory/orientation, dynamics or recurring-loss analysis.
 TC/ABS remain missing in modern extraction. `lap_time_s` is empty in run-024 despite
 a legacy OCR method existing. Context/incident scene descriptions were manually supplied.
 Detailed caveats and code links are in the audit.
@@ -76,8 +77,27 @@ All run paths below are relative to ignored `data/lab/coaching-reliability/`.
 
 The audit ran existing event functions across all run-024 samples:316 candidates
 (44 brake on/off pairs of counts,46 throttle on/off counts each,135 gear changes and
-one initial active-throttle state). Episode pairing is **not** thereby implemented.
+one initial active-throttle state). Run-029 now pairs the 181 pedal candidates;
+135 gear candidates are outside this increment.
 Existing tests were read/reused; source videos were not decoded again for this audit.
+
+## First episode increment — run-029
+
+- `processed/control-episodes/`: structured JSON, original pedal samples, annotation
+  comparisons and integrity manifest. 91 episodes (44 brake, 47 throttle); 89 bounded,
+  two throttle fragments at session edges; 89 resumption relations, 61 candidate overlaps.
+- No pedal gaps in this source. Every invalid/missing row or absent frame splits
+  evidence in the implementation; missing boundaries produce null durations.
+- Duration, observed peak/first peak time, last-maximum-to-off tail and mean HUD slope.
+  True release onset, internal modulation classification and calibrated full throttle
+  remain unavailable. No inherited speed/lap aggregates used or changed.
+- `reports/examples.md`: three braking episodes and one throttle episode checked
+  against existing sparse points/visibility. 21 points per pedal reproduce known biases.
+  B2 onset 11246 falls in 11245–11246; throttle-off 11255 lags reported release by
+  0.250–0.267 s. Definitions differ; no complete episode temporal accuracy demonstrated.
+- 33 focused tests and four documentation tests pass; artifact hashes and all 29,402
+  pedal rows preserved, 181 events
+  unchanged, four example calculations checked. Source video never opened by this work.
 
 ## Demonstrated issues to account for in the next increment
 
@@ -89,11 +109,11 @@ Existing tests were read/reused; source videos were not decoded again for this a
 
 ## Exact next action
 
-**Implement phase1A: assemble bounded brake/throttle episodes from run-024 artifacts,
-then publish initial temporal descriptors with missing/truncated states and evidence.**
-Reuse `analysis/perception.py`; preserve input samples. Start with duration, peak and
-release/pickup chronology on existing annotated windows. Avoid spatial claims until
-`s_m/d_m` and landmarks are established. No new OCR or platform/MCP work for this step.
+**Prepare a small, explicitly defined temporal truth set for B2 and one existing
+throttle window before claiming episode timing accuracy.** Distinguish first visible
+movement, threshold crossing, off and last maximum; establish what existing annotations
+can support and what targeted review is missing. No threshold search or general gate
+promotion. Continue video data qualification under phase1; platform/MCP stays deferred.
 
 For subsequent spatial work, ACC-on-Mac software/service and usable duration are still
 unknown. Prepare collection before consuming a limited PC window. Dataset/model work
