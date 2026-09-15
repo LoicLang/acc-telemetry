@@ -103,6 +103,20 @@ sur les lignes et lignes vides écartées du percentile. Aucun seuil/extracteur 
 modifié par cette revue. Dernier maximum et certaines fins restent sans référence
 univoque ; valeurs de précision correspondantes null, pas de score global.
 
+## Correction des contre-exemples — base run-033
+
+Le [mode de remplissage spatial](signal-treatment.md) corrige les fragments du HUD
+sans changer les seuils temporels. La séance recalculée conserve les impulsions brèves
+dans ses samples ; une impulsion sous la persistance requise ne devient pas un épisode
+confirmé. Off/on12982/13018 réapparaissent, off2621 est retrouvé, l'épisode artificiel
+20190–20305 disparaît. Les bornes du frein B2 restent11246/11423.
+
+Base active : `data/lab/coaching-reliability/run-033/processed/`,83 épisodes (37 frein,
+46 gaz),165 événements,53 intersections. Les comptes changés ne qualifient pas tous les
+événements :208 images ciblées et21 points par pédale ont été vérifiés. Les limites
+physiques et les ambiguïtés non résolues de run-032 restent distinctes. Voir les
+résultats et listes ajoutées/retirées dans `run-033/reports/`.
+
 ## Résultat et portée des preuves
 
 Run-029 : 91 épisodes (44 frein, 47 gaz), dont 89 bornés et deux gaz tronqués aux

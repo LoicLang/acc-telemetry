@@ -13,8 +13,13 @@ from acc_telemetry.domain.telemetry import QualityFlag
 class TelemetryExtractor:
     """Extracts telemetry values from ROI images using computer vision."""
     
+    def __init__(self, *, horizontal_bar_mode='longest_run'):
+        if horizontal_bar_mode not in ('longest_run', 'left_connected'):
+            raise ValueError('unsupported horizontal bar mode')
+        self.horizontal_bar_mode = horizontal_bar_mode
+
     @staticmethod
-    def extract_bar_percentage(roi_image: np.ndarray, target_color: str = 'green', orientation: str = 'vertical') -> float:
+    def extract_bar_percentage(roi_image: np.ndarray, target_color: str = 'green', orientation: str = 'vertical', *, horizontal_mode: str = 'longest_run') -> float:
         """
         Extract percentage value from a bar by detecting filled portion.
         Supports both horizontal and vertical bars.
@@ -27,6 +32,8 @@ class TelemetryExtractor:
         Returns:
             Percentage value (0.0 to 100.0)
         """
+        if horizontal_mode not in ('longest_run', 'left_connected'):
+            raise ValueError('unsupported horizontal bar mode')
         if roi_image is None or roi_image.size == 0:
             return 0.0
             
@@ -110,16 +117,25 @@ class TelemetryExtractor:
                 
             middle_rows = mask[start_row:end_row, :]
 
-            # Find the continuous filled region from the left edge
-            # This handles text overlays and gaps by detecting the main bar fill
+            if horizontal_mode == 'left_connected':
+                # Native HUD fill starts at the calibrated left edge. Disconnected
+                # text fragments are not pedal fill. Empty rows MUST contribute zero;
+                # otherwise one colored graphic row can sustain an active pedal.
+                widths = []
+                for row in middle_rows:
+                    empty = np.flatnonzero(row == 0)
+                    widths.append(int(empty[0]) if len(empty) else width)
+                return float(np.percentile(widths, 80) / width * 100)
+
+            # Historical mode: longest fragment anywhere on each nonempty row.
+            # Retain historical fragment semantics for profiles not opted in.
             filled_widths = []
             for row in middle_rows:
                 non_zero_cols = np.where(row > 0)[0]
                 if len(non_zero_cols) == 0:
                     continue
 
-                # Find the longest continuous run starting from near the left edge
-                # The bar fills from left to right, so we want the leftmost continuous region
+                # Historical scan is not anchored at the left edge.
                 max_continuous_width = 0
                 current_run_start = None
                 current_run_length = 0
@@ -349,7 +365,8 @@ class TelemetryExtractor:
                 value = self._observe_steering_position(roi)
             else:
                 value = self.extract_bar_percentage(
-                    roi, "green" if field == "throttle" else "red", "horizontal")
+                    roi, "green" if field == "throttle" else "red", "horizontal",
+                    horizontal_mode=self.horizontal_bar_mode)
             observations[field] = (
                 missing("steering_candidate_missing") if value is None else
                 FieldObservation(value, QualityFlag.OBSERVED, value,
@@ -371,8 +388,8 @@ class TelemetryExtractor:
             Dictionary with extracted values including TC and ABS activation status
         """
         return {
-            'throttle': self.extract_bar_percentage(roi_dict['throttle'], 'green', 'horizontal'),
-            'brake': self.extract_bar_percentage(roi_dict['brake'], 'red', 'horizontal'),
+            'throttle': self.extract_bar_percentage(roi_dict['throttle'], 'green', 'horizontal', horizontal_mode=self.horizontal_bar_mode),
+            'brake': self.extract_bar_percentage(roi_dict['brake'], 'red', 'horizontal', horizontal_mode=self.horizontal_bar_mode),
             'steering': self.extract_steering_position(roi_dict['steering']),
             'tc_active': self.extract_tc_active(roi_dict['throttle']),
             'abs_active': self.extract_abs_active(roi_dict['brake'])

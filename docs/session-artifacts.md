@@ -102,7 +102,9 @@ et CSV ; les abstentions antérieures et les autres champs restent inchangés. L
 et qualités héritées ne sont pas promues. Les événements/épisodes sont recalculés à
 partir du nouveau dossier par `scripts/control_episodes.py`, pas copiés du parent.
 
-Le manifeste conserve les paramètres hérités et actualise uniquement les deux ROI.
+Le manifeste conserve les paramètres hérités et actualise les deux ROI et le mode
+`pedal_bar_mode` du profil. Le mode absent dans un parent signifie `longest_run` ;
+`left_connected` active la correction spatiale native (run-033).
 `pedal_refresh` référence les fichiers/empreintes/code du parent, les anciens/nouveaux
 rectangles, le format vérifié et le nombre de lectures reproduites. `code` décrit le
 programme de réextraction ; les canaux réutilisés conservent leur provenance parent.

@@ -63,6 +63,27 @@ nouveaux artefacts et recalculer les épisodes : ne pas simplement remplacer leu
 pics par100 %, ni supposer les événements inchangés près des seuils. Les valeurs
 manquantes/raisons et Gate A FAIL, `coaching_eligible=false`, restent préservés.
 
+## Rejet des fragments du HUD — run-033
+
+Le profil `ps5_full_map_1080p` active `pedal_bar_mode: left_connected` : chaque ligne
+contribue la longueur du remplissage contigu au bord gauche, ou zéro. Le percentile80
+inclut aussi les lignes vides. Cela exclut les fragments de texte éloignés et empêche
+une seule ligne graphique d'entretenir un faux signal. Couleurs, ROI144px et seuils
+temporels restent inchangés ; les vrais faibles remplissages ne sont pas écrêtés à0.
+
+Le mode est validé dans la configuration et transmis par la fabrique partagée CLI/web.
+Les profils non activés et les appels historiques gardent `longest_run`. Le rafraîchisseur
+reprend le mode du parent (défaut historique si absent) pour son contrôle d'alignement,
+et consigne l'ancien/nouveau mode dans le manifeste. Il ne réécrit pas l'historique.
+
+Run-033 corrige les contre-exemples run-032 : off/on12982/13018 retrouvés, off2621
+retrouvé, fausse confirmation20190 supprimée tout en conservant les six lectures
+positives de l'impulsion. Sur21 points/pédale, MAE frein0,188 et gaz0,143 point ; les9
+points de plein restent100 %. Vérification sur208 images existantes, puis réextraction
+des seules pédales de29 402 frames, sans OCR. Autres canaux/qualités/raisons préservés.
+Les83 épisodes recalculés deviennent la base active ; pas une qualification temporelle
+générale. Résultats locaux : `data/lab/coaching-reliability/run-033/reports/results.md`.
+
 ## Admission des faits et portée du contrat historique
 
 Le [contrat de l’export déjà implémenté](specs/2026-09-13-session-coaching-report.md) autorise le rapport

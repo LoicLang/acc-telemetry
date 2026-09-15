@@ -119,6 +119,7 @@ class ProfileSettings:
     white_upper: tuple[int, int, int]
     sample_count: int
     lap_foreground_bounds: bool = False
+    pedal_bar_mode: str = 'longest_run'
 
 
 @dataclass(frozen=True)
@@ -432,6 +433,9 @@ def load_settings(root: Path | str | None = None) -> TelemetrySettings:
     profiles: dict[str, ProfileSettings] = {}
     for name, raw_value in roi_profiles.items():
         raw = _mapping(raw_value, f"profiles.{name}")
+        bar_mode = raw.get('pedal_bar_mode', 'longest_run')
+        if bar_mode not in ('longest_run', 'left_connected'):
+            raise ConfigurationError(f'profiles.{name}.pedal_bar_mode is unsupported')
         lap_bounds = raw.get('lap_foreground_bounds', False)
         if type(lap_bounds) is not bool:
             raise ConfigurationError(f'profiles.{name}.lap_foreground_bounds must be boolean')
@@ -473,6 +477,7 @@ def load_settings(root: Path | str | None = None) -> TelemetrySettings:
             white_upper=upper,
             sample_count=sample_count,
             lap_foreground_bounds=lap_bounds,
+            pedal_bar_mode=bar_mode,
         )
 
     comparison_raw = _mapping(telemetry.get("comparison"), "comparison")

@@ -65,11 +65,14 @@ def refresh_pedals(session_path, output, *, progress=None):
             raise ValueError('parent frame/time coverage mismatch')
     inputs = {str(parent / name): digest for name, digest in original['files'].items()}
     inputs[str(parent / 'manifest.json')] = _sha(parent / 'manifest.json')
-    rois = _plain(load_settings().profile(original['profile']).rois)
+    profile = load_settings().profile(original['profile'])
+    rois = _plain(profile.rois)
+    old_mode = original['config']['settings']['profiles'][original['profile']].get('pedal_bar_mode', 'longest_run')
     old_rois = original['config']['settings']['profiles'][original['profile']]['rois']
     manifest = copy.deepcopy(original)
     for channel in PEDALS.values():
         manifest['config']['settings']['profiles'][original['profile']]['rois'][channel] = rois[channel]
+    manifest['config']['settings']['profiles'][original['profile']]['pedal_bar_mode'] = profile.pedal_bar_mode
     manifest['config_sha256'] = hashlib.sha256(_json(manifest['config']).encode()).hexdigest()
     manifest.update(code=_code_identity(), created_at=datetime.now(timezone.utc).isoformat(),
                     gate_a='FAIL', coaching_eligible=False)
@@ -78,6 +81,7 @@ def refresh_pedals(session_path, output, *, progress=None):
         parent_code=original['code'], refreshed_fields=list(PEDALS),
         policy='Only fresh observed pedals replaced; prior non-observed evidence preserved; all other channels reused.',
         format=probe, ocr_replayed=False, source_identity_verified=True,
+        old_bar_mode=old_mode, new_bar_mode=profile.pedal_bar_mode,
         old_rois={c: old_rois[c] for c in PEDALS.values()}, new_rois={c: rois[c] for c in PEDALS.values()})
     target.parent.mkdir(parents=True, exist_ok=True)
     staging = Path(tempfile.mkdtemp(prefix='.pedal-refresh-', dir=target.parent))
@@ -86,7 +90,7 @@ def refresh_pedals(session_path, output, *, progress=None):
         cap = cv2.VideoCapture(source['path'])
         if not cap.isOpened():
             raise ValueError('cannot decode source')
-        extractor = TelemetryExtractor()
+        extractor = TelemetryExtractor(horizontal_bar_mode=profile.pedal_bar_mode)
         old_matches = 0
         with (parent/'samples.jsonl').open() as samples_in, (parent/'observations.jsonl').open() as obs_in, \
                 (parent/'telemetry.csv').open(newline='') as csv_in, \
@@ -111,7 +115,7 @@ def refresh_pedals(session_path, output, *, progress=None):
                     old = obs['observations'][field]
                     if old['quality'] == 'observed':
                         value = extractor.extract_bar_percentage(crop(old_rois[channel]),
-                                    'green' if channel == 'throttle' else 'red', 'horizontal')
+                                    'green' if channel == 'throttle' else 'red', 'horizontal', horizontal_mode=old_mode)
                         if value != old['value']:
                             raise ValueError(f'old pedal reading mismatch at {i}: {field}')
                         old_matches += 1

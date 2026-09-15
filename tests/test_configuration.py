@@ -297,7 +297,7 @@ class TestTelemetryConfiguration(unittest.TestCase):
 
         video_processor.assert_called_once()
         self.assertIn("speed", video_processor.call_args.args[1])
-        telemetry_extractor.assert_called_once_with()
+        telemetry_extractor.assert_called_once_with(horizontal_bar_mode='longest_run')
         lap_detector.assert_called_once()
         detector = lap_detector.return_value
         self.assertEqual(detector._max_speed_ocr_delta_kmh, 20)
@@ -348,6 +348,19 @@ class TestTelemetryConfiguration(unittest.TestCase):
             white_upper=(180, 100, 255),
         )
         self.assertIs(components.position, position_tracker.return_value)
+
+
+class TestPedalModeConfiguration(unittest.TestCase):
+    def test_unknown_pedal_mode_is_rejected_by_settings_loader(self):
+        with tempfile.TemporaryDirectory() as folder:
+            root = Path(folder)
+            _write_configuration(root, yaml.safe_load((ROOT/'config/telemetry.yaml').read_text()))
+            path = root/'config/roi_config.yaml'
+            config = yaml.safe_load(path.read_text())
+            config['profile']['pedal_bar_mode'] = 'guess_from_maximum'
+            path.write_text(yaml.safe_dump(config))
+            with self.assertRaisesRegex(ConfigurationError, 'pedal_bar_mode'):
+                load_settings(root)
 
 
 if __name__ == "__main__":

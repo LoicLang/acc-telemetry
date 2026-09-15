@@ -156,7 +156,12 @@ existantes et revue modèle provisoire séparées. B2 localement cohérent ; cou
 retardées et paire gaz visible omise. Des fragments sous les textes entretiennent
 un faux état actif. Dernier pic/fin frein dans certaines fenêtres restent ambigus.
 
-**Prochaine action exacte : corriger l'admission des fragments de texte/graphisme
-comme remplissage de pédale, sur les contre-exemples run-032. Protéger les vrais faibles
-niveaux et le plein, sans modifier les seuils pour masquer le problème. Puis vérifier
-les épisodes affectés. La plateforme reste différée.**
+**Correction run-033 livrée :** admission du remplissage connecté à gauche et lignes
+vides conservées dans le calcul. Contre-exemples ciblés corrigés sans changer les seuils ;
+réextraction pédales seule,83 épisodes deviennent la base active. Faibles niveaux et
+plein préservés ; aucune qualification temporelle générale supplémentaire.
+
+**Prochaine action exacte : définir le premier incrément spatial sur les trois passages
+des Combes déjà revus. Inventorier placement observable dans l'image, repères existants
+et géométrie manquante avant de promettre une trajectoire en mètres. Utiliser run-033
+pour les commandes. La plateforme reste différée.**

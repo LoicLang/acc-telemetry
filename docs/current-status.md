@@ -1,5 +1,5 @@
 ---
-summary: run-032 timing review finds missed throttle transitions from HUD fragments; run-031 remains the data baseline
+summary: run-033 fixes HUD fragment contamination and supplies the active calibrated session and episodes
 read_when:
   - starting repository work or choosing the exact next action
   - checking current extraction capabilities, evidence and platform boundaries
@@ -7,172 +7,100 @@ read_when:
 
 # Current status
 
-Last verified: **2026-09-15**. Work branch: `codex/video-control-episodes`, created
-from main at `6b2c04b`. Episodes delivered; native pedal ROI calibration now corrected.
-No sub-agents, exhaustive review, threshold campaign or OCR replay. The duplicate
-plan copy was removed after byte-for-byte comparison with the version in `6b2c04b`;
-the plan linked below is the only active plan.
+Last verified: **2026-09-15**. Branch: `codex/video-control-episodes`, created from
+main at `6b2c04b`. **Active data baseline: run-033.** No sub-agents, threshold campaign
+or OCR replay. The duplicate plan was removed; the plan linked below is authoritative.
 
-## Vision and priority
+## Product and active scope
 
-**Final product: a persistent driving-data platform that an AI agent can navigate.**
-It will expose session summaries, trajectories, references, comparisons, recurrences
-and evidence through tools/MCP, with optional skills for investigation. Human reports
-are optional views. The agent analyses driving; our software supplies traceable facts.
+Build a persistent driving-data platform navigable by an AI agent: observations,
+trajectories, references, comparisons and evidence. The software supplies facts;
+the consuming agent analyses driving. Human reports are optional views.
 
-**Current work: recover and qualify the useful data from video first.** The owner
-explicitly deferred platform implementation and agent navigation until the data
-foundation exists. Existing local artifacts are sufficient for the next increments.
-PC video+telemetry may support spatial labels; future direct PC acquisition should
-reuse the same normalized concepts. No MCP server, new database or navigation skill
-is implemented or required for the next task.
+Recover and qualify useful video data first. Platform/database/MCP and navigation
+skills remain deferred. PC video+telemetry may support spatial labels; direct PC
+acquisition is a future adapter. Do not present hidden physical quantities as video
+measurements. A local check is not general qualification.
 
-Active plan: `plans/video-to-agent-platform.md`.
-[Code audit](video-data-audit.md) maps all72 catalogue entries to actual code.
-[Research catalogue](driving-metrics.md) defines the target and its input requirements.
-[Architecture](architecture.md) describes the existing pipeline and future boundaries.
+[Single active plan](plans/video-to-agent-platform.md) · [Data audit](video-data-audit.md)
+· [Metric definitions](driving-metrics.md) · [Architecture](architecture.md).
 
-## What the code actually provides
+## Active session — run-033
 
-- Native1080p60 CFR preflight, source frames/time, immutable-source artifacts.
-- Fresh speed, brake/throttle percentages, gear, confirmed HUD lap number/events.
-- Estimated normalized progress `s`/`s_fused` in0–1; `track_position` in percent.
-- A HUD steering-dot candidate in−1…1, **not a calibrated physical steering angle**.
-- Neutral pedal on/off and gear-change candidates; missing-data intervals and coverage.
-- Diagnostic position alignment/delta, coarse per-lap summaries, manual-landmark
-  time intervals, annotation-based accuracy/event metrics.
+Paths are relative to ignored `data/lab/coaching-reliability/`.
 
-New: candidate brake/throttle episodes, temporal descriptors and frame-linked evidence
-([contract and reproduction](control-episodes.md)).
-Not delivered: generally qualified episodes, automatic physical corner landmarks,
-metric `s_m/d_m`, trajectory/orientation, dynamics or recurring-loss analysis.
-TC/ABS remain missing in modern extraction. `lap_time_s` is empty in run-024 despite
-a legacy OCR method existing. Context/incident scene descriptions were manually supplied.
-Detailed caveats and code links are in the audit.
-
-**Gate A: FAIL; `coaching_eligible=false`.** Availability is not accuracy. Historical
-run-024/029 full throttle reads about94 %. The corrected native profile reaches100 %
-at reviewed full-scale points; small residues and impact-speed abstentions remain.
-No smoothing or invented visibility. Hidden physical quantities require a justified
-estimator/other source or remain unavailable; the72-entry catalogue is not a promise
-that every channel can be reconstructed exactly from arbitrary video.
-
-## Reusable evidence and actual outputs
-
-All run paths below are relative to ignored `data/lab/coaching-reliability/`.
-
-- run-024 `processed/crash-session/`: 29,402 samples, hashes/envelopes rechecked by
-  `read_session_artifacts()` during the audit. Speed29,298; each pedal29,402;
-  gear28,913; progress26,844; physical steering/TC/ABS unqualified.
+- `run-033/processed/crash-session/`:29,402 native1080p60 samples. Only pedals were
+  re-extracted from the original video; other channels, qualities/reasons, missing
+  values and CSV evidence were verified unchanged from run-031. No OCR.
 - Source: `data/lab/2026-09-03-generic-s-fusion/crash-representative.mov`,453613415 bytes,
   SHA-256 `b2558ba17c174043e94345f240b31614f4a428246cc437ac09537d37156b7124`.
-- run-021/run-022: finished BMW/incidents counter truth; reuse, no exhaustive reread.
-- run-026 `reports/session_coaching.md`: three reviewed passages; retained/reproducible
-  via [its implemented contract](specs/2026-09-13-session-coaching-report.md).
-- run-027 `reports/lap-4/index.html`: actual full-lap viewer,14 manually routed zones,
-  95 neutral candidates and frame-synchronized video. [Commands](perception-package.md).
-  Local preview was started on8767; check availability before claiming it is running.
-- run-028 `reports/Passage_ACC_pour_analyse_IA.pdf`:17 pages/18 s,59 distinct images.
-  External response and evaluation are in `reports/reponse_externe.txt` and
-  `evaluation_reponse_externe.md`; frozen reference in `interim/reference_avant_reponse.md`.
-  Reconstruction locally favorable, not proof of scalable condensation or coaching.
+  Source identity, format/CFR, decoder timestamps and full coverage verified.
+- Native pedal width144px fixes the old153px denominator. Validated profile mode
+  `left_connected` measures contiguous fill from the left edge and includes empty
+  rows in the spatial percentile. Colors and temporal thresholds are unchanged.
+  Other profiles/default calls retain historical `longest_run` behavior.
+- All58,804 parent pedal readings were reproduced alongside the new extraction.
+  Manifest `pedal_refresh` records parent hashes/code, old/new modes and geometry.
+  Inherited channels do not acquire the new extractor's provenance or qualification.
+- `run-033/processed/control-episodes/`:83 episodes (37 brake,46 throttle),165 events,
+  53 candidate intersections,81 resumption relations, no pedal gaps. Onsets, ends,
+  confirmations, truncations, raw profiles and quality remain explicit.
 
-The audit ran existing event functions across all run-024 samples:316 candidates
-(44 brake on/off pairs of counts,46 throttle on/off counts each,135 gear changes and
-one initial active-throttle state). Run-029 now pairs the 181 pedal candidates;
-135 gear candidates are outside this increment.
-Existing tests were read/reused; source videos were not decoded again for this audit.
+Reproduction: [pedal refresh](session-artifacts.md), [episode export](control-episodes.md),
+[signal semantics and calibration](signal-treatment.md). Use fresh output folders.
 
-## First episode increment — run-029
+## What was checked, and what remains unknown
 
-- `processed/control-episodes/`: structured JSON, original pedal samples, annotation
-  comparisons and integrity manifest. 91 episodes (44 brake, 47 throttle); 89 bounded,
-  two throttle fragments at session edges; 89 resumption relations, 61 candidate overlaps.
-- No pedal gaps in this source. Every invalid/missing row or absent frame splits
-  evidence in the implementation; missing boundaries produce null durations.
-- Duration, observed peak/first peak time, last-maximum-to-off tail and mean HUD slope.
-  True release onset, internal modulation classification and calibrated full throttle
-  remain unavailable. No inherited speed/lap aggregates used or changed.
-- `reports/examples.md`: three braking episodes and one throttle episode checked
-  against existing sparse points/visibility. 21 points per pedal reproduce known biases.
-  B2 onset 11246 falls in 11245–11246; throttle-off 11255 lags reported release by
-  0.250–0.267 s. Definitions differ; no complete episode temporal accuracy demonstrated.
-- 33 focused tests and four documentation tests pass; artifact hashes and all 29,402
-  pedal rows preserved, 181 events
-  unchanged, four example calculations checked. Source video never opened by this work.
+- Run-032's208 native frames in8 targeted windows were reused. Off/on12982/13018 is
+  restored; delayed off2624 returns to2621. Sparse text/graphic pixels no longer
+  sustain throttle. The visible pulse20190–20195 remains in raw readings but cannot
+  satisfy100ms persistence; false episode20190–20305 disappears.
+- Brake B2 boundaries11246/11423 remain unchanged. Existing human onset reference
+  11245–11246 and provisional model end11422–11423 yield a local boundary-duration
+  interval2.933–2.967s containing2.950s. Interior/physical latency remain unqualified.
+- 21 existing annotated points per pedal: MAE brake0.188 and throttle0.143 point;
+  all9 full-scale points remain100 %. Synthetic checks protect real1/2/3/7-pixel
+  fills, intermediate levels, full bars with text holes, empty rows and isolated pixels.
+- 379 full-suite tests passed plus one subsequently added configuration-validation
+  test. Production code unchanged after the full-suite run. Source/parent/output
+  hashes and preservation of all nonpedal evidence were verified.
+- New visual references in run-032 are provisional non-blind model review, separate
+  from human labels. Changed event counts do not validate every added/removed event.
+  Last maximum, release onset, physical control latency and general timing accuracy
+  remain unqualified. `s` is a fraction, not metres; `steering` is a HUD candidate,
+  not a physical angle. Modern TC/ABS and run-024 lap-time readings remain unavailable.
+- Existing historical gate results/targets remain unchanged; do not imply validated
+  automated coaching from this capability-specific correction.
 
-## Pedal calibration correction — run-030
+Delivery evidence: `run-033/reports/results.md`, `verification.json`,
+`bounded-checks.json`, `calibration-points.json`, `tests-full.txt`.
 
-The native1080p pedal ROI included9 pixels beyond the144-pixel bar, yielding
-144/153×100 =94.12 % at full scale. Both configured widths are now144; color/event
-thresholds and historical profiles are unchanged. On21 existing annotated images:
-brake MAE1.60→0.25 points, throttle3.12→0.41; all9 full-scale points read100 %.
-24 focused tests pass after reproducing the defect. No OCR or full-video replay.
-[Calibration details](signal-treatment.md); local point checks and verification in
-`run-030/reports/`. Run-024/029 remain immutable historical outputs using the old
-calibration; they have **not** been recalibrated by this configuration fix.
+## Reusable earlier evidence
 
-## Calibrated session and episodes — run-031
+- Run-024: original full extraction; run-031: width-calibrated pedal refresh. Both
+  are preserved parents, not the current pedal baseline.
+- Run-029: first episode implementation; run-030: width calibration evidence;
+  run-032: frame-linked timing review and counterexamples, preserved unchanged.
+- Run-021/run-022: frozen BMW/incidents counter truth; no exhaustive reread needed.
+- Run-026: three reviewed Combes passages, native frames and `session_coaching.md`.
+  Its [historical contract](specs/2026-09-13-session-coaching-report.md) is reproducible.
+- Run-027: full-lap viewer,14 manually routed zones; [commands](perception-package.md).
+  These are navigation windows, not automatic geometric landmarks. Check any local
+  preview server before claiming it is running.
+- Run-028: PDF and external response/evaluation remain a local experiment in visual
+  reconstruction, not proof of general condensation or automated coaching.
 
-- `processed/crash-session/`:29,402 native frames; pedal-only refresh using144px ROI.
-  All58,804 old-geometry pedal readings reproduced during decoding. Input size/hash,
-  native format/CFR, decoder timestamps and full coverage verified; no OCR.
-- Other samples/observations/CSV fields, original qualities/reasons and missing values
-  verified unchanged. Parent run-024 and old run-029 outputs preserved. Mixed provenance
-  is explicit in `manifest.pedal_refresh`; the old acquisition code belongs to inherited
-  channels, the refresh code to pedals.
-- `processed/control-episodes/`:91 episodes (89 bounded),181 events,89 resumption
-  relations,61 intersections, no pedal gaps.177 events retain their exact timing.
-  Brake-off1464→1451 and throttle-off2621→2624; throttle off/on12982/13018 disappears,
-  on/off20190/20305 appears. Same counts do not imply the same episodes.
-- Four example episodes retain their durations but reach100 % peaks. The first/last
-  exact peak can move because the full-scale plateau is now represented at100 %.
-- `reports/results.md` and `comparison.json`: point MAE brake0.254/throttle0.407;
-  all9 full-scale annotations read100 %. B2 onset and release comparisons unchanged;
-  continuous timing and the newly appearing events are not independently validated.
-- 31 distinct focused tests pass (replacement, missing evidence, decode failure cleanup,
-  episode and artifact checks). No video replay after successful publication.
-  [Refresh command and provenance](session-artifacts.md).
-
-## Targeted temporal review — run-032
-
-- 208 native frames in8 windows reviewed:67 reused,141 newly decoded after format/source
-  checks. No OCR, full replay, threshold change or source mutation. New visual labels
-  are provisional non-blind model review, not independent/human-approved ground truth.
-- B2 brake onset agrees with existing human11245–11246; model-reviewed end11422–11423
-  gives a local boundary-duration interval2.933–2.967s containing the computed2.950s.
-  This does not qualify the entire interior or physical input latency.
-- Throttle disappearance2620–2621 vs candidate2624:50–66.7ms offset. Disappearance
-  20302–20303 vs candidate20305:33.3–50ms. Different definitions/review status remain
-  separate; no global MAE or general precision assertion.
-- Visible off/on12982/13018 is missing from the calibrated event index. Mask fragments
-  under HUD text create3/144=2.0833%, keeping the hysteresis state active. At20196,
-  sparse upper-row/text pixels produce5% despite an apparently empty bar body and
-  support confirmation of an episode whose continuity is not visually supported.
-- `extract_bar_percentage` chooses the longest fragment anywhere, despite its comment
-  describing left-origin fill, and excludes empty rows from its percentile. This is
-  a concrete extraction limitation; no detector changes were made during this review.
-- `reports/timing-review.json`: capability-specific observations, frame brackets,
-  candidate/confirmation offsets, nulls for missing/ambiguous references. `results.md`
-  links all8 native sheets. First/last maximum and changed brake-off remain partly
-  ambiguous; no physical release onset inferred. Data baseline remains run-031.
-
-## Demonstrated issues to account for in the next increment
-
-- Do not treat normalized `s` as metres or minimap centerline as actual trajectory.
-- `generate_summary()` counts five HUD numbers where only three laps have both bounds.
-- Its all-missing speed aggregate still returns0.0; reproduced in memory. Correct it
-  before reusing that aggregate, preserving nulls and field quality.
-- Coarse statistics do not distinguish clean/partial/incident laps or qualify phases.
+Unused inherited defects: `generate_summary()` counts HUD numbers rather than complete
+laps and returns0 for all-missing speed. Correct these before reusing those aggregates;
+none is used by the new episode calculations.
 
 ## Exact next action
 
-**Correct the pedal extractor's admission of disconnected HUD text/graphic pixels,
-starting with the run-032 counterexamples.** Preserve genuine low fill and full scale;
-do not raise off thresholds to hide residuals. Verify the bounded windows and existing
-calibration points, then recalculate affected episodes. No platform or trajectory
-implementation before resolving this demonstrated control-data issue.
+**Define the first spatial data increment using the three already reviewed Combes
+passages and their native frames/landmarks.** Inventory measurable image placement and
+missing geometry before promising trajectories in metres. Use run-033 for controls;
+retain local timing limits and avoid another full pedal replay without a new defect.
 
-For subsequent spatial work, ACC-on-Mac software/service and usable duration are still
-unknown. Prepare collection before consuming a limited PC window. Dataset/model work
-must demonstrate synchronization, geometry and transfer; none has been launched.
+ACC-on-Mac software/service and usable PC duration are unknown. Prepare any collection
+before consuming a limited PC window. No paired dataset, spatial model training or
+platform implementation has been launched.

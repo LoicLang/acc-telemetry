@@ -46,7 +46,7 @@ class TestPS5Profile(unittest.TestCase):
                     frame[y:y+height, 1758:1758+filled] = color
                     roi = profile.rois[field]
                     crop = frame[roi['y']:roi['y']+roi['height'], roi['x']:roi['x']+roi['width']]
-                    observed = TelemetryExtractor().observe_frame_telemetry(
+                    observed = TelemetryExtractor(horizontal_bar_mode=profile.pedal_bar_mode).observe_frame_telemetry(
                         {field: crop}, time_s=0, visibility=(), allow_unreviewed=True)[field]
                     self.assertAlmostEqual(observed.value, filled / 144 * 100)
                     self.assertIn('hud_visibility_unverified', observed.reasons)
@@ -57,6 +57,7 @@ class TestPS5Profile(unittest.TestCase):
             config = yaml.safe_load(config_file)
 
         profile = config["ps5_full_map_1080p"]
+        self.assertEqual(profile['pedal_bar_mode'], 'left_connected')
         expected_rois = {
             "throttle": {"x": 1758, "y": 1005, "width": 144, "height": 21},
             "brake": {"x": 1758, "y": 1025, "width": 144, "height": 18},
@@ -75,7 +76,7 @@ class TestPS5Profile(unittest.TestCase):
         }
 
         self.assertEqual(
-            {key: value for key, value in profile.items() if key != "position_tracking"},
+            {key: value for key, value in profile.items() if key not in ("position_tracking", "pedal_bar_mode")},
             expected_rois,
         )
         self.assertEqual(

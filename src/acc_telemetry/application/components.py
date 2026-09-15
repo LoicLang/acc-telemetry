@@ -54,7 +54,7 @@ def build_components(
         lap_roi_config["lap_number"] = lap_roi_config["lap_number_training"]
 
     video = VideoProcessor(video_path, roi_config)
-    controls = TelemetryExtractor()
+    controls = TelemetryExtractor(horizontal_bar_mode=profile.pedal_bar_mode)
     laps = LapDetector(
         lap_roi_config,
         enable_performance_stats=enable_performance_stats,

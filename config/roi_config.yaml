@@ -81,6 +81,7 @@ ps5_full_map_720p:
     sample_count: 60
 
 ps5_full_map_1080p:
+  pedal_bar_mode: left_connected
   # Native pedal track: x=1758..1901 inclusive (144px).
   # The former 153px ROI included 9px of right margin, giving 94.12% at full scale.
   # Verified against existing 1080p60 annotated frames; see run-030 / signal-treatment.md.
