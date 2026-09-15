@@ -30,6 +30,27 @@ class TestPS5Profile(unittest.TestCase):
             },
         )
 
+    def test_native_pedal_scale_excludes_the_nine_pixel_right_margin(self):
+        import numpy as np
+        from acc_telemetry.application.config import load_settings
+        from acc_telemetry.extraction.controls import TelemetryExtractor
+
+        profile = load_settings().profile('ps5_full_map_1080p')
+        # Native HUD support x=1758..1901 inclusive; x=1902..1910 is outside the bar.
+        # A 153px ROI used to report 144/153 = 94.1176% at full command.
+        for field, color in [('throttle', (0, 255, 0)), ('brake', (0, 0, 255))]:
+            for filled in (0, 36, 72, 108, 144):
+                with self.subTest(field=field, filled=filled):
+                    frame = np.full((1080, 1920, 3), 40, dtype=np.uint8)
+                    y, height = (1005, 21) if field == 'throttle' else (1025, 18)
+                    frame[y:y+height, 1758:1758+filled] = color
+                    roi = profile.rois[field]
+                    crop = frame[roi['y']:roi['y']+roi['height'], roi['x']:roi['x']+roi['width']]
+                    observed = TelemetryExtractor().observe_frame_telemetry(
+                        {field: crop}, time_s=0, visibility=(), allow_unreviewed=True)[field]
+                    self.assertAlmostEqual(observed.value, filled / 144 * 100)
+                    self.assertIn('hud_visibility_unverified', observed.reasons)
+
     def test_ps5_full_map_1080p_profile_has_calibrated_geometry(self):
         config_path = Path(__file__).parents[1] / "config" / "roi_config.yaml"
         with config_path.open(encoding="utf-8") as config_file:
@@ -37,8 +58,8 @@ class TestPS5Profile(unittest.TestCase):
 
         profile = config["ps5_full_map_1080p"]
         expected_rois = {
-            "throttle": {"x": 1758, "y": 1005, "width": 153, "height": 21},
-            "brake": {"x": 1758, "y": 1025, "width": 153, "height": 18},
+            "throttle": {"x": 1758, "y": 1005, "width": 144, "height": 21},
+            "brake": {"x": 1758, "y": 1025, "width": 144, "height": 18},
             "steering": {"x": 1703, "y": 993, "width": 201, "height": 14},
             "lap_number": {"x": 356, "y": 107, "width": 71, "height": 56},
             "lap_number_training": {

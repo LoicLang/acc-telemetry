@@ -142,7 +142,11 @@ plusieurs séances. La scène, le geste et la conséquence restent reliés.
 - Gate A reste FAIL, `coaching_eligible=false` ; aucune qualification spatiale ou
   causale générale. Vérités compteur run-021/run-022 réutilisées, pas de revue exhaustive.
 
-**Prochaine action exacte : préparer une petite vérité temporelle définie sur B2 et
-une fenêtre gaz existante pour qualifier les descripteurs run-029. Distinguer mouvement
-visible et franchissement des seuils ; pas de campagne de seuils. La plateforme et la
-navigation de l'agent viennent après les données.**
+**Correction de calibration run-030 :** largeur des pédales native1080p corrigée de153
+à144 pixels, vérifiée sur21 images annotées existantes ; les9 points de plein frein/gaz
+atteignent100 %. Anciens artefacts inchangés. [Détails](../signal-treatment.md).
+
+**Prochaine action exacte : rafraîchir les seules pédales dans de nouveaux artefacts
+avec le profil corrigé puis recalculer les épisodes, sans OCR. Ensuite préparer la
+petite vérité temporelle B2/gaz prévue, en distinguant mouvement visible et seuils.
+La plateforme reste différée.**

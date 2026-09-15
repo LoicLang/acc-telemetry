@@ -34,6 +34,34 @@ Les wrappers legacy et anciens artefacts HELD restent lisibles et distincts. Les
 interpolations internes d'odométrie ne remplissent pas la série de vitesse publiée.
 Une régression/lissage de vitesse serait une série estimée séparée ; elle est différée.
 
+## Calibration des pédales native 1080p — correction du 15 septembre 2026
+
+Le profil `ps5_full_map_1080p` utilisait une largeur de153 pixels pour une barre utile
+allant de x=1758 à1901 inclus, soit144 pixels. La marge droite de9 pixels faisait
+lire un plein gaz à144/153×100 =94,12 %. `config/roi_config.yaml` borne désormais
+les deux pédales à144 pixels ; aucune modification de seuil couleur ou temporel,
+aucun lissage ni remise à l'échelle arbitraire des pics de séance.
+
+Sur les21 images natives annotées existantes de la source incidents, relues uniquement
+pour les barres, l'erreur absolue moyenne passe de1,60 à0,25 point pour le frein et
+de3,12 à0,41 pour les gaz. Les2 points frein et7 points gaz annotés100 % lisent100 %.
+Les niveaux intermédiaires s'améliorent aussi (frein54 % :50,98→54,17 %).
+Petits résidus persistants : erreur maximale0,97 point frein et1,81 point gaz sur
+ces points. Ce contrôle local n'établit ni calibration générale ni précision temporelle.
+
+Preuves locales : `data/lab/coaching-reliability/run-030/reports/point-checks.json`,
+`verification.json` et `verify_calibration.py`. Empreintes des21 images vérifiées,
+format1920×1080/60 vérifié par les métadonnées existantes ; aucun nouvel OCR ni replay
+vidéo. Régression reproduite avant correction,24 tests profil/contrôles/config passent.
+Les profils historiques720p restent inchangés, sans nouvelle investigation.
+
+La correction s'applique aux prochaines extractions avec ce profil. Les artefacts
+run-024 et les épisodes run-029 gardent leur ancienne calibration et ne sont pas
+réécrits. Pour publier une séance corrigée, réextraire les seules pédales dans de
+nouveaux artefacts et recalculer les épisodes : ne pas simplement remplacer leurs
+pics par100 %, ni supposer les événements inchangés près des seuils. Les valeurs
+manquantes/raisons et Gate A FAIL, `coaching_eligible=false`, restent préservés.
+
 ## Admission des faits et portée du contrat historique
 
 Le [contrat de l’export déjà implémenté](specs/2026-09-13-session-coaching-report.md) autorise le rapport

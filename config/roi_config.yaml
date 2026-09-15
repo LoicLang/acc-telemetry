@@ -81,15 +81,18 @@ ps5_full_map_720p:
     sample_count: 60
 
 ps5_full_map_1080p:
+  # Native pedal track: x=1758..1901 inclusive (144px).
+  # The former 153px ROI included 9px of right margin, giving 94.12% at full scale.
+  # Verified against existing 1080p60 annotated frames; see run-030 / signal-treatment.md.
   throttle:
     x: 1758
     y: 1005
-    width: 153
+    width: 144
     height: 21
   brake:
     x: 1758
     y: 1025
-    width: 153
+    width: 144
     height: 18
   steering:
     x: 1703

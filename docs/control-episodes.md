@@ -66,6 +66,13 @@ de paliers/réapplications internes, d'intégrale ou de distance dans cet incré
 `s` reste une fraction ; `steering` reste un candidat HUD non physique. Les agrégats
 hérités vitesse/tours ne sont pas utilisés ; leurs défauts connus restent hors scope.
 
+## Calibration ultérieure
+
+La [largeur native des pédales](signal-treatment.md) est corrigée en run-030.
+Run-029 ci-dessous utilise toujours les samples historiques run-024 : modifier la
+configuration ne recalibre pas un export déjà extrait. Ne pas comparer ses pics à
+ceux d'une future extraction corrigée sans distinguer les deux calibrations.
+
 ## Résultat et portée des preuves
 
 Run-029 : 91 épisodes (44 frein, 47 gaz), dont 89 bornés et deux gaz tronqués aux

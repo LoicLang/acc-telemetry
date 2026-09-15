@@ -1,5 +1,5 @@
 ---
-summary: first HUD pedal episodes delivered in run-029; temporal accuracy remains unqualified and agent platform is deferred
+summary: native pedal calibration fixed at 144px; run-024 and run-029 retain old calibration and episode timing remains unqualified
 read_when:
   - starting repository work or choosing the exact next action
   - checking current extraction capabilities, evidence and platform boundaries
@@ -8,7 +8,7 @@ read_when:
 # Current status
 
 Last verified: **2026-09-15**. Work branch: `codex/video-control-episodes`, created
-from main at `6b2c04b`. First downstream episode increment delivered. No sub-agents,
+from main at `6b2c04b`. Episodes delivered; native pedal ROI calibration now corrected. No sub-agents,
 exhaustive review, threshold campaign or OCR replay. The pre-existing untracked
 `docs/plans/video-to-agent-platform 2.md` is untouched and is not the active plan.
 
@@ -49,8 +49,9 @@ TC/ABS remain missing in modern extraction. `lap_time_s` is empty in run-024 des
 a legacy OCR method existing. Context/incident scene descriptions were manually supplied.
 Detailed caveats and code links are in the audit.
 
-**Gate A: FAIL; `coaching_eligible=false`.** Availability is not accuracy. Full throttle
-can read about94 %, small pedal residues remain, and some real impact speeds abstain.
+**Gate A: FAIL; `coaching_eligible=false`.** Availability is not accuracy. Historical
+run-024/029 full throttle reads about94 %. The corrected native profile reaches100 %
+at reviewed full-scale points; small residues and impact-speed abstentions remain.
 No smoothing or invented visibility. Hidden physical quantities require a justified
 estimator/other source or remain unavailable; the72-entry catalogue is not a promise
 that every channel can be reconstructed exactly from arbitrary video.
@@ -99,6 +100,17 @@ Existing tests were read/reused; source videos were not decoded again for this a
   pedal rows preserved, 181 events
   unchanged, four example calculations checked. Source video never opened by this work.
 
+## Pedal calibration correction — run-030
+
+The native1080p pedal ROI included9 pixels beyond the144-pixel bar, yielding
+144/153×100 =94.12 % at full scale. Both configured widths are now144; color/event
+thresholds and historical profiles are unchanged. On21 existing annotated images:
+brake MAE1.60→0.25 points, throttle3.12→0.41; all9 full-scale points read100 %.
+24 focused tests pass after reproducing the defect. No OCR or full-video replay.
+[Calibration details](signal-treatment.md); local point checks and verification in
+`run-030/reports/`. Run-024/029 remain immutable historical outputs using the old
+calibration; they have **not** been recalibrated by this configuration fix.
+
 ## Demonstrated issues to account for in the next increment
 
 - Do not treat normalized `s` as metres or minimap centerline as actual trajectory.
@@ -109,11 +121,11 @@ Existing tests were read/reused; source videos were not decoded again for this a
 
 ## Exact next action
 
-**Prepare a small, explicitly defined temporal truth set for B2 and one existing
-throttle window before claiming episode timing accuracy.** Distinguish first visible
-movement, threshold crossing, off and last maximum; establish what existing annotations
-can support and what targeted review is missing. No threshold search or general gate
-promotion. Continue video data qualification under phase1; platform/MCP stays deferred.
+**Refresh the pedal channels into new native1080p60 artifacts using the corrected
+ROI, then regenerate episodes before continuing temporal qualification.** Reuse the
+other frozen channels and preserve missing values/provenance; no OCR is needed for
+pedals. Keep old artifacts and quantify changes at event thresholds. The small B2/
+throttle temporal truth check remains pending; no general gate promotion or platform.
 
 For subsequent spatial work, ACC-on-Mac software/service and usable duration are still
 unknown. Prepare collection before consuming a limited PC window. Dataset/model work
