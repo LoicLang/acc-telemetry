@@ -7,8 +7,10 @@ read_when:
 
 # Current status
 
-Last verified: **2026-09-15**. Branch `codex/coaching-reliability`.
-Push authorized, no merge. No sub-agents, exhaustive counter review or threshold campaign.
+Last verified: **2026-09-15**. Integration branch: `main`.
+The owner authorized merging `codex/coaching-reliability` into main for this delivery;
+the integration was a fast-forward. Start the next increment on a new `codex/` branch
+from current main. No sub-agents, exhaustive counter review or threshold campaign.
 Use proportionate checks from AGENTS.md; no OCR replay to change downstream data/docs.
 
 ## Vision and priority
