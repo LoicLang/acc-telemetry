@@ -51,12 +51,15 @@ de visibilité non vérifiée. Le mode `reviewed`, défaut historique, exige des
 revues pour publier vitesse/pédales. [Signaux](docs/signal-treatment.md) et
 [artefacts telemetry-v2](docs/session-artifacts.md).
 
-Les artefacts run-024 existent déjà ; les prochains calculs doivent les relire au lieu
-de relancer l'OCR. Les sources et exports personnels restent locaux, hors Git.
+Les épisodes de commandes sont livrés. Run-031 contient les pédales recalibrées et
+préserve les autres canaux hérités de run-024 ; c'est la base actuelle pour les prochains
+contrôles temporels. Suivre la passation pour choisir les artefacts, sans relancer l'OCR
+pour des calculs aval. Les sources et exports personnels restent locaux, hors Git.
 
 ## Résultats expérimentaux conservés
 
 - [Extraction automatique run-024](docs/automatic-system-trial.md).
+- [Épisodes et pédales recalibrées run-031](docs/control-episodes.md).
 - [Lecteur d'un tour, run-027](docs/perception-package.md) : vidéo, courbes, zones et index.
 - `session_coaching.md`, run-026 : [contrat reproductible](docs/specs/2026-09-13-session-coaching-report.md).
 - run-028 : un essai externe de perception sur PDF ; bon retour local, volume impropre

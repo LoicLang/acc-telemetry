@@ -153,7 +153,7 @@ rapport et la situation. [Almeida Racing Academy — Throttle Applications](http
 | ID | Métrique et définition proposée | Entrées | Utilité / limite |
 |---|---|---|---|
 | A01 | Première reprise des gaz `(t,s)` et reprise durable distincte | A,T,P | Une impulsion ou un blip ne constitue pas nécessairement une accélération volontaire. |
-| A02 | Position/temps d'atteinte du plein gaz calibré et maintien | A,T,P,Q | Pas de seuil universel à 100 % : notre plein gaz est souvent lu à94,12 %. |
+| A02 | Position/temps d'atteinte du plein gaz calibré et maintien | A,T,P,Q | Ancien run-024 ≈94,12 % ; run-031 atteint100 % aux points revus. Détecteur/maintien encore à qualifier. |
 | A03 | Rampe de gaz : délai entre niveaux, pente et profil | A,T | À croiser avec rapport, rotation et grip ; montée rapide pas systématiquement meilleure. |
 | A04 | Relâchements/réapplications après reprise : nombre, amplitude, durée | A,T | Signature de modulation ; trafic, corrections, TC ou blips possibles. |
 | A05 | Temps/distance sans commande frein ni gaz mesurable | A,B,T,P | Décrit phase neutre ; moteur, pente et adhérence restent actifs. Pas une faute universelle. |
@@ -392,8 +392,8 @@ au seul motif qu'il est peu fréquent. Le diagnostic appartient à l'IA.
 - `get_evidence` : valeurs natives ou quelques images/extrait ciblé, liés au calcul.
 
 Noms et contrats indicatifs ; aucun serveur ni calcul nouveau n'est livré par cette
-recherche. La prochaine action est l'extraction de données et les premiers épisodes
-frein/gaz depuis les artefacts existants. Le contrat de navigation/MCP attend le socle
+recherche. Les premiers épisodes sont désormais livrés ; la prochaine action est leur
+contrôle temporel borné sur run-031, selon la passation. Le contrat de navigation/MCP attend le socle
 de mesures défini dans le plan ; l'audit distingue code présent et calculs à ajouter.
 
 ## Portée des sources et vérification

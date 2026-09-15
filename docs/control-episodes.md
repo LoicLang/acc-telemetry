@@ -15,6 +15,9 @@ ou changement de seuil. **Gate A reste FAIL ; `coaching_eligible=false`.**
 ## Reproduire
 
 Depuis la racine, choisir un dossier de sortie neuf :
+la commande ci-dessous reproduit la version historique run-029. Pour le travail
+courant sur les pédales recalibrées, utiliser la séance run-031 indiquée dans la
+passation et une nouvelle destination ; conserver les deux provenances distinctes.
 
 ```sh
 PYTHONPATH=src .venv/bin/python scripts/control_episodes.py \

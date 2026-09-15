@@ -8,9 +8,10 @@ read_when:
 # Current status
 
 Last verified: **2026-09-15**. Work branch: `codex/video-control-episodes`, created
-from main at `6b2c04b`. Episodes delivered; native pedal ROI calibration now corrected. No sub-agents,
-exhaustive review, threshold campaign or OCR replay. The pre-existing untracked
-`docs/plans/video-to-agent-platform 2.md` is untouched and is not the active plan.
+from main at `6b2c04b`. Episodes delivered; native pedal ROI calibration now corrected.
+No sub-agents, exhaustive review, threshold campaign or OCR replay. The duplicate
+plan copy was removed after byte-for-byte comparison with the version in `6b2c04b`;
+the plan linked below is the only active plan.
 
 ## Vision and priority
 

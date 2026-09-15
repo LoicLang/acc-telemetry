@@ -24,6 +24,12 @@ B07/intégrales, plein gaz calibré, modulation interne, distances et précision
 continue restent non livrés/non qualifiés. Valeurs/raisons inchangées, aucune nouvelle
 extraction. Les agrégats hérités ne sont pas utilisés et n'ont pas été modifiés.
 
+Run-031 est désormais la base recalibrée des pédales et des épisodes ; les canaux
+hérités conservent leur provenance. Les points de plein frein/gaz revus atteignent100 %,
+sans qualification continue des événements. Les chiffres run-024 et la matrice initiale
+ci-dessous sont historiques ; pour l'état des livraisons, lire cette mise à jour et
+la [passation](current-status.md).
+
 ## Ce que nous produisons déjà
 
 | Sortie | Preuve dans le code | Portée réelle |
@@ -67,7 +73,11 @@ candidats :44 débuts/44 fins de frein,46 coupures/46 reprises de gaz,135 change
 rapport et1 état initial gaz actifs. **Ce ne sont pas316 actions du pilote validées.**
 Aucun nouvel extracteur n'a été utilisé, aucune sortie source modifiée.
 
-## Correspondance avec les72 entrées du catalogue
+## Matrice initiale des72 entrées — avant l'incrément run-029
+
+Photographie de l'audit initial ; appliquer la mise à jour des épisodes en tête de
+document et consulter la passation pour la prochaine action, plutôt que relancer
+les développements déjà livrés.
 
 Légende : **P** = partie implémentée/diagnostique, pas entrée complète qualifiée ;
 **C** = calcul aval absent, accessible en principe depuis les signaux actuels après
@@ -179,8 +189,10 @@ un pourcentage de maturité. Un signal récupérable n'est pas un diagnostic imp
 ## Ce qui est raisonnablement accessible depuis la vidéo
 
 **Déjà présent :** signaux HUD principaux, compteur, temps/qualité et progression estimée.
-**Prochain incrément simple :** épisodes temporels frein/gaz et descripteurs B03–B07,
-A01–A07 sur plages admissibles ; garder position métrique et diagnostic inconnus.
+**Incrément déjà livré :** épisodes temporels et premiers descripteurs dans run-029,
+puis run-031 recalibré. **Prochaine action :** contrôle temporel borné B2/gaz sur run-031,
+avec les définitions séparées (mouvement visible, seuil, plateau et fin). B07/intégrales,
+modulation interne et détection du plein gaz restent à développer ; voir la passation.
 **Puis :** champs HUD supplémentaires réellement visibles (régime, aides réglées,
 carburant, pressions affichées, avertissements), avec ROI/calibration/sémantique vérifiées.
 **Chantier central :** trajectoire, bords, orientation et repères physiques. Données PC

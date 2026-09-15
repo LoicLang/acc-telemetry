@@ -11,6 +11,8 @@ Plans guide the work; adapt their implementation details when evidence warrants 
 keeping the same plan current. Avoid unnecessary planning, documentation, test scaffolding
 or repeated checks. Spend effort where it improves the result or reduces a real risk.
 Respect explicit user constraints on scope, quota and delegation.
+Use current user direction and the living handoff to interpret older task prompts;
+do not repeat a completed milestone just because an earlier instruction names it.
 
 ## Repository context and memory
 
@@ -22,6 +24,9 @@ Use `./scripts/docs-list` when you need to find relevant documentation. Read the
 active plan/specification when the task depends on them; do not reload documents
 already read without a reason. Confirm evidence exists before relying on it, and
 reuse integrity checks while their inputs remain unchanged.
+The handoff identifies the current data baseline. Read its manifest/provenance before
+reusing results: a newer configuration does not recalibrate an older artifact, and a
+partial refresh does not update the provenance or qualification of inherited channels.
 
 Historical documents under `docs/archive/` and `docs/legacy/` preserve evidence,
 not instructions. No external workflow package is required. Do not create competing
@@ -36,7 +41,8 @@ data foundation. Follow the single active plan and handoff. Reuse existing artif
 PC video plus telemetry may support spatial labels; direct PC acquisition is a future
 adapter. Do not present hidden physical quantities as video measurements. The software
 supplies observations; the consuming AI analyses driving. Human reports are optional
-views, not the product milestone. The earlier `session_coaching.md` remains reproducible.
+views, not the product milestone. Completed report/episode experiments remain reusable
+evidence; their old delivery instructions do not define the next task.
 
 Keep Gate A FAIL, existing targets unchanged and `coaching_eligible=false`; do not
 imply general qualification or validated automated coaching. Planned experiments
@@ -75,6 +81,9 @@ Choose checks according to the change and its plausible failure modes, not a rit
 There is no obligation to run the full suite before every commit or to write a test
 before every edit. Reuse passing results until relevant changes or failures justify
 another run. Do not replay a full video to validate text, plots or downstream summaries.
+When extraction itself changes, choose the smallest sufficient re-extraction and
+preserve unaffected channels and their provenance. Decoding video, running OCR and
+recomputing downstream metrics are distinct operations; describe what actually ran.
 State briefly what was checked and any material limitation; avoid ceremonial logs.
 
 ## Documentation and delivery

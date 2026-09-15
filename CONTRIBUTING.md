@@ -22,8 +22,10 @@ The target is a persistent session-data platform navigable by AI tools/MCP. Curr
 priority: extract and qualify video-derived data before building that platform or its
 agent skills. Follow [current status](docs/current-status.md), the
 [single active plan](docs/plans/video-to-agent-platform.md), and the
-[code capability audit](docs/video-data-audit.md). Existing telemetry-v2 artifacts are
-sufficient for the next downstream metrics. Preserve unknowns and evidence boundaries;
+[code capability audit](docs/video-data-audit.md). Use the current artifact baseline
+named in the handoff, checking calibration and mixed provenance. The handoff determines
+which capabilities are complete and which implementation or qualification step comes next.
+Preserve unknowns and evidence boundaries;
 a catalogue entry is not proof that its physical inputs are observable in video.
 
 ## Proportionate verification
@@ -43,7 +45,7 @@ personal captures. Run `./scripts/docs-list` when document discovery/structure c
 Commands available when appropriate:
 
 ```bash
-PYTHONPATH=src python -m unittest tests.test_video_sampling -v
+PYTHONPATH=src python -m unittest discover -s tests -p 'test_video_sampling.py' -v
 PYTHONPATH=src python -m unittest discover -s tests -v
 ```
 
