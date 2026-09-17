@@ -16,6 +16,10 @@ WORKDIR /app
 # ffmpeg: for video processing
 RUN apt-get update && apt-get install -y \
     tesseract-ocr \
+    libtesseract-dev \
+    libleptonica-dev \
+    pkg-config \
+    g++ \
     libgl1 \
     ffmpeg \
     && rm -rf /var/lib/apt/lists/*

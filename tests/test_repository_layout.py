@@ -126,14 +126,14 @@ class TestRepositoryLayout(unittest.TestCase):
     def test_active_documentation_has_routing_metadata(self):
         self.assertEqual(validate_active_docs(ROOT / "docs"), [])
 
-    def test_current_docs_route_to_one_active_plan(self):
+    def test_handoff_routes_to_one_frozen_roadmap(self):
         import re
         status = (ROOT / "docs/current-status.md").read_text(encoding="utf-8")
-        match = re.search(r"Active plan: `([^`]+)`", status)
+        match = re.search(r"Reference roadmap: `([^`]+)`", status)
         self.assertIsNotNone(match)
         self.assertTrue((ROOT / "docs" / match.group(1)).is_file())
         self.assertEqual(len(list((ROOT / "docs/plans").glob("*.md"))), 1)
-        self.assertIn("Gate A: FAIL", status)
+        self.assertIn("Status: community handoff", status)
         self.assertIn("coaching_eligible=false", status)
         self.assertFalse((ROOT / "DEPLOY.md").exists())
         self.assertFalse((ROOT / "QUICKSTART_WEB.md").exists())

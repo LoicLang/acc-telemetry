@@ -38,3 +38,8 @@ Thumbs.db
 debug/
 .vercel
 .env*.local
+
+# Local credentials (examples may be committed deliberately)
+.env
+.env.*
+!.env.example

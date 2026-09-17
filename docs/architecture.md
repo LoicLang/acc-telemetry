@@ -7,6 +7,11 @@ read_when:
 
 # Architecture
 
+> Community handoff,17 September2026: the existing video architecture below is
+> preserved. Future platform/PC sections describe the former vision; a PC successor
+> will start separately and is not implemented here. See [current status](current-status.md).
+
+
 ## Chaîne existante
 
 ```text

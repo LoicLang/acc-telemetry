@@ -1,11 +1,18 @@
 ---
-summary: single active plan - extract and qualify video driving data first, then expose a persistent session platform to AI agents
+summary: frozen video-first roadmap retained for community continuation after the owner pivoted to PC
 read_when:
   - choosing the next implementation increment or deciding whether platform work is premature
   - building video-derived measurements, trajectory or later agent navigation
 ---
 
-# Plan actif — vidéo vers plateforme de données pour agents
+# Feuille de route vidéo — gelée le 17 septembre 2026
+
+**Statut actuel : projet vidéo mis en pause et transmis publiquement.** Le propriétaire
+passe sur PC et repartira sur une base distincte, à partir des données directement
+exploitables sur cette plateforme. Les étapes et prochaines actions ci-dessous sont
+la feuille de route **historique**, conservée pour une reprise communautaire éventuelle.
+Elles ne sont plus un programme de travail autorisé par défaut. Voir la
+[passation publique](../current-status.md).
 
 **Décision du15 septembre2026 : l'objectif final est une plateforme facilement
 navigable par un agent pour explorer les données de conduite. La priorité de réalisation

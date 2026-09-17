@@ -2,7 +2,9 @@
 
 ## Environment
 
-Use Python 3.12 or newer (the audited local environment is Python 3.13.2). Create a local environment and install the pinned dependencies:
+Use Python 3.12 or newer (the audited local environment is Python 3.13.2). Install
+the system dependencies listed in the README first, then create a local environment
+and install the pinned dependencies:
 
 ```bash
 python3 -m venv .venv
@@ -16,17 +18,19 @@ Use [AGENTS.md](AGENTS.md) for working rules. Read `docs/current-status.md` and 
 Git when starting work unless that context is already current. Use `./scripts/docs-list`
 and the active plan/specification as needed; do not repeat reads without a reason.
 
-## Active delivery
+## Community handoff
 
-The target is a persistent session-data platform navigable by AI tools/MCP. Current
-priority: extract and qualify video-derived data before building that platform or its
-agent skills. Follow [current status](docs/current-status.md), the
-[single active plan](docs/plans/video-to-agent-platform.md), and the
-[code capability audit](docs/video-data-audit.md). Use the current artifact baseline
-named in the handoff, checking calibration and mixed provenance. The handoff determines
-which capabilities are complete and which implementation or qualification step comes next.
-Preserve unknowns and evidence boundaries;
-a catalogue entry is not proof that its physical inputs are observable in video.
+The video research is paused as of17 September2026. The owner is moving to a separate
+PC-based project; this repository is retained for anyone interested in continuing the
+video approach. Read [current status](docs/current-status.md), the
+[frozen roadmap](docs/plans/video-to-agent-platform.md) and
+[capability audit](docs/video-data-audit.md). Do not interpret old next-action sections
+as an obligation to restart model training or private-data experiments.
+
+A fresh clone contains code and tests, not the local run datasets or model checkpoints.
+Use `PYTHONPATH=src python scripts/demo_control_episodes.py` to inspect synthetic output,
+then test your own compatible capture. Preserve unknowns and source/field provenance.
+Review [origin and licensing status](NOTICE.md) before planning redistribution.
 
 ## Proportionate verification
 
@@ -77,4 +81,4 @@ Group related changes coherently; separate migrations or unrelated changes when 
 improves review or data safety. Small policy edits need only a review/diff check.
 
 Update `docs/current-status.md` in the same commit whenever a behavior change alters
-verified project truth, blockers, the active milestone, or the exact next action.
+the handoff status, verified behavior or known limits.

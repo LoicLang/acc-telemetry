@@ -1,6 +1,6 @@
 # Local driving data — video acquisition and future agent platform
 
-This directory is the durable local home for ACC driving sessions. Current work extracts and qualifies data from video; a future agent platform will query these measurements and their evidence. Personal artifacts are intentionally ignored by Git.
+This directory is the durable local home for ACC driving sessions. This public repository preserves paused video research; future PC work will use a separate foundation. No local runs, personal captures or trained experiment checkpoints are bundled. Personal artifacts are intentionally ignored by Git.
 
 ## Session layout
 

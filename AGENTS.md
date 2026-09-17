@@ -34,20 +34,18 @@ plans or turn the handoff into a diary.
 
 ## Current scope
 
-The final product is a persistent driving-data platform that an AI agent can navigate
-through tools/MCP and optional skills. The current priority is to extract and qualify
-useful data from video first; platform implementation and agent navigation follow that
-data foundation. Follow the single active plan and handoff. Reuse existing artifacts.
-PC video plus telemetry may support spatial labels; direct PC acquisition is a future
-adapter. Do not present hidden physical quantities as video measurements. The software
-supplies observations; the consuming AI analyses driving. Human reports are optional
-views, not the product milestone. Completed report/episode experiments remain reusable
-evidence; their old delivery instructions do not define the next task.
+As of 17 September 2026, this repository is a public community handoff of the
+paused ACC PS5 video research. The owner is moving to PC and will start a separate
+foundation based on directly available PC data. Do not resume video/model work or
+build the PC successor here unless explicitly requested. The roadmap is frozen
+context for a potential new maintainer, not an active work queue.
 
-Keep Gate A FAIL, existing targets unchanged and `coaching_eligible=false`; do not
-imply general qualification or validated automated coaching. Planned experiments
-must establish the evidence required by the capability they claim. Other prerequisites
-still apply to the capabilities they actually govern.
+Preserve implemented extraction, episode analysis, tests and technical history.
+Clearly distinguish public code from private experiment data that is not bundled.
+Do not claim a local result is reproducible from a fresh clone without its inputs.
+The consuming AI analyses driving; the software supplies observations. Historical
+validation failures and coaching metadata remain unchanged, not release goals for
+the future PC project. Do not promote them to general qualification.
 
 Keep work focused on ACC PS5 telemetry and the requested outcome. New video processing
 accepts only native **1920×1080 at exactly 60 fps CFR**: check metadata first, reject
