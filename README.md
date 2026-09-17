@@ -109,7 +109,8 @@ and episode code. Start with the synthetic demo, tests, and your own compatible 
    evidence. Existing per-frame checks do not certify all driving episodes.
 
 Architecture: `capture → extraction → normalization → domain → analysis → visualization`.
-Run `./scripts/docs-list` to discover the technical documentation.
+Run `./scripts/docs-list` to discover the technical documentation
+(or `python scripts/docs_list.py` in PowerShell).
 
 ## Origin and licensing status
 

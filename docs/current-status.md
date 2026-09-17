@@ -76,7 +76,7 @@ complete laps, zero returned for an all-missing speed aggregate).
 ## Publication and origin
 
 All implemented pedal/episode changes are included. The public entry point is `main`,
-with a dated `video-handoff-2026-09-17` snapshot tag. Source history and upstream
+with a dated `video-handoff-2026-09-17.1` snapshot tag. Source history and upstream
 attribution are retained. No project license has been invented for inherited code;
 see [NOTICE.md](../NOTICE.md).
 
